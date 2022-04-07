@@ -31,7 +31,7 @@ const Tab2: React.FC = () => {
         </IonGrid>
 
         <IonFab vertical="bottom" horizontal="center" slot="fixed">
-          <IonFabButton onClick={() => takePhoto()}>
+          <IonFabButton onClick={() => takePhoto()} >
             <IonIcon icon={camera}></IonIcon>
           </IonFabButton>
         </IonFab>

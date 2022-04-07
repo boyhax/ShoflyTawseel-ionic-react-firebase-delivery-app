@@ -37,7 +37,7 @@ export function usePhotoGallery() {
     const photo = await Camera.getPhoto({
       resultType: CameraResultType.Uri,
       source: CameraSource.Camera,
-      quality: 100
+      quality: 100,
     });
     const fileName = new Date().getTime() + '.jpeg';
     const savedFileImage = await savePicture(photo, fileName);
