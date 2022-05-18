@@ -4,10 +4,12 @@ import {
   IonApp,
   IonIcon,
   IonLabel,
+  IonPage,
   IonRouterOutlet,
   IonTabBar,
   IonTabButton,
-  IonTabs
+  IonTabs,
+  IonTitle,
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { square, triangle, images } from 'ionicons/icons';
@@ -31,15 +33,20 @@ import '@ionic/react/css/text-alignment.css';
 import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
-
+import {getApps,initializeApp} from 'firebase/app';
 /* Theme variables */
 import './theme/variables.css';
-
+import {Config} from"./config"
 /* Global CSS */
 import './global.css';
-
-const App: React.FC = () => (
-  <IonApp>
+const firebaseConfig=Config
+if (getApps.length===0){
+initializeApp(firebaseConfig)
+}
+const App: React.FC = () => {
+  
+  
+  return(<IonApp>
     <IonReactRouter>
       <IonTabs>
         <IonRouterOutlet>
@@ -48,6 +55,8 @@ const App: React.FC = () => (
           <Route path="/tab2/details" component={Details} />
           <Route path="/tab3" component={Tab3} />
           <Route path="/" render={() => <Redirect to="/tab1" />} exact={true} />
+          {/* <Route path={"/oman"} component={()=>{return(<IonPage><IonTitle size='large'>Oman</IonTitle></IonPage>)}} /> */}
+          
         </IonRouterOutlet>
         <IonTabBar slot="bottom">
           <IonTabButton tab="tab1" href="/tab1">
@@ -66,6 +75,6 @@ const App: React.FC = () => (
       </IonTabs>
     </IonReactRouter>
   </IonApp>
-);
+)};
 
 export default App;

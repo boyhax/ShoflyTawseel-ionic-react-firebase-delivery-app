@@ -1,18 +1,34 @@
-import React, { useRef, useState } from 'react';
-import { IonAlert, IonAvatar, IonButton, IonButtons, IonCard, IonCardContent, IonCardTitle, IonContent, IonFab, IonFabButton, IonFabList, IonHeader, IonIcon, IonLabel, IonPage, IonRouterLink, IonTitle, IonToolbar } from '@ionic/react';
+import React, { useEffect, useRef, useState } from 'react';
+import { IonAlert, IonAvatar, IonBackButton, IonButton, IonButtons, IonCard, IonCardContent, IonCardTitle, IonContent, IonFab, IonFabButton, IonFabList, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonPage, IonRouterLink, IonSlide, IonSlides, IonText, IonTitle, IonToolbar } from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
 import './Tab1.css';
 import { ellipsisHorizontal, ellipsisVertical, logoFacebook, logoInstagram, logoTwitter, logoVimeo, personCircle, search, share } from 'ionicons/icons';
-
-const Tab1: React.FC = () => {
-  
+import {getDocs,collection,getFirestore, query, limit} from "firebase/firestore"
+import OrderCard,{OrderProps} from '../components/OrderCard';
+const Tab1= () => {
+  const [list,setList]=useState<null|typeof OrderProps[]>(null)
+  useEffect(()=>{
+    getData();
+  },[])
+  async function getData() {
+  const col=collection(getFirestore(),"orders")
+  const q = query(col,limit(10))
+  const data = await getDocs(col)
+  var newList:any[]=[]
+  data.forEach((doc)=>{
+    newList.push({id:doc.id,...doc.data()})
+  })
+  setList(newList)
+  } 
     return (
     <IonPage>
       <IonHeader >
         <IonToolbar>
-          <IonTitle slot='start'>Tab 1</IonTitle>
-          <IonTitle slot='start'>Tab 2</IonTitle>
-          <IonTitle slot='start'>Tab 3</IonTitle>
+        <IonButtons slot="start">
+          <IonBackButton />
+        </IonButtons>
+          <IonTitle slot='start'>ShoflyTawseel</IonTitle>
+          <IonTitle slot='start'>Profile</IonTitle>
           
         </IonToolbar>
       </IonHeader>
@@ -22,7 +38,8 @@ const Tab1: React.FC = () => {
             <IonTitle size="large">Tab 1</IonTitle>
           </IonToolbar>
         </IonHeader>
-        
+          {!!list && <IonList>{list.map((v,i)=>{
+            return <IonItem key={i}><OrderCard values={v}></OrderCard></IonItem>})}</IonList>}
         <IonFab vertical="bottom" horizontal="start" slot="fixed">
           <IonFabButton>
             <IonIcon icon={share} />
@@ -35,7 +52,7 @@ const Tab1: React.FC = () => {
         <IonButton href="/tab3">go tab 3</IonButton>
         <IonToolbar color="secondary">
     <IonButtons slot="secondary">
-      <IonButton>
+      <IonButton href='/tab2'>
         <IonIcon slot="icon-only" icon={personCircle} />
       </IonButton>
       <IonButton>
@@ -49,6 +66,20 @@ const Tab1: React.FC = () => {
     </IonButtons>
     <IonTitle>Dark Toolbar</IonTitle>
   </IonToolbar>
+  <IonSlides pager={true} options={{
+  initialSlide: 1,
+  speed: 400,
+}}>
+      <IonSlide>
+        <IonTitle>Slide 1</IonTitle>
+      </IonSlide>
+      <IonSlide>
+        <IonTitle>Slide 2</IonTitle>
+      </IonSlide>
+      <IonSlide>
+        <IonTitle>Slide 3</IonTitle>
+      </IonSlide>
+    </IonSlides>
           
 
       </IonContent>
