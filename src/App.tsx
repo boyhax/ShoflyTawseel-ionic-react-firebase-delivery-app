@@ -12,7 +12,7 @@ import {
   IonTitle,
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { square, triangle, images } from 'ionicons/icons';
+import { square, triangle, images, home, personCircleSharp } from 'ionicons/icons';
 import Tab1 from './pages/Tab1';
 import Tab2 from './pages/Tab2';
 import Tab3 from './pages/Tab3';
@@ -33,48 +33,63 @@ import '@ionic/react/css/text-alignment.css';
 import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
-import {getApps,initializeApp} from 'firebase/app';
+import {FirebaseApp, getApps,initializeApp} from 'firebase/app';
 /* Theme variables */
 import './theme/variables.css';
 import {Config} from"./config"
 /* Global CSS */
 import './global.css';
+import Profile from './pages/Profile';
+import SignIn from './pages/SignIn';
+import GlobalProvider from './providers/globalsProvider';
+import { browserPopupRedirectResolver, browserSessionPersistence, initializeAuth } from 'firebase/auth';
 const firebaseConfig=Config
-if (getApps.length===0){
-initializeApp(firebaseConfig)
-}
+
+const firebaseApp = initializeApp(firebaseConfig)
+
+const auth = initializeAuth(firebaseApp, {
+  persistence: browserSessionPersistence,
+  popupRedirectResolver: browserPopupRedirectResolver,
+});
 const App: React.FC = () => {
   
   
-  return(<IonApp>
+  return(
+  <GlobalProvider>
+    <IonApp>
     <IonReactRouter>
-      <IonTabs>
+    <IonRouterOutlet>
+          <Route path="/home" component={Tab1} exact={true} />
+          <Route path="/Profile" component={Profile} exact={true} />
+          <Route path="/tab2/details" component={Details} />
+          <Route path="/SignIn" component={SignIn} />
+          <Route path="/" render={() => <Redirect to="/home" />} exact={true} />
+          
+        </IonRouterOutlet>
+      {/* <IonTabs>
         <IonRouterOutlet>
           <Route path="/tab1" component={Tab1} exact={true} />
-          <Route path="/tab2" component={Tab2} exact={true} />
+          <Route path="/Profile" component={Profile} exact={true} />
           <Route path="/tab2/details" component={Details} />
-          <Route path="/tab3" component={Tab3} />
+          <Route path="/SignIn" component={SignIn} />
           <Route path="/" render={() => <Redirect to="/tab1" />} exact={true} />
-          {/* <Route path={"/oman"} component={()=>{return(<IonPage><IonTitle size='large'>Oman</IonTitle></IonPage>)}} /> */}
           
         </IonRouterOutlet>
         <IonTabBar slot="bottom">
           <IonTabButton tab="tab1" href="/tab1">
-            <IonIcon icon={triangle} />
-            <IonLabel>Tab One</IonLabel>
+            <IonIcon icon={home} />
+            <IonLabel>Home</IonLabel>
           </IonTabButton>
-          <IonTabButton tab="tab2" href="/tab2">
-            <IonIcon icon={images} />
-            <IonLabel>Photos</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="tab3" href="/tab3">
-            <IonIcon icon={square} />
-            <IonLabel>Tab Three</IonLabel>
+          
+          <IonTabButton tab="tab2" href="/Profile">
+            <IonIcon icon={personCircleSharp} />
+            <IonLabel>Profile</IonLabel>
           </IonTabButton>
         </IonTabBar>
-      </IonTabs>
+      </IonTabs> */}
     </IonReactRouter>
   </IonApp>
+  </GlobalProvider>
 )};
 
 export default App;

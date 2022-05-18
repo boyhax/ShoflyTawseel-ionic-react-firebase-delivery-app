@@ -1,0 +1,26 @@
+
+.card{
+    flex: 1;
+    direction: rtl;
+    background-color: aliceblue;
+
+}
+.inline{
+    display: inline-flex;
+    flex-direction: row-reverse;
+    background-color:aliceblue;
+    }
+.text{
+    font-size: large;
+    color: rgb(146, 29, 29);
+}
+.title{
+    justify-content: center;
+    font-family: baloo;
+    font-size: large;
+}
+.BoldText{
+    font-weight: 50;
+    font-size: large;
+    font-family: baloo;
+}
