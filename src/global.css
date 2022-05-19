@@ -2,9 +2,13 @@
   font-family: 'baloo';  
   src: url('./assets/fonts/BalooBhaijaan-Regular.ttf');
 }
-ion-content{
+ion-content,ion-item{
   font-family: baloo;
+  justify-content: center;
+  text-align: center;
+  direction: rtl;
 }
+
 @media (prefers-color-scheme: dark) {
   /*
    * Dark Colors

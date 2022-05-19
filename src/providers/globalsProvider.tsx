@@ -1,12 +1,19 @@
-import React, { createContext, useContext, useState,SetStateAction } from "react";  
-import { getAuth } from "firebase/auth";
+import React, { createContext, useContext, useState,SetStateAction, useEffect } from "react";  
+import { getAuth, onAuthStateChanged, UserInfo } from "firebase/auth";
+import { userInfo } from "os";
 
-const globalsContext = createContext({uid:"",setUid:(uid:string)=>{}});
+const globalsContext = createContext({user:false});
 
 const GlobalProvider:React.FC =(props)=>{
-    const [uid,setUid] = useState("")
+    const [user,setUser] = useState(false)
+    useEffect(()=>{
+        onAuthStateChanged(getAuth(),(user)=>{
+            console.log('user  :>> ', !!user );
+            setUser(!!user)
+          })
+    },[])
     
-    return<globalsContext.Provider value={{uid,setUid}}>
+    return<globalsContext.Provider value={{user}}>
         {props.children}
     </globalsContext.Provider>
 }

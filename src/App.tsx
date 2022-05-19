@@ -13,7 +13,7 @@ import {
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { square, triangle, images, home, personCircleSharp } from 'ionicons/icons';
-import Tab1 from './pages/Tab1';
+import Home from './pages/Home';
 import Tab2 from './pages/Tab2';
 import Tab3 from './pages/Tab3';
 import Details from './pages/Details';
@@ -42,24 +42,27 @@ import './global.css';
 import Profile from './pages/Profile';
 import SignIn from './pages/SignIn';
 import GlobalProvider from './providers/globalsProvider';
-import { browserPopupRedirectResolver, browserSessionPersistence, initializeAuth } from 'firebase/auth';
+import { browserPopupRedirectResolver, browserSessionPersistence, getAuth, initializeAuth, onAuthStateChanged } from 'firebase/auth';
+import { auth } from 'firebaseui';
 const firebaseConfig=Config
 
 const firebaseApp = initializeApp(firebaseConfig)
 
-const auth = initializeAuth(firebaseApp, {
-  persistence: browserSessionPersistence,
-  popupRedirectResolver: browserPopupRedirectResolver,
-});
+// const auth = initializeAuth(firebaseApp, {
+//   persistence: browserSessionPersistence,
+//   popupRedirectResolver: browserPopupRedirectResolver,
+// });
 const App: React.FC = () => {
   
-  
+  onAuthStateChanged(getAuth(),(user)=>{
+    
+  })
   return(
   <GlobalProvider>
     <IonApp>
     <IonReactRouter>
     <IonRouterOutlet>
-          <Route path="/home" component={Tab1} exact={true} />
+          <Route path="/home" component={Home} exact={true} />
           <Route path="/Profile" component={Profile} exact={true} />
           <Route path="/tab2/details" component={Details} />
           <Route path="/SignIn" component={SignIn} />
