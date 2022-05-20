@@ -111,9 +111,9 @@ const SignIn: React.FC = () => {
       <IonContent id='firebaseui-auth-container'></IonContent>
 {verificationId ===""    && <div id='recaptcha-container' ></div>}
       <IonContent className='container'>
-        {verificationId !=="" && <IonItem onClick={(e)=>{setVerificationId("");setPhoneNumber("")}} ><IonLabel>تغيير الرقم</IonLabel></IonItem>}
+        {verificationId !=="" && <IonItem onClick={(e) => { setVerificationId(""); setPhoneNumber(""); } } fill={undefined} shape={undefined} counter={undefined} counterFormatter={undefined} ><IonLabel>تغيير الرقم</IonLabel></IonItem>}
           
-          {!user && <div><IonItem className='input' > 
+          {!user && <div><IonItem className='input' fill={undefined} shape={undefined} counter={undefined} counterFormatter={undefined} > 
               <IonLabel position='floating'>رقم الهاتف</IonLabel>
         <IonInput  maxlength={8}  type='tel'  onIonChange={(e)=>setPhoneNumber(e.detail.value!)}>
             </IonInput>
@@ -123,7 +123,7 @@ const SignIn: React.FC = () => {
         <IonLabel>{verifyError?.message!}</IonLabel></div>}
 
         {!!verificationId && <div>
-          <IonItem className='input' ref={verificationCodeTextInput} >
+          <IonItem className='input' ref={verificationCodeTextInput} fill={undefined} shape={undefined} counter={undefined} counterFormatter={undefined} >
               <IonLabel position='floating'>verification number OTB</IonLabel>
         <IonInput  maxlength={8} disabled={!verificationId} type='number'  onIonChange={(e)=>setVerificationCode(e.detail.value!)}>
             </IonInput>
@@ -131,7 +131,7 @@ const SignIn: React.FC = () => {
             <IonIcon size='large' icon={arrowForwardCircle}></IonIcon></IonButton>
         </IonItem>
         <IonLabel>{confirmError?.message!}</IonLabel></div>}
-    {user && <IonItem >
+    {user && <IonItem fill={undefined} shape={undefined} counter={undefined} counterFormatter={undefined} >
       <IonTitle slot='start'>you are signed in</IonTitle>
       <IonButton slot='start' onClick={()=>onSignOut()}>sign out</IonButton>
       </IonItem>}

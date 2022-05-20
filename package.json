@@ -10,7 +10,7 @@
     "@capacitor/ios": "^3.5.1",
     "@capacitor/storage": "^1.2.5",
     "@ionic/pwa-elements": "^3.1.1",
-    "@ionic/react": "^5.9.4",
+    "@ionic/react": "^6.1.6",
     "@ionic/react-router": "^5.9.4",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^10.4.9",
@@ -34,7 +34,7 @@
     "serve": "ionic serve",
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --transformIgnorePatterns 'node_modules/(?!(@ionic/react|@ionic/react-router|@ionic/core|@stencil/core|ionicons)/)'",
     "eject": "react-scripts eject",
     "build android": "./gradlew assembleDebug"
   },

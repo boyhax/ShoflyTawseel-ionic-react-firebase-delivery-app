@@ -8,6 +8,9 @@ ion-content,ion-item{
   text-align: center;
   direction: rtl;
 }
+ion-page{
+  flex: 1;
+}
 
 @media (prefers-color-scheme: dark) {
   /*

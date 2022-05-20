@@ -10,6 +10,7 @@ import {
   IonTabButton,
   IonTabs,
   IonTitle,
+  setupIonicReact,
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { square, triangle, images, home, personCircleSharp } from 'ionicons/icons';
@@ -47,16 +48,13 @@ import { auth } from 'firebaseui';
 const firebaseConfig=Config
 
 const firebaseApp = initializeApp(firebaseConfig)
+setupIonicReact({
+  mode: 'md'
+});
 
-// const auth = initializeAuth(firebaseApp, {
-//   persistence: browserSessionPersistence,
-//   popupRedirectResolver: browserPopupRedirectResolver,
-// });
 const App: React.FC = () => {
   
-  onAuthStateChanged(getAuth(),(user)=>{
-    
-  })
+  
   return(
   <GlobalProvider>
     <IonApp>
@@ -69,27 +67,7 @@ const App: React.FC = () => {
           <Route path="/" render={() => <Redirect to="/home" />} exact={true} />
           
         </IonRouterOutlet>
-      {/* <IonTabs>
-        <IonRouterOutlet>
-          <Route path="/tab1" component={Tab1} exact={true} />
-          <Route path="/Profile" component={Profile} exact={true} />
-          <Route path="/tab2/details" component={Details} />
-          <Route path="/SignIn" component={SignIn} />
-          <Route path="/" render={() => <Redirect to="/tab1" />} exact={true} />
-          
-        </IonRouterOutlet>
-        <IonTabBar slot="bottom">
-          <IonTabButton tab="tab1" href="/tab1">
-            <IonIcon icon={home} />
-            <IonLabel>Home</IonLabel>
-          </IonTabButton>
-          
-          <IonTabButton tab="tab2" href="/Profile">
-            <IonIcon icon={personCircleSharp} />
-            <IonLabel>Profile</IonLabel>
-          </IonTabButton>
-        </IonTabBar>
-      </IonTabs> */}
+      
     </IonReactRouter>
   </IonApp>
   </GlobalProvider>

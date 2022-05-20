@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonRouterLink, IonInput, IonLabel, IonItem, IonCard, IonCardContent } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonRouterLink, IonInput, IonLabel, IonItem, IonCard, IonCardContent, IonAccordionGroup, IonAccordion, IonList } from '@ionic/react';
 import { ellipsisVertical, personCircle, searchCircle } from 'ionicons/icons';
 import { useGlobals } from '../providers/globalsProvider';
 import { collection, doc, getDoc, getFirestore } from 'firebase/firestore';
@@ -33,15 +33,14 @@ const Profile: React.FC = () => {
     
   </IonToolbar>
       </IonHeader>
-      <IonContent className='center' >
-        {!!user && <IonTitle>profile</IonTitle>}
+      
+        {/* {!!user && <IonTitle>profile</IonTitle>} */}
         {!!user && <IonButton onClick={()=>{auth.signOut();setProfile(undefined)}}><IonTitle>تسجيل الخروج</IonTitle></IonButton>}
-        {user && profile===undefined && <IonCard className='profileCard'><IonItem >يجب ان تضيف معلومات حسابك</IonItem>
-        <ProfileEdit></ProfileEdit></IonCard>}
+        
 
         {!user && <IonContent><IonButton href='/SignIn'>SignIn first Please</IonButton></IonContent>}
-      </IonContent>
-      <IonTitle>{JSON.stringify(profile)}</IonTitle>
+      {user && profile===undefined && <IonCard className='profileCard'><IonItem fill={undefined} shape={undefined} counter={undefined} counterFormatter={undefined} >يجب ان تضيف معلومات حسابك</IonItem>
+        <ProfileEdit></ProfileEdit></IonCard>}
       
     </IonPage>
   );
@@ -54,5 +53,22 @@ async function getProfile(uid:String,onValue:(profile:any)=>any) {
    })
 }
 const ProfileEdit:React.FC=(props)=>{
-  return<IonCardContent>edit profile</IonCardContent>
+  return<IonAccordionGroup>
+  <IonAccordion value="colors">
+    <IonItem slot="header" fill={undefined} shape={undefined} counter={undefined} counterFormatter={undefined}>
+      <IonLabel>Colors</IonLabel>
+    </IonItem>
+
+    <IonList slot="content">
+      <IonItem fill={undefined} shape={undefined} counter={undefined} counterFormatter={undefined}>
+        <IonLabel>Red</IonLabel>
+      </IonItem>
+      <IonItem fill={undefined} shape={undefined} counter={undefined} counterFormatter={undefined}>
+        <IonLabel>Green</IonLabel>
+      </IonItem>
+      <IonItem fill={undefined} shape={undefined} counter={undefined} counterFormatter={undefined}>
+        <IonLabel>Blue</IonLabel>
+      </IonItem>
+    </IonList>
+  </IonAccordion></IonAccordionGroup>
 }

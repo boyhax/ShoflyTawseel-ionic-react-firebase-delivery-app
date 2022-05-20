@@ -75,7 +75,7 @@ const [list,setList]=useState<null|typeof OrderProps[]>(null)
   </IonRefresher>
   <IonContent  onIonScrollEnd={(e)=>{console.log("end")}}>
       {!!list && <IonList onScroll={(e)=>{console.log(e)}}  className='list'>{list.map((v,i)=>{
-        return <IonItem key={i}><OrderCard values={v}></OrderCard></IonItem>})}</IonList>}
+        return <IonItem key={i} fill={undefined} shape={undefined} counter={undefined} counterFormatter={undefined}><OrderCard values={v}></OrderCard></IonItem>})}</IonList>}
     {!list && <IonSpinner name='lines' className='center'/>}
     </IonContent>
     </IonContent>
