@@ -28,7 +28,7 @@ const SignIn: React.FC = () => {
       auth.signOut()
     }
     async function  sendVerifyNumber(){
-      if(String(phoneNumber).length!=8){
+      if(String(phoneNumber).length !== 8){
         console.log("phone numbers <8")
         return 1
       }
@@ -117,7 +117,7 @@ const SignIn: React.FC = () => {
               <IonLabel position='floating'>رقم الهاتف</IonLabel>
         <IonInput  maxlength={8}  type='tel'  onIonChange={(e)=>setPhoneNumber(e.detail.value!)}>
             </IonInput>
-            <IonButton slot='end'  size='default' onClick={()=>{sendVerifyNumber()}} disabled={String(phoneNumber).length<8 ||verificationId !=""}>
+            <IonButton slot='end'  size='default' onClick={()=>{sendVerifyNumber()}} disabled={String(phoneNumber).length<8 ||verificationId !==""}>
             <IonIcon size='large' icon={arrowForwardCircle}></IonIcon></IonButton>
         </IonItem>
         <IonLabel>{verifyError?.message!}</IonLabel></div>}

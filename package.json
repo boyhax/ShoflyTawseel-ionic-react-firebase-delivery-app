@@ -35,8 +35,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --transformIgnorePatterns 'node_modules/(?!(@ionic/react|@ionic/react-router|@ionic/core|@stencil/core|ionicons)/)'",
-    "eject": "react-scripts eject",
-    "build android": "./gradlew assembleDebug"
+    "build android": "cd andorid && ./gradlew bundle && cd .."
   },
   "eslintConfig": {
     "extends": "react-app"
