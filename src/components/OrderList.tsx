@@ -6,6 +6,8 @@ import { IonButton, IonChip, IonContent, IonFab, IonFabButton, IonIcon, IonInfin
 import { add, close, filter, remove, removeCircleSharp } from "ionicons/icons";
 import { RefresherEventDetail } from '@ionic/core';
 import "./OrderList.css"
+import ListPicker from "./ListPicker";
+import { Cities } from "./utlis/citiesUtlis";
 
 const citiesList = require("../assets/cities.json")[0]["oman"]["ar"]
 
@@ -43,11 +45,7 @@ const [list,setList]=useState<null|typeof OrderProps[]>(null)
     if (filterTo!==null){
       firstQuery = query(firstQuery,where("to","==",filterTo))
     }
-    // if(list==[]){
-    //   firstQuery=query(firstQuery,startAfter(list[list.length-1]["uid"]))
-    // }else{
-
-    // }
+    
 
     var finalQuery= query(firstQuery,limit(count))
     const snapshot = await getDocs(finalQuery) 
@@ -114,35 +112,15 @@ function onOptionRemove(){
   }
 }
     return<IonContent className="center">
+
       <IonItem onClick={()=>toggleFilter()}>
         <IonIcon icon={filter}></IonIcon>
-        
-        <IonItem ><IonChip onClick={()=>showCitiesOption("from")} >من:  {filterFrom!}</IonChip>
-          {filterFrom  &&  <IonIcon icon={removeCircleSharp} onClick={()=>{setFilterFrom(null)}}></IonIcon>}        </IonItem>
-        <IonItem><IonChip onClick={()=>showCitiesOption("to")} >الى :{filterTo!}</IonChip>
-        {filterTo && <IonIcon icon={removeCircleSharp} onClick={()=>{setFilterTo(null)}}></IonIcon>}        </IonItem>
+        <CitiePicker value={filterFrom} onItemPicked={(v)=>setFilterFrom(v)} 
+        placeHolder={"من :"}/>
+        <CitiePicker value={filterTo} onItemPicked={(v)=>setFilterTo(v)} 
+        placeHolder={"الى :"}/>
       </IonItem>
-      
-      {/* {false && <IonItem><IonLabel onClick={()=>showCitiesOption("from")} >من:  {filterFrom!}</IonLabel>
-      <IonLabel onClick={()=>showCitiesOption("to")} >الى :{filterTo!}</IonLabel></IonItem>} */}
-      
-      <IonModal  ref={optionsModal} isOpen={CitieOptionTarget === null?false:true}>
-        
-        <IonContent>
-          <IonItem><IonLabel>{CitieOptionTarget==="to"?"من: ":"الى :"}</IonLabel>
-          <IonChip><IonLabel>{CitieOptionTarget==="to"?filterTo:filterFrom}</IonLabel></IonChip>
-        <IonInput placeholder="أبحث..."  onIonChange={(e)=>{onOptionTextChange(e.detail.value!)}}></IonInput>
-        <IonIcon icon={close} onClick={()=>{onOptionRemove()}}></IonIcon>
-        <IonButton onClick={()=>setCitieOptionTarget(null)}><IonLabel >close</IonLabel></IonButton>
-        </IonItem>
-      
-      <IonList>{citiesList.map((value:any, index:Number) => 
-      {
-        if(value >= optionInput){return <IonItem className={value === (CitieOptionTarget==="to"?filterTo:filterFrom)?"choosed_item":""} key={value} onClick={()=>onOptionPicked(value)}>{value}</IonItem>
-      }
-        })}</IonList>
-      
-      </IonContent></IonModal>
+
     <IonRefresher ref={IonRefresherElement} slot="fixed" onIonRefresh={doRefresh} onTouchEnd={(e)=>{console.log("end touch")}} >
     <IonRefresherContent refreshingText="refreshing..."></IonRefresherContent>
   </IonRefresher>
@@ -170,3 +148,12 @@ function onOptionRemove(){
     
     </IonContent>
       }
+const CitiePicker =(props:{value:string|null,onItemPicked:(v:string|null)=>void,placeHolder:string})=>{
+  return<IonItem>
+  <ListPicker 
+   value={props.value} 
+   data={Cities} 
+   placeHolder={props.placeHolder} 
+   onValueSet={(v)=>props.onItemPicked(v)}></ListPicker>
+  </IonItem>
+}

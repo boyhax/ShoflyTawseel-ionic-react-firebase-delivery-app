@@ -2,21 +2,11 @@ import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import {
   IonApp,
-  IonIcon,
-  IonLabel,
-  IonPage,
   IonRouterOutlet,
-  IonTabBar,
-  IonTabButton,
-  IonTabs,
-  IonTitle,
   setupIonicReact,
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { square, triangle, images, home, personCircleSharp } from 'ionicons/icons';
 import Home from './pages/Home';
-import Tab2 from './pages/Tab2';
-import Tab3 from './pages/Tab3';
 import Details from './pages/Details';
 
 /* Core CSS required for Ionic components to work properly */
@@ -43,8 +33,6 @@ import './global.css';
 import Profile from './pages/Profile';
 import SignIn from './pages/SignIn';
 import GlobalProvider from './providers/globalsProvider';
-import { browserPopupRedirectResolver, browserSessionPersistence, getAuth, initializeAuth, onAuthStateChanged } from 'firebase/auth';
-import { auth } from 'firebaseui';
 const firebaseConfig=Config
 
 const firebaseApp = initializeApp(firebaseConfig)
@@ -61,11 +49,11 @@ const App: React.FC = () => {
     <IonReactRouter>
     <IonRouterOutlet>
           <Route path="/home" component={Home} exact={true} />
-          <Route path="/Profile" component={Profile} exact={true} />
-          <Route path="/tab2/details" component={Details} />
+          <Route path="/Profile" component={Profile} />
+          <Route path="/Profile/:id" component={Profile} />
+          <Route path="/details" component={Details} />
           <Route path="/SignIn" component={SignIn} />
           <Route path="/" render={() => <Redirect to="/home" />} exact={true} />
-          
         </IonRouterOutlet>
       
     </IonReactRouter>

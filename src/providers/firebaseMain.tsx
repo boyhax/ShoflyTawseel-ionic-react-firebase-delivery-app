@@ -13,12 +13,20 @@ export async function getTripCard(id:String){
   export async function updateTripCard(id:String,data:{}){
     updateDoc(doc(getFirestore(),"orders/"+id),data)
   }
-  export async function addNewTripCard(data:{}){
+  type tripCardProps={
+    name:string,
+    uid:string,
+    from:string,
+    to:string,
+    time:Date,
+    flagged:boolean
+  }
+  export async function addNewTripCard(data:tripCardProps){
     var _data:any=false
     
     try {
       var fsRef = await addDoc(collection(getFirestore(),"orders"),data)
-      _data = fsRef.id?true:false
+      _data = fsRef.id
   
     } catch (error) {
       console.log(error)

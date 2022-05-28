@@ -13,6 +13,7 @@ const GlobalProvider:React.FC =(props)=>{
           })
     },[])
     
+    
     return<globalsContext.Provider value={{user}}>
         {props.children}
     </globalsContext.Provider>

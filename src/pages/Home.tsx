@@ -10,12 +10,16 @@ import { useHistory } from "react-router-dom";
 import { useGlobals } from '../providers/globalsProvider';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import OrderList from '../components/OrderList';
+import AddOrder from '../components/AddOrder';
 const Tab1= () => {
   
   const history = useHistory()
 
-
+const [addOrder,setAddOrder] = useState(false)
   const onSignIn =()=>{("/SignIn")}
+  function onAddOrder(){
+    setAddOrder(!addOrder)
+  }
     return (
     <IonPage>
            
@@ -43,11 +47,7 @@ const Tab1= () => {
   </IonToolbar>
       </IonHeader>
       <IonContent>
-        <IonHeader collapse="condense">
-          <IonToolbar slot="start">
-            <IonTitle size="large">Tab 1</IonTitle>
-          </IonToolbar>
-        </IonHeader>
+      
         
         <OrderList></OrderList>
         
@@ -65,11 +65,11 @@ const Tab1= () => {
         <IonTitle>Slide 3</IonTitle>
       </IonSlide>
     </IonSlides> */}
-          
+          <AddOrder isOpen={addOrder} setOpen={(v)=>setAddOrder(v)}/>
 
       </IonContent>
       <IonFab vertical="bottom" horizontal="start" slot="float">
-      <IonFabButton onClick={(e)=>{history.push("/SignIn")}}>
+      <IonFabButton onClick={(e)=>{onAddOrder()}}>
         <IonIcon icon={add} />
       </IonFabButton>
     </IonFab>
