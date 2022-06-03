@@ -15,7 +15,7 @@ ion-page{
   flex: 1;
 }
 
-/* @media (prefers-color-scheme: dark) {
+ @media (prefers-color-scheme: dark) {
   /*
    * Dark Colors
    * -------------------------------------------
@@ -165,4 +165,4 @@ ion-page{
   ion-title.title-large {
     --color: white;
   }
-} */
+} 

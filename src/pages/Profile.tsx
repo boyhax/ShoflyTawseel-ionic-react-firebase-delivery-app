@@ -12,15 +12,19 @@ import { useParams } from 'react-router';
 const Profile: React.FC = () => {
     const {user} = useGlobals()
     const[profile,setProfile] = useState<{}|undefined>(undefined)
-    console.log(profile)
+    const [loading,setLoading]=useState(true)
     const auth= getAuth()
     const id = useParams()
+    
     useEffect(()=>{
       if(user){
          getProfile(auth.currentUser!.uid,(p)=>{setProfile(p)})
       }
   },[user]);
 
+    setTimeout(() => {
+      setLoading(false)
+    }, 2000);
     
     return (
     <IonPage >
@@ -45,7 +49,7 @@ const Profile: React.FC = () => {
           <IonTitle>قائمة طلباتك</IonTitle>
           <ProfileOrdersList/>
       </IonContent>}
-        {!user && <IonContent>
+        {!user && loading === false && <IonContent>
           <IonButton href='/SignIn'>قم بتسجيل الدخول اولأ</IonButton>
           </IonContent>}
 </IonContent>

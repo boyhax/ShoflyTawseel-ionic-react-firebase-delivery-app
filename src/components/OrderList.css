@@ -1,10 +1,7 @@
-.center{
-  justify-content: center;
-  display: flexbox;
-  flex:1;
-  flex-grow: 1;
-  background-color: aquamarine;
-  
+.spinner{
+  /* display: -moz-grid-group; */
+  /* align-items: center; */
+  color: rgb(222, 93, 1);
 
 }
 .choosed_item{

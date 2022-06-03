@@ -22,7 +22,8 @@ const [list,setList]=useState<null|typeof OrderProps[]>(null)
   const [CitieOptionTarget,setCitieOptionTarget] = useState<null|String>(null)
   const [optionInput,setOptionInput] = useState<String>("")
   const optionsModal = useRef(null)
-  const IonRefresherElement = useRef(null)
+  const IonRefresherElement = useRef<any>(null)
+  const infiniteScrollRef = useRef<any>(null)
   const [data, setData] = useState<string[]>([]);
   const [isInfiniteDisabled, setInfiniteDisabled] = useState(false);
   useEffect(()=>{
@@ -32,7 +33,6 @@ const [list,setList]=useState<null|typeof OrderProps[]>(null)
   function doRefresh(event: CustomEvent<RefresherEventDetail>) {
     console.log('Begin async operation');
     getData();
-    event.detail.complete()
 }   
   async function getData() {
     setRefreshing(true)
@@ -46,15 +46,20 @@ const [list,setList]=useState<null|typeof OrderProps[]>(null)
       firstQuery = query(firstQuery,where("to","==",filterTo))
     }
     
-
-    var finalQuery= query(firstQuery,limit(count))
-    const snapshot = await getDocs(finalQuery) 
-     var newList:any[]=[]
-     snapshot.forEach((doc)=>{
-        newList.push({id:doc.id,...doc.data()})
-       })
-    setList(newList)
-    setRefreshing(false)
+    try {
+      var finalQuery= query(firstQuery,limit(count))
+      const snapshot = await getDocs(finalQuery) 
+       var newList:any[]=[]
+       snapshot.forEach((doc)=>{
+          newList.push({id:doc.id,...doc.data()})
+         })
+      setList(newList)
+    
+    } catch (error) {
+      console.log('error :>> ', error);      
+    }
+        setRefreshing(false)
+    IonRefresherElement.current!.complete()
   } 
     
     function onRefresh(){
@@ -62,10 +67,11 @@ const [list,setList]=useState<null|typeof OrderProps[]>(null)
       console.log("on refresh")
     }
     function onEndRefresh(){
-      if(list!.length){
+      if(list){
         if(count <= list!.length){
           setCount(count+10)
-          console.log("end refresh")
+          console.log("end refresh"+" new count :"+count+", list length: "+list.length)
+          infiniteScrollRef.current!.complete()
         }
       } 
     }
@@ -135,16 +141,18 @@ function onOptionRemove(){
           </IonItem>})}
         </IonList>}
           <IonInfiniteScroll
+          ref={infiniteScrollRef}
           onIonInfinite={onEndRefresh}
           threshold="100px"
           disabled={isInfiniteDisabled}
+
         >
           <IonInfiniteScrollContent
-            loadingSpinner="bubbles"
-            loadingText="Loading more data..."
+            loadingSpinner="dots"
+            loadingText="لايوجد مزيد من الطلبات"
           ></IonInfiniteScrollContent>
         </IonInfiniteScroll>
-    {!list && <IonSpinner name='lines' className='center'/>}
+    {!list && <IonSpinner name='lines' className='spinner'/>}
     
     </IonContent>
       }
