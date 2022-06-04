@@ -14,12 +14,9 @@ ion-item{
 ion-page{
   flex: 1;
 }
-
+/* 
  @media (prefers-color-scheme: dark) {
-  /*
-   * Dark Colors
-   * -------------------------------------------
-   */
+  
  
   body {
     --ion-color-primary: #428cff;
@@ -86,10 +83,7 @@ ion-page{
     --ion-color-light-tint: #383a3e;
   }
   
-  /*
-   * iOS Dark Theme
-   * -------------------------------------------
-   */
+  
   
   .ios body {
     --ion-background-color: #000000;
@@ -125,10 +119,7 @@ ion-page{
   }
   
   
-  /*
-   * Material Design Dark Theme
-   * -------------------------------------------
-   */
+  
   
   .md body {
     --ion-background-color: #121212;
@@ -165,4 +156,4 @@ ion-page{
   ion-title.title-large {
     --color: white;
   }
-} 
+}  */
