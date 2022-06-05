@@ -8,11 +8,12 @@ import { RefresherEventDetail } from '@ionic/core';
 import "./OrderList.css"
 import ListPicker from "./ListPicker";
 import { Cities } from "./utlis/citiesUtlis";
+import { stringify } from "querystring";
 
 const citiesList = require("../assets/cities.json")[0]["oman"]["ar"]
 
 export default function OrderList(props:any) {
-const [list,setList]=useState<null|typeof OrderProps[]>(null)
+const [list,setList]=useState<null|Array<OrderProps>>(null)
   const [refreshing,setRefreshing] = useState(false)
   const [count,setCount] = useState(10)
   const [showFilter,setShowFilter] = useState(false)
@@ -35,7 +36,7 @@ const [list,setList]=useState<null|typeof OrderProps[]>(null)
     getData();
 }   
   async function getData() {
-    setRefreshing(true)
+    // setRefreshing(true)
     const ref = collection(getFirestore(),"orders")
     var firstQuery = query(ref,orderBy("time","desc"))
     firstQuery = query(firstQuery,where("flagged","==",false))

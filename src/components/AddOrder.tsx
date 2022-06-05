@@ -1,4 +1,4 @@
-import { IonAlert, IonButton, IonCard, IonContent, IonIcon, IonInput, IonItem, IonLabel, IonModal, IonText, IonTextarea, IonTitle, IonToolbar } from "@ionic/react";
+import { IonAlert, IonButton, IonCard, IonContent, IonIcon, IonInput, IonItem, IonLabel, IonModal, IonSpinner, IonText, IonTextarea, IonTitle, IonToolbar } from "@ionic/react";
 import { getAuth } from "firebase/auth";
 import { closeCircle } from "ionicons/icons";
 import React, { FC, PropsWithChildren, useState } from "react";
@@ -18,6 +18,8 @@ const AddOrder=({isOpen,setOpen}:Props)=>{
     const [to,setTo]= useState<null|string>(null)
     const [comment,setComment]= useState<null|string|undefined>(undefined)
     const [err,setErr]= useState<{message:string,color:"red"|"blue"}|undefined>(undefined)
+    const [loading,setLoading]= useState(false)
+
     const auth = getAuth()
     const user = auth.currentUser
     function onAddPressed(){
@@ -28,17 +30,26 @@ const AddOrder=({isOpen,setOpen}:Props)=>{
         :setErr({message:"اضف الوجهه التي تريد ارسال الاغراظ منها",color:"red"})
     }
     async function addTrip(){
-        
-       const newId = await addNewTripCard({
-            from:from!,
-            to:to!,
-            name:user!.displayName!,
-            uid:user?.uid!,
-            time:new Date(),
-            flagged:false
-        })
-        console.log('newId :>> ', newId);
-        setErr({message:"تم أضافة الطلب",color:"blue"})
+        setLoading(true)
+        try {
+            const newId = await addNewTripCard({
+                from:from!,
+                to:to!,
+                number:user?.phoneNumber!,
+                name:user!.displayName!,
+                uid:user?.uid!,
+                time:new Date(),
+                flagged:false
+            })
+            setErr({message:"تم أضافة الطلب",color:"blue"})
+            setLoading(false)
+
+        } catch (error) {
+            console.log('error :>> ', error);
+            setErr({message:"لم يتم أضافة الطلب بسبب عدم تسجيل دخولك ",color:"red"})
+            setLoading(false)
+        }
+       
     }
     return <IonModal isOpen={isOpen}>
         <IonAlert
@@ -83,7 +94,10 @@ const AddOrder=({isOpen,setOpen}:Props)=>{
             onIonChange={(v)=>setComment(v.detail.value)} 
             debounce={5}></IonTextarea>
             </IonCard>
+            {loading?
+            <IonSpinner></IonSpinner>:
             <IonButton onClick={()=>onAddPressed()} >اضافه</IonButton>
+        }
             </IonContent>
         
     </IonModal>

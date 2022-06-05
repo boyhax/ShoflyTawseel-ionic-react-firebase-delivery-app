@@ -100,7 +100,7 @@ const ProfileEdit:React.FC=(props)=>{
   </IonAccordion></IonAccordionGroup>
 }
 const ProfileOrdersList:FC=(props)=>{
-  const [list,setList]=useState<null|typeof OrderProps[]>(null)
+  const [list,setList]=useState<null|OrderProps[]>(null)
   const [refreshing,setRefreshing] = useState(true)
   const {user} = useGlobals()
   useEffect(()=>{

@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { IonButton, IonContent, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonPage, IonSpinner, IonTitle, IonToolbar } from '@ionic/react';
+import { IonButton, IonContent, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonModal, IonPage, IonSpinner, IonTitle, IonToolbar } from '@ionic/react';
 import { arrowForwardCircle, home } from 'ionicons/icons';
 import { getAuth, PhoneAuthProvider, signInWithCredential,RecaptchaVerifier,signInWithPhoneNumber, initializeAuth, browserSessionPersistence, browserPopupRedirectResolver, EmailAuthProvider, onAuthStateChanged } from 'firebase/auth';
 import './SignIn.css';
 import * as firebaseui from 'firebaseui';
 import { useGlobals } from '../providers/globalsProvider';
+import { createNewProfile, getProfile } from '../providers/firebaseMain';
 
 const SignIn: React.FC = () => {
     const [phoneNumber,setPhoneNumber]=useState<any>(null)
@@ -16,14 +17,51 @@ const SignIn: React.FC = () => {
     const [confirmError, setConfirmError] = useState<any|{}>();
     const [confirmInProgress, setConfirmInProgress] = useState(false);
     const[RecaptchaVerified,setRecaptchaVerified] = useState(false)
+    const [name,setName] = useState<null|string|any>(null)
     const [ui,setUi] = useState<any>(null)
     const auth= getAuth()
     const {user} = useGlobals()
+    const createProfileModal = useRef<any>(null)
     useEffect(()=>{
       var ui = new firebaseui.auth.AuthUI(getAuth());
       setUi(ui)
     },[])
+    useEffect(()=>{
+      if(user){
+        onSignIn()
+      }
+    },[user])
+    useEffect(()=>{
+      setVerificationId(null)
+      // document.getElementById("recaptcha-container")!.innerHTML
+          },[phoneNumber])
     
+      async function getprofile() {
+      return await (await getProfile(auth.currentUser!.uid)).data
+    }
+    async function onSignIn(){
+      
+        await getProfile(auth.currentUser!.uid).then((data)=>{
+          const exist = data.exists()
+          if (!exist){
+            createProfile()
+          }
+        },(error)=>{
+          console.log('error :>> ', error);
+        })
+    }
+    function onCreateProfileSubmit(){
+      if(typeof name === "string"?name.length >5:false){
+          createNewProfile(auth.currentUser?.uid,{
+            name:name
+          })
+      }else{
+        alert("يجب ادخال اسم اكبر من 5 حروف")
+      }
+    }
+    function createProfile(){
+      createProfileModal.current!.present()
+    }
     function onSignOut(){
       auth.signOut()
     }
@@ -38,6 +76,8 @@ const SignIn: React.FC = () => {
           setVerificationId('');
           auth.languageCode = "ar"
           setRecaptchaVerified(false)
+            document.getElementById("recaptcha-container")!.innerHTML=""
+
           const recaptchaVerifier = new RecaptchaVerifier(
             `recaptcha-container`,
             {
@@ -84,7 +124,7 @@ const SignIn: React.FC = () => {
           setVerificationCode('');
           alert('تم تاكيد التسجيل بنجاح');
           setConfirmError({message:"تم التسجيل بنجاح"});
-
+          onSignIn()
         } catch (err) {
           setConfirmError(err);
           setConfirmInProgress(false);
@@ -104,36 +144,66 @@ const SignIn: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Sign In </IonTitle>
+          <IonTitle>تسجيل الدخول </IonTitle>
           <IonButton slot='end' href='/'><IonIcon icon={home}></IonIcon></IonButton>
         </IonToolbar>
       </IonHeader>
-      <IonContent id='firebaseui-auth-container'></IonContent>
-{verificationId ===""    && <div id='recaptcha-container' ></div>}
+      {/* <IonItem id='firebaseui-auth-container'></IonItem> */}
+      
+{!verificationId &&       <IonItem id='recaptcha-container' ></IonItem>
+}
+        <IonModal ref={createProfileModal} > 
+          <IonContent>
+            <IonTitle>
+              ادخل معلوماتك
+            </IonTitle>
+            <IonItem>
+              <IonLabel position='floating' >الاسم</IonLabel>
+              <IonInput 
+              placeholder='الاسم'
+              onIonChange={(e)=>setName(e.detail.value)}></IonInput>
+            </IonItem>
+            <IonButton onClick={()=>onCreateProfileSubmit()}>Submit</IonButton>
+          </IonContent>
+        </IonModal>
       <IonContent className='container'>
-        {verificationId !=="" && <IonItem onClick={(e) => { setVerificationId(""); setPhoneNumber(""); } } fill={undefined} shape={undefined} counter={undefined} counterFormatter={undefined} ><IonLabel>تغيير الرقم</IonLabel></IonItem>}
+        {/* {verificationId !==null && 
+        <IonItem 
+        onClick={(e) => { setVerificationId(""); setPhoneNumber(""); } } 
+        fill={undefined} shape={undefined} counter={undefined} 
+        counterFormatter={undefined} >
+          <IonLabel>تغيير الرقم</IonLabel>
+          </IonItem>} */}
           
-          {!user && <div><IonItem className='input' fill={undefined} shape={undefined} counter={undefined} counterFormatter={undefined} > 
+          {!user && <div><IonItem className='input' fill={undefined} shape={undefined} 
+          counter={undefined} counterFormatter={undefined} > 
               <IonLabel position='floating'>رقم الهاتف</IonLabel>
         <IonInput  maxlength={8}  type='tel'  onIonChange={(e)=>setPhoneNumber(e.detail.value!)}>
             </IonInput>
-            <IonButton slot='end'  size='default' onClick={()=>{sendVerifyNumber()}} disabled={String(phoneNumber).length<8 ||verificationId !==""}>
+            <IonButton slot='end'  size='default' onClick={()=>{sendVerifyNumber()}} 
+            disabled={String(phoneNumber).length<8 }>
             <IonIcon size='large' icon={arrowForwardCircle}></IonIcon></IonButton>
         </IonItem>
         <IonLabel>{verifyError?.message!}</IonLabel></div>}
 
         {!!verificationId && <div>
-          <IonItem className='input' ref={verificationCodeTextInput} fill={undefined} shape={undefined} counter={undefined} counterFormatter={undefined} >
-              <IonLabel position='floating'>verification number OTB</IonLabel>
-        <IonInput  maxlength={8} disabled={!verificationId} type='number'  onIonChange={(e)=>setVerificationCode(e.detail.value!)}>
+          <IonItem className='input' ref={verificationCodeTextInput} 
+          fill={undefined} shape={undefined} counter={undefined} 
+          counterFormatter={undefined} >
+              <IonLabel position='floating'> OTB الرمز السري</IonLabel>
+        <IonInput  maxlength={8} disabled={!verificationId} type='number'  
+        onIonChange={(e)=>setVerificationCode(e.detail.value!)}>
             </IonInput>
-            <IonButton slot='end' size='default' onClick={()=>{VerifyNumber()}} disabled={String(verificationCode).length<1}>
-            <IonIcon size='large' icon={arrowForwardCircle}></IonIcon></IonButton>
+            <IonButton slot='end' size='default' onClick={()=>{VerifyNumber()}} 
+            disabled={String(verificationCode).length<1}>
+            <IonIcon size='large' icon={arrowForwardCircle}></IonIcon>
+            </IonButton>
         </IonItem>
-        <IonLabel>{confirmError?.message!}</IonLabel></div>}
+        <IonLabel>{confirmError?.message!}</IonLabel>
+        </div>}
     {user && <IonItem fill={undefined} shape={undefined} counter={undefined} counterFormatter={undefined} >
-      <IonTitle slot='start'>you are signed in</IonTitle>
-      <IonButton slot='start' onClick={()=>onSignOut()}>sign out</IonButton>
+      <IonTitle slot='start'>تم تسجيل الدخول</IonTitle>
+      <IonButton slot='start' onClick={()=>onSignOut()}>خروج</IonButton>
       </IonItem>}
       </IonContent>
     </IonPage>
