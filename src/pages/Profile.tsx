@@ -8,6 +8,7 @@ import "./Profile.css"
 import { map } from '@firebase/util';
 import OrderCard, { OrderProps } from '../components/OrderCard';
 import { useParams } from 'react-router';
+import { getProfile, profileExist, updateUserProfile } from '../providers/firebaseMain';
 
 const Profile: React.FC = () => {
     const {user} = useGlobals()
@@ -16,12 +17,23 @@ const Profile: React.FC = () => {
     const auth= getAuth()
     const id = useParams()
     
+    if(user && !userProfileExist()){
+      console.log("no profile")
+    }
+    async function  userProfileExist(){
+      return await profileExist(auth.currentUser!.uid)
+    }
     useEffect(()=>{
-      if(user){
-         getProfile(auth.currentUser!.uid,(p)=>{setProfile(p)})
+      if(user && userProfileExist()){
+        getProfile(auth.currentUser!.uid).then((d)=>{
+          if(d.exists()){
+            setProfile(d.data()) 
+          }
+          console.log('d.data :>> ', d.data());
+        })
       }
   },[user]);
-
+   
     setTimeout(() => {
       setLoading(false)
     }, 2000);
@@ -57,7 +69,7 @@ const Profile: React.FC = () => {
 
       {user && auth.currentUser?.displayName==="" && <IonCard className='profileCard'><IonItem fill={undefined} shape={undefined} counter={undefined} counterFormatter={undefined} >يجب ان تضيف معلومات حسابك</IonItem>
         </IonCard>}
-        {user && <ProfileEdit></ProfileEdit>}
+        {user && profile!==undefined && <ProfileEdit></ProfileEdit>}
       
     </IonPage>
   );
@@ -66,11 +78,7 @@ const Profile: React.FC = () => {
 export default Profile;
 
 
-async function getProfile(uid:String,onValue:(profile:any)=>any) {
-   const p =await getDoc(doc(getFirestore(),"users/"+uid)).then((v)=>{
-     onValue(v.data())
-   })
-}
+
 const ProfileEdit:React.FC=(props)=>{
   const auth= getAuth()
   const user = auth.currentUser
@@ -82,16 +90,18 @@ const ProfileEdit:React.FC=(props)=>{
     </IonItem>
 
     <IonList slot="content">
-      <IonItem fill={undefined} shape={undefined} counter={undefined} counterFormatter={undefined}>
+      <IonItem fill={undefined} shape={undefined} counter={undefined} 
+      counterFormatter={undefined}>
         <IonLabel>الاسم</IonLabel>
         <IonInput placeholder='name' onIonChange={(e)=>{
           if(user !==null){
-            updateProfile(user,{displayName:e.detail.value})
+            updateUserProfile(auth.currentUser!.uid,{name:e.detail.value})
           }
         }} value={auth.currentUser?.displayName}></IonInput>
         <IonButton><IonLabel>حفظ</IonLabel></IonButton>
       </IonItem>
-      <IonItem fill={undefined} shape={undefined} counter={undefined} counterFormatter={undefined}>
+      <IonItem fill={undefined} shape={undefined} counter={undefined} 
+      counterFormatter={undefined}>
         <IonLabel>الرقم</IonLabel>
         <IonLabel >{auth.currentUser?.phoneNumber}</IonLabel>
       </IonItem>

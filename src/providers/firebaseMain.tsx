@@ -1,5 +1,8 @@
 import React from "react";
 import moduleName, { addDoc, collection, doc, getDoc, getFirestore, setDoc, updateDoc } from 'firebase/firestore';
+import { profile } from "console";
+import { getAuth, updateProfile } from "firebase/auth";
+import { auth } from "firebaseui";
 export async function getTripCard(id:String){
     var _data:any
     await getDoc(doc(getFirestore(),"orders/"+id)).then((data)=>{
@@ -37,6 +40,15 @@ export async function getTripCard(id:String){
 export async function getProfile(uid:string) {
   return await getDoc(doc(getFirestore(),"users/"+uid))
   
+}
+export function updateUserProfile(uid:any,data:any){
+  updateProfile(getAuth().currentUser!,{displayName:data.name!})
+  updateDoc(doc(getFirestore(),"users/"+uid),data).catch((value) => {
+    setDoc(doc(getFirestore(),"users/"+uid),data)
+  })
+}
+export async function profileExist(uid:string){
+  return await (await getProfile(uid)).exists()
 }
 export function createNewProfile(uid:any,data:any){
     const col = doc(getFirestore(),"users/"+uid)
