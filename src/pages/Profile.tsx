@@ -1,9 +1,9 @@
 import React, { FC, useEffect, useState } from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonRouterLink, IonInput, IonLabel, IonItem, IonCard, IonCardContent, IonAccordionGroup, IonAccordion, IonList, IonGrid, IonSpinner } from '@ionic/react';
-import { arrowBack, ellipsisVertical, personCircle, searchCircle } from 'ionicons/icons';
+import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonRouterLink, IonInput, IonLabel, IonItem, IonCard, IonCardContent, IonAccordionGroup, IonAccordion, IonList, IonGrid, IonSpinner } from '@ionic/react';
+import { arrowBack, } from 'ionicons/icons';
 import { useGlobals } from '../providers/globalsProvider';
-import { collection, doc, getDoc, getDocs, getFirestore, orderBy, query, where } from 'firebase/firestore';
-import { getAuth, onAuthStateChanged, updateProfile } from 'firebase/auth';
+import { collection, getDocs, getFirestore, orderBy, query, where } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 import "./Profile.css"
 import OrderCard, { OrderProps } from '../components/OrderCard';
 import { useHistory, useParams } from 'react-router';
@@ -69,26 +69,30 @@ export default Profile;
 const ProfileEdit:React.FC=(props)=>{
   const auth= getAuth()
   const user = auth.currentUser
-
+  const uid = user?.uid
+  const [data,setData]=useState({})
+  const {profile} = useGlobals()
+useEffect(()=>{
+console.log(profile)
+},[profile])
   return<IonAccordionGroup>
   <IonAccordion value="colors">
-    <IonItem slot="header" fill={undefined} shape={undefined} counter={undefined} counterFormatter={undefined}>
+    <IonItem slot="header" >
       <IonLabel>معلومات المستخدم</IonLabel>
     </IonItem>
 
     <IonList slot="content">
-      <IonItem fill={undefined} shape={undefined} counter={undefined} 
-      counterFormatter={undefined}>
+      <IonItem >
         <IonLabel>الاسم</IonLabel>
         <IonInput placeholder='name' onIonChange={(e)=>{
-          if(user !==null){
-            updateUserProfile(auth.currentUser!.uid,{name:e.detail.value})
-          }
-        }} value={auth.currentUser?.displayName}></IonInput>
-        <IonButton><IonLabel>حفظ</IonLabel></IonButton>
+            setData({...data,name:e.detail.value})
+          
+        }} 
+        value={"profile exiset? "+String(profile)}></IonInput>
+        <IonButton onClick={()=>updateUserProfile(uid,data)}>
+          <IonLabel>حفظ</IonLabel></IonButton>
       </IonItem>
-      <IonItem fill={undefined} shape={undefined} counter={undefined} 
-      counterFormatter={undefined}>
+      <IonItem>
         <IonLabel>الرقم</IonLabel>
         <IonLabel >{auth.currentUser?.phoneNumber}</IonLabel>
       </IonItem>

@@ -1,8 +1,9 @@
-import { IonAlert, IonButton, IonCard, IonContent, IonIcon, IonInput, IonItem, IonLabel, IonModal, IonSpinner, IonText, IonTextarea, IonTitle, IonToolbar } from "@ionic/react";
+import { IonAlert, IonButton, IonCard, IonContent, IonIcon, IonInput, IonItem, IonLabel, IonModal, IonPage, IonSpinner, IonText, IonTextarea, IonTitle, IonToolbar } from "@ionic/react";
 import { getAuth } from "firebase/auth";
 import { closeCircle } from "ionicons/icons";
 import React, { FC, PropsWithChildren, useState } from "react";
 import { addNewTripCard } from "../providers/firebaseMain";
+import { useGlobals } from "../providers/globalsProvider";
 import ListPicker from "./ListPicker";
 import { Cities } from "./utlis/citiesUtlis";
 
@@ -19,10 +20,16 @@ const AddOrder=({isOpen,setOpen}:Props)=>{
     const [comment,setComment]= useState<null|string|undefined>(undefined)
     const [err,setErr]= useState<{message:string,color:"red"|"blue"}|undefined>(undefined)
     const [loading,setLoading]= useState(false)
-
+const {profile} = useGlobals()
     const auth = getAuth()
     const user = auth.currentUser
     function onAddPressed(){
+        if(!profile || (profile && !profile.name)){
+            console.log('profile name :>> ', profile);
+            alert("يرجى اضافه اسمك")
+            return<IonPage><IonInput placeholder="name" ></IonInput></IonPage>
+            return 0
+        }
         from?
             to?
                 addTrip()

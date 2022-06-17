@@ -3,6 +3,7 @@ import moduleName, { addDoc, collection, doc, getDoc, getFirestore, setDoc, upda
 import { profile } from "console";
 import { getAuth, updateProfile } from "firebase/auth";
 import { auth } from "firebaseui";
+import { useGlobals } from "./globalsProvider";
 export async function getTripCard(id:String){
     var _data:any
     await getDoc(doc(getFirestore(),"orders/"+id)).then((data)=>{
@@ -41,10 +42,16 @@ export async function getProfile(uid:string) {
   return await getDoc(doc(getFirestore(),"users/"+uid))
   
 }
-export function updateUserProfile(uid:any,data:any){
-  updateProfile(getAuth().currentUser!,{displayName:data.name!})
-  return updateDoc(doc(getFirestore(),"users/"+uid),data)
-
+export async function updateUserProfile(uid:any,data:any){
+  
+  if(! await profileExist(uid)){
+   return createNewProfile(uid,data)
+  }else{
+    updateProfile(getAuth().currentUser!,{displayName:data.name!})
+    return updateDoc(doc(getFirestore(),"users/"+uid),data)
+  
+  }
+  
 }
 export async function profileExist(uid:string){
   return await (await getProfile(uid)).exists()

@@ -15,7 +15,6 @@ const GlobalProvider:React.FC =(props)=>{
             console.log('user  :>> ', !!user );
             setUser(!!user)
             
-          setLoading(false)
     })},[])
   useEffect(()=>{
       if(user){
@@ -24,9 +23,12 @@ const GlobalProvider:React.FC =(props)=>{
         if(v.exists()){
             console.log('profile exist :>> ',":",uid, v.data());
             setProfile(profile)
+            
         }else{
             console.log('profile dont exist :>> ',":",uid);
         }
+        setLoading(false)
+
     })
   }},[user])
     if(loading){
