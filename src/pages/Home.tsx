@@ -11,8 +11,9 @@ import { useGlobals } from '../providers/globalsProvider';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import OrderList from '../components/OrderList';
 import AddOrder from '../components/AddOrder';
+import CreateProfile from './CreatProfile';
 const Tab1= () => {
-  
+  const {user,profile}= useGlobals()
   const history = useHistory()
 
 const [addOrder,setAddOrder] = useState(false)
@@ -20,30 +21,25 @@ const [addOrder,setAddOrder] = useState(false)
   function onAddOrder(){
     setAddOrder(!addOrder)
   }
+  // if(user && !profile){
+  //   return<CreateProfile></CreateProfile>
+  // }
     return (
     <IonPage>
            
 
       <IonHeader >
-        {/* <IonToolbar>
-          <IonTitle slot='start'>ShoflyTawseel</IonTitle>
-          <IonIcon slot='end'size="large" color='blue' icon={personCircle} ></IonIcon>
-        </IonToolbar> */}
+       
         <IonToolbar color="secondary">
-    <IonButtons slot="secondary">
-      <IonButton href='/Profile'>
+        <IonTitle slot='primary'>ShoflyTawseel</IonTitle>
+    <IonButtons slot="end">
+    <IonButton onClick={()=>history.push("/Profile")}>
         <IonIcon slot="icon-only" icon={personCircle} />
       </IonButton>
-      {/* <IonButton onClick={onSignIn}>
-        <IonIcon slot="icon-only" icon={search} />
+      {/* <IonButton color="danger">
+        <IonIcon slot="icon-only" ios={ellipsisHorizontal} md={ellipsisVertical} />
       </IonButton> */}
     </IonButtons>
-    <IonButtons slot="primary">
-      <IonButton color="danger">
-        <IonIcon slot="icon-only" ios={ellipsisHorizontal} md={ellipsisVertical} />
-      </IonButton>
-    </IonButtons>
-    <IonTitle>ShoflyTawseel</IonTitle>
   </IonToolbar>
       </IonHeader>
       <IonContent>

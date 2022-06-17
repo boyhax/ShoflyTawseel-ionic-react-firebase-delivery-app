@@ -1,6 +1,12 @@
+ionContent{
+  padding:5%
+}
 .container{
   justify-content: center;
   align-items: center;
+}
+.center{
+  justify-content: center;
 }
 .input{
   border-radius: 10;

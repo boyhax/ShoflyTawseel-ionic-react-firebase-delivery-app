@@ -9,10 +9,13 @@ import "./OrderList.css"
 import ListPicker from "./ListPicker";
 import { Cities } from "./utlis/citiesUtlis";
 import { stringify } from "querystring";
+import { getProfile } from "../providers/firebaseMain";
+import { getAuth } from "firebase/auth";
 
 const citiesList = require("../assets/cities.json")[0]["oman"]["ar"]
 
 export default function OrderList(props:any) {
+  const [isMounted, setIsMounted] = useState(true)
 const [list,setList]=useState<null|Array<OrderProps>>(null)
   const [refreshing,setRefreshing] = useState(false)
   const [count,setCount] = useState(10)
@@ -27,10 +30,15 @@ const [list,setList]=useState<null|Array<OrderProps>>(null)
   const infiniteScrollRef = useRef<any>(null)
   const [data, setData] = useState<string[]>([]);
   const [isInfiniteDisabled, setInfiniteDisabled] = useState(false);
+  const user =getAuth().currentUser
   useEffect(()=>{
-    getData();
-
+    getData()
+    // setIsMounted(true)
+  return () => {
+    setIsMounted(false)
+  }
   },[])
+  
   function doRefresh(event: CustomEvent<RefresherEventDetail>) {
     console.log('Begin async operation');
     getData();
@@ -49,18 +57,27 @@ const [list,setList]=useState<null|Array<OrderProps>>(null)
     
     try {
       var finalQuery= query(firstQuery,limit(count))
-      const snapshot = await getDocs(finalQuery) 
+      const snapshot = await getDocs(finalQuery)
+      
        var newList:any[]=[]
        snapshot.forEach((doc)=>{
           newList.push({id:doc.id,...doc.data()})
          })
-      setList(newList)
+         if(isMounted){
+          setList(newList)
+          setRefreshing(false)
+
+         }
+      
     
     } catch (error) {
       console.log('error :>> ', error);      
     }
-        setRefreshing(false)
-    IonRefresherElement.current!.complete()
+    if(isMounted){
+      setRefreshing(false)
+      IonRefresherElement?.current!.complete()
+
+    }
   } 
     
     function onRefresh(){
@@ -78,8 +95,8 @@ const [list,setList]=useState<null|Array<OrderProps>>(null)
     }
 
     useEffect(()=>{
-      getData()
-      console.log("[count,filterFrom,filterTo] value refresh")
+      //  getData()
+       
     },[count,filterFrom,filterTo])
     
   

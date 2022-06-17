@@ -1,60 +1,47 @@
 import React, { FC, useEffect, useState } from 'react';
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonRouterLink, IonInput, IonLabel, IonItem, IonCard, IonCardContent, IonAccordionGroup, IonAccordion, IonList, IonGrid, IonSpinner } from '@ionic/react';
-import { ellipsisVertical, personCircle, searchCircle } from 'ionicons/icons';
+import { arrowBack, ellipsisVertical, personCircle, searchCircle } from 'ionicons/icons';
 import { useGlobals } from '../providers/globalsProvider';
 import { collection, doc, getDoc, getDocs, getFirestore, orderBy, query, where } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged, updateProfile } from 'firebase/auth';
 import "./Profile.css"
-import { map } from '@firebase/util';
 import OrderCard, { OrderProps } from '../components/OrderCard';
-import { useParams } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import { getProfile, profileExist, updateUserProfile } from '../providers/firebaseMain';
 
 const Profile: React.FC = () => {
-    const {user} = useGlobals()
-    const[profile,setProfile] = useState<{}|undefined>(undefined)
+    const {user,profile} = useGlobals()
     const [loading,setLoading]=useState(true)
     const auth= getAuth()
     const id = useParams()
+    const history =useHistory()
     
-    if(user && !userProfileExist()){
-      console.log("no profile")
-    }
+    
     async function  userProfileExist(){
       return await profileExist(auth.currentUser!.uid)
     }
     useEffect(()=>{
-      if(user && userProfileExist()){
-        getProfile(auth.currentUser!.uid).then((d)=>{
-          if(d.exists()){
-            setProfile(d.data()) 
-          }
-          console.log('d.data :>> ', d.data());
-        })
-      }
+      
   },[user]);
    
-    setTimeout(() => {
-      setLoading(false)
-    }, 2000);
+    
     
     return (
     <IonPage >
-      <IonHeader>
       <IonToolbar color="secondary">
-    <IonButtons slot="primary">
-    
-      <IonButton color="danger">
-        <IonIcon slot="icon-only" icon={ellipsisVertical} />
-      </IonButton>
+    <IonButtons slot="start">
+          <IonButton  onClick={()=>history.goBack()}>
+            <IonIcon icon={arrowBack}></IonIcon>
+          </IonButton>
     </IonButtons>
-    <IonRouterLink href='/home'><IonTitle color='light' >ShoflyTawseel</IonTitle></IonRouterLink>
+    <IonTitle slot='primary' onClick={()=>history.push("/home")}  
+    >ShoflyTawseel
+    </IonTitle>
     
   </IonToolbar>
-      </IonHeader>
       <IonContent>
         {user && <IonContent>
-          <IonButton onClick={()=>{auth.signOut();setProfile(undefined)}}>
+          <IonButton onClick={()=>{history.push("/signin")}}>
             <IonTitle>تسجيل الخروج</IonTitle>
             </IonButton>
 
@@ -62,7 +49,7 @@ const Profile: React.FC = () => {
           <ProfileOrdersList/>
       </IonContent>}
         {!user && loading === false && <IonContent>
-          <IonButton href='/SignIn'>قم بتسجيل الدخول اولأ</IonButton>
+          <IonButton onClick={()=>history.push('/SignIn')}>قم بتسجيل الدخول</IonButton>
           </IonContent>}
 </IonContent>
               

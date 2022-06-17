@@ -1,8 +1,8 @@
 import { ComponentProps, isPlatform } from "@ionic/core";
 import { IonCard, IonLabel,IonContent ,IonCardContent, IonCardTitle, IonTitle, IonBadge, IonText, IonRow, IonGrid, IonCol, IonChip, IonIcon, IonButton} from "@ionic/react";
+import { doc, getDoc, getFirestore, } from "firebase/firestore";
 import { chatboxEllipsesOutline, logoWhatsapp, send } from "ionicons/icons";
 import React from "react";
-import { getProfile } from "../providers/firebaseMain";
 import "./OrderCard.css"
 const options:Object = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
 
@@ -28,8 +28,7 @@ const OpenWhatsapp=(number:any)=>{
 }
 export default ({values}:props)=>{
     var date =!!values.time? new Date(values.time.seconds*1000).toLocaleDateString("ar-om",options) + ' في ' + new Date(values.time.seconds*1000).toLocaleTimeString():null
-    const profile = getProfile(values.uid)
-
+    
 return<IonCard className="card" >
     
     <IonChip className="BoldText" color="primary">{values.name}</IonChip>

@@ -43,19 +43,19 @@ export async function getProfile(uid:string) {
 }
 export function updateUserProfile(uid:any,data:any){
   updateProfile(getAuth().currentUser!,{displayName:data.name!})
-  updateDoc(doc(getFirestore(),"users/"+uid),data).catch((value) => {
-    setDoc(doc(getFirestore(),"users/"+uid),data)
-  })
+  return updateDoc(doc(getFirestore(),"users/"+uid),data)
+
 }
 export async function profileExist(uid:string){
   return await (await getProfile(uid)).exists()
 }
 export function createNewProfile(uid:any,data:any){
     const col = doc(getFirestore(),"users/"+uid)
-    setDoc(col,data).then((d)=>{
+     const d = setDoc(col,data).then((d)=>{
 console.log('new profile created :>> ', d);
   alert("تم تاكيد معلومات الحساب شكرا")
     },(err)=>{
       console.log('err :>> ', err);
     })
+    return d
 }

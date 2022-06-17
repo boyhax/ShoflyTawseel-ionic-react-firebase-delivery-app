@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { IonButton, IonContent, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonModal, IonPage, IonSpinner, IonTitle, IonToolbar } from '@ionic/react';
-import { arrowForwardCircle, home } from 'ionicons/icons';
+import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonModal, IonPage, IonSpinner, IonTab, IonTabs, IonTitle, IonToolbar } from '@ionic/react';
+import { arrowBack, arrowForwardCircle, home, returnUpBack } from 'ionicons/icons';
 import { getAuth, PhoneAuthProvider, signInWithCredential,RecaptchaVerifier,signInWithPhoneNumber, initializeAuth, browserSessionPersistence, browserPopupRedirectResolver, EmailAuthProvider, onAuthStateChanged, GoogleAuthProvider, OAuthProvider } from 'firebase/auth';
 import './SignIn.css';
 import * as firebaseui from 'firebaseui';
 import { useGlobals } from '../providers/globalsProvider';
 import { createNewProfile, getProfile, profileExist } from '../providers/firebaseMain';
 import { StyledFirebaseAuth,FirebaseAuth } from 'react-firebaseui';
+import { useHistory } from 'react-router';
 
 const uiConfig = {
   // Popup signin flow rather than redirect flow.
@@ -36,6 +37,7 @@ const SignIn: React.FC = () => {
     const auth= getAuth()
     auth.languageCode = "ar"
     const {user} = useGlobals()
+    const history = useHistory()
     const createProfileModal = useRef<any>(null)
     useEffect(()=>{
     },[])
@@ -76,11 +78,13 @@ const SignIn: React.FC = () => {
       }
     }
     function createProfile(){
-      createProfileModal.current!.present()
+      // createProfileModal.current!.present()
+      return<IonLabel>create pr</IonLabel>
     }
     function onSignOut(){
       auth.signOut()
     }
+    
     async function  sendVerifyNumber(){
       if(String(phoneNumber).length !== 8){
         console.log("phone numbers <8")
@@ -184,12 +188,17 @@ const SignIn: React.FC = () => {
         
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>تسجيل الدخول </IonTitle>
-          <IonButton slot='end' href='/'><IonIcon icon={home}></IonIcon></IonButton>
-        </IonToolbar>
-      </IonHeader>
+        <IonToolbar color="secondary">
+    <IonButtons slot="start">
+          <IonButton  onClick={()=>history.goBack()}>
+            <IonIcon icon={arrowBack}></IonIcon>
+          </IonButton>
+    </IonButtons>
+    <IonTitle slot='primary' onClick={()=>history.push("/home")}  
+    >ShoflyTawseel
+    </IonTitle>
+    
+  </IonToolbar>
       
         <IonModal ref={createProfileModal} > 
           <IonContent>
@@ -209,8 +218,9 @@ const SignIn: React.FC = () => {
        
           
           {!user && <IonContent>
-            <div id="firebaseui-auth-container"></div>
-            <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={getAuth()}></StyledFirebaseAuth>
+            {/* <div id="firebaseui-auth-container"></div> */}
+            {/* <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={getAuth()}></StyledFirebaseAuth> */}
+           
             <IonItem className='input' fill={undefined} shape={undefined} 
           counter={undefined} counterFormatter={undefined}  > 
               <IonLabel position='floating'>رقم الهاتف</IonLabel>
@@ -221,11 +231,7 @@ const SignIn: React.FC = () => {
             <IonIcon size='large' icon={arrowForwardCircle}></IonIcon>
             </IonButton>
         </IonItem>
-
         <IonLabel>{verifyError?.message!}</IonLabel>
-        {!verificationId &&       <IonItem id='recaptcha-container' ></IonItem>}
-      </IonContent>}
-
         {!!verificationId && <IonContent>
           <IonItem className='input' ref={verificationCodeTextInput} 
           fill={undefined} shape={undefined} counter={undefined} 
@@ -234,18 +240,25 @@ const SignIn: React.FC = () => {
         <IonInput  maxlength={8} disabled={!verificationId} type='number'  
         onIonChange={(e)=>setVerificationCode(e.detail.value!)}>
             </IonInput>
-            <IonButton slot='end' size='default' onClick={()=>{VerifyNumber()}} 
+            <IonButton slot='start' size='default' onClick={()=>{VerifyNumber()}} 
             disabled={String(verificationCode).length<1}>
             <IonIcon size='large' icon={arrowForwardCircle}></IonIcon>
             </IonButton>
         </IonItem>
         <IonLabel>{confirmError?.message!}</IonLabel>
         </IonContent>}
+        {!verificationId &&    
+           <div className='center' id='recaptcha-container' ></div>}
+      </IonContent>}
 
-    {user && <IonItem fill={undefined} shape={undefined} counter={undefined} counterFormatter={undefined} >
+        
+          <IonContent>
+          {user && <IonItem fill={'outline'} shape={'round'}  >
       <IonTitle slot='start'>تم تسجيل الدخول</IonTitle>
       <IonButton slot='start' onClick={()=>onSignOut()}>خروج</IonButton>
       </IonItem>}
+          </IonContent>
+    
       </IonContent>
     </IonPage>
   );
