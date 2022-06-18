@@ -37,7 +37,7 @@ const GlobalProvider:React.FC =(props)=>{
             <IonLabel>Loading...</IonLabel>
             <IonSpinner></IonSpinner>
             </div>
-            {/* {window.ne} */}
+            
         </IonPage>
     }
     
