@@ -1,15 +1,13 @@
 import React, {  useEffect, useRef, useState } from "react";
 
-import { addDoc, collection, getDocs, getFirestore, query, where,limitToLast, updateDoc, doc, limit, orderBy, startAt, startAfter  } from "firebase/firestore";
+import {  collection, getDocs, getFirestore, query, where, doc, limit, orderBy, startAfter, getDoc, FieldPath, documentId  } from "firebase/firestore";
 import OrderCard, { OrderProps } from "./OrderCard";
 import { IonButton, IonChip, IonContent, IonFab, IonFabButton, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonInput, IonItem, IonLabel, IonList, IonModal, IonRefresher, IonRefresherContent, IonSearchbar, IonSpinner } from "@ionic/react";
-import { add, close, filter, remove, removeCircleSharp } from "ionicons/icons";
+import {  filter } from "ionicons/icons";
 import { RefresherEventDetail } from '@ionic/core';
 import "./OrderList.css"
 import ListPicker from "./ListPicker";
 import { Cities } from "./utlis/citiesUtlis";
-import { stringify } from "querystring";
-import { getProfile } from "../providers/firebaseMain";
 import { getAuth } from "firebase/auth";
 
 const citiesList = require("../assets/cities.json")[0]["oman"]["ar"]
@@ -20,20 +18,15 @@ const [list,setList]=useState<null|Array<OrderProps>>(null)
   const [refreshing,setRefreshing] = useState(false)
   const [count,setCount] = useState(10)
   const [showFilter,setShowFilter] = useState(false)
-  const [showCitiesOptionsModal,setShowCitiesOptionsModal] = useState(false)
   const [filterTo,setFilterTo] = useState<null|string>(null)
   const [filterFrom,setFilterFrom] = useState<null|string>(null)
-  const [CitieOptionTarget,setCitieOptionTarget] = useState<null|String>(null)
-  const [optionInput,setOptionInput] = useState<String>("")
-  const optionsModal = useRef(null)
   const IonRefresherElement = useRef<any>(null)
   const infiniteScrollRef = useRef<any>(null)
-  const [data, setData] = useState<string[]>([]);
   const [isInfiniteDisabled, setInfiniteDisabled] = useState(false);
   const user =getAuth().currentUser
   useEffect(()=>{
     getData()
-    // setIsMounted(true)
+    setIsMounted(true)
   return () => {
     setIsMounted(false)
   }
@@ -41,6 +34,7 @@ const [list,setList]=useState<null|Array<OrderProps>>(null)
   
   function doRefresh(event: CustomEvent<RefresherEventDetail>) {
     console.log('Begin async operation');
+    setList([])
     getData();
 }   
   async function getData() {
@@ -54,18 +48,27 @@ const [list,setList]=useState<null|Array<OrderProps>>(null)
     if (filterTo!==null){
       firstQuery = query(firstQuery,where("to","==",filterTo))
     }
+    if(list &&list?.length){
+      const lastItemID = list[list.length-1].id
+      const docSnap = await getDoc(doc(getFirestore(), "orders/"+lastItemID));
+      firstQuery = query(firstQuery,startAfter(docSnap))
+    }
     
     try {
       var finalQuery= query(firstQuery,limit(count))
       const snapshot = await getDocs(finalQuery)
       
        var newList:any[]=[]
+       if(list){
+         newList = [...list]
+       }
        snapshot.forEach((doc)=>{
           newList.push({id:doc.id,...doc.data()})
          })
          if(isMounted){
           setList(newList)
           setRefreshing(false)
+          infiniteScrollRef.current!.complete()
 
          }
       
@@ -80,22 +83,20 @@ const [list,setList]=useState<null|Array<OrderProps>>(null)
     }
   } 
     
-    function onRefresh(){
-      getData()
-      console.log("on refresh")
-    }
+   
+   
     function onEndRefresh(){
+      getData()
+
       if(list){
-        if(count <= list!.length){
-          setCount(count+10)
-          console.log("end refresh"+" new count :"+count+", list length: "+list.length)
+          console.log("end refresh"+" new count :"+ list.length+ "+list.length")
           infiniteScrollRef.current!.complete()
-        }
+        
       } 
     }
 
     useEffect(()=>{
-      //  getData()
+       getData()
        
     },[count,filterFrom,filterTo])
     
@@ -103,38 +104,7 @@ const [list,setList]=useState<null|Array<OrderProps>>(null)
   function toggleFilter(){
     setShowFilter(!showFilter)
   }
-function showCitiesOption(target:String){
-  
-  // optionsModal.current?.toggle()
-  setCitieOptionTarget(target)
-}
-function onOptionTextChange(value:String){
-  setOptionInput(value)
-  
-}
-function onOptionPicked(value:string){
-  if(CitieOptionTarget ==="from"){
-    setFilterFrom(value)
-  }else{
-    setFilterTo(value)
-  }
-}
-function getModalInputValue(){
-  if(CitieOptionTarget ==="from"){
-    return filterFrom
-  }else if(CitieOptionTarget ==="to"){
-    return filterTo
-  }else{
-    return ""
-  }
-}
-function onOptionRemove(){
-  if(CitieOptionTarget ==="from"){
-    setFilterFrom(null)
-  }else{
-    setFilterTo(null)
-  }
-}
+
     return<IonContent className="center">
 
       <IonItem onClick={()=>toggleFilter()}>
@@ -145,7 +115,7 @@ function onOptionRemove(){
         placeHolder={"الى :"}/>
       </IonItem>
 
-    <IonRefresher ref={IonRefresherElement} slot="fixed" onIonRefresh={doRefresh} onTouchEnd={(e)=>{console.log("end touch")}} >
+    <IonRefresher ref={IonRefresherElement} slot="fixed" onIonRefresh={doRefresh} >
     <IonRefresherContent refreshingText="refreshing..."></IonRefresherContent>
   </IonRefresher>
   
@@ -153,9 +123,9 @@ function onOptionRemove(){
       {!!list && 
       <IonList  className='list'>
         {list.map((v,i)=>{
-          return <IonItem key={i} fill={undefined} shape={undefined} 
-            counter={undefined} counterFormatter={undefined}>
-              <OrderCard values={v}></OrderCard>
+          return <IonItem key={i} >
+              <OrderCard values={v} whatsapp message report onDeleted={()=>{delete list[i];setList(list)}}>
+              </OrderCard>
           </IonItem>})}
         </IonList>}
           <IonInfiniteScroll

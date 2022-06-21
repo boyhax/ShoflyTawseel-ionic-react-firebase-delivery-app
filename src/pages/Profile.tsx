@@ -3,7 +3,7 @@ import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons,
 import { arrowBack, } from 'ionicons/icons';
 import { useGlobals } from '../providers/globalsProvider';
 import { collection, getDocs, getFirestore, orderBy, query, where } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
+import { getAuth, updateProfile } from 'firebase/auth';
 import "./Profile.css"
 import OrderCard, { OrderProps } from '../components/OrderCard';
 import { useHistory, useParams } from 'react-router';
@@ -71,10 +71,19 @@ const ProfileEdit:React.FC=(props)=>{
   const user = auth.currentUser
   const uid = user?.uid
   const [data,setData]=useState({})
+  const[loading,setLoading] = useState(false)
   const {profile} = useGlobals()
-useEffect(()=>{
-console.log(profile)
-},[profile])
+  const [newName,setNewName] = useState(profile.name!)
+  function updateProfile(){
+      setLoading(true);
+      updateUserProfile(uid,{...data,name:newName})
+      .finally(()=>setLoading(false))
+  }
+  if(loading){
+    return<IonSpinner slot='primary'>
+      <IonLabel>Saving...</IonLabel>
+       </IonSpinner>
+  }
   return<IonAccordionGroup>
   <IonAccordion value="colors">
     <IonItem slot="header" >
@@ -85,11 +94,12 @@ console.log(profile)
       <IonItem >
         <IonLabel>الاسم</IonLabel>
         <IonInput placeholder='name' onIonChange={(e)=>{
-            setData({...data,name:e.detail.value})
+            setNewName(e.detail.value)
           
         }} 
-        value={"profile exiset? "+String(profile)}></IonInput>
-        <IonButton onClick={()=>updateUserProfile(uid,data)}>
+        value={newName}></IonInput>
+        <IonButton onClick={()=>updateProfile()}
+        >
           <IonLabel>حفظ</IonLabel></IonButton>
       </IonItem>
       <IonItem>
@@ -124,7 +134,7 @@ const ProfileOrdersList:FC=(props)=>{
   return<IonList>
     {refreshing && <IonSpinner></IonSpinner>}
       {!!list && list.map((value, index, array) => {
-        return <OrderCard values={value} key={index}></OrderCard>
+        return <OrderCard values={value} key={index} remove ></OrderCard>
         })}
   </IonList>
 }

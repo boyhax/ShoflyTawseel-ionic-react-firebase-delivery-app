@@ -7,30 +7,47 @@ const globalsContext = createContext<{user:boolean,profile:any}>({user:false,pro
 
 const GlobalProvider:React.FC =(props)=>{
     const [user,setUser] = useState(false)
-    const [profile,setProfile] = useState<any>(null)
+    const [profile,setProfile] = useState<null|Object>(null)
     const[loading,setLoading] = useState(true)
     const uid=getAuth().currentUser?.uid
     useEffect(()=>{
-        onAuthStateChanged(getAuth(),(user)=>{
-            console.log('user  :>> ', !!user );
-            setUser(!!user)
-            
-    })},[])
+        try {
+            return onAuthStateChanged(getAuth(),(user)=>{
+                console.log('user  :>> ', !!user );
+                setUser(!!user)
+                
+        },(err)=>{
+            console.log(err,"error in user sign in check")
+            setLoading(false)
+
+        })      
+        } catch (error) {
+          console.log("error in user sign in check: ",error)  
+          setLoading(false)
+        }
+      },[])
   useEffect(()=>{
       if(user){
 
       getProfile(uid!).then((v)=>{
         if(v.exists()){
             console.log('profile exist :>> ',":",uid, v.data());
-            setProfile(profile)
+            setProfile(v.data())
             
         }else{
             console.log('profile dont exist :>> ',":",uid);
         }
         setLoading(false)
-
     })
   }},[user])
+//   useEffect(()=>{
+//     console.log('profile :>> ', profile);
+
+//       if(profile &&user){
+//         setLoading(false)
+//         }
+//       }
+//   ,[profile,user])
     if(loading){
         return<IonPage className="loadingPage">
             <div>

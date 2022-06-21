@@ -1,7 +1,7 @@
 import { IonAlert, IonButton, IonCard, IonContent, IonIcon, IonInput, IonItem, IonLabel, IonModal, IonPage, IonSpinner, IonText, IonTextarea, IonTitle, IonToolbar } from "@ionic/react";
 import { getAuth } from "firebase/auth";
 import { closeCircle } from "ionicons/icons";
-import React, { FC, PropsWithChildren, useState } from "react";
+import React, { FC, PropsWithChildren, useEffect, useState } from "react";
 import { addNewTripCard } from "../providers/firebaseMain";
 import { useGlobals } from "../providers/globalsProvider";
 import ListPicker from "./ListPicker";
@@ -20,9 +20,9 @@ const AddOrder=({isOpen,setOpen}:Props)=>{
     const [comment,setComment]= useState<null|string|undefined>(undefined)
     const [err,setErr]= useState<{message:string,color:"red"|"blue"}|undefined>(undefined)
     const [loading,setLoading]= useState(false)
-const {profile} = useGlobals()
+const {profile,user} = useGlobals()
     const auth = getAuth()
-    const user = auth.currentUser
+    const uid = auth.currentUser?.uid
     function onAddPressed(){
         if(!profile || (profile && !profile.name)){
             console.log('profile name :>> ', profile);
@@ -42,9 +42,9 @@ const {profile} = useGlobals()
             const newId = await addNewTripCard({
                 from:from!,
                 to:to!,
-                number:user?.phoneNumber!,
-                name:user!.displayName!,
-                uid:user?.uid!,
+                number:auth.currentUser?.phoneNumber!,
+                name:profile.name,
+                uid:uid!,
                 time:new Date(),
                 flagged:false
             })
