@@ -5,10 +5,9 @@
     background-color: aliceblue;
 
 }
-.inline{
+.row{
     display: inline-flex;
     flex-direction: row-reverse;
-    background-color:aliceblue;
     }
 .text{
     font-size: large;

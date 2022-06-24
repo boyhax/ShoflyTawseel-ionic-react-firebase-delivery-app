@@ -24,11 +24,10 @@ const {profile,user} = useGlobals()
     const auth = getAuth()
     const uid = auth.currentUser?.uid
     function onAddPressed(){
-        if(!profile || (profile && !profile.name)){
+        if(!user){
             console.log('profile name :>> ', profile);
-            alert("يرجى اضافه اسمك")
-            return<IonPage><IonInput placeholder="name" ></IonInput></IonPage>
-            return 0
+            alert("يرجى تسجيل الدخول اولا")
+            
         }
         from?
             to?

@@ -1,14 +1,14 @@
 import React, { createContext, useContext, useState, useEffect, FC } from "react";  
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getProfile } from "./firebaseMain";
-import { IonContent, IonLabel, IonPage, IonSpinner } from "@ionic/react";
+import { IonContent, IonLabel, IonPage, IonSpinner, IonTitle } from "@ionic/react";
 import "./globalsProvider.css"
+import LoadingScreen from "../pages/LoadingScreen";
 const globalsContext = createContext<{user:boolean,profile:any}>({user:false,profile:null});
 
 const GlobalProvider:React.FC =(props)=>{
-    const [user,setUser] = useState(false)
-    const [profile,setProfile] = useState<null|Object>(null)
-    const[loading,setLoading] = useState(true)
+    const [user,setUser] = useState<boolean|undefined>(undefined)
+    const [profile,setProfile] = useState<null|Object|undefined>(undefined)
     const uid=getAuth().currentUser?.uid
     useEffect(()=>{
         try {
@@ -18,12 +18,10 @@ const GlobalProvider:React.FC =(props)=>{
                 
         },(err)=>{
             console.log(err,"error in user sign in check")
-            setLoading(false)
 
         })      
         } catch (error) {
           console.log("error in user sign in check: ",error)  
-          setLoading(false)
         }
       },[])
   useEffect(()=>{
@@ -36,8 +34,8 @@ const GlobalProvider:React.FC =(props)=>{
             
         }else{
             console.log('profile dont exist :>> ',":",uid);
+            setProfile(null)
         }
-        setLoading(false)
     })
   }},[user])
 //   useEffect(()=>{
@@ -48,14 +46,9 @@ const GlobalProvider:React.FC =(props)=>{
 //         }
 //       }
 //   ,[profile,user])
+  const loading =( user === undefined)
     if(loading){
-        return<IonPage className="loadingPage">
-            <div>
-            <IonLabel>Loading...</IonLabel>
-            <IonSpinner></IonSpinner>
-            </div>
-            
-        </IonPage>
+        return<LoadingScreen></LoadingScreen>
     }
     
     return<globalsContext.Provider value={{user,profile}}>

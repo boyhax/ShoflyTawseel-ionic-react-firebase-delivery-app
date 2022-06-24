@@ -1,8 +1,8 @@
 import React, {  useEffect, useRef, useState } from "react";
 
-import {  collection, getDocs, getFirestore, query, where, doc, limit, orderBy, startAfter, getDoc, FieldPath, documentId  } from "firebase/firestore";
+import {  collection, getDocs, getFirestore, query, where, limit, orderBy, startAfter  } from "firebase/firestore";
 import OrderCard, { OrderProps } from "./OrderCard";
-import { IonButton, IonChip, IonContent, IonFab, IonFabButton, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonInput, IonItem, IonLabel, IonList, IonModal, IonRefresher, IonRefresherContent, IonSearchbar, IonSpinner } from "@ionic/react";
+import { IonButton, IonContent, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonInput, IonItem, IonLabel, IonList, IonRefresher, IonRefresherContent, IonSpinner } from "@ionic/react";
 import {  filter } from "ionicons/icons";
 import { RefresherEventDetail } from '@ionic/core';
 import "./OrderList.css"
@@ -10,7 +10,6 @@ import ListPicker from "./ListPicker";
 import { Cities } from "./utlis/citiesUtlis";
 import { getAuth } from "firebase/auth";
 
-const citiesList = require("../assets/cities.json")[0]["oman"]["ar"]
 
 export default function OrderList(props:any) {
   const [isMounted, setIsMounted] = useState(true)
@@ -23,81 +22,107 @@ const [list,setList]=useState<null|Array<OrderProps>>(null)
   const IonRefresherElement = useRef<any>(null)
   const infiniteScrollRef = useRef<any>(null)
   const [isInfiniteDisabled, setInfiniteDisabled] = useState(false);
+  const [lastDoc,setLastDoc] = useState<any>(null)
+  const [listQ,setListQ]= useState<any>(null)
+  const [listMessage,setListMessage] = useState<any>(null)
   const user =getAuth().currentUser
+
   useEffect(()=>{
-    getData()
+    getNewList()
     setIsMounted(true)
   return () => {
     setIsMounted(false)
   }
   },[])
   
+  
+ 
+    
   function doRefresh(event: CustomEvent<RefresherEventDetail>) {
     console.log('Begin async operation');
-    setList([])
-    getData();
+    getNewList()
 }   
-  async function getData() {
-    // setRefreshing(true)
-    const ref = collection(getFirestore(),"orders")
-    var firstQuery = query(ref,orderBy("time","desc"))
-    firstQuery = query(firstQuery,where("flagged","==",false))
-    if (filterFrom!==null){
-      firstQuery = query(firstQuery,where("from","==",filterFrom))
+    async function getNewList(){
+      setRefreshing(true)
+      const ref = collection(getFirestore(),"orders")
+      var firstQuery = query(ref)
+      firstQuery= query(firstQuery,orderBy("time","desc"))
+      firstQuery = query(firstQuery,where("flagged","==",false))
+
+      if (filterFrom){
+        firstQuery = query(firstQuery,where("from","==",filterFrom))
+      }
+      if (filterTo){
+        firstQuery = query(firstQuery,where("to","==",filterTo))
+      }
+      try {
+        firstQuery = query(firstQuery,limit(count))
+        var finalQuery= firstQuery
+        const snapshot = await getDocs(finalQuery)
+        var newList:any[]=[]
+        snapshot.forEach((doc)=>{
+            newList.push({id:doc.id,...doc.data()})
+          })
+          const docs = snapshot.docs
+          const newLastDoc = docs[docs.length -1]
+          if(isMounted && !snapshot.empty){
+            setList(newList)
+            setLastDoc(newLastDoc)
+            setListQ(finalQuery)
+          }
+          if(snapshot.empty){
+            setList(null)
+            setLastDoc(null)
+            setListMessage({text:"no orders found",color:"green"})
+          }else{
+            setListMessage(null)
+            infiniteScrollRef.current!.complete()
+
+          }
+      } catch (error) {
+        console.log('error :>> ', error);      
+      }
+      if(isMounted){
+        setRefreshing(false)
+        IonRefresherElement?.current!.complete()
+        infiniteScrollRef.current!.complete()
+      }
     }
-    if (filterTo!==null){
-      firstQuery = query(firstQuery,where("to","==",filterTo))
-    }
-    if(list &&list?.length){
-      const lastItemID = list[list.length-1].id
-      const docSnap = await getDoc(doc(getFirestore(), "orders/"+lastItemID));
-      firstQuery = query(firstQuery,startAfter(docSnap))
-    }
-    
-    try {
-      var finalQuery= query(firstQuery,limit(count))
-      const snapshot = await getDocs(finalQuery)
-      
-       var newList:any[]=[]
-       if(list){
-         newList = [...list]
-       }
-       snapshot.forEach((doc)=>{
-          newList.push({id:doc.id,...doc.data()})
-         })
-         if(isMounted){
-          setList(newList)
+      async function getMoreList(){
+        setRefreshing(true)
+       var firstQuery = listQ
+       firstQuery = query(firstQuery,startAfter(lastDoc))
+        try {
+          
+          firstQuery = query(firstQuery,limit(count))
+          var finalQuery= firstQuery
+          const snapshot = await getDocs(finalQuery)
+          var newList:any[]=[]
+          snapshot.forEach((doc:any)=>{
+            newList.push({id:doc.id,...doc.data()})
+            })
+            const docs = snapshot.docs
+            const newLastDoc = docs[docs.length -1]
+            if(isMounted && !snapshot.empty){
+              setList([...list!,...newList])
+              setLastDoc(newLastDoc)
+            }
+           
+        } catch (error) {
+          console.log('error :>> ', error);      
+        }
+        if(isMounted){
           setRefreshing(false)
           infiniteScrollRef.current!.complete()
-
-         }
-      
-    
-    } catch (error) {
-      console.log('error :>> ', error);      
-    }
-    if(isMounted){
-      setRefreshing(false)
-      IonRefresherElement?.current!.complete()
-
-    }
-  } 
-    
-   
-   
-    function onEndRefresh(){
-      getData()
-
-      if(list){
-          console.log("end refresh"+" new count :"+ list.length+ "+list.length")
-          infiniteScrollRef.current!.complete()
-        
+        }
       } 
+    function onEndRefresh(){
+      getMoreList()
     }
 
     useEffect(()=>{
-       getData()
-       
+       getNewList()
+       console.log("filter")
     },[count,filterFrom,filterTo])
     
   
@@ -128,19 +153,22 @@ const [list,setList]=useState<null|Array<OrderProps>>(null)
               </OrderCard>
           </IonItem>})}
         </IonList>}
+        {!!listMessage &&<IonItem style={{display:"flex",flexDirection:"column"}}>
+          <IonLabel color={listMessage.color}>{listMessage.text}</IonLabel>
+          <IonButton onClick={()=>{getNewList()}}>اعد المحاوله</IonButton>
+        </IonItem>
+         }
           <IonInfiniteScroll
           ref={infiniteScrollRef}
           onIonInfinite={onEndRefresh}
           threshold="100px"
-          disabled={isInfiniteDisabled}
-
-        >
+          disabled={isInfiniteDisabled}>
           <IonInfiniteScrollContent
             loadingSpinner="dots"
-            loadingText="لايوجد مزيد من الطلبات"
+            loadingText="بحث المزيد من الطلبات"
           ></IonInfiniteScrollContent>
         </IonInfiniteScroll>
-    {!list && <IonSpinner name='lines' className='spinner'/>}
+    {refreshing && <IonSpinner name='lines' className='spinner'/>}
     
     </IonContent>
       }

@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonRouterLink, IonInput, IonLabel, IonItem, IonCard, IonCardContent, IonAccordionGroup, IonAccordion, IonList, IonGrid, IonSpinner } from '@ionic/react';
+import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonRouterLink, IonInput, IonLabel, IonItem, IonCard, IonCardContent, IonAccordionGroup, IonAccordion, IonList, IonGrid, IonSpinner, IonBackButton } from '@ionic/react';
 import { arrowBack, } from 'ionicons/icons';
 import { useGlobals } from '../providers/globalsProvider';
 import { collection, getDocs, getFirestore, orderBy, query, where } from 'firebase/firestore';
@@ -30,9 +30,7 @@ const Profile: React.FC = () => {
     <IonPage >
       <IonToolbar color="secondary">
     <IonButtons slot="start">
-          <IonButton  onClick={()=>history.goBack()}>
-            <IonIcon icon={arrowBack}></IonIcon>
-          </IonButton>
+    <IonBackButton defaultHref='/'></IonBackButton>
     </IonButtons>
     <IonTitle slot='primary' onClick={()=>history.push("/home")}  
     >ShoflyTawseel
@@ -56,7 +54,7 @@ const Profile: React.FC = () => {
 
       {user && auth.currentUser?.displayName==="" && <IonCard className='profileCard'><IonItem fill={undefined} shape={undefined} counter={undefined} counterFormatter={undefined} >يجب ان تضيف معلومات حسابك</IonItem>
         </IonCard>}
-        {user && profile!==undefined && <ProfileEdit></ProfileEdit>}
+        {profile!==undefined && <ProfileEdit></ProfileEdit>}
       
     </IonPage>
   );
@@ -113,10 +111,17 @@ const ProfileEdit:React.FC=(props)=>{
 const ProfileOrdersList:FC=(props)=>{
   const [list,setList]=useState<null|OrderProps[]>(null)
   const [refreshing,setRefreshing] = useState(true)
+  const [isMounted, setIsMounted] = useState(true)
   const {user} = useGlobals()
   useEffect(()=>{
       getData();
   },[user])
+  useEffect(()=>{
+    setIsMounted(true)
+    return () => {
+      setIsMounted(false)
+    }
+  })
 
   async function getData() {
     setRefreshing(true)
@@ -128,8 +133,11 @@ const ProfileOrdersList:FC=(props)=>{
      snapshot.forEach((doc)=>{
         newList.push({id:doc.id,...doc.data()})
        })
-    setList(newList)
-    setRefreshing(false)
+       if(isMounted){
+        setList(newList)
+        setRefreshing(false)    
+       }
+    
   } 
   return<IonList>
     {refreshing && <IonSpinner></IonSpinner>}
