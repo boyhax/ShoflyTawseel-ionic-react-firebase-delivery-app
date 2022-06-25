@@ -1,10 +1,9 @@
 import React from "react";
-import moduleName, { addDoc, arrayUnion, collection, deleteDoc, doc, FieldValue, Firestore, getDoc, getFirestore, increment, setDoc, updateDoc } from 'firebase/firestore';
+import moduleName, { addDoc, arrayUnion, collection, deleteDoc, doc, FieldValue, Firestore, getDoc, getFirestore, increment, setDoc, Timestamp, updateDoc } from 'firebase/firestore';
 import { profile } from "console";
 import { getAuth, updateProfile } from "firebase/auth";
 import { auth } from "firebaseui";
 import { useGlobals } from "./globalsProvider";
-import { OrderProps } from "../components/OrderCard";
 export async function getTripCard(id:String){
     var _data:any
     await getDoc(doc(getFirestore(),"orders/"+id)).then((data)=>{
@@ -18,26 +17,30 @@ export async function getTripCard(id:String){
   export async function updateTripCard(id:String,data:{}){
     updateDoc(doc(getFirestore(),"orders/"+id),data)
   }
-  type tripCardProps={
+  export type orderProps={
     name:string,
     uid:string,
     from:string,
     to:string,
-    time:Date,
+    time:any,
     flagged:boolean,
-    number:string
+    number:string,
+    comment:string|undefined|null,
+    id?:string
+
   }
-  export async function addNewTripCard(data:tripCardProps){
-    var _data:any=false
-    
-    try {
-      var fsRef = await addDoc(collection(getFirestore(),"orders"),data)
-      _data = fsRef.id
   
+  export async function addNewTripCard(data:orderProps){
+    var state:any=false
+    try {
+      const newOrderRef = doc(collection(getFirestore(), "orders"));
+      await setDoc(newOrderRef, {id:newOrderRef.id,...data});
+      state = true
     } catch (error) {
       console.log(error)
+      state = false
     }
-    return _data
+    return state
   }
 export async function getProfile(uid:string) {
   return await getDoc(doc(getFirestore(),"users/"+uid))
@@ -67,7 +70,7 @@ console.log('new profile created :>> ', d);
     })
     return d
 }
-export const reportOrder=async(order:OrderProps,onDeleted:()=>void)=>{
+export const reportOrder=async(order:orderProps,onDeleted:()=>void)=>{
   const ref = doc(getFirestore(),"orders/"+order.id)
   const data = await (await getDoc(ref)).data()
   console.log('order reported :>> ', order.id);
@@ -78,14 +81,14 @@ export const reportOrder=async(order:OrderProps,onDeleted:()=>void)=>{
   if(data!.reportsCounts!>=2){
     deleteOrder(order)
     onDeleted()
-    console.log('reported deleted doc :>> ',order.id);
+    console.log('reported deleted doc :>> ',order.id!);
   }else{
-    console.log("reported : ",order.id)
+    console.log("reported : ",order.id!)
     await updateDoc(ref,{reportsCounts:increment(1)})
   }
 }
-export async function deleteOrder(order:OrderProps) {
-  const res = await deleteDoc(doc(getFirestore(),"orders/"+order.id))
-  console.log(' deleted doc :>> ',order.id,res);
+export async function deleteOrder(order:orderProps) {
+  const res = await deleteDoc(doc(getFirestore(),"orders/"+order.id!))
+  console.log(' deleted doc :>> ',order.id!,res);
 
 }

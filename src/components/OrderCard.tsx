@@ -1,26 +1,15 @@
-import { ComponentProps, isPlatform } from "@ionic/core";
-import { IonCard, IonLabel,IonContent ,IonCardContent, IonCardTitle, IonTitle, IonBadge, IonText, IonRow, IonGrid, IonCol, IonChip, IonIcon, IonButton} from "@ionic/react";
+import { ComponentProps } from "@ionic/core";
+import { IonCard, IonLabel,IonContent ,IonCardContent, IonCardTitle, IonTitle, IonBadge, IonText, IonRow, IonGrid, IonCol, IonChip, IonIcon, IonButton, IonBreadcrumb, IonPopover} from "@ionic/react";
 import { doc, getDoc, getFirestore, } from "firebase/firestore";
 import { chatboxEllipsesOutline, logoWhatsapp, alertCircle, removeCircle, send, trashBinOutline, trashOutline } from "ionicons/icons";
-import React from "react";
-import { deleteOrder, reportOrder } from "../providers/firebaseMain";
+import React, { useRef } from "react";
+import { deleteOrder, orderProps, reportOrder } from "../providers/firebaseMain";
 import "./OrderCard.css"
 const options:Object = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
 
-export type OrderProps={
-id:string,
-name:string,
-from:string,
-to:string,
-uid:string,
-number:string,
-time: {seconds:1,nanoSecounds:1},
-reports?:String[],
-reportsCounts?:Number,
-comment:string
-}
+
 interface props extends ComponentProps{
-values:  OrderProps,
+order: orderProps ,
 whatsapp?:any,
 message?:any,
 remove?:any,
@@ -36,30 +25,38 @@ const SendSMSMessage = (phoneNumber:String, message:String) => {
 const OpenWhatsapp=(number:any)=>{
     window.open("http://wa.me/"+number)
 }
-export default ({values,whatsapp,message,remove,report,onDeleted}:props)=>{
-    var date =!!values.time? new Date(values.time.seconds*1000).toLocaleDateString("ar-om",options) + ' في ' + new Date(values.time.seconds*1000).toLocaleTimeString():null
-    
+export default ({order,whatsapp,message,remove,report,onDeleted}:props)=>{
+    var date =!!order.time? new Date(order.time.seconds!*1000).toLocaleDateString("ar-om",options) + ' في ' + new Date(order.time.seconds*1000).toLocaleTimeString():null
+    const comment = typeof order.comment! =="string"?order.comment:"no comment"
+    const popOver = useRef<any>(null)
+    const toggleComment=()=>{
+        popOver.current!.present()
+    }
 return<IonCard className="card row" >
-    <div><IonChip className="BoldText" color="primary">{values.name}</IonChip>
-    <IonChip className="BoldText" color="secondary">{"من: "+values.from}</IonChip>
-    <IonChip className="BoldText" color="secondary">{"الى: "+values.to}</IonChip>
-    <IonChip className="BoldText" color="secondary">
-        {"الوصف: "+values.comment.slice(0, 30)+"..."}
+    <div><IonChip className="BoldText" color="primary">{order.name}</IonChip>
+    <IonChip className="BoldText" color="secondary">{"من: "+order.from}</IonChip>
+    <IonChip className="BoldText" color="secondary">{"الى: "+order.to}</IonChip>
+    <IonChip className="BoldText" color="secondary"
+    onClick={()=>toggleComment()}>
+        <IonPopover ref={popOver}  
+        >
+        <IonText >{comment}</IonText></IonPopover>
+        {"الوصف: "+comment.slice(0,5)+"..."}
         </IonChip>
 
     <IonChip >{date}</IonChip>
     </div>
     <div>
-    {message &&<IonButton onClick={()=>SendSMSMessage(values.number,"السلام عليكم هل تحتاج مندوب توصيل ")} color="light" shape="round" >
+    {message &&<IonButton onClick={()=>SendSMSMessage(order.number,"السلام عليكم هل تحتاج مندوب توصيل ")} color="light" shape="round" >
         <IonIcon size="large" color="success" icon={chatboxEllipsesOutline} ></IonIcon>
     </IonButton>}
-    {whatsapp && <IonButton  onClick={()=>OpenWhatsapp(values.number)} color="light" shape="round" ><IonIcon size="large" color="success" icon={logoWhatsapp} ></IonIcon>
+    {whatsapp && <IonButton  onClick={()=>OpenWhatsapp(order.number)} color="light" shape="round" ><IonIcon size="large" color="success" icon={logoWhatsapp} ></IonIcon>
     </IonButton>}
-    { remove && <IonButton  onClick={()=>deleteOrder(values)} 
+    { remove && <IonButton  onClick={()=>deleteOrder(order)} 
     color="light" shape="round" >
         <IonIcon size="large" color="success" icon={trashOutline} ></IonIcon>
     </IonButton>}
-    { report && <IonButton  onClick={()=>reportOrder(values,()=>onDeleted)} 
+    { report && <IonButton  onClick={()=>reportOrder(order,()=>onDeleted)} 
     color="light" shape="round" >
         <IonIcon size="large" color="success" icon={alertCircle} ></IonIcon>
     </IonButton>}

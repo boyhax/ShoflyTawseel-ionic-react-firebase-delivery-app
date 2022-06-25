@@ -1,7 +1,6 @@
 import React, {  useEffect, useRef, useState } from "react";
 
 import {  collection, getDocs, getFirestore, query, where, limit, orderBy, startAfter  } from "firebase/firestore";
-import OrderCard, { OrderProps } from "./OrderCard";
 import { IonButton, IonContent, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonInput, IonItem, IonLabel, IonList, IonRefresher, IonRefresherContent, IonSpinner } from "@ionic/react";
 import {  filter } from "ionicons/icons";
 import { RefresherEventDetail } from '@ionic/core';
@@ -9,11 +8,13 @@ import "./OrderList.css"
 import ListPicker from "./ListPicker";
 import { Cities } from "./utlis/citiesUtlis";
 import { getAuth } from "firebase/auth";
+import { orderProps } from "../providers/firebaseMain";
+import OrderCard from "./OrderCard";
 
 
 export default function OrderList(props:any) {
   const [isMounted, setIsMounted] = useState(true)
-const [list,setList]=useState<null|Array<OrderProps>>(null)
+const [list,setList]=useState<null|Array<orderProps>>(null)
   const [refreshing,setRefreshing] = useState(false)
   const [count,setCount] = useState(10)
   const [showFilter,setShowFilter] = useState(false)
@@ -116,6 +117,9 @@ const [list,setList]=useState<null|Array<OrderProps>>(null)
           infiniteScrollRef.current!.complete()
         }
       } 
+      function Refresh() {
+        getNewList() 
+      }
     function onEndRefresh(){
       getMoreList()
     }
@@ -140,7 +144,7 @@ const [list,setList]=useState<null|Array<OrderProps>>(null)
         placeHolder={"الى :"}/>
       </IonItem>
 
-    <IonRefresher ref={IonRefresherElement} slot="fixed" onIonRefresh={doRefresh} >
+    <IonRefresher ref={IonRefresherElement} slot="fixed"  onIonRefresh={doRefresh} >
     <IonRefresherContent refreshingText="refreshing..."></IonRefresherContent>
   </IonRefresher>
   
@@ -149,13 +153,13 @@ const [list,setList]=useState<null|Array<OrderProps>>(null)
       <IonList  className='list'>
         {list.map((v,i)=>{
           return <IonItem key={i} >
-              <OrderCard values={v} whatsapp message report onDeleted={()=>{delete list[i];setList(list)}}>
+              <OrderCard order={v} whatsapp message report onDeleted={()=>{delete list[i];setList(list)}}>
               </OrderCard>
           </IonItem>})}
         </IonList>}
         {!!listMessage &&<IonItem style={{display:"flex",flexDirection:"column"}}>
           <IonLabel color={listMessage.color}>{listMessage.text}</IonLabel>
-          <IonButton onClick={()=>{getNewList()}}>اعد المحاوله</IonButton>
+          <IonButton onClick={()=>{Refresh()}}>اعد المحاوله</IonButton>
         </IonItem>
          }
           <IonInfiniteScroll
@@ -168,7 +172,7 @@ const [list,setList]=useState<null|Array<OrderProps>>(null)
             loadingText="بحث المزيد من الطلبات"
           ></IonInfiniteScrollContent>
         </IonInfiniteScroll>
-    {refreshing && <IonSpinner name='lines' className='spinner'/>}
+    {refreshing && <IonSpinner color="blue" name='lines' className='spinner'/>}
     
     </IonContent>
       }

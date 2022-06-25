@@ -4,7 +4,7 @@ import { getProfile } from "./firebaseMain";
 import { IonContent, IonLabel, IonPage, IonSpinner, IonTitle } from "@ionic/react";
 import "./globalsProvider.css"
 import LoadingScreen from "../pages/LoadingScreen";
-const globalsContext = createContext<{user:boolean,profile:any}>({user:false,profile:null});
+const globalsContext = createContext<{user:boolean|undefined,profile:any}>({user:false,profile:null});
 
 const GlobalProvider:React.FC =(props)=>{
     const [user,setUser] = useState<boolean|undefined>(undefined)
@@ -46,9 +46,10 @@ const GlobalProvider:React.FC =(props)=>{
 //         }
 //       }
 //   ,[profile,user])
+const[timeout,isTimeout] = useState(false)
   const loading =( user === undefined)
-    if(loading){
-        return<LoadingScreen></LoadingScreen>
+    if(!timeout){
+        return<LoadingScreen onClose={()=>isTimeout(true)}></LoadingScreen>
     }
     
     return<globalsContext.Provider value={{user,profile}}>

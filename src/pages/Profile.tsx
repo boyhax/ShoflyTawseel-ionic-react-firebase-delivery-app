@@ -5,9 +5,9 @@ import { useGlobals } from '../providers/globalsProvider';
 import { collection, getDocs, getFirestore, orderBy, query, where } from 'firebase/firestore';
 import { getAuth, updateProfile } from 'firebase/auth';
 import "./Profile.css"
-import OrderCard, { OrderProps } from '../components/OrderCard';
+import OrderCard from '../components/OrderCard';
 import { useHistory, useParams } from 'react-router';
-import { getProfile, profileExist, updateUserProfile } from '../providers/firebaseMain';
+import { getProfile, orderProps, profileExist, updateUserProfile } from '../providers/firebaseMain';
 
 const Profile: React.FC = () => {
     const {user,profile} = useGlobals()
@@ -109,7 +109,7 @@ const ProfileEdit:React.FC=(props)=>{
   </IonAccordion></IonAccordionGroup>
 }
 const ProfileOrdersList:FC=(props)=>{
-  const [list,setList]=useState<null|OrderProps[]>(null)
+  const [list,setList]=useState<null|orderProps[]>(null)
   const [refreshing,setRefreshing] = useState(true)
   const [isMounted, setIsMounted] = useState(true)
   const {user} = useGlobals()
@@ -142,7 +142,7 @@ const ProfileOrdersList:FC=(props)=>{
   return<IonList>
     {refreshing && <IonSpinner></IonSpinner>}
       {!!list && list.map((value, index, array) => {
-        return <OrderCard values={value} key={index} remove ></OrderCard>
+        return <OrderCard order={value} key={index} remove ></OrderCard>
         })}
   </IonList>
 }

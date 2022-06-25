@@ -1,29 +1,30 @@
 import React from 'react';
 import { IonBackButton, IonButtons, IonHeader, IonPage, IonToolbar, IonTitle, IonContent, IonSpinner, IonList, IonCard, IonCardContent, IonCardTitle } from '@ionic/react';
 import { useParams } from 'react-router';
-
-const LoadingScreen: React.FC = () => {
-  // const parms = useParams()
-  // console.log('parms :>> ', parms);
+interface Props {
+  onClose:()=>void,
+}
+const LoadingScreen: React.FC<Props> = ({onClose}) => {
+  
   return (
     <IonPage>
-      {/* <IonHeader>
+      <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/tab2" />
+            {/* <IonBackButton defaultHref="/tab2" /> */}
           </IonButtons>
-          <IonTitle>Detail</IonTitle>
+          <IonTitle onClick={()=>onClose()}>ابدا</IonTitle>
+          {/* <IonTitle>Detail</IonTitle> */}
         </IonToolbar>
-      </IonHeader> */}
+      </IonHeader>
       <IonContent>
         <IonList>
           <IonCard>
             <IonCardTitle>
-              تحية
+            تطبيق شوفلي توصيل يرحب بك
             </IonCardTitle>
-            <IonCardContent>
-    تطبيق شوفلي توصيل يرحب بك
-            </IonCardContent>
+            {/* <IonCardContent>
+            </IonCardContent> */}
           </IonCard>
           
           <IonCard>
@@ -52,8 +53,8 @@ const LoadingScreen: React.FC = () => {
           </IonCard>
         </IonList>
 
-        <IonTitle>Loading...</IonTitle>
-        <IonSpinner></IonSpinner>
+        {/* <IonTitle>Loading...</IonTitle>
+        <IonSpinner></IonSpinner> */}
       </IonContent>
     </IonPage>
   );
