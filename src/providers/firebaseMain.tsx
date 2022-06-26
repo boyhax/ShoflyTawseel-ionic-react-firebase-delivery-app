@@ -1,9 +1,7 @@
 import React from "react";
-import moduleName, { addDoc, arrayUnion, collection, deleteDoc, doc, FieldValue, Firestore, getDoc, getFirestore, increment, setDoc, Timestamp, updateDoc } from 'firebase/firestore';
-import { profile } from "console";
+import  { addDoc, arrayUnion, collection, deleteDoc, doc, FieldValue, Firestore, getDoc, getFirestore, increment, setDoc, Timestamp, updateDoc } from 'firebase/firestore';
 import { getAuth, updateProfile } from "firebase/auth";
-import { auth } from "firebaseui";
-import { useGlobals } from "./globalsProvider";
+
 export async function getTripCard(id:String){
     var _data:any
     await getDoc(doc(getFirestore(),"orders/"+id)).then((data)=>{
@@ -70,24 +68,43 @@ console.log('new profile created :>> ', d);
     })
     return d
 }
-export const reportOrder=async(order:orderProps,onDeleted?:()=>void)=>{
+export const reportOrder=async(order:orderProps,onDeleted?:()=>void,why?:string)=>{
+  const useruid = getAuth().currentUser?.uid!
   const ref = doc(getFirestore(),"orders/"+order.id)
   const data = await (await getDoc(ref)).data()
-  console.log('order reported :>> ', order.id);
-  console.log('order.reportsCounts :>> ', data!.reportsCounts!);
-  const userRef = doc(getFirestore(),"users/"+order.uid) 
-  const up = await updateDoc(ref,{reportsCounts:increment(1),reports:arrayUnion(order.id)})
-    
-  if(data!.reportsCounts!>=2){
-    deleteOrder(order)
-    if(onDeleted){
-      onDeleted()
-    }
-    console.log('reported deleted doc :>> ',order.id!);
-  }else{
-    console.log("reported : ",order.id!)
-    await updateDoc(ref,{reportsCounts:increment(1)})
+  console.log('order reports :>> ', data!.reports!);
+  console.log('order.reportsCounts :>> ', data!.reported!);
+  if(data && data.reported){
+    data.reports!.forEach((value:any) => {
+      if(value.by === useruid){
+        console.log("already reported by")
+        return false
+      }
+    })
   }
+ 
+  const userRef = doc(getFirestore(),"users/"+order.uid)
+  const report={
+    id:order.id,
+    why:why?why:"no why"
+  } 
+   updateDoc(userRef,{reported:arrayUnion(report)})
+  const newReport = {
+    by:useruid,
+    why:why?why:"no why"
+  }
+  const up = await updateDoc(ref,{reported:increment(1),reports:arrayUnion(newReport)})
+    
+  // if(data!.reportsCounts!>=2){
+  //   deleteOrder(order)
+  //   if(onDeleted){
+  //     onDeleted()
+  //   }
+  //   console.log('reported deleted doc :>> ',order.id!);
+  // }else{
+  //   console.log("reported : ",order.id!)
+  //   await updateDoc(ref,{reportsCounts:increment(1)})
+  // }
 }
 export async function deleteOrder(order:orderProps) {
   deleteDoc_("orders/"+order.id)
@@ -97,4 +114,22 @@ export async function deleteDoc_(path:string) {
   const res = await deleteDoc(doc(getFirestore(),path))
   console.log(' deleted doc path :>> ',path);
 
+}
+export async function isReportedBy(userUID:string,docUID:string) {
+  const reports = await getOrderReports(docUID)
+  if(!reports ==undefined){
+    console.log('reports :>> ', reports);
+    reports.forEach((value:any) => {
+      if(value.by == userUID){
+        return true
+      }
+    })
+    return false
+  }
+  return true
+}
+async function getOrderReports(id:string){
+  const data = await getDoc(doc(getFirestore(),"orders/"+id))
+  
+  return data.exists()?data.data().reports!?data.data().reports:[]:undefined
 }

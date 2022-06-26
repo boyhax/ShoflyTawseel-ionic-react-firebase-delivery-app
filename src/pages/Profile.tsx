@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonRouterLink, IonInput, IonLabel, IonItem, IonCard, IonCardContent, IonAccordionGroup, IonAccordion, IonList, IonGrid, IonSpinner, IonBackButton, IonicSlides, IonSlides, IonSlide } from '@ionic/react';
-import { arrowBack, } from 'ionicons/icons';
+import { arrowBack, exitSharp, } from 'ionicons/icons';
 import { useGlobals } from '../providers/globalsProvider';
 import { collection, getDocs, getFirestore, orderBy, query, where } from 'firebase/firestore';
 import { getAuth, updateProfile } from 'firebase/auth';
@@ -39,9 +39,14 @@ const Profile: React.FC = () => {
   </IonToolbar>
       <IonContent>
         {user && <IonContent>
+          <IonItem>
           <IonButton onClick={()=>{history.push("/signin")}}>
-            <IonTitle>تسجيل الخروج</IonTitle>
+            <IonTitle>خروج</IonTitle>
+            <IonIcon icon={exitSharp}></IonIcon>
             </IonButton>
+            <IonTitle>{profile?profile.name:"waiting..."}</IonTitle>
+          </IonItem>
+          
           <IonSlides>
             <IonSlide>
                 <IonContent>orders</IonContent>

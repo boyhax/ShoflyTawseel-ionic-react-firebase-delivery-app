@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { IonButton, IonButtons, IonContent, IonFab, IonFabButton,
-   IonHeader, IonIcon, IonPage,
+   IonHeader, IonIcon, IonLabel, IonPage,
      IonTitle,
      IonToolbar } from '@ionic/react';
 import './Home.css';
@@ -25,12 +25,12 @@ const [addOrder,setAddOrder] = useState(false)
       <IonHeader >
        
         <IonToolbar color="secondary">
-        <IonTitle slot='primary'>ShoflyTawseel</IonTitle>
+        <IonTitle slot='start'>ShoflyTawseel</IonTitle>
     <IonButtons slot="end">
+    <IonLabel>{profile?profile.name!:"signing in.."}</IonLabel>
     <IonButton onClick={()=>history.push("/Profile")}>
         <IonIcon slot="icon-only" icon={personCircle} />
       </IonButton>
-      
     </IonButtons>
   </IonToolbar>
       </IonHeader>

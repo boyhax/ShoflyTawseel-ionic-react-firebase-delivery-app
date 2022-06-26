@@ -39,11 +39,12 @@ const [list,setList]=useState<null|Array<orderProps>>(null)
   
  
     
-  async function doRefresh(event: CustomEvent<RefresherEventDetail>) {
+   function doRefresh(event: CustomEvent<RefresherEventDetail>) {
     console.log('Begin async operation');
-     await getNewList().finally(()=>event.detail.complete())
+      getNewList().finally(()=>event.detail.complete())
 }   
     async function getNewList(){
+      // IonRefresherElement.current!.start()
       setRefreshing(true)
       const ref = collection(getFirestore(),"orders")
       var firstQuery = query(ref)
@@ -159,7 +160,9 @@ const [list,setList]=useState<null|Array<orderProps>>(null)
         </IonList>}
         {!!listMessage &&<IonItem style={{display:"flex",flexDirection:"column"}}>
           <IonLabel color={listMessage.color}>{listMessage.text}</IonLabel>
-          <IonButton onClick={()=>{Refresh()}}>اعد المحاوله</IonButton>
+          {/* <IonButton onClick={()=>{Refresh()}}>اعد المحاوله</IonButton> */}
+          <IonLabel >أسحب للاسفل للتحديث</IonLabel>
+
         </IonItem>
          }
           <IonInfiniteScroll
@@ -172,7 +175,7 @@ const [list,setList]=useState<null|Array<orderProps>>(null)
             loadingText="بحث المزيد من الطلبات"
           ></IonInfiniteScrollContent>
         </IonInfiniteScroll>
-    {refreshing && <IonSpinner color="blue" name='lines' className='spinner'/>}
+    {/* {refreshing && <IonSpinner color="blue" name='lines' className='spinner'/>} */}
     
     </IonContent>
       }
