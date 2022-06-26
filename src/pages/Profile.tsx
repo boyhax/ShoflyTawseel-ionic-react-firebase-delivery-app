@@ -156,10 +156,16 @@ const ProfileOrdersList:FC=(props)=>{
        }
     
   } 
+  function onOrderRemoved(value:object){
+    const newList:any = list?.filter((value_)=>{
+      return value_===value?false:true
+    })
+    setList(newList)
+  }
   return<IonList>
     {refreshing && <IonSpinner></IonSpinner>}
       {!!list && list.map((value, index, array) => {
-        return <OrderCard order={value} key={index} remove ></OrderCard>
+        return <OrderCard order={value} key={index} remove onDeleted={()=>onOrderRemoved(value)}></OrderCard>
         })}
         {!list && !refreshing && <IonButton onClick={()=>getData()}>refresh</IonButton>}
   </IonList>

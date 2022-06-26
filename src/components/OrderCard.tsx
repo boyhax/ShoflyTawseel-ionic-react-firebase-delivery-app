@@ -61,7 +61,10 @@ return<IonCard className="card row" >
     </IonButton>}
     {whatsapp && <IonButton  onClick={()=>OpenWhatsapp(order.number)} color="light" shape="round" ><IonIcon size="large" color="success" icon={logoWhatsapp} ></IonIcon>
     </IonButton>}
-    { remove && <IonButton  onClick={()=>deleteOrder(order)} 
+    { remove && <IonButton  onClick={()=>{deleteOrder(order);
+    if(typeof onDeleted =="function")
+    {onDeleted()}
+}} 
     color="light" shape="round" >
         <IonIcon size="large" color="success" icon={trashOutline} ></IonIcon>
     </IonButton>}

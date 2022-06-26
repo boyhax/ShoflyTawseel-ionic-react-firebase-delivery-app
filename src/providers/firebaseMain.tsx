@@ -1,5 +1,7 @@
 import React from "react";
-import  { addDoc, arrayUnion, collection, deleteDoc, doc, FieldValue, Firestore, getDoc, getFirestore, increment, setDoc, Timestamp, updateDoc } from 'firebase/firestore';
+import  { addDoc, arrayUnion, collection, deleteDoc, doc, 
+  FieldValue, Firestore, getDoc, getFirestore, increment, setDoc, 
+   updateDoc } from 'firebase/firestore';
 import { getAuth, updateProfile } from "firebase/auth";
 
 export async function getTripCard(id:String){
