@@ -48,8 +48,9 @@ const [list,setList]=useState<null|Array<orderProps>>(null)
       setRefreshing(true)
       const ref = collection(getFirestore(),"orders")
       var firstQuery = query(ref)
-      firstQuery= query(firstQuery,orderBy("time","desc"))
       firstQuery = query(firstQuery,where("flagged","==",false))
+      firstQuery= query(firstQuery,orderBy("time","desc"))
+
 
       if (filterFrom){
         firstQuery = query(firstQuery,where("from","==",filterFrom))
@@ -63,7 +64,11 @@ const [list,setList]=useState<null|Array<orderProps>>(null)
         const snapshot = await getDocs(finalQuery)
         var newList:any[]=[]
         snapshot.forEach((doc)=>{
-            newList.push({id:doc.id,...doc.data()})
+          if(doc.data()!.reported!>=1){
+            return
+          }
+          newList.push({id:doc.id,...doc.data()})
+
           })
           const docs = snapshot.docs
           const newLastDoc = docs[docs.length -1]
@@ -101,6 +106,9 @@ const [list,setList]=useState<null|Array<orderProps>>(null)
           const snapshot = await getDocs(finalQuery)
           var newList:any[]=[]
           snapshot.forEach((doc:any)=>{
+            if(doc.data()!.reported!>=1){
+              return
+            }
             newList.push({id:doc.id,...doc.data()})
             })
             const docs = snapshot.docs

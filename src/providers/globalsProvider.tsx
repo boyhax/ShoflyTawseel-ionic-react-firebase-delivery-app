@@ -1,9 +1,10 @@
 import React, { createContext, useContext, useState, useEffect, FC } from "react";  
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getProfile } from "./firebaseMain";
-import { IonContent, IonLabel, IonModal, IonPage, IonSpinner, IonTitle } from "@ionic/react";
 import "./globalsProvider.css"
 import LoadingScreen from "../pages/LoadingScreen";
+
+        
 const globalsContext = createContext<{user:boolean|undefined,
     profile:any,
     updateProfile:()=>void}>({user:false,profile:null,updateProfile:()=>{}});
