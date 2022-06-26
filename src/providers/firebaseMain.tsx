@@ -70,7 +70,7 @@ console.log('new profile created :>> ', d);
     })
     return d
 }
-export const reportOrder=async(order:orderProps,onDeleted:()=>void)=>{
+export const reportOrder=async(order:orderProps,onDeleted?:()=>void)=>{
   const ref = doc(getFirestore(),"orders/"+order.id)
   const data = await (await getDoc(ref)).data()
   console.log('order reported :>> ', order.id);
@@ -80,7 +80,9 @@ export const reportOrder=async(order:orderProps,onDeleted:()=>void)=>{
     
   if(data!.reportsCounts!>=2){
     deleteOrder(order)
-    onDeleted()
+    if(onDeleted){
+      onDeleted()
+    }
     console.log('reported deleted doc :>> ',order.id!);
   }else{
     console.log("reported : ",order.id!)
@@ -88,7 +90,11 @@ export const reportOrder=async(order:orderProps,onDeleted:()=>void)=>{
   }
 }
 export async function deleteOrder(order:orderProps) {
-  const res = await deleteDoc(doc(getFirestore(),"orders/"+order.id!))
-  console.log(' deleted doc :>> ',order.id!,res);
+  deleteDoc_("orders/"+order.id)
+
+}
+export async function deleteDoc_(path:string) {
+  const res = await deleteDoc(doc(getFirestore(),path))
+  console.log(' deleted doc path :>> ',path);
 
 }

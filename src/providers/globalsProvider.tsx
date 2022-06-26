@@ -48,11 +48,12 @@ const GlobalProvider:React.FC =(props)=>{
 //   ,[profile,user])
 const[timeout,isTimeout] = useState(false)
   const loading =( user === undefined)
-    if(!timeout){
-        return<LoadingScreen onClose={()=>isTimeout(true)}></LoadingScreen>
-    }
+    // if(!timeout){
+    //     return<LoadingScreen onClose={()=>isTimeout(true)}></LoadingScreen>
+    // }
     
     return<globalsContext.Provider value={{user,profile}}>
+        <IonTitle>hello</IonTitle>
         {props.children}
         
     </globalsContext.Provider>

@@ -39,9 +39,9 @@ const [list,setList]=useState<null|Array<orderProps>>(null)
   
  
     
-  function doRefresh(event: CustomEvent<RefresherEventDetail>) {
+  async function doRefresh(event: CustomEvent<RefresherEventDetail>) {
     console.log('Begin async operation');
-    getNewList()
+     await getNewList().finally(()=>event.detail.complete())
 }   
     async function getNewList(){
       setRefreshing(true)
@@ -153,7 +153,7 @@ const [list,setList]=useState<null|Array<orderProps>>(null)
       <IonList  className='list'>
         {list.map((v,i)=>{
           return <IonItem key={i} >
-              <OrderCard order={v} whatsapp message report onDeleted={()=>{delete list[i];setList(list)}}>
+              <OrderCard order={v} whatsapp message report onRefresh={()=>Refresh()} onDeleted={()=>{delete list[i];setList(list)}}>
               </OrderCard>
           </IonItem>})}
         </IonList>}

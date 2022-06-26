@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonRouterLink, IonInput, IonLabel, IonItem, IonCard, IonCardContent, IonAccordionGroup, IonAccordion, IonList, IonGrid, IonSpinner, IonBackButton } from '@ionic/react';
+import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonRouterLink, IonInput, IonLabel, IonItem, IonCard, IonCardContent, IonAccordionGroup, IonAccordion, IonList, IonGrid, IonSpinner, IonBackButton, IonicSlides, IonSlides, IonSlide } from '@ionic/react';
 import { arrowBack, } from 'ionicons/icons';
 import { useGlobals } from '../providers/globalsProvider';
 import { collection, getDocs, getFirestore, orderBy, query, where } from 'firebase/firestore';
@@ -42,13 +42,25 @@ const Profile: React.FC = () => {
           <IonButton onClick={()=>{history.push("/signin")}}>
             <IonTitle>تسجيل الخروج</IonTitle>
             </IonButton>
-
+          <IonSlides>
+            <IonSlide>
+                <IonContent>orders</IonContent>
+            </IonSlide>
+            <IonSlide>
+            <IonContent>offers</IonContent>
+            </IonSlide>
+          </IonSlides>
           <IonTitle>قائمة طلباتك</IonTitle>
-          <ProfileOrdersList/>
+                <ProfileOrdersList/>
       </IonContent>}
-        {!user && loading === false && <IonContent>
+        {user ===false && <IonContent>
           <IonButton onClick={()=>history.push('/SignIn')}>قم بتسجيل الدخول</IonButton>
           </IonContent>}
+          {user ===undefined &&
+          <IonContent>
+            <IonSpinner></IonSpinner>
+            <IonLabel>please waite..</IonLabel>
+            </IonContent>}
 </IonContent>
               
 
@@ -144,5 +156,6 @@ const ProfileOrdersList:FC=(props)=>{
       {!!list && list.map((value, index, array) => {
         return <OrderCard order={value} key={index} remove ></OrderCard>
         })}
+        {!list && !refreshing && <IonButton onClick={()=>getData()}>refresh</IonButton>}
   </IonList>
 }

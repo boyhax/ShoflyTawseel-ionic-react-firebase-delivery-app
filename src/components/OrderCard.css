@@ -23,3 +23,19 @@
     font-size: large;
     font-family: baloo;
 }
+.topLeft{
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: small;
+}
+.chips{
+    padding-top: 20px;
+    
+}
+.small{
+    font-size: small;
+}
+.iconsContainer{
+    width: min-content;
+}

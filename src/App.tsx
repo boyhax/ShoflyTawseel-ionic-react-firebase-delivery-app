@@ -59,6 +59,7 @@ const App: React.FC = () => {
           <Route path="/Profile/:id" component={Profile} />
           <Route path="/details" component={Details} />
           <Route path="/SignIn" component={SignIn} />
+
           <Route path="/" render={() => <Redirect to="/home" />} exact={true} />
         </IonRouterOutlet>
       
