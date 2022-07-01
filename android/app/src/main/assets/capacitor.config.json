@@ -1,0 +1,8 @@
+{
+	"appId": "com.boyhax.shoflyTawseel",
+	"appName": "ShoflyTawseel",
+	"bundledWebRuntime": false,
+	"npmClient": "npm",
+	"webDir": "build",
+	"cordova": {}
+}
