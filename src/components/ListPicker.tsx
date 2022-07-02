@@ -18,9 +18,21 @@ const ListPicker=(props:Props)=>{
     const [isOpen,setIsOpen] = useState(false)
     const modal:any = useRef(null)
 
-    useEffect(()=>{
+    useEffect(()=>{})
      
-    },[])
+    //   data.sort((a,b) => {
+    //     const A:string = a.value;
+    //     const B:string = b.value;
+    //     return A.search(searchValue?searchValue:"")!-B.search(searchValue?searchValue:"")!
+    //   //  var an = A.indexOf(searchValue?searchValue:"");
+    //   //  var bn = B.indexOf(searchValue?searchValue:"");
+    //   //  if(an === bn)
+    //   //    return (a.value > b.value) ? 1 : ((b.value > a.value) ? -1 : 0);
+    //   //  else
+    //   //    return  an > bn ? 1 : -1;
+       
+    //      })
+    // },[searchValue])
     function onOpen(){
       setIsOpen(false)
       modal.current!.present()
@@ -50,18 +62,11 @@ const ListPicker=(props:Props)=>{
         </IonItem>
         
         <IonContent>
-      <IonList>{data
-      .sort((a,b) => {
-         const A = a.value;
-         const B = b.value;
-        var an = A.indexOf(searchValue?searchValue:"");
-        var bn = B.indexOf(searchValue?searchValue:"");
-        if(an === bn)
-          return (a.value > b.value) ? 1 : ((b.value > a.value) ? -1 : 0);
-        else
-          return  an > bn ? 1 : -1;
-        
-          }).map((value:dataProps, index:Number) => 
+      <IonList>{data.sort((a,b) => {
+        const A:string = a.value;
+        const B:string = b.value;
+        return B.indexOf(searchValue?searchValue:"")!-A.indexOf(searchValue?searchValue:"")!
+      }).map((value:dataProps, index:Number) => 
       {
             return <IonItem 
             
