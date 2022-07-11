@@ -3,6 +3,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getProfile } from "./firebaseMain";
 import "./globalsProvider.css"
 import LoadingScreen from "../pages/LoadingScreen";
+import { doc, getDoc, getFirestore } from "firebase/firestore";
 
         
 const globalsContext = createContext<{user:boolean|undefined,
@@ -18,10 +19,6 @@ const GlobalProvider:React.FC =(props)=>{
             return onAuthStateChanged(getAuth(),(user)=>{
                 console.log('user  :>> ', !!user );
                 setUser(!!user)
-                if(!!user){
-                    updateProfile()
-                }
-                
         },(err)=>{
             console.log(err,"error in user sign in check")
 
@@ -30,30 +27,21 @@ const GlobalProvider:React.FC =(props)=>{
           console.log("error in user sign in check: ",error)  
         }
       },[])
-      
+      useEffect(()=>{
+        updateProfile()
+      },[user])
     
       
   
-  function updateProfile(){
+  async function updateProfile(){
+    if(!user){
+        return
+    }
     const uid = getAuth().currentUser!.uid
-
-    getProfile(uid!).then((v)=>{
-            if(v.exists()){
-                console.log('profile exist :>> ',":",uid, v.data());
-                setProfile(v.data())
-                
-            }else{
-                console.log('profile dont exist :>> ',":",uid);
-                setProfile(null)
-            }
-        },(err)=>{
-            setTimeout(()=>{
-                updateProfile()
-            },500)
-            console.log('error fetching profile :>> ', err);
-        })
+    const p = await getDoc(doc(getFirestore(),"users/"+uid))
+    console.log('p :>> ', p.data());
+    setProfile(p.data())
   }
-
 const[timeout,isTimeout] = useState(false)
   const loading =( user === undefined)
     // if(!timeout){

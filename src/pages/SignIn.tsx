@@ -237,7 +237,12 @@ const SignIn: React.FC = () => {
           fill={undefined} shape={undefined} counter={undefined} 
           counterFormatter={undefined} >
               <IonLabel position='floating'> OTB الرمز السري</IonLabel>
-        <IonInput  maxlength={8} disabled={!verificationId} type='number'  
+        <IonInput  
+        maxlength={8} 
+        disabled={!verificationId} 
+        type='number'
+        inputMode='numeric'
+        autocomplete='one-time-code' 
         onIonChange={(e)=>setVerificationCode(e.detail.value!)}>
             </IonInput>
             <IonButton slot='start' size='default' onClick={()=>{VerifyNumber()}} 

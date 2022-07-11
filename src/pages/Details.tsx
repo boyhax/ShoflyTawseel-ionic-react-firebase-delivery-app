@@ -1,5 +1,5 @@
 import React from 'react';
-import { IonBackButton, IonButtons, IonHeader, IonPage, IonToolbar, IonTitle, IonContent } from '@ionic/react';
+import { IonBackButton, IonButtons, IonHeader, IonPage, IonToolbar, IonTitle, IonContent, IonList, IonCard, IonCardTitle, IonCardContent } from '@ionic/react';
 import { useParams } from 'react-router';
 import OrderCard from '../components/OrderCard';
 
@@ -11,32 +11,49 @@ const Details: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/tab2" />
+            <IonBackButton defaultHref="/home" />
           </IonButtons>
-          <IonTitle>Detail</IonTitle>
+          <IonTitle>معلومات عن تطبيق شوفلي توصيل</IonTitle>
           
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <p>Details</p>
-        <OrderCard order={{
-            name:"said alhajri",
-            from:"bidiyah",
-            to:"bidiyah",
-            time:{seconds:51000},
-            id:"",
-            uid:"",
-            comment:"ثثثثثثثثثثثثثثثثثثثثث السلام عليكم",
-            flagged:false,
-            number:"+968 95373990"
-          }}
-          whatsapp
-remove
-report
-message
->
+        <IonList>
+          <IonCard>
+            <IonCardTitle>
+            تطبيق شوفلي توصيل يرحب بك
+            </IonCardTitle>
+            {/* <IonCardContent>
+            </IonCardContent> */}
+          </IonCard>
+          
+          <IonCard>
+            <IonCardTitle>
+              نبذه سريعة
+            </IonCardTitle>
+            <IonCardContent>
+    تطبيق شوفلي توصيل يساعدك في الوصول السريع الى اي شخص يريد توصيل اي غرض 
+            </IonCardContent>
+          </IonCard>
+          <IonCard>
+            <IonCardTitle>
+      صاحب الغرض
+            </IonCardTitle>
+            <IonCardContent>
+  اظغط زر الزائد في الصفحه الرئيسية 
+  بعدها حدد من الولايه التي تريد ارسال الغرض منها والى اي ولاية 
+            </IonCardContent>
+          </IonCard>
+          <IonCard>
+            <IonCardTitle>
+        المندوب
+            </IonCardTitle>
+            <IonCardContent>
+  ابحث في الصفحة الرئيسية عن الطلبات التي تناسب وجهتك وموقع انطلاقك واختر التواصل بلواتساب او الرسائل النصية
+            </IonCardContent>
+          </IonCard>
+        </IonList>
 
-          </OrderCard>
       </IonContent>
     </IonPage>
   );
