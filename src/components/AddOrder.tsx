@@ -2,6 +2,7 @@ import { IonAlert, IonButton, IonCard, IonContent, IonIcon, IonInput, IonItem, I
 import { getAuth } from "firebase/auth";
 import { closeCircle } from "ionicons/icons";
 import React, { FC, PropsWithChildren, useEffect, useState } from "react";
+import { useHistory } from "react-router";
 import { addNewTripCard } from "../providers/firebaseMain";
 import { useGlobals } from "../providers/globalsProvider";
 import ListPicker from "./ListPicker";
@@ -20,6 +21,7 @@ const AddOrder=({isOpen,setOpen}:Props)=>{
     const [comment,setComment]= useState<null|string|undefined>(undefined)
     const [err,setErr]= useState<{message:string,color:"red"|"blue"}|undefined>(undefined)
     const [loading,setLoading]= useState(false)
+    const history = useHistory()
 const {profile,user} = useGlobals()
     const auth = getAuth()
     const uid = auth.currentUser?.uid
@@ -76,6 +78,11 @@ const {profile,user} = useGlobals()
                 </IonButton>
             </IonToolbar>
             <IonTitle>يمكنك اضافه طلبك هنا</IonTitle>
+            {!user && <IonLabel>بعد تسجيلك الدخول اولا</IonLabel>}
+            {!user && <IonButton onClick={(e)=>{
+                setOpen(false)
+                history.push("/SignIn")}}>تسجيل الدخول</IonButton>}
+
             <IonItem>
                 <ListPicker 
                 data={Cities} 

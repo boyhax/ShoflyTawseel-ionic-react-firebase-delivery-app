@@ -6,8 +6,9 @@ import { collection, getDocs, getFirestore, orderBy, query, where } from 'fireba
 import { getAuth, updateProfile } from 'firebase/auth';
 import "./Profile.css"
 import OrderCard from '../components/OrderCard';
-import { useHistory, useParams } from 'react-router';
+import { Redirect, useHistory, useParams } from 'react-router';
 import { getProfile, orderProps, profileExist, updateTripCard, updateUserProfile } from '../providers/firebaseMain';
+import SignIn from './SignIn';
 
 const Profile: React.FC = () => {
     const {user,profile} = useGlobals()
@@ -20,7 +21,9 @@ const Profile: React.FC = () => {
       
   },[user]);
    
-    
+    if(!user){
+      return<Redirect to={"/SignIn"}></Redirect>
+    }
     
     return (
     <IonPage >
@@ -54,9 +57,9 @@ const Profile: React.FC = () => {
           <IonTitle>قائمة طلباتك</IonTitle>
                 <ProfileOrdersList/>
       </IonContent>}
-        {user ===false && <IonContent>
+        {/* {user ===false && <IonContent>
           <IonButton onClick={()=>history.push('/SignIn')}>قم بتسجيل الدخول</IonButton>
-          </IonContent>}
+          </IonContent>} */}
           {user ===undefined &&
           <IonContent>
             <IonSpinner></IonSpinner>

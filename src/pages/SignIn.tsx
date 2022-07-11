@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonModal, IonPage, IonSpinner, IonTab, IonTabs, IonTitle, IonToolbar } from '@ionic/react';
+import { IonBackButton, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonModal, IonPage, IonSpinner, IonTab, IonTabs, IonTitle, IonToolbar } from '@ionic/react';
 import { arrowBack, arrowForwardCircle, home, returnUpBack } from 'ionicons/icons';
 import { getAuth, PhoneAuthProvider, signInWithCredential,RecaptchaVerifier,signInWithPhoneNumber, initializeAuth, browserSessionPersistence, browserPopupRedirectResolver, EmailAuthProvider, onAuthStateChanged, GoogleAuthProvider, OAuthProvider } from 'firebase/auth';
 import './SignIn.css';
@@ -179,10 +179,9 @@ const SignIn: React.FC = () => {
   return (
     <IonPage>
         <IonToolbar color="secondary">
-    <IonButtons slot="start">
-          <IonButton  onClick={()=>history.goBack()}>
-            <IonIcon icon={arrowBack}></IonIcon>
-          </IonButton>
+
+        <IonButtons slot="start">
+    <IonBackButton defaultHref='/'></IonBackButton>
     </IonButtons>
     <IonTitle slot='primary' onClick={()=>history.push("/home")}  
     >ShoflyTawseel
@@ -190,26 +189,11 @@ const SignIn: React.FC = () => {
     
   </IonToolbar>
       
-        <IonModal ref={createProfileModal} > 
-          <IonContent>
-            <IonTitle>
-              ادخل معلوماتك
-            </IonTitle>
-            <IonItem>
-              <IonLabel position='floating' >الاسم</IonLabel>
-              <IonInput 
-              placeholder='الاسم'
-              onIonChange={(e)=>setName(e.detail.value)}></IonInput>
-            </IonItem>
-            <IonButton onClick={()=>onCreateProfileSubmit()}>Submit</IonButton>
-          </IonContent>
-        </IonModal>
+        
       <IonContent className='container'>
        
           
           {!user && <IonContent>
-            {/* <div id="firebaseui-auth-container"></div> */}
-            {/* <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={getAuth()}></StyledFirebaseAuth> */}
            
             <IonItem className='input' fill={undefined} shape={undefined} 
           counter={undefined} counterFormatter={undefined}  > 
@@ -248,10 +232,10 @@ const SignIn: React.FC = () => {
 
         
           <IonContent>
-          {user && <IonItem fill={'outline'} shape={'round'}  >
+          {/* {user && <IonItem fill={'outline'} shape={'round'}  >
       <IonTitle slot='start'>تم تسجيل الدخول</IonTitle>
       <IonButton slot='start' onClick={()=>onSignOut()}>خروج</IonButton>
-      </IonItem>}
+      </IonItem>} */}
           </IonContent>
     
       </IonContent>
