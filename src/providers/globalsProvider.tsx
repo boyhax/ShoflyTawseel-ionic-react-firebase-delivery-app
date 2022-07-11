@@ -3,7 +3,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getProfile, updateUserProfile } from "./firebaseMain";
 import "./globalsProvider.css"
 import LoadingScreen from "../pages/LoadingScreen";
-import { doc, getDoc, getFirestore } from "firebase/firestore";
+import { doc, getDoc, getFirestore, onSnapshot } from "firebase/firestore";
 
         
 const globalsContext = createContext<{
@@ -39,7 +39,9 @@ const GlobalProvider:React.FC =(props)=>{
         return
     }
     const uid = getAuth().currentUser!.uid
+    
     const p = await getDoc(doc(getFirestore(),"users/"+uid))
+
     console.log('p :>> ', p.data());
     if(p.exists()){
       if(p.data()["name"]==""){
@@ -48,6 +50,9 @@ const GlobalProvider:React.FC =(props)=>{
       }
     }
     setProfile(p.data())
+    onSnapshot(doc(getFirestore(),"users/"+uid),(doc)=>{
+      setProfile(doc.data())
+    })
   }
 const[timeout,isTimeout] = useState(false)
   const loading =( user === undefined)
