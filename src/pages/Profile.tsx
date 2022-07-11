@@ -7,7 +7,7 @@ import { getAuth, updateProfile } from 'firebase/auth';
 import "./Profile.css"
 import OrderCard from '../components/OrderCard';
 import { useHistory, useParams } from 'react-router';
-import { getProfile, orderProps, profileExist, updateUserProfile } from '../providers/firebaseMain';
+import { getProfile, orderProps, profileExist, updateTripCard, updateUserProfile } from '../providers/firebaseMain';
 
 const Profile: React.FC = () => {
     const {user,profile} = useGlobals()
@@ -16,10 +16,6 @@ const Profile: React.FC = () => {
     const id = useParams()
     const history =useHistory()
     
-    
-    async function  userProfileExist(){
-      return await profileExist(auth.currentUser!.uid)
-    }
     useEffect(()=>{
       
   },[user]);
@@ -69,8 +65,10 @@ const Profile: React.FC = () => {
 </IonContent>
               
 
-      {user && auth.currentUser?.displayName==="" && <IonCard className='profileCard'><IonItem fill={undefined} shape={undefined} counter={undefined} counterFormatter={undefined} >يجب ان تضيف معلومات حسابك</IonItem>
-        </IonCard>}
+      {/* {user && auth.currentUser?.displayName==="" && 
+      <IonCard className='profileCard'>
+        <IonItem >يجب ان تضيف معلومات حسابك</IonItem>
+        </IonCard>} */}
         {profile!==undefined && <ProfileEdit></ProfileEdit>}
       
     </IonPage>
@@ -129,7 +127,7 @@ const ProfileOrdersList:FC=(props)=>{
   const [list,setList]=useState<null|orderProps[]>(null)
   const [refreshing,setRefreshing] = useState(true)
   const [isMounted, setIsMounted] = useState(true)
-  const {user} = useGlobals()
+  const {user,profile} = useGlobals()
   useEffect(()=>{
       getData();
   },[user])
@@ -165,8 +163,18 @@ const ProfileOrdersList:FC=(props)=>{
   return<IonList>
     {refreshing && <IonSpinner></IonSpinner>}
       {!!list && list.map((value, index, array) => {
+        if(profile){
+          checkName(value,profile)
+        }
+        
         return <OrderCard order={value} key={index} remove onDeleted={()=>onOrderRemoved(value)}></OrderCard>
         })}
         {!list && !refreshing && <IonButton onClick={()=>getData()}>refresh</IonButton>}
   </IonList>
+}
+function checkName(value:orderProps,profile:any){
+  if (value.name !== profile.name){
+    updateTripCard(value.id!,{name:profile.name})
+  }
+
 }
