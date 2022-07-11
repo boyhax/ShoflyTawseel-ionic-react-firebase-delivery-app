@@ -1,14 +1,15 @@
 import React, { createContext, useContext, useState, useEffect, FC } from "react";  
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { getProfile } from "./firebaseMain";
+import { getProfile, updateUserProfile } from "./firebaseMain";
 import "./globalsProvider.css"
 import LoadingScreen from "../pages/LoadingScreen";
 import { doc, getDoc, getFirestore } from "firebase/firestore";
 
         
-const globalsContext = createContext<{user:boolean|undefined,
+const globalsContext = createContext<{
+    user:boolean|undefined,
     profile:any,
-    updateProfile:()=>void}>({user:false,profile:null,updateProfile:()=>{}});
+    }>({user:false,profile:null});
 
 const GlobalProvider:React.FC =(props)=>{
     const [user,setUser] = useState<boolean|undefined>(undefined)
@@ -28,18 +29,24 @@ const GlobalProvider:React.FC =(props)=>{
         }
       },[])
       useEffect(()=>{
-        updateProfile()
+        fetchProfile()
       },[user])
     
       
   
-  async function updateProfile(){
+  async function fetchProfile(){
     if(!user){
         return
     }
     const uid = getAuth().currentUser!.uid
     const p = await getDoc(doc(getFirestore(),"users/"+uid))
     console.log('p :>> ', p.data());
+    if(p.exists()){
+      if(p.data()["name"]==""){
+        updateUserProfile(uid,{name:generateName()})
+        fetchProfile()
+      }
+    }
     setProfile(p.data())
   }
 const[timeout,isTimeout] = useState(false)
@@ -48,7 +55,7 @@ const[timeout,isTimeout] = useState(false)
     //     return<LoadingScreen onClose={()=>isTimeout(true)}></LoadingScreen>
     // }
     
-    return<globalsContext.Provider value={{user,profile,updateProfile}}>
+    return<globalsContext.Provider value={{user,profile}}>
         {props.children}
         
     </globalsContext.Provider>
@@ -58,3 +65,12 @@ export const useGlobals=()=>{
 }
 export default GlobalProvider
 
+function generateName(){
+  const str= "abcdefghijklmnopqrstuvwxyz"
+  const num = "1234567890"
+  const mix = str+num
+  const newName = shuffle(mix).slice(0,10)
+  console.log('newName :>> ', newName);
+  return newName
+}
+const shuffle = (str:string) => str.split('').sort(()=>Math.random()-.5).join('');
