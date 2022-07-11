@@ -55,17 +55,7 @@ const SignIn: React.FC = () => {
       return await (await getProfile(auth.currentUser!.uid)).data
     }
     async function onSignIn(){
-      
-        
-          const exist = await profileExist(auth.currentUser!.uid)
-          if (!exist){
-            if(auth.currentUser?.displayName ){
-              createNewProfile(auth.currentUser?.uid,{
-                name:auth.currentUser.displayName
-              })
-            }
-            createProfile()
-          }
+          history.push("/")
         
     }
     function onCreateProfileSubmit(){

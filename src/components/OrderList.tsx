@@ -80,7 +80,7 @@ const [list,setList]=useState<null|Array<orderProps>>(null)
           if(snapshot.empty){
             setList(null)
             setLastDoc(null)
-            setListMessage({text:"no orders found",color:"green"})
+            setListMessage({text:"لايوجد طلبات توصيل حاليا",color:"green"})
           }else{
             setListMessage(null)
             infiniteScrollRef.current!.complete()
@@ -169,7 +169,10 @@ const [list,setList]=useState<null|Array<orderProps>>(null)
         {!!listMessage &&<IonItem style={{display:"flex",flexDirection:"column"}}>
           <IonLabel color={listMessage.color}>{listMessage.text}</IonLabel>
           {/* <IonButton onClick={()=>{Refresh()}}>اعد المحاوله</IonButton> */}
-          <IonLabel >أسحب للاسفل للتحديث</IonLabel>
+          <IonLabel color="primary" onClick={(e)=>{
+            setFilterFrom(null);
+            setFilterTo(null);
+          }} >رجوع</IonLabel>
 
         </IonItem>
          }

@@ -1,5 +1,5 @@
 import { IonBadge, IonButton, IonCardHeader, IonChip, IonContent, IonIcon, IonInput, IonItem, IonLabel, IonList, IonModal, IonTabBar, IonTitle, IonToolbar, UseIonModalResult } from "@ionic/react";
-import { closeCircle } from "ionicons/icons";
+import { closeCircle, removeCircleOutline } from "ionicons/icons";
 import React, { useEffect, useRef, useState } from "react";
 import "./ListPicker.css"
 type dataProps={
@@ -43,7 +43,7 @@ const ListPicker=(props:Props)=>{
     }
 
     return<IonChip color="success" onClick={()=>onOpen()}>
-        
+        {/* {props.value&& <IonIcon onClick={(e)=>props.onValueSet(null)} icon={removeCircleOutline} ></IonIcon>} */}
         <IonTitle>{props.placeHolder}{props.value}</IonTitle>
         
     <IonModal ref={modal}  isOpen={isOpen} canDismiss={true} 

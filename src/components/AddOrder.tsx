@@ -26,8 +26,8 @@ const {profile,user} = useGlobals()
     function onAddPressed(){
         if(!user){
             console.log('profile name :>> ', profile);
-            alert("يرجى تسجيل الدخول اولا")
-            
+            setErr({message:"يرجى تسجيل الدخول اولا",color:"red"}) 
+            return           
         }
         from?
             to?
@@ -67,6 +67,7 @@ const {profile,user} = useGlobals()
         //   subHeader={'Subtitle'}
           message={err?.message}
           buttons={['OK']}
+
         />
         <IonContent>
             <IonToolbar>

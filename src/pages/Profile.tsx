@@ -36,10 +36,10 @@ const Profile: React.FC = () => {
       <IonContent>
         {user && <IonContent>
           <IonItem>
-          <IonButton onClick={()=>{history.push("/signin")}}>
-            <IonTitle>خروج</IonTitle>
+          {/* <IonButton color='danger' onClick={()=>{history.push("/signin")}}>
+            <IonTitle>تسجيل الخروج</IonTitle>
             <IonIcon icon={exitSharp}></IonIcon>
-            </IonButton>
+            </IonButton> */}
             <IonTitle>{profile?profile.name:"waiting..."}</IonTitle>
           </IonItem>
           
@@ -70,6 +70,16 @@ const Profile: React.FC = () => {
         <IonItem >يجب ان تضيف معلومات حسابك</IonItem>
         </IonCard>} */}
         {profile!==undefined && <ProfileEdit></ProfileEdit>}
+        
+          {user &&
+          <IonItem>
+          <IonButton slot="start" color='danger' onClick={()=>{getAuth().signOut()}}>
+          <IonTitle>تسجيل الخروج</IonTitle>
+          <IonIcon icon={exitSharp}></IonIcon>
+          </IonButton>
+          </IonItem> }
+        
+        
       
     </IonPage>
   );

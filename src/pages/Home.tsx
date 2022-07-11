@@ -21,7 +21,7 @@ const Tab1= () => {
     <IonPage>
       <IonHeader >
         <IonToolbar color="secondary">
-        <IonTitle slot='start'>ShoflyTawseel</IonTitle>
+        <IonTitle slot='start' onClick={()=>history.push("/home")}>ShoflyTawseel</IonTitle>
     <IonButtons slot="end">
     <IonLabel>{user?profile?profile.name!:profile==undefined?"signing in..":"":""}</IonLabel>
     <IonButton onClick={()=>history.push("/Profile")}>
