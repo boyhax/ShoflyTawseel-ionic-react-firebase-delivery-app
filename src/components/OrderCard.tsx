@@ -30,12 +30,12 @@ export default ({order,whatsapp,message,remove,report,onDeleted,onRefresh}:props
     const comment = typeof order.comment! =="string"?order.comment:"no comment"
     const popOver = useRef<any>(null)
     const [reporting,setReporting]=useState(false)
-    const [reprtWhy,setReportWhy]=useState<null|String>(null)
+    const [reportWhy,setReportWhy]=useState<undefined|string>(undefined)
     const toggleComment=()=>{
         popOver.current!.present()
     }
     function onReport(){
-        reportOrder(order)
+        reportOrder(order,reportWhy)
         if(onRefresh){
             onRefresh()
             console.log("message")
@@ -44,6 +44,7 @@ export default ({order,whatsapp,message,remove,report,onDeleted,onRefresh}:props
     }
 return<IonCard className="card row" >
     <IonPopover isOpen={reporting}>
+        <IonLabel slot="primary">اذكر السبب</IonLabel>
         <IonTextarea onIonChange={(e)=>{
             setReportWhy(e.detail.value!)
         }}>
@@ -60,8 +61,7 @@ return<IonCard className="card row" >
     <IonChip className="BoldText" color="secondary">{"الى: "+order.to}</IonChip>
     <IonChip className="BoldText" color="secondary"
     onClick={()=>toggleComment()}>
-        <IonPopover ref={popOver}  
-        >
+        <IonPopover ref={popOver} >
         <IonContent >{comment}</IonContent></IonPopover>
         {"الوصف: "+comment.slice(0,10)+"..."}
         </IonChip>

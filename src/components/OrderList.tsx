@@ -37,6 +37,10 @@ const [list,setList]=useState<null|Array<orderProps>>(null)
     setIsMounted(false)
   }
   },[])
+useEffect(()=>{
+  getNewList()
+
+},[profile])
   
   
  
@@ -66,22 +70,20 @@ const [list,setList]=useState<null|Array<orderProps>>(null)
         const snapshot = await getDocs(finalQuery)
         var newList:any[]=[]
         snapshot.forEach((doc)=>{
-          
-          
           newList.push({id:doc.id,...doc.data()})
-
           })
           var userReportedOrdersIds:Array<String>=[] 
-          if(profile && profile.reports!){
-              profile.reports.forEach((value:any) => {
+          if(profile && profile.didReport!){
+              profile.didReport.forEach((value:any) => {
                 userReportedOrdersIds.push(value.id)
               })
           }
-          newList.filter((v:orderProps)=>{
-            if(v.reported && v.reported>2 || userReportedOrdersIds.includes(v.id!)){
-              return true
+          newList = newList.filter((v:orderProps)=>{
+            
+            if(v.reported &&  (userReportedOrdersIds.includes(v.id!) || v.reported>2) ){
+              return false
             }
-            return false
+            return true
           })
           
           const docs = snapshot.docs
@@ -125,6 +127,19 @@ const [list,setList]=useState<null|Array<orderProps>>(null)
             }
             newList.push({id:doc.id,...doc.data()})
             })
+            var userReportedOrdersIds:Array<String>=[] 
+          if(profile && profile.didReport!){
+              profile.didReport.forEach((value:any) => {
+                userReportedOrdersIds.push(value.id)
+              })
+          }
+          newList = newList.filter((v:orderProps)=>{
+            
+            if(v.reported &&  (userReportedOrdersIds.includes(v.id!) || v.reported>2) ){
+              return false
+            }
+            return true
+          })
             const docs = snapshot.docs
             const newLastDoc = docs[docs.length -1]
             if(isMounted && !snapshot.empty){
