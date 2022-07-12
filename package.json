@@ -53,6 +53,7 @@
   "devDependencies": {
     "@capacitor/cli": "^3.5.1",
     "@ionic/cli": "6.19.1",
+    "cordova-res": "0.15.4",
     "react-scripts": "3.4.1"
   },
   "description": "Build a photo gallery app that runs on iOS, Android, and the web - with just one codebase."
