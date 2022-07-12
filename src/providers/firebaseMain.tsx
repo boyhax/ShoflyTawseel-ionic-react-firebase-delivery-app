@@ -26,7 +26,9 @@ export async function getTripCard(id:String){
     flagged:boolean,
     number:string,
     comment:string|undefined|null,
-    id?:string
+    id?:string,
+    reported?:number,
+    reports?:Array<{by:string,why:String}>
 
   }
   

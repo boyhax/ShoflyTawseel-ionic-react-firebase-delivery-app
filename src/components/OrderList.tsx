@@ -10,6 +10,7 @@ import { Cities } from "./utlis/citiesUtlis";
 import { getAuth } from "firebase/auth";
 import { orderProps } from "../providers/firebaseMain";
 import OrderCard from "./OrderCard";
+import { useGlobals } from "../providers/globalsProvider";
 
 
 export default function OrderList(props:any) {
@@ -27,6 +28,7 @@ const [list,setList]=useState<null|Array<orderProps>>(null)
   const [listQ,setListQ]= useState<any>(null)
   const [listMessage,setListMessage] = useState<any>(null)
   const user =getAuth().currentUser
+  const {profile}= useGlobals()
 
   useEffect(()=>{
     getNewList()
@@ -64,12 +66,24 @@ const [list,setList]=useState<null|Array<orderProps>>(null)
         const snapshot = await getDocs(finalQuery)
         var newList:any[]=[]
         snapshot.forEach((doc)=>{
-          if(doc.data()!.reported!>=1){
-            return
-          }
+          
+          
           newList.push({id:doc.id,...doc.data()})
 
           })
+          var userReportedOrdersIds:Array<String>=[] 
+          if(profile && profile.reports!){
+              profile.reports.forEach((value:any) => {
+                userReportedOrdersIds.push(value.id)
+              })
+          }
+          newList.filter((v:orderProps)=>{
+            if(v.reported && v.reported>2 || userReportedOrdersIds.includes(v.id!)){
+              return true
+            }
+            return false
+          })
+          
           const docs = snapshot.docs
           const newLastDoc = docs[docs.length -1]
           if(isMounted && !snapshot.empty){

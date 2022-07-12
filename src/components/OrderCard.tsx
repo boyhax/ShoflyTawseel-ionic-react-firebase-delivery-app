@@ -1,8 +1,8 @@
 import { ComponentProps } from "@ionic/core";
-import { IonCard, IonLabel,IonContent ,IonCardContent, IonCardTitle, IonTitle, IonBadge, IonText, IonRow, IonGrid, IonCol, IonChip, IonIcon, IonButton, IonBreadcrumb, IonPopover} from "@ionic/react";
+import { IonCard, IonLabel,IonContent ,IonCardContent, IonCardTitle, IonTitle, IonBadge, IonText, IonRow, IonGrid, IonCol, IonChip, IonIcon, IonButton, IonBreadcrumb, IonPopover, IonModal, IonTextarea} from "@ionic/react";
 import { doc, getDoc, getFirestore, } from "firebase/firestore";
 import { chatboxEllipsesOutline, logoWhatsapp, alertCircle, removeCircle, send, trashBinOutline, trashOutline } from "ionicons/icons";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { deleteOrder, orderProps, reportOrder } from "../providers/firebaseMain";
 import "./OrderCard.css"
 const options:Object = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -29,6 +29,8 @@ export default ({order,whatsapp,message,remove,report,onDeleted,onRefresh}:props
     var date =!!order.time? new Date(order.time.seconds!*1000).toLocaleDateString("ar-om",options) + ' في ' + new Date(order.time.seconds*1000).toLocaleTimeString():null
     const comment = typeof order.comment! =="string"?order.comment:"no comment"
     const popOver = useRef<any>(null)
+    const [reporting,setReporting]=useState(false)
+    const [reprtWhy,setReportWhy]=useState<null|String>(null)
     const toggleComment=()=>{
         popOver.current!.present()
     }
@@ -41,6 +43,17 @@ export default ({order,whatsapp,message,remove,report,onDeleted,onRefresh}:props
 
     }
 return<IonCard className="card row" >
+    <IonPopover isOpen={reporting}>
+        <IonTextarea onIonChange={(e)=>{
+            setReportWhy(e.detail.value!)
+        }}>
+
+        </IonTextarea>
+        <IonButton onClick={(e)=>{
+            setReporting(false);
+            onReport()
+        }}>submit</IonButton>
+    </IonPopover>
     <div >
     <IonChip className="BoldText" color="secondary">{order.name}</IonChip>
     <IonChip className="BoldText" color="secondary">{"من: "+order.from}</IonChip>
@@ -68,7 +81,7 @@ return<IonCard className="card row" >
     color="light" shape="round" >
         <IonIcon size="large" color="success" icon={trashOutline} ></IonIcon>
     </IonButton>}
-    { report && <IonButton  onClick={()=>onReport()} 
+    { report && <IonButton  onClick={()=>setReporting(!reporting)} 
     color="light" shape="round" >
         <IonIcon size="large" color="success" icon={alertCircle} ></IonIcon>
     
