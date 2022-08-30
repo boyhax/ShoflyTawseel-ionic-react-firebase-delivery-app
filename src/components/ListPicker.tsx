@@ -20,19 +20,7 @@ const ListPicker=(props:Props)=>{
 
     useEffect(()=>{})
      
-    //   data.sort((a,b) => {
-    //     const A:string = a.value;
-    //     const B:string = b.value;
-    //     return A.search(searchValue?searchValue:"")!-B.search(searchValue?searchValue:"")!
-    //   //  var an = A.indexOf(searchValue?searchValue:"");
-    //   //  var bn = B.indexOf(searchValue?searchValue:"");
-    //   //  if(an === bn)
-    //   //    return (a.value > b.value) ? 1 : ((b.value > a.value) ? -1 : 0);
-    //   //  else
-    //   //    return  an > bn ? 1 : -1;
-       
-    //      })
-    // },[searchValue])
+    
     function onOpen(){
       setIsOpen(false)
       modal.current!.present()

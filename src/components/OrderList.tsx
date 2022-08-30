@@ -191,7 +191,7 @@ useEffect(()=>{
       <IonList  className='list'>
         {list.map((v,i)=>{
           return <IonItem key={i} >
-              <OrderCard order={v} whatsapp message report onRefresh={()=>Refresh()} onDeleted={()=>{delete list[i];setList(list)}}>
+              <OrderCard order={v}  report canApplyFor onRefresh={()=>Refresh()} onDeleted={()=>{delete list[i];setList(list)}}>
               </OrderCard>
           </IonItem>})}
         </IonList>}

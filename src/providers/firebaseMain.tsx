@@ -1,5 +1,5 @@
 import React from "react";
-import  { addDoc, arrayUnion, collection, deleteDoc, doc, 
+import  { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, 
   FieldValue, Firestore, getDoc, getFirestore, increment, setDoc, 
    updateDoc } from 'firebase/firestore';
 import { getAuth, updateProfile } from "firebase/auth";
@@ -28,7 +28,8 @@ export async function getTripCard(id:String){
     comment:string|undefined|null,
     id?:string,
     reported?:number,
-    reports?:Array<{by:string,why:String}>
+    reports?:Array<{by:string,why:String}>,
+    appliedUsers?:String[]
 
   }
   
@@ -134,4 +135,17 @@ async function getOrderReports(id:string){
   const data = await getDoc(doc(getFirestore(),"orders/"+id))
   
   return data.exists()?data.data().reports!?data.data().reports:[]:undefined
+}
+export async function applyForCard(UserUID:string,cardUID:string) {
+  const res = await updateDoc(doc(getFirestore(),"orders/"+cardUID),
+  {"appliedUsers":arrayUnion(UserUID)})
+  return res
+}
+export async function removeApplicationToOrder(UserUID:string,cardUID:string) {
+  const res = await updateDoc(doc(getFirestore(),"orders/"+cardUID),
+  {"appliedUsers":arrayRemove(UserUID)})
+  return res
+}
+export function is_user_applied_to_card(UserUID:string,order:orderProps){
+  return order.appliedUsers?.includes(UserUID)
 }

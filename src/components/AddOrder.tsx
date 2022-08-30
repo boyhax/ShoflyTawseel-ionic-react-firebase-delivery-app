@@ -49,6 +49,7 @@ const {profile,user} = useGlobals()
                 time:new Date(),
                 flagged:false,
                 comment:comment,
+                
             })
             setErr({message:"تم أضافة الطلب",color:"blue"})
             setLoading(false)
