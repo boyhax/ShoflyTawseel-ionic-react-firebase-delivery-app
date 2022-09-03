@@ -39,7 +39,6 @@ const GlobalProvider:React.FC =(props)=>{
         return
     }
     const uid = getAuth().currentUser!.uid
-    
     const p = await getDoc(doc(getFirestore(),"users/"+uid))
 
     console.log('p :>> ', p.data());
@@ -52,6 +51,7 @@ const GlobalProvider:React.FC =(props)=>{
     setProfile(p.data())
     onSnapshot(doc(getFirestore(),"users/"+uid),(doc)=>{
       setProfile(doc.data())
+      console.log('profile update :>> ', doc.data());
     })
   }
 const[timeout,isTimeout] = useState(false)

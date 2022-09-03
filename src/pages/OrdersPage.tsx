@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton } from '@ionic/react';
+import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton, IonSlides, IonSlide } from '@ionic/react';
 import { exitSharp, } from 'ionicons/icons';
 import { useGlobals } from '../providers/globalsProvider';
 import { collection, getDocs, getFirestore, orderBy, query, where } from 'firebase/firestore';
@@ -9,7 +9,7 @@ import OrderCard from '../components/OrderCard';
 import { Redirect, useHistory, useParams } from 'react-router';
 import { orderProps, updateTripCard, updateUserProfile } from '../providers/firebaseMain';
 
-const Profile: React.FC = () => {
+const OrdersPage: React.FC = () => {
     const {user,profile} = useGlobals()
     const [loading,setLoading]=useState(true)
     const auth= getAuth()
@@ -32,51 +32,33 @@ const Profile: React.FC = () => {
           <IonBackButton defaultHref="/home" />
         </IonButtons>
         <IonTitle slot='primary' >
-          Profile
+          طلباتك
         </IonTitle>
-        <IonTitle>{profile?profile.name:"waiting..."}</IonTitle>
-
     
       </IonToolbar>
-      <IonItem>
-        <IonTitle>قائمة طلباتك</IonTitle>
-      </IonItem>
-      {/* <IonSlides>
+      <IonContent>
+        {user && <IonContent>
+          
+          
+          <IonSlides>
             <IonSlide>
                 <IonContent>orders</IonContent>
             </IonSlide>
             <IonSlide>
             <IonContent>offers</IonContent>
             </IonSlide>
-          </IonSlides> */}
-          {/* <IonToolbar>
-            
-          </IonToolbar> */}
-      <IonContent>
-      {user && 
-            <IonContent>
-              <ProfileOrdersList/>
-            </IonContent>}
+          </IonSlides>
+                <ProfileOrdersList/>
+      </IonContent>}
         
-          {user ===undefined &&
+          {user && profile===undefined &&
           <IonContent>
             <IonSpinner></IonSpinner>
             <IonLabel>please waite..</IonLabel>
             </IonContent>}
 </IonContent>
               
-
-      
-        {user && 
-        <IonButtons>
-          <IonButton>تعديل الحساب</IonButton>
-          <IonButton slot="start" color='danger' onClick={()=>{getAuth().signOut()}}>
-          <IonTitle>تسجيل الخروج</IonTitle>
-          <IonIcon icon={exitSharp}></IonIcon>
-          </IonButton>
-        </IonButtons> }
         
-          
         
         
       
@@ -84,54 +66,11 @@ const Profile: React.FC = () => {
   );
 };
 
-export default Profile;
+export default OrdersPage;
 
 
 
-const ProfileEdit:React.FC=(props)=>{
-  const auth= getAuth()
-  const user = auth.currentUser
-  const uid = user?.uid
-  const [data,setData]=useState({})
-  const[loading,setLoading] = useState(false)
-  const {profile} = useGlobals()
-  const [newName,setNewName] = useState(profile.name!)
-  function updateProfile(){
-      setLoading(true);
-      updateUserProfile(uid,{...data,name:newName})
-      .finally(()=>setLoading(false))
-  }
-  if(loading){
-    return<IonSpinner slot='primary'>
-      <IonLabel>Saving...</IonLabel>
-       </IonSpinner>
-  }
-  return<IonAccordionGroup>
-  <IonAccordion value="colors">
-    <IonItem slot="header" >
-      <IonLabel>معلومات المستخدم</IonLabel>
-    </IonItem>
 
-    <IonList slot="content">
-      <IonItem >
-        <IonLabel>الاسم</IonLabel>
-        <IonInput placeholder='name' onIonChange={(e)=>{
-            setNewName(e.detail.value)
-          
-        }} 
-        value={newName}></IonInput>
-        <IonButton onClick={()=>updateProfile()}
-        >
-          <IonLabel>حفظ</IonLabel></IonButton>
-      </IonItem>
-      <IonItem>
-        <IonLabel>الرقم</IonLabel>
-        <IonLabel >{auth.currentUser?.phoneNumber}</IonLabel>
-      </IonItem>
-      
-    </IonList>
-  </IonAccordion></IonAccordionGroup>
-}
 const ProfileOrdersList:FC=(props)=>{
   const [list,setList]=useState<null|orderProps[]>(null)
   const [refreshing,setRefreshing] = useState(true)
@@ -182,6 +121,7 @@ const ProfileOrdersList:FC=(props)=>{
   </IonList>
 }
 function checkName(value:orderProps,profile:any){
+  // to be added to function
   if (value.name !== profile.name){
     updateTripCard(value.id!,{name:profile.name})
   }

@@ -39,7 +39,9 @@ const [list,setList]=useState<null|Array<orderProps>>(null)
   },[])
 useEffect(()=>{
   getNewList()
-
+  return () => {
+    setIsMounted(false)
+  }
 },[profile])
   
   
@@ -88,7 +90,10 @@ useEffect(()=>{
           
           const docs = snapshot.docs
           const newLastDoc = docs[docs.length -1]
-          if(isMounted && !snapshot.empty){
+          if(!isMounted){
+            return
+          }
+          if( !snapshot.empty){
             setList(newList)
             setLastDoc(newLastDoc)
             setListQ(finalQuery)
@@ -142,7 +147,10 @@ useEffect(()=>{
           })
             const docs = snapshot.docs
             const newLastDoc = docs[docs.length -1]
-            if(isMounted && !snapshot.empty){
+            if(!isMounted ){
+              return
+            }
+            if( !snapshot.empty){
               setList([...list!,...newList])
               setLastDoc(newLastDoc)
             }

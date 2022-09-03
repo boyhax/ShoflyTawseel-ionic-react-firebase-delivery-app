@@ -2,10 +2,9 @@ import { ComponentProps } from "@ionic/core";
 import { IonCard, IonLabel,IonContent ,IonChip, IonIcon, IonButton, IonPopover, IonTextarea, IonSpinner} from "@ionic/react";
 import { getAuth } from "firebase/auth";
 import { doc, getFirestore, onSnapshot, } from "firebase/firestore";
-import {  alertCircle, trashOutline, thumbsDownOutline, thumbsUpOutline, chatboxEllipsesOutline, logoWhatsapp } from "ionicons/icons";
+import {  alertCircle, trashOutline, thumbsDownOutline, thumbsUpOutline } from "ionicons/icons";
 import React, { useEffect, useRef, useState } from "react";
 import { applyForCard, deleteOrder, is_user_applied_to_card, orderProps, removeApplicationToOrder, reportOrder } from "../providers/firebaseMain";
-import { useGlobals } from "../providers/globalsProvider";
 import "./OrderCard.css"
 const options:Object = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
 
@@ -35,7 +34,6 @@ export default ({order,whatsapp,message,remove,report,canApplyFor,onDeleted,onRe
     const [reporting,setReporting]=useState(false)
     const [reportWhy,setReportWhy]=useState<undefined|string>(undefined)
     const uid= getAuth().currentUser?.uid
-    const {user} = useGlobals()
     const [userApplied,setApplied] = useState<boolean|undefined>(data.appliedUsers?is_user_applied_to_card(uid!,data):false)
     useEffect(()=>{
         const unsub = onSnapshot(doc(getFirestore(),"orders/"+data.id),(doc)=>{
@@ -47,7 +45,7 @@ export default ({order,whatsapp,message,remove,report,canApplyFor,onDeleted,onRe
         popOver.current!.present()
     }
     async function _applyToOrder(){
-        if(!user){
+        if(!uid){
             alert("يرجى تسجيل الدخول اولا")
             return
         }
@@ -99,30 +97,16 @@ return<IonCard className="card row" >
     <IonChip >{date}</IonChip>
     </div>
     <div className="iconsContainer">
-    {message &&
-        <IonButton 
-            onClick={()=>
-                SendSMSMessage(order.number,"السلام عليكم هل تحتاج مندوب توصيل ")} 
-            color="light" shape="round" >
-        <IonIcon size="large" 
-        color="success" 
-        icon={chatboxEllipsesOutline} >
-        </IonIcon>
+    {/* {message &&<IonButton onClick={()=>SendSMSMessage(order.number,"السلام عليكم هل تحتاج مندوب توصيل ")} color="light" shape="round" >
+        <IonIcon size="large" color="success" icon={chatboxEllipsesOutline} ></IonIcon>
     </IonButton>}
-    {whatsapp && <IonButton  
-    onClick={()=>OpenWhatsapp(order.number)} 
-    color="light" shape="round" >
-        <IonIcon size="large" color="success" icon={logoWhatsapp} ></IonIcon>
-    </IonButton>}
-    {canApplyFor && 
-    <IonButton  
-        onClick={()=>{_applyToOrder()}} 
-        color="light" 
-        shape="round" >
+    {whatsapp && <IonButton  onClick={()=>OpenWhatsapp(order.number)} color="light" shape="round" ><IonIcon size="large" color="success" icon={logoWhatsapp} ></IonIcon>
+    </IonButton>} */}
+    {canApplyFor && <IonButton  onClick={()=>{_applyToOrder()}} color="light" shape="round" >
         {userApplied!==undefined && <IonIcon 
-            size="large" 
-            color="success" 
-            icon={ userApplied?thumbsDownOutline:thumbsUpOutline} ></IonIcon>}
+        size="large" 
+        color="success" 
+        icon={ userApplied?thumbsDownOutline:thumbsUpOutline} ></IonIcon>}
         {userApplied===undefined && <IonSpinner></IonSpinner>}
     </IonButton>}
     { remove && <IonButton  onClick={()=>{deleteOrder(data);

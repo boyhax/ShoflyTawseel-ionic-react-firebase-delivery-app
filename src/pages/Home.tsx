@@ -1,37 +1,46 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { IonButton, IonButtons, IonContent, IonFab, IonFabButton,
    IonHeader, IonIcon, IonLabel, IonPage,
      IonTitle,
      IonToolbar } from '@ionic/react';
 import './Home.css';
-import { add, informationCircle, personCircle } from 'ionicons/icons';
+import { add, informationCircle, menuOutline, personCircle } from 'ionicons/icons';
 import { useHistory } from "react-router-dom";
 import { useGlobals } from '../providers/globalsProvider';
 import OrderList from '../components/OrderList';
 import AddOrder from '../components/AddOrder';
+import MainMenu from '../components/MainMenu';
 const Tab1= () => {
   const {user,profile}= useGlobals()
   const history = useHistory()
   const [addOrder,setAddOrder] = useState(false)
+  const [menuOpen,setMenuOpen] = useState(false)
+  const menuRef = useRef<any>()
   function onAddOrder(){
     setAddOrder(!addOrder)
+  }
+  function toggleMenu(){
+    menuRef.current?.toggle()
   }
   
     return (
     <IonPage>
-      <IonHeader >
+      <MainMenu menuRef={menuRef}></MainMenu>
+      <IonHeader>
         <IonToolbar color="secondary">
-        <IonTitle slot='start' onClick={()=>history.push("/home")}>ShoflyTawseel</IonTitle>
-    <IonButtons slot="end">
-    <IonLabel>{user?profile?profile.name!:profile==undefined?"signing in..":"":""}</IonLabel>
-    <IonButton onClick={()=>history.push("/Profile")}>
-        <IonIcon slot="icon-only" icon={personCircle} />
-      </IonButton>
-      <IonButton onClick={()=>history.push("/details")}>
-        <IonIcon slot="icon-only" icon={informationCircle} />
-      </IonButton>
-    </IonButtons>
-  </IonToolbar>
+          <IonTitle slot='primary' onClick={()=>history.push("/home")}>ShoflyTawseel</IonTitle>
+          <IonButtons slot="start">            
+            <IonButton onClick={()=>toggleMenu()}>
+                <IonIcon slot="icon-only" icon={menuOutline} />
+            </IonButton>
+            <IonButton onClick={()=>history.push("/Profile")}>
+                <IonIcon slot="icon-only" icon={personCircle} />
+              </IonButton>
+              <IonLabel>{user?profile?profile.name!:profile === undefined?"signing in..":"":""}</IonLabel>
+
+            
+          </IonButtons>
+        </IonToolbar>
       </IonHeader>
       <IonContent>
         <OrderList></OrderList>

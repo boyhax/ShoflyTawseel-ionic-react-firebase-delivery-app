@@ -39,6 +39,7 @@ import './global.css';
 import Profile from './pages/Profile';
 import SignIn from './pages/SignIn';
 import GlobalProvider, { useGlobals } from './providers/globalsProvider';
+import OrdersPage from './pages/OrdersPage';
 const firebaseConfig=Config
 
 const firebaseApp = initializeApp(firebaseConfig)
@@ -59,6 +60,8 @@ const App: React.FC = () => {
           <Route path="/Profile/:id" component={Profile} />
           <Route path="/details" component={Details} />
           <Route path="/SignIn" component={SignIn} />
+          <Route path="/OrdersPage" component={OrdersPage} />
+
 
           <Route path="/" render={() => <Redirect to="/home" />} exact={true} />
         </IonRouterOutlet>
