@@ -1,8 +1,19 @@
-import React from "react";
 import  { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, 
-  FieldValue, Firestore, getDoc, getFirestore, increment, setDoc, 
+  getDoc, getFirestore, setDoc, 
    updateDoc } from 'firebase/firestore';
 import { getAuth, updateProfile } from "firebase/auth";
+import { initializeApp } from 'firebase/app';
+import { setupIonicReact } from '@ionic/react';
+import { Config } from '../config';
+import { userProfile } from './globalsProvider';
+
+const firebaseConfig=Config
+initializeApp(firebaseConfig)
+setupIonicReact({
+  mode: 'md'
+});
+const db = getFirestore()
+
 
 export async function getTripCard(id:String){
     var _data:any
@@ -27,8 +38,7 @@ export async function getTripCard(id:String){
     number:string,
     comment:string|undefined|null,
     id?:string,
-    reported?:number,
-    reports?:Array<{by:string,why:String}>,
+    reportsGot?:Array<string>,
     appliedUsers?:String[]
 
   }
@@ -74,38 +84,27 @@ console.log('new profile created :>> ', d);
     return d
 }
 export const reportOrder=async(order:orderProps,why?:string,onDeleted?:()=>void)=>{
-  const useruid = getAuth().currentUser?.uid!
-  const ref = doc(getFirestore(),"orders/"+order.id)
-  const data = await (await getDoc(ref)).data()
-  console.log('order reports :>> ', data!.reports!);
-  console.log('order.reportsCounts :>> ', data!.reported!);
+  const uid = getAuth().currentUser?.uid
   var reportedByUser =false
-  if(data && data.reported){
-    data.reports!.forEach((value:any) => {
-      if(value.by === useruid){
-        console.log("already reported by")
-        reportedByUser = true
+  const profile = userProfile
+  if(order && order.reportsGot! && profile && profile.reportsDone!){
+      const filteredArray = intersection(profile.reportsDone,order.reportsGot)
+        reportedByUser = filteredArray.length >0
       }
-    })
+  if(reportedByUser){
+    console.log("already reported by")
+    return
   }
- if(reportedByUser){
-  return
- }
-  const userRef = doc(getFirestore(),"users/"+order.uid)
-  const selfRef = doc(getFirestore(),"users/"+getAuth().currentUser?.uid)
-
+  
   const report={
-    id:order.id,
-    why:why?why:"no why"
+    orderId:order.id,
+    orderOwner:order.uid,
+    from:uid,
+    why:why?why:null
   } 
-   updateDoc(userRef,{reported:arrayUnion(report)})
-   updateDoc(selfRef,{didReport:arrayUnion(report)})
-
-  const newReport = {
-    by:useruid,
-    why:why?why:"no why"
-  }
-  const up = await updateDoc(ref,{reported:increment(1),reports:arrayUnion(newReport)})
+   
+  
+   return await addDoc(collection(db,"ordersReports"),report)
     
   
 }
@@ -114,16 +113,16 @@ export async function deleteOrder(order:orderProps) {
 
 }
 export async function deleteDoc_(path:string) {
-  const res = await deleteDoc(doc(getFirestore(),path))
+   await deleteDoc(doc(getFirestore(),path))
   console.log(' deleted doc path :>> ',path);
 
 }
 export async function isReportedBy(userUID:string,docUID:string) {
   const reports = await getOrderReports(docUID)
-  if(!reports ==undefined){
+  if(!reports ===undefined){
     console.log('reports :>> ', reports);
     reports.forEach((value:any) => {
-      if(value.by == userUID){
+      if(value.by === userUID){
         return true
       }
     })
@@ -148,4 +147,11 @@ export async function removeApplicationToOrder(UserUID:string,cardUID:string) {
 }
 export function is_user_applied_to_card(UserUID:string,order:orderProps){
   return order.appliedUsers?.includes(UserUID)
+}
+
+export function intersection(a:Array<any>,b:Array<any>){
+  var filteredArray = a.filter(function(n) {
+    return b.indexOf(n) !== -1;
+});
+return filteredArray
 }

@@ -1,11 +1,9 @@
 import React, { createContext, useContext, useState, useEffect, FC } from "react";  
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { getProfile, updateUserProfile } from "./firebaseMain";
 import "./globalsProvider.css"
-import LoadingScreen from "../pages/LoadingScreen";
-import { doc, getDoc, getFirestore, onSnapshot } from "firebase/firestore";
+import { doc, getFirestore, onSnapshot } from "firebase/firestore";
 
-        
+export var userProfile:any = null
 const globalsContext = createContext<{
     user:boolean|undefined,
     profile:any,
@@ -47,6 +45,7 @@ const GlobalProvider:React.FC =(props)=>{
         return
       }
       setProfile(doc.data())
+      userProfile = doc.data()
       console.log('profile update :>> ', doc.data());
     })
   }
@@ -60,14 +59,16 @@ const GlobalProvider:React.FC =(props)=>{
 export const useGlobals=()=>{
     return useContext(globalsContext)
 }
+
 export default GlobalProvider
 
-function generateName(){
-  const str= "abcdefghijklmnopqrstuvwxyz"
-  const num = "1234567890"
-  const mix = str+num
-  const newName = shuffle(mix).slice(0,10)
-  console.log('newName :>> ', newName);
-  return newName
-}
-const shuffle = (str:string) => str.split('').sort(()=>Math.random()-.5).join('');
+// moved to cloud functions
+// function generateName(){
+//   const str= "abcdefghijklmnopqrstuvwxyz"
+//   const num = "1234567890"
+//   const mix = str+num
+//   const newName = shuffle(mix).slice(0,10)
+//   console.log('newName :>> ', newName);
+//   return newName
+// }
+// const shuffle = (str:string) => str.split('').sort(()=>Math.random()-.5).join('');

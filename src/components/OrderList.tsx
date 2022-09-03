@@ -1,14 +1,14 @@
 import React, {  useEffect, useRef, useState } from "react";
 
 import {  collection, getDocs, getFirestore, query, where, limit, orderBy, startAfter  } from "firebase/firestore";
-import { IonButton, IonContent, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonInput, IonItem, IonLabel, IonList, IonRefresher, IonRefresherContent, IonSpinner } from "@ionic/react";
+import { IonContent, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonItem, IonLabel, IonList, IonRefresher, IonRefresherContent } from "@ionic/react";
 import {  filter } from "ionicons/icons";
 import { RefresherEventDetail } from '@ionic/core';
 import "./OrderList.css"
 import ListPicker from "./ListPicker";
 import { Cities } from "./utlis/citiesUtlis";
 import { getAuth } from "firebase/auth";
-import { orderProps } from "../providers/firebaseMain";
+import { intersection, orderProps } from "../providers/firebaseMain";
 import OrderCard from "./OrderCard";
 import { useGlobals } from "../providers/globalsProvider";
 
@@ -72,21 +72,13 @@ useEffect(()=>{
         const snapshot = await getDocs(finalQuery)
         var newList:any[]=[]
         snapshot.forEach((doc)=>{
+          if(!isGoodOrder(doc.data(),profile)){
+              return
+            }
           newList.push({id:doc.id,...doc.data()})
           })
-          var userReportedOrdersIds:Array<String>=[] 
-          if(profile && profile.didReport!){
-              profile.didReport.forEach((value:any) => {
-                userReportedOrdersIds.push(value.id)
-              })
-          }
-          newList = newList.filter((v:orderProps)=>{
-            
-            if(v.reported &&  (userReportedOrdersIds.includes(v.id!) || v.reported>2) ){
-              return false
-            }
-            return true
-          })
+          
+          
           
           const docs = snapshot.docs
           const newLastDoc = docs[docs.length -1]
@@ -127,24 +119,12 @@ useEffect(()=>{
           const snapshot = await getDocs(finalQuery)
           var newList:any[]=[]
           snapshot.forEach((doc:any)=>{
-            if(doc.data()!.reported!>=1){
+            
+            if(!isGoodOrder(doc.data(),profile)){
               return
             }
             newList.push({id:doc.id,...doc.data()})
             })
-            var userReportedOrdersIds:Array<String>=[] 
-          if(profile && profile.didReport!){
-              profile.didReport.forEach((value:any) => {
-                userReportedOrdersIds.push(value.id)
-              })
-          }
-          newList = newList.filter((v:orderProps)=>{
-            
-            if(v.reported &&  (userReportedOrdersIds.includes(v.id!) || v.reported>2) ){
-              return false
-            }
-            return true
-          })
             const docs = snapshot.docs
             const newLastDoc = docs[docs.length -1]
             if(!isMounted ){
@@ -235,4 +215,17 @@ const CitiePicker =(props:{value:string|null,onItemPicked:(v:string|null)=>void,
    placeHolder={props.placeHolder} 
    onValueSet={(v)=>props.onItemPicked(v)}></ListPicker>
   </IonItem>
+}
+
+function isGoodOrder(data:any,profile:any){
+  if(data!.reportsGot! ){
+    if(data!.reportsGot.length!>=2){
+      return false
+    } 
+    if(profile && profile.reportsDone! ){
+      if(intersection(profile.reportsDone!,data.reportsGot!).length>0){
+        return false
+      }
+    }}
+         return true
 }

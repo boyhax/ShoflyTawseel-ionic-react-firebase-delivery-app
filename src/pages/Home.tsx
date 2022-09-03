@@ -1,21 +1,19 @@
 import React, { useRef, useState } from 'react';
 import { IonAvatar, IonButton, IonButtons, IonContent, IonFab, IonFabButton,
-   IonHeader, IonIcon, IonImg, IonLabel, IonPage,
+   IonHeader, IonIcon, IonPage,
      IonTitle,
      IonToolbar } from '@ionic/react';
 import './Home.css';
-import { add, informationCircle, menuOutline, personCircle } from 'ionicons/icons';
+import { add, menuOutline, personCircle } from 'ionicons/icons';
 import { useHistory } from "react-router-dom";
 import { useGlobals } from '../providers/globalsProvider';
 import OrderList from '../components/OrderList';
 import AddOrder from '../components/AddOrder';
 import MainMenu from '../components/MainMenu';
-import { getAuth } from 'firebase/auth';
 const Tab1= () => {
   const {user,profile}= useGlobals()
   const history = useHistory()
   const [addOrder,setAddOrder] = useState(false)
-  const [menuOpen,setMenuOpen] = useState(false)
   const menuRef = useRef<any>()
   function onAddOrder(){
     setAddOrder(!addOrder)

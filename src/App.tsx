@@ -1,15 +1,8 @@
-import React, { FC, useEffect } from 'react';
+import React, {  } from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import {
   IonApp,
-  IonButton,
-  IonInput,
-  IonItem,
-  IonLabel,
-  IonPage,
   IonRouterOutlet,
-  IonTitle,
-  setupIonicReact,
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import Home from './pages/Home';
@@ -30,22 +23,16 @@ import '@ionic/react/css/text-alignment.css';
 import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
-import {FirebaseApp, getApps,initializeApp} from 'firebase/app';
 /* Theme variables */
 import './theme/variables.css';
-import {Config} from"./config"
 /* Global CSS */
 import './global.css';
 import Profile from './pages/Profile';
 import SignIn from './pages/SignIn';
-import GlobalProvider, { useGlobals } from './providers/globalsProvider';
+import GlobalProvider from './providers/globalsProvider';
 import OrdersPage from './pages/OrdersPage';
-const firebaseConfig=Config
 
-const firebaseApp = initializeApp(firebaseConfig)
-setupIonicReact({
-  mode: 'md'
-});
+
 
 const App: React.FC = () => {
   

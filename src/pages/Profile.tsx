@@ -1,21 +1,21 @@
 import React, { FC, useEffect, useState } from 'react';
 import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton, IonChip } from '@ionic/react';
-import { createOutline, exitSharp, logOutOutline, } from 'ionicons/icons';
+import { createOutline, logOutOutline, } from 'ionicons/icons';
 import { useGlobals } from '../providers/globalsProvider';
 import { collection, getDocs, getFirestore, orderBy, query, where } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import "./Profile.css"
 import OrderCard from '../components/OrderCard';
-import { Redirect, useHistory, useParams } from 'react-router';
+import { Redirect } from 'react-router';
 import { orderProps, updateTripCard, updateUserProfile } from '../providers/firebaseMain';
 import { TT } from '../components/utlis/tt';
 
 const Profile: React.FC = () => {
     const {user,profile} = useGlobals()
-    const [loading,setLoading]=useState(true)
-    const auth= getAuth()
-    const id = useParams()
-    const history =useHistory()
+    const [content,setContent]=useState<"orders"|"deliver">("orders")
+    // const auth= getAuth()
+    // const id = useParams()
+    // const history =useHistory()
     
     useEffect(()=>{
       
@@ -47,27 +47,33 @@ const Profile: React.FC = () => {
         
     
       </IonToolbar>
-      <IonItem>
-        <IonButtons>
-          <IonChip>
-            طلباتك
-          </IonChip>
-          <IonChip >
-           التوصيل
-          </IonChip>
-        </IonButtons>
-      </IonItem>
-      {/* <IonSlides>
-            <IonSlide>
-                <IonContent>orders</IonContent>
-            </IonSlide>
-            <IonSlide>
-            <IonContent>offers</IonContent>
-            </IonSlide>
-          </IonSlides> */}
-          {/* <IonToolbar>
-            
-          </IonToolbar> */}
+        <IonItem>
+          <IonButtons>
+            <IonChip 
+            color={content ==="orders"?"primary":"dark"}
+            onClick={()=>setContent('orders')}>
+              طلباتك
+            </IonChip>
+            <IonChip 
+            color={content ==="deliver"?"primary":"dark"}
+            onClick={()=>setContent('deliver')}>
+            التوصيل
+            </IonChip>
+          </IonButtons>
+        </IonItem>
+      
+      {user && content ==="orders"&& 
+            <IonContent>
+              <IonTitle>Orders</IonTitle>
+              <ProfileOrdersList/>
+            </IonContent>}
+      
+        {user && content ==="deliver"&& 
+            <IonContent>
+              <IonTitle>Orders</IonTitle>
+              <ProfileOrdersList/>
+            </IonContent>}
+  {/* </IonContent>
       <IonContent>
       {user && 
             <IonContent>
@@ -79,7 +85,7 @@ const Profile: React.FC = () => {
             <IonSpinner></IonSpinner>
             <IonLabel>please waite..</IonLabel>
             </IonContent>}
-</IonContent>
+</IonContent> */}
               
 
       
@@ -108,13 +114,12 @@ const ProfileEdit:React.FC=(props)=>{
   const auth= getAuth()
   const user = auth.currentUser
   const uid = user?.uid
-  const [data,setData]=useState({})
   const[loading,setLoading] = useState(false)
   const {profile} = useGlobals()
   const [newName,setNewName] = useState(profile.name!)
   function updateProfile(){
       setLoading(true);
-      updateUserProfile(uid,{...data,name:newName})
+      updateUserProfile(uid,{name:newName})
       .finally(()=>setLoading(false))
   }
   if(loading){
@@ -161,7 +166,7 @@ const ProfileOrdersList:FC=(props)=>{
     return () => {
       setIsMounted(false)
     }
-  })
+  },[])
 
   async function getData() {
     setRefreshing(true)
