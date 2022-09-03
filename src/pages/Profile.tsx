@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
-import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton } from '@ionic/react';
-import { exitSharp, } from 'ionicons/icons';
+import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton, IonChip } from '@ionic/react';
+import { createOutline, exitSharp, logOutOutline, } from 'ionicons/icons';
 import { useGlobals } from '../providers/globalsProvider';
 import { collection, getDocs, getFirestore, orderBy, query, where } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
@@ -8,6 +8,7 @@ import "./Profile.css"
 import OrderCard from '../components/OrderCard';
 import { Redirect, useHistory, useParams } from 'react-router';
 import { orderProps, updateTripCard, updateUserProfile } from '../providers/firebaseMain';
+import { TT } from '../components/utlis/tt';
 
 const Profile: React.FC = () => {
     const {user,profile} = useGlobals()
@@ -31,15 +32,30 @@ const Profile: React.FC = () => {
         <IonButtons slot="start">
           <IonBackButton defaultHref="/home" />
         </IonButtons>
-        <IonTitle slot='primary' >
-          Profile
-        </IonTitle>
-        <IonTitle>{profile?profile.name:"waiting..."}</IonTitle>
-
+        
+        <IonTitle slot='end'>{profile?profile.name:"Profile"}</IonTitle>
+        <IonButtons>
+          {user &&<IonButton onClick={()=>{getAuth().signOut()}}>
+            <IonIcon icon={logOutOutline}></IonIcon>
+            {TT("logout")}
+          </IonButton>}
+          {user && profile && <IonButton>
+            {TT("edit")} 
+            <IonIcon icon={createOutline}></IonIcon>
+          </IonButton>}
+        </IonButtons>
+        
     
       </IonToolbar>
       <IonItem>
-        <IonTitle>قائمة طلباتك</IonTitle>
+        <IonButtons>
+          <IonChip>
+            طلباتك
+          </IonChip>
+          <IonChip >
+           التوصيل
+          </IonChip>
+        </IonButtons>
       </IonItem>
       {/* <IonSlides>
             <IonSlide>
@@ -67,14 +83,14 @@ const Profile: React.FC = () => {
               
 
       
-        {user && 
+        {/* {user && 
         <IonButtons>
           <IonButton>تعديل الحساب</IonButton>
           <IonButton slot="start" color='danger' onClick={()=>{getAuth().signOut()}}>
           <IonTitle>تسجيل الخروج</IonTitle>
           <IonIcon icon={exitSharp}></IonIcon>
           </IonButton>
-        </IonButtons> }
+        </IonButtons> } */}
         
           
         

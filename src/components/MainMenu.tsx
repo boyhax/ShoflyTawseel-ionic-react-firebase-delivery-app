@@ -1,5 +1,5 @@
 import { ComponentProps } from "@ionic/core";
-import { IonContent , IonTitle, IonHeader, IonToolbar, IonList, IonItem, IonMenu, IonButtons, IonButton, IonIcon, IonRippleEffect} from "@ionic/react";
+import { IonContent , IonTitle, IonHeader, IonToolbar, IonList, IonItem, IonMenu, IonButtons, IonButton, IonIcon, IonRippleEffect, IonLabel} from "@ionic/react";
 import { getAuth } from "firebase/auth";
 import {  closeOutline,  } from "ionicons/icons";
 import React, {   useEffect,  } from "react";
@@ -12,7 +12,7 @@ interface props extends ComponentProps{
 }
 
 export default (Props:props)=>{
-    const {user} = useGlobals()
+    const {user,profile} = useGlobals()
     function close(){
         Props.menuRef.current.close()
     }
@@ -39,6 +39,8 @@ return<IonMenu  side="start" ref={Props.menuRef} >
             
             <IonItem className="item" onClick={()=>history.push("Profile")}>Profile
             <IonRippleEffect></IonRippleEffect>
+            <IonLabel>{user?profile?profile.name!:profile === undefined?"signing in..":"":""}</IonLabel>
+
 </IonItem>
             <IonItem className="item" onClick={()=>history.push("OrdersPage")}>My Orders
             <IonRippleEffect></IonRippleEffect>

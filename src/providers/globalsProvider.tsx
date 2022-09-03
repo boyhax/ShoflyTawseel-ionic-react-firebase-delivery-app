@@ -29,36 +29,28 @@ const GlobalProvider:React.FC =(props)=>{
         }
       },[])
       useEffect(()=>{
+        if(!user){
+          return
+      }
         fetchProfile()
       },[user])
     
       
   
   async function fetchProfile(){
-    if(!user){
-        return
-    }
+    
     const uid = getAuth().currentUser!.uid
-    const p = await getDoc(doc(getFirestore(),"users/"+uid))
 
-    console.log('p :>> ', p.data());
-    if(p.exists()){
-      if(p.data()["name"]==""){
-        updateUserProfile(uid,{name:generateName()})
-        fetchProfile()
-      }
-    }
-    setProfile(p.data())
+    
     onSnapshot(doc(getFirestore(),"users/"+uid),(doc)=>{
+      if(!doc.exists()){
+        return
+      }
       setProfile(doc.data())
       console.log('profile update :>> ', doc.data());
     })
   }
-const[timeout,isTimeout] = useState(false)
-  const loading =( user === undefined)
-    // if(!timeout){
-    //     return<LoadingScreen onClose={()=>isTimeout(true)}></LoadingScreen>
-    // }
+
     
     return<globalsContext.Provider value={{user,profile}}>
         {props.children}
