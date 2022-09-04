@@ -1,11 +1,18 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { GoogleMap } from '@capacitor/google-maps';
 import { useRef } from 'react';
-import { IonButton, IonContent } from '@ionic/react';
+import {  IonContent } from '@ionic/react';
 
+const gkey = process.env.REACT_APP_map_api_key!
 const MyMap: React.FC = () => {
   const mapRef = useRef<HTMLElement>();
+  const[markers,setMarkers]=useState<any>(false)
   let newMap: GoogleMap;
+
+  useEffect(()=>{
+    createMap()
+
+},[])
 
   async function createMap() {
     if (!mapRef.current) return;
@@ -13,7 +20,7 @@ const MyMap: React.FC = () => {
     newMap = await GoogleMap.create({
       id: 'my-cool-map',
       element: mapRef.current,
-      apiKey: process.env.REACT_APP_map_api_key!,
+      apiKey: gkey,
       config: {
         center: {
           lat: 33.6,
@@ -22,6 +29,26 @@ const MyMap: React.FC = () => {
         zoom: 8
       }
     })
+    newMap.enableCurrentLocation(true)
+    
+    newMap.setOnMapClickListener(async(data)=>{
+      console.log('data :>> ', data);
+      const newm = {
+        coordinate:{
+        lat:data.latitude,
+        lng:data.longitude
+        },
+        draggable:true,
+        title:"target place"
+      }
+      if(markers){
+        return
+      }
+      console.log('markers :>> ', markers);
+      const id = await newMap.addMarker(newm);
+      setMarkers(true)
+    })
+
   }
 
   return<IonContent className="component-wrapper">
@@ -31,7 +58,7 @@ const MyMap: React.FC = () => {
             height: 400
           }}></capacitor-google-map>
 
-          <IonButton onClick={()=>createMap()}>Create Map</IonButton>
+          {/* <IonButton onClick={()=>createMap()}>Create Map</IonButton> */}
         </IonContent>
   
 }

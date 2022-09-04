@@ -49,7 +49,8 @@ const App: React.FC = () => {
           <Route path="/details" component={Details} />
           <Route path="/SignIn" component={SignIn} />
           <Route path="/OrdersPage" component={OrdersPage} />
-          <Route path="/Map/:location" component={MapPage} />
+          <Route path="/map/:location" component={MapPage} />
+          <Route path="/map" component={MapPage} />
 
 
           <Route path="/" render={() => <Redirect to="/home" />} exact={true} />
