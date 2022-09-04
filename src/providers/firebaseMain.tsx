@@ -89,6 +89,7 @@ export const reportOrder=async(order:orderProps,why?:string,onDeleted?:()=>void)
   const profile = userProfile
   if(order && order.reportsGot! && profile && profile.reportsDone!){
       const filteredArray = intersection(profile.reportsDone,order.reportsGot)
+      console.log('filteredArray :>> ', filteredArray);
         reportedByUser = filteredArray.length >0
       }
   if(reportedByUser){
