@@ -31,6 +31,7 @@ import Profile from './pages/Profile';
 import SignIn from './pages/SignIn';
 import GlobalProvider from './providers/globalsProvider';
 import OrdersPage from './pages/OrdersPage';
+import MapPage from './pages/MapPage';
 
 
 
@@ -48,6 +49,7 @@ const App: React.FC = () => {
           <Route path="/details" component={Details} />
           <Route path="/SignIn" component={SignIn} />
           <Route path="/OrdersPage" component={OrdersPage} />
+          <Route path="/Map/:location" component={MapPage} />
 
 
           <Route path="/" render={() => <Redirect to="/home" />} exact={true} />
