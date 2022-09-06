@@ -1,12 +1,13 @@
-import { IonAlert, IonButton, IonCard, IonContent, IonIcon, IonInput, IonItem, IonLabel, IonModal, IonPage, IonSpinner, IonText, IonTextarea, IonTitle, IonToolbar } from "@ionic/react";
+import { IonAlert, IonButton, IonCard, IonContent, IonIcon, IonItem, IonLabel, IonModal, IonSpinner, IonTextarea, IonTitle, IonToolbar } from "@ionic/react";
 import { getAuth } from "firebase/auth";
 import { closeCircle } from "ionicons/icons";
-import React, { FC, PropsWithChildren, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useHistory } from "react-router";
 import { addNewTripCard } from "../providers/firebaseMain";
 import { useGlobals } from "../providers/globalsProvider";
 import ListPicker from "./ListPicker";
 import { Cities } from "./utlis/citiesUtlis";
+import MyMap from "./utlis/Map";
 
 
 
@@ -21,6 +22,9 @@ const AddOrder=({isOpen,setOpen}:Props)=>{
     const [comment,setComment]= useState<null|string|undefined>(undefined)
     const [err,setErr]= useState<{message:string,color:"red"|"blue"}|undefined>(undefined)
     const [loading,setLoading]= useState(false)
+    const [map,setMap]= useState(false)
+    const [location,setLocation]= useState<any>(null)
+
     const history = useHistory()
 const {profile,user} = useGlobals()
     const auth = getAuth()
@@ -61,6 +65,9 @@ const {profile,user} = useGlobals()
         }
        
     }
+    function showMap(){
+        setMap(true)
+    }
     return <IonModal isOpen={isOpen}>
         <IonAlert
           isOpen={!!err}
@@ -90,6 +97,14 @@ const {profile,user} = useGlobals()
                 placeHolder={"من :"} 
                 value={from} 
                 onValueSet={(v)=>setFrom(v)}/>
+                <IonButton onClick={()=>{showMap()}}>use location</IonButton>
+                <IonModal isOpen={map}>
+                    <IonButton onClick={()=>setMap(false)}>close</IonButton>
+                    <MyMap onLocationSet={((l)=>{setLocation(l)})}/>
+                </IonModal>
+                <IonLabel>{String(location)}</IonLabel>
+            </IonItem>
+            <IonItem>
                 <ListPicker 
                 data={Cities} 
                 placeHolder={"الى :"} 

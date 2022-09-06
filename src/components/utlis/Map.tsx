@@ -4,8 +4,15 @@ import { useRef } from 'react';
 import {  IonButton, IonButtons, IonContent } from '@ionic/react';
 import { Geolocation } from '@capacitor/geolocation';
 
+interface Props  {
+  onLocationSet?:(l:{
+      lat:number,
+      lng:number
+})=>void,
+
+}
 const gkey = process.env.REACT_APP_map_api_key!
-const MyMap: React.FC = () => {
+const MyMap: React.FC<Props> = ({onLocationSet}) => {
   const mapRef = useRef<any>();
   const[markers,setMarkers]=useState<any>([])
   const[map,setMap] = useState<GoogleMap|null>(null)
@@ -30,9 +37,25 @@ const MyMap: React.FC = () => {
       }
     })
     setMap(newMap)
+    newMap.setOnMapClickListener((data)=>{
+      if(onLocationSet){
+        onLocationSet({
+          lat:data.latitude,
+            lng:data.longitude
+        });
+      }
+      
+    })
   }
  async function markMyLocation(){
     const pos = await Geolocation.getCurrentPosition()
+
+    if(onLocationSet){
+    onLocationSet({
+      lat:pos.coords.latitude,
+        lng:pos.coords.longitude
+    })}
+
     if(!!map){
       
       // map.removeMarker("1")

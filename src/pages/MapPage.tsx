@@ -1,5 +1,5 @@
 import React from 'react';
-import { IonButton, IonButtons, IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import { IonBackButton, IonButtons, IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 // import './styles.css';
 import MyMap from '../components/utlis/Map';
 
@@ -8,6 +8,9 @@ const MapPage: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
+          <IonButtons slot='start'>
+            <IonBackButton defaultHref='home'></IonBackButton>
+          </IonButtons>
           <IonTitle>Map</IonTitle>
         </IonToolbar>
       </IonHeader>
