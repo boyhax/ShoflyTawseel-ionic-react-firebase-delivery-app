@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { GoogleMap } from '@capacitor/google-maps';
 import { useRef } from 'react';
-import {  IonContent } from '@ionic/react';
+import {  IonButton, IonButtons, IonContent } from '@ionic/react';
+import { Geolocation } from '@capacitor/geolocation';
 
 const gkey = process.env.REACT_APP_map_api_key!
 const MyMap: React.FC = () => {
-  const mapRef = useRef<HTMLElement>();
-  const[markers,setMarkers]=useState<any>(false)
-  let newMap: GoogleMap;
-
+  const mapRef = useRef<any>();
+  const[markers,setMarkers]=useState<any>([])
+  const[map,setMap] = useState<GoogleMap|null>(null)
   useEffect(()=>{
     createMap()
 
@@ -17,7 +17,7 @@ const MyMap: React.FC = () => {
   async function createMap() {
     if (!mapRef.current) return;
 
-    newMap = await GoogleMap.create({
+    const newMap = await GoogleMap.create({
       id: 'my-cool-map',
       element: mapRef.current,
       apiKey: gkey,
@@ -29,26 +29,35 @@ const MyMap: React.FC = () => {
         zoom: 8
       }
     })
-    newMap.enableCurrentLocation(true)
-    
-    newMap.setOnMapClickListener(async(data)=>{
-      console.log('data :>> ', data);
-      const newm = {
+    setMap(newMap)
+  }
+ async function markMyLocation(){
+    const pos = await Geolocation.getCurrentPosition()
+    if(!!map){
+      
+      // map.removeMarker("1")
+     const id = await map.addMarker({
         coordinate:{
-        lat:data.latitude,
-        lng:data.longitude
+          lat:pos.coords.latitude,
+          lng:pos.coords.longitude
         },
-        draggable:true,
-        title:"target place"
+         
+       })
+       setMarkers([...markers,id])
+       map.setCamera({
+        coordinate: {
+          lat:pos.coords.latitude,
+        lng:pos.coords.longitude
+        },
+      })  
+      if(markers.length>0){
+        console.log('markers :>> ', markers);
+        map.removeMarkers(markers)
+        setMarkers([])
       }
-      if(markers){
-        return
-      }
-      console.log('markers :>> ', markers);
-      const id = await newMap.addMarker(newm);
-      setMarkers(true)
-    })
-
+    }
+    
+    console.log('pos :>> ', pos);
   }
 
   return<IonContent className="component-wrapper">
@@ -56,7 +65,12 @@ const MyMap: React.FC = () => {
             display: 'inline-block',
             width: 275,
             height: 400
-          }}></capacitor-google-map>
+          }}>
+            
+          </capacitor-google-map>
+          <IonButtons>
+                <IonButton onClick={()=>markMyLocation()} >my location</IonButton>
+            </IonButtons>
 
           {/* <IonButton onClick={()=>createMap()}>Create Map</IonButton> */}
         </IonContent>
