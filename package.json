@@ -3,6 +3,7 @@
   "version": "2.0.0",
   "private": true,
   "dependencies": {
+    "@capacitor-community/fcm": "^2.0.2",
     "@capacitor/android": "3.5.1",
     "@capacitor/core": "^3.5.1",
     "@capacitor/geolocation": "^4.0.1",
