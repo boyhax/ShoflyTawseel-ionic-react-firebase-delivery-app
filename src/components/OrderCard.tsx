@@ -70,7 +70,7 @@ export default ({order,whatsapp,message,remove,report,canApplyFor,onDeleted,onRe
         }
 
     }
-return<IonCard className="card row" >
+return<IonCard className="card row" color="tertiary">
     <IonPopover isOpen={reporting}>
         <IonLabel slot="primary">اذكر السبب</IonLabel>
         <IonTextarea onIonChange={(e)=>{
