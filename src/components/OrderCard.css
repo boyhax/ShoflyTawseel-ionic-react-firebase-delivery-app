@@ -1,14 +1,23 @@
 
 .card{
-    flex: 1;
     direction: rtl;
-    background-color: aliceblue;
+    width: auto;
 
+}
+.fsize-small{
+    font-size: smaller;
 }
 .row{
     display: inline-flex;
     flex-direction: row-reverse;
     }
+.content{
+    width: auto;
+}
+.w-min {
+  width: min-content;
+}
+
 .text{
     font-size: large;
     color: rgb(146, 29, 29);

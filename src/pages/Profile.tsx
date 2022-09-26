@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton, IonChip } from '@ionic/react';
+import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton, IonChip, IonSegment, IonSegmentButton } from '@ionic/react';
 import { createOutline, logOutOutline, } from 'ionicons/icons';
 import { useGlobals } from '../providers/globalsProvider';
 import { collection, getDocs, getFirestore, orderBy, query, where } from 'firebase/firestore';
@@ -44,59 +44,29 @@ const Profile: React.FC = () => {
             <IonIcon icon={createOutline}></IonIcon>
           </IonButton>}
         </IonButtons>
-        
-    
       </IonToolbar>
-        <IonItem>
-          <IonButtons>
-            <IonChip 
-            color={content ==="orders"?"primary":"dark"}
-            onClick={()=>setContent('orders')}>
-              طلباتك
-            </IonChip>
-            <IonChip 
-            color={content ==="deliver"?"primary":"dark"}
-            onClick={()=>setContent('deliver')}>
-            التوصيل
-            </IonChip>
-          </IonButtons>
-        </IonItem>
+
+      <IonSegment  value={content}>
+        <IonSegmentButton value="orders" onClick={()=>setContent('orders')}>
+          <IonLabel>orders</IonLabel>
+        </IonSegmentButton>
+        <IonSegmentButton value="deliver" onClick={()=>setContent('deliver')}>
+          <IonLabel>deliver</IonLabel>
+        </IonSegmentButton>
+      </IonSegment>
+
+       
       
       {user && content ==="orders"&& 
             <IonContent>
-              <IonTitle>Orders</IonTitle>
               <ProfileOrdersList/>
             </IonContent>}
       
         {user && content ==="deliver"&& 
             <IonContent>
-              <IonTitle>Orders</IonTitle>
               <ProfileOrdersList/>
             </IonContent>}
-  {/* </IonContent>
-      <IonContent>
-      {user && 
-            <IonContent>
-              <ProfileOrdersList/>
-            </IonContent>}
-        
-          {user ===undefined &&
-          <IonContent>
-            <IonSpinner></IonSpinner>
-            <IonLabel>please waite..</IonLabel>
-            </IonContent>}
-</IonContent> */}
-              
-
-      
-        {/* {user && 
-        <IonButtons>
-          <IonButton>تعديل الحساب</IonButton>
-          <IonButton slot="start" color='danger' onClick={()=>{getAuth().signOut()}}>
-          <IonTitle>تسجيل الخروج</IonTitle>
-          <IonIcon icon={exitSharp}></IonIcon>
-          </IonButton>
-        </IonButtons> } */}
+  
         
           
         

@@ -1,5 +1,5 @@
 import { ComponentProps } from "@ionic/core";
-import { IonCard, IonLabel,IonContent ,IonChip, IonIcon, IonButton, IonPopover, IonTextarea, IonSpinner} from "@ionic/react";
+import { IonCard, IonLabel,IonContent ,IonChip, IonIcon, IonButton, IonPopover, IonTextarea, IonSpinner, IonCardHeader, IonTitle, IonBadge, IonFab, IonFabButton} from "@ionic/react";
 import { getAuth } from "firebase/auth";
 import { doc, getFirestore, onSnapshot, } from "firebase/firestore";
 import {  alertCircle, trashOutline, thumbsDownOutline, thumbsUpOutline, chatboxEllipsesOutline, logoWhatsapp } from "ionicons/icons";
@@ -70,7 +70,7 @@ export default ({order,whatsapp,message,remove,report,canApplyFor,onDeleted,onRe
         }
 
     }
-return<IonCard className="card row" color="tertiary">
+return<IonCard className="card" color="tertiary">
     <IonPopover isOpen={reporting}>
         <IonLabel slot="primary">اذكر السبب</IonLabel>
         <IonTextarea onIonChange={(e)=>{
@@ -83,12 +83,21 @@ return<IonCard className="card row" color="tertiary">
             onReport()
         }}>submit</IonButton>
     </IonPopover>
-    <div >
+    {/* <IonCardHeader>{data.name}</IonCardHeader> */}
+
+    <div className="content" >
     <IonChip className="BoldText" color="secondary">{data.name}</IonChip>
     <IonChip className="BoldText" color="secondary">{"من: "+data.from}</IonChip>
     <IonChip className="BoldText" color="secondary">{"الى: "+data.to}</IonChip>
-    {data.appliedUsers && <IonChip className="BoldText" color="secondary">{"قبول الطلب: "+data.appliedUsers.length}</IonChip>
-}
+    {data.appliedUsers &&
+     <IonChip className="BoldText" color="secondary">
+        {"قبول الطلب: "}
+        <IonBadge>
+            {data.appliedUsers.length}        
+        </IonBadge>
+        </IonChip>
+        }
+    
     <IonChip className="BoldText" color="secondary"
     onClick={()=>toggleComment()}>
         <IonPopover ref={popOver} >
@@ -96,9 +105,11 @@ return<IonCard className="card row" color="tertiary">
         {"الوصف: "+comment.slice(0,10)+"..."}
         </IonChip>
 
-    <IonChip >{date}</IonChip>
+    <IonChip className="fsize-small">
+        {date}
+    </IonChip>
     </div>
-    <div className="iconsContainer">
+    <div className="w-min row">
     {message &&
         <IonButton 
             onClick={()=>
@@ -109,34 +120,37 @@ return<IonCard className="card row" color="tertiary">
         icon={chatboxEllipsesOutline} >
         </IonIcon>
     </IonButton>}
-    {whatsapp && <IonButton  
-    onClick={()=>OpenWhatsapp(order.number)} 
-    color="light" shape="round" >
+    {whatsapp && 
+        <IonButton  
+        onClick={()=>OpenWhatsapp(order.number)} 
+        color="light" shape="round" >
         <IonIcon size="large" color="success" icon={logoWhatsapp} ></IonIcon>
-    </IonButton>}
+        </IonButton>}
     {canApplyFor && 
-    <IonButton  
+        <IonButton  
         onClick={()=>{_applyToOrder()}} 
-        color="light" 
-        shape="round" >
-        {userApplied!==undefined && <IonIcon 
-            size="large" 
+        color="dark" 
+        fill="clear" >
+        {userApplied!==undefined && 
+        <IonIcon 
+            // size="xl" 
             color="success" 
             icon={ userApplied?thumbsDownOutline:thumbsUpOutline} ></IonIcon>}
         {userApplied===undefined && <IonSpinner></IonSpinner>}
+        {userApplied?"un accept":"accept"}
     </IonButton>}
     { remove && <IonButton  onClick={()=>{deleteOrder(data);
-    if(typeof onDeleted =="function")
-    {onDeleted()}
-}} 
-    color="light" shape="round" >
+        if(typeof onDeleted =="function")
+        {onDeleted()}
+        }} 
+        color="light" shape="round" >
         <IonIcon size="large" color="success" icon={trashOutline} ></IonIcon>
     </IonButton>}
-    { report && <IonButton  onClick={()=>setReporting(!reporting)} 
-    color="light" shape="round" >
+    { report && <IonButton fill="clear"  onClick={()=>setReporting(!reporting)} 
+        color="dark" shape="round" >
         <IonIcon size="large" color="success" icon={alertCircle} ></IonIcon>
-    
-    إبلاغ</IonButton>}
+        إبلاغ
+        </IonButton>}
     
     </div>
     </IonCard>

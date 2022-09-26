@@ -27,7 +27,7 @@ const MyMap: React.FC<Props> = ({onLocationSet}) => {
     const newMap = await GoogleMap.create({
       id: 'my-cool-map',
       element: mapRef.current,
-      apiKey: gkey,
+      apiKey: process.env.REACT_APP_map_api_key!,
       config: {
         center: {
           lat: 33.6,

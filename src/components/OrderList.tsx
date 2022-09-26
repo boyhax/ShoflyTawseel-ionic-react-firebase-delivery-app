@@ -15,7 +15,7 @@ import { useGlobals } from "../providers/globalsProvider";
 
 export default function OrderList(props:any) {
   const [isMounted, setIsMounted] = useState(true)
-const [list,setList]=useState<null|Array<orderProps>>(null)
+const [list,setList]=useState<null|Array<orderProps>|any>(null)
   const [refreshing,setRefreshing] = useState(false)
   const [count,setCount] = useState(10)
   const [showFilter,setShowFilter] = useState(false)
@@ -177,11 +177,10 @@ useEffect(()=>{
     
       {!!list && 
       <IonList  className='list'>
-        {list.map((v,i)=>{
-          return <IonItem key={i} >
-              <OrderCard order={v}  report canApplyFor onRefresh={()=>Refresh()} onDeleted={()=>{delete list[i];setList(list)}}>
+        {list.map((v:any,i:any)=>{
+          return <OrderCard key={i} order={v}  report canApplyFor onRefresh={()=>Refresh()} onDeleted={()=>{delete list[i];setList(list)}}>
               </OrderCard>
-          </IonItem>})}
+        })}
         </IonList>}
         {!!listMessage &&<IonItem style={{display:"flex",flexDirection:"column"}}>
           <IonLabel color={listMessage.color}>{listMessage.text}</IonLabel>
