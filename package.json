@@ -6,6 +6,7 @@
     "@capacitor-community/fcm": "^2.0.2",
     "@capacitor/android": "^4.1.0",
     "@capacitor/core": "^4.1.0",
+    "@capacitor/device": "^4.0.1",
     "@capacitor/geolocation": "^4.0.1",
     "@capacitor/google-maps": "^4.1.0",
     "@capacitor/ios": "^3.5.1",

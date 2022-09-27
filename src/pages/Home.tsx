@@ -10,7 +10,9 @@ import { useGlobals } from '../providers/globalsProvider';
 import OrderList from '../components/OrderList';
 import AddOrder from '../components/AddOrder';
 import MainMenu from '../components/MainMenu';
-import { FCM } from "@capacitor-community/fcm";
+
+
+
 const Tab1= () => {
   const {user,profile}= useGlobals()
   const history = useHistory()
@@ -24,14 +26,7 @@ const Tab1= () => {
   function toggleMenu(){
     menuRef.current?.toggle()
   }
-  useEffect(()=>{
-    checkToken()
-  })
- const checkToken= async  () => {
-  var c = await FCM.getToken()
-  setFcmToken(c)
-  
- }
+ 
     return (
     <IonPage>
       <MainMenu menuRef={menuRef}></MainMenu>

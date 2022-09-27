@@ -2,17 +2,9 @@ import  { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc,
   getDoc, getFirestore, query, serverTimestamp, setDoc, 
    updateDoc } from 'firebase/firestore';
 import { getAuth, updateProfile } from "firebase/auth";
-import { initializeApp } from 'firebase/app';
-import { setupIonicReact } from '@ionic/react';
-import { Config } from '../config';
 import { userProfile } from './globalsProvider';
+import { db } from '../App';
 
-const firebaseConfig=Config
-initializeApp(firebaseConfig)
-setupIonicReact({
-  mode: 'md'
-});
-const db = getFirestore()
 
 
 export async function getTripCard(id:String){

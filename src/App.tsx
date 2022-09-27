@@ -34,8 +34,35 @@ import OrdersPage from './pages/OrdersPage';
 import MapPage from './pages/MapPage';
 import OrderPage from './pages/OrderPage';
 import ApplicationsPage from './pages/ApplicationsPage';
+import Chat from './pages/chat/chat';
+import Chats from './pages/chat/chats';
+import { Device } from '@capacitor/device';
+import { FCM } from '@capacitor-community/fcm';
+import { initializeApp } from 'firebase/app';
+import { setupIonicReact } from '@ionic/react';
+import { Config } from './config';
+import { getFirestore } from 'firebase/firestore';
 
 
+const firebaseConfig=Config()
+initializeApp(firebaseConfig)
+export const db = getFirestore()
+
+
+setupIonicReact({
+  mode: 'md'
+});
+
+
+
+Device.getInfo().then((v)=>{
+  console.log('platform :>> ', v.platform);
+  if(["android","ios"].includes(v.platform)){
+    FCM.getToken().then((t)=>{
+
+    })
+  }
+})
 
 const App: React.FC = () => {
   
@@ -55,6 +82,8 @@ const App: React.FC = () => {
           <Route path="/map" component={MapPage} />
           <Route path="/order/:id" component={OrderPage} />
           <Route path="/applications/:id" component={ApplicationsPage} />
+          <Route path="/chat/:id" component={Chat} />
+          <Route path="/chats" exact={true} component={Chats} />
 
 
 
