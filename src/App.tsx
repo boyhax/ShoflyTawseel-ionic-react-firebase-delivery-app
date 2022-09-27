@@ -32,6 +32,8 @@ import SignIn from './pages/SignIn';
 import GlobalProvider from './providers/globalsProvider';
 import OrdersPage from './pages/OrdersPage';
 import MapPage from './pages/MapPage';
+import OrderPage from './pages/OrderPage';
+import ApplicationsPage from './pages/ApplicationsPage';
 
 
 
@@ -51,6 +53,9 @@ const App: React.FC = () => {
           <Route path="/OrdersPage" component={OrdersPage} />
           <Route path="/map/:location" component={MapPage} />
           <Route path="/map" component={MapPage} />
+          <Route path="/order/:id" component={OrderPage} />
+          <Route path="/applications/:id" component={ApplicationsPage} />
+
 
 
           <Route path="/" render={() => <Redirect to="/home" />} exact={true} />

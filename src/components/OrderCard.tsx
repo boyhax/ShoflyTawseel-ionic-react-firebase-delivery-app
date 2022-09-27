@@ -4,6 +4,7 @@ import { getAuth } from "firebase/auth";
 import { doc, getFirestore, onSnapshot, } from "firebase/firestore";
 import {  alertCircle, trashOutline, thumbsDownOutline, thumbsUpOutline, chatboxEllipsesOutline, logoWhatsapp } from "ionicons/icons";
 import React, { useEffect, useRef, useState } from "react";
+import { useHistory } from "react-router";
 import { applyForCard, deleteOrder, is_user_applied_to_card, orderProps, removeApplicationToOrder, reportOrder } from "../providers/firebaseMain";
 import { useGlobals } from "../providers/globalsProvider";
 import "./OrderCard.css"
@@ -17,7 +18,7 @@ remove?:any,
 report?:any,
 canApplyFor?:any
 onDeleted?:()=>void,
-onRefresh?:()=>void
+onRefresh?:()=>void,
 }
 const SendSMSMessage = (phoneNumber:String, message:String) => {
     const separator = 'ios' ? '&' : '?'
@@ -37,11 +38,16 @@ export default ({order,whatsapp,message,remove,report,canApplyFor,onDeleted,onRe
     const uid= getAuth().currentUser?.uid
     const {user} = useGlobals()
     const [userApplied,setApplied] = useState<boolean|undefined>(data.appliedUsers?is_user_applied_to_card(uid!,data):false)
+    const history=useHistory()
+    const owner = data.uid == uid
+    
     useEffect(()=>{
         const unsub = onSnapshot(doc(getFirestore(),"orders/"+data.id),(doc)=>{
             setData(doc.data())
         })
-        return unsub
+        return ()=>{
+            unsub()
+        }
     })
     const toggleComment=()=>{
         popOver.current!.present()
@@ -53,7 +59,7 @@ export default ({order,whatsapp,message,remove,report,canApplyFor,onDeleted,onRe
         }
         setApplied(undefined)
         if(!userApplied){
-            applyForCard(uid!,data.id!).finally(()=>{
+            applyForCard(uid!,data.id!,data.uid!).finally(()=>{
                 setApplied(true)
             })
         }else{
@@ -70,7 +76,7 @@ export default ({order,whatsapp,message,remove,report,canApplyFor,onDeleted,onRe
         }
 
     }
-return<IonCard className="card" color="tertiary">
+return<IonCard className="card" color="tertiary" >
     <IonPopover isOpen={reporting}>
         <IonLabel slot="primary">اذكر السبب</IonLabel>
         <IonTextarea onIonChange={(e)=>{
@@ -83,18 +89,20 @@ return<IonCard className="card" color="tertiary">
             onReport()
         }}>submit</IonButton>
     </IonPopover>
-    {/* <IonCardHeader>{data.name}</IonCardHeader> */}
 
     <div className="content" >
     <IonChip className="BoldText" color="secondary">{data.name}</IonChip>
     <IonChip className="BoldText" color="secondary">{"من: "+data.from}</IonChip>
     <IonChip className="BoldText" color="secondary">{"الى: "+data.to}</IonChip>
     {data.appliedUsers &&
-     <IonChip className="BoldText" color="secondary">
+     <IonChip className="BoldText" color="secondary"
+     onClick={()=>{
+        if(owner){
+            history.push("/applications/"+data.id)
+        }
+     }}>
         {"قبول الطلب: "}
-        <IonBadge>
-            {data.appliedUsers.length}        
-        </IonBadge>
+         {data.appliedUsers.length}        
         </IonChip>
         }
     
@@ -109,6 +117,7 @@ return<IonCard className="card" color="tertiary">
         {date}
     </IonChip>
     </div>
+
     <div className="w-min row">
     {message &&
         <IonButton 

@@ -11,7 +11,12 @@ export function TT(text:string,language:string="en"){
             // ttData.writeFile(t,{})
         }
     }else{
-        ttData.writeFile(t,{})
+        var d = ttData
+        d[text]={en:text}
+        d= JSON.stringify(d)
+        // ttData.writeFile("transulatedText.json",d,()=>{
+        //     console.log("done")
+        // })
     }
     return text
 }

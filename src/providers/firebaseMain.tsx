@@ -1,5 +1,5 @@
 import  { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, 
-  getDoc, getFirestore, setDoc, 
+  getDoc, getFirestore, query, serverTimestamp, setDoc, 
    updateDoc } from 'firebase/firestore';
 import { getAuth, updateProfile } from "firebase/auth";
 import { initializeApp } from 'firebase/app';
@@ -55,9 +55,10 @@ export async function getTripCard(id:String){
     }
     return state
   }
-export async function getProfile(uid:string) {
-  return await getDoc(doc(getFirestore(),"users/"+uid))
-  
+export async function getProfile(uid:string,callback:(profile:any)=>void=(c)=>{}) {
+   const res = await getDoc(doc(getFirestore(),"users/"+uid))
+   callback(res)
+  return res
 }
 export async function updateUserProfile(uid:any,data:any){
   
@@ -136,16 +137,35 @@ async function getOrderReports(id:string){
   
   return data.exists()?data.data().reports!?data.data().reports:[]:undefined
 }
-export async function applyForCard(UserUID:string,cardUID:string) {
+export async function applyForCard(UserUID:string,cardUID:string,orderOwner:string) {
+  const newApplication = {
+    time:serverTimestamp(),
+    orderID:cardUID,
+    user:UserUID,
+    orderOwner:orderOwner
+  }
+  await setDoc(doc(db,"ordersApplications/"+cardUID+"/col"+UserUID),newApplication)
   const res = await updateDoc(doc(getFirestore(),"orders/"+cardUID),
-  {"appliedUsers":arrayUnion(UserUID)})
+  {
+    "appliedUsers":arrayUnion(UserUID),
+  }
+    )
+  
   return res
+}
+export async function getApplicationsToOrder(cardUID:string) {
+  const res = await query(collection(getFirestore(),"ordersApplications/"+cardUID+"/col"))
+  if (!!res){
+    return res
+  }
+  return []
 }
 export async function removeApplicationToOrder(UserUID:string,cardUID:string) {
   const res = await updateDoc(doc(getFirestore(),"orders/"+cardUID),
   {"appliedUsers":arrayRemove(UserUID)})
   return res
 }
+
 export function is_user_applied_to_card(UserUID:string,order:orderProps){
   return order.appliedUsers?.includes(UserUID)
 }

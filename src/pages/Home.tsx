@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { IonAvatar, IonButton, IonButtons, IonContent, IonFab, IonFabButton,
    IonHeader, IonIcon, IonPage,
      IonTitle,
@@ -10,10 +10,13 @@ import { useGlobals } from '../providers/globalsProvider';
 import OrderList from '../components/OrderList';
 import AddOrder from '../components/AddOrder';
 import MainMenu from '../components/MainMenu';
+import { FCM } from "@capacitor-community/fcm";
 const Tab1= () => {
   const {user,profile}= useGlobals()
   const history = useHistory()
   const [addOrder,setAddOrder] = useState(false)
+  const [fcmToken,setFcmToken] = useState<any>(null)
+
   const menuRef = useRef<any>()
   function onAddOrder(){
     setAddOrder(!addOrder)
@@ -21,7 +24,14 @@ const Tab1= () => {
   function toggleMenu(){
     menuRef.current?.toggle()
   }
+  useEffect(()=>{
+    checkToken()
+  })
+ const checkToken= async  () => {
+  var c = await FCM.getToken()
+  setFcmToken(c)
   
+ }
     return (
     <IonPage>
       <MainMenu menuRef={menuRef}></MainMenu>
@@ -47,6 +57,7 @@ const Tab1= () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
+        <IonTitle>{fcmToken}</IonTitle>
         <OrderList></OrderList>
         <AddOrder isOpen={addOrder} setOpen={(v)=>setAddOrder(v)}/>
 

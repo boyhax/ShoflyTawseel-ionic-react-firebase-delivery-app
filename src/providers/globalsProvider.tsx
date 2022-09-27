@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, FC } from "react";  
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import "./globalsProvider.css"
-import { doc, getFirestore, onSnapshot } from "firebase/firestore";
+import { doc, getDoc, getFirestore, onSnapshot } from "firebase/firestore";
 import { Network } from '@capacitor/network';
 
 export var userProfile:any = null
@@ -39,27 +39,32 @@ const GlobalProvider:React.FC =(props)=>{
         
       },[])
       useEffect(()=>{
-        if(!user){
-          return
+        if(user){
+          const unsub = fetchProfile()
+          return ()=>{unsub()}
       }
-        fetchProfile()
       },[user])
     
       
   
-  async function fetchProfile(){
-    
+   function fetchProfile(){
+    setProfile(undefined)
     const uid = getAuth().currentUser!.uid
 
-    
-    onSnapshot(doc(getFirestore(),"users/"+uid),(doc)=>{
-      if(!doc.exists()){
-        return
-      }
-      setProfile(doc.data())
-      userProfile = doc.data()
-      console.log('profile update :>> ', doc.data());
-    })
+    console.log('uid :>> ', uid);
+    const ref = doc(getFirestore(),"users/"+uid)
+    const unsub =  onSnapshot(ref,(doc)=>{
+        if(!doc.exists()){
+          return
+        }
+        console.log('profile update :>> ', doc.data());
+
+        setProfile(doc.data())
+      })
+        getDoc(ref).then((snap)=>{
+        console.log('profile :>> ', snap.data());
+      });
+    return unsub
   }
 
     
