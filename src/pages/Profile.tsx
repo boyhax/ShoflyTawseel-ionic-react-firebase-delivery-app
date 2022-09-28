@@ -1,14 +1,15 @@
 import React, { FC, useEffect, useState } from 'react';
-import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton, IonChip, IonSegment, IonSegmentButton } from '@ionic/react';
+import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton, IonChip, IonSegment, IonSegmentButton, IonCard, IonCardContent, IonGrid, IonRow, IonAvatar, IonImg, IonCol, IonItemDivider } from '@ionic/react';
 import { createOutline, logOutOutline, } from 'ionicons/icons';
 import { useGlobals } from '../providers/globalsProvider';
-import { collection, getDocs, getFirestore, orderBy, query, where } from 'firebase/firestore';
+import { collection, DocumentSnapshot, getDocs, getFirestore, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import "./Profile.css"
 import OrderCard from '../components/OrderCard';
 import { Redirect } from 'react-router';
 import { orderProps, updateTripCard, updateUserProfile } from '../providers/firebaseMain';
 import { TT } from '../components/utlis/tt';
+import { ApplicationCard } from './ApplicationsPage';
 
 const Profile: React.FC = () => {
     const {user,profile} = useGlobals()
@@ -21,7 +22,7 @@ const Profile: React.FC = () => {
       
   },[user]);
    
-    if(!user){
+    if(!user || !profile){
       return<Redirect to={"/SignIn"}></Redirect>
     }
     
@@ -33,19 +34,36 @@ const Profile: React.FC = () => {
           <IonBackButton defaultHref="/home" />
         </IonButtons>
         
-        <IonTitle slot='end'>{profile?profile.name:"Profile"}</IonTitle>
-        <IonButtons>
-          {user &&<IonButton onClick={()=>{getAuth().signOut()}}>
-            <IonIcon icon={logOutOutline}></IonIcon>
-            {TT("logout")}
-          </IonButton>}
-          {user && profile && <IonButton>
-            {TT("edit")} 
-            <IonIcon icon={createOutline}></IonIcon>
-          </IonButton>}
-        </IonButtons>
+        
       </IonToolbar>
+      <IonItem>
+          <IonGrid >
+            <IonRow>
+              <IonCol>
+                <IonAvatar><IonImg src={!!profile.photoURL?profile.photoURL
+                :"https://avataaars.io/?avatarStyle=Circle&topType=ShortHairFrizzle&accessoriesType=Blank&hairColor=Brown&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Default&eyebrowType=FlatNatural&mouthType=Default&skinColor=Light"}></IonImg>
+                </IonAvatar>
+                <IonCol>
+                  <IonLabel>Name : {profile.name}</IonLabel>
+                  <IonLabel>                     </IonLabel>
+                  <IonLabel>email : {profile.email}</IonLabel>
+                </IonCol>
+                
+                
+              </IonCol>
+              <IonCol>
+                <IonButton>{TT("edit")}
+                </IonButton>
+                <IonButton color={'danger'} onClick={()=>{getAuth().signOut()}}>
+                  {TT("logOut")}
+                  <IonIcon icon={logOutOutline}></IonIcon>
+                </IonButton>
+              </IonCol>
+              
 
+              </IonRow>
+          </IonGrid>
+        </IonItem>
       <IonSegment  value={content}>
         <IonSegmentButton value="orders" onClick={()=>setContent('orders')}>
           <IonLabel>orders</IonLabel>
@@ -64,7 +82,7 @@ const Profile: React.FC = () => {
       
         {user && content ==="deliver"&& 
             <IonContent>
-              <ProfileOrdersList/>
+              <ProfileApplicationsList/>
             </IonContent>}
   
         
@@ -129,30 +147,38 @@ const ProfileOrdersList:FC=(props)=>{
   const [isMounted, setIsMounted] = useState(true)
   const {user,profile} = useGlobals()
   useEffect(()=>{
-      getData();
-  },[user])
-  useEffect(()=>{
-    setIsMounted(true)
-    return () => {
-      setIsMounted(false)
-    }
+    const unsub = getData();
+    return()=>{unsub()}
   },[])
+  
 
-  async function getData() {
+   function getData() {
     setRefreshing(true)
     const ref = collection(getFirestore(),"orders")
     var firstQuery = query(ref,orderBy("time","desc"))
     var finalQuery= query(firstQuery,where("uid","==",getAuth().currentUser?.uid))
-    const snapshot = await getDocs(finalQuery)
-    var newList:any[]=[]
-     snapshot.forEach((doc)=>{
-        newList.push({id:doc.id,...doc.data()})
-       })
-       if(isMounted){
-        setList(newList)
-        setRefreshing(false)    
-       }
-    
+    getDocs(finalQuery).then((snap)=>{
+
+      var newList:any[]=[]
+      snap.forEach((doc)=>{
+         newList.push(doc.data())
+        })
+        if(isMounted){
+         setList(newList)
+         setRefreshing(false)    
+        }
+      })
+    return onSnapshot(finalQuery,(snap)=>{
+
+      var newList:any[]=[]
+      snap.forEach((doc)=>{
+         newList.push(doc.data())
+        })
+        if(isMounted){
+         setList(newList)
+         setRefreshing(false)    
+        }
+      })
   } 
   function onOrderRemoved(value:object){
     const newList:any = list?.filter((value_)=>{
@@ -163,18 +189,54 @@ const ProfileOrdersList:FC=(props)=>{
   return<IonList>
     {refreshing && <IonSpinner></IonSpinner>}
       {!!list && list.map((value, index, array) => {
-        if(profile){
-          checkName(value,profile)
-        }
         
         return <OrderCard order={value} key={index} remove onDeleted={()=>onOrderRemoved(value)}></OrderCard>
         })}
         {!list && !refreshing && <IonButton onClick={()=>getData()}>refresh</IonButton>}
   </IonList>
 }
-function checkName(value:orderProps,profile:any){
-  if (value.name !== profile.name){
-    updateTripCard(value.id!,{name:profile.name})
-  }
+const ProfileApplicationsList:FC=(props)=>{
+  const [list,setList]=useState<null|any>(null)
+  const [refreshing,setRefreshing] = useState(true)
+  const [isMounted, setIsMounted] = useState(true)
+  const {user,profile} = useGlobals()
+  useEffect(()=>{
+      const unsub = getData();
+      return()=>{unsub()}
+  },[])
+  useEffect(()=>{
+    setIsMounted(true)
+    return () => {
+      setIsMounted(false)
+    }
+  },[])
 
+   function getData() {
+    setRefreshing(true)
+    const ref = collection(getFirestore(),"ordersApplications")
+    var firstQuery = query(ref,orderBy("time","desc"))
+    var finalQuery= query(firstQuery,where("byUser","==",getAuth().currentUser?.uid))
+    
+    return onSnapshot(finalQuery,(snap)=>{
+
+      var newList:any[]=[]
+      snap.forEach((doc)=>{
+         newList.push(doc)
+        })
+        if(isMounted){
+         setList(newList)
+         setRefreshing(false)    
+        }
+    })
+    
+    
+  } 
+  
+  return<IonList>
+    {refreshing && <IonSpinner></IonSpinner>}
+      {!!list && list.map((value:any) => {
+        return <ApplicationCard data={value}></ApplicationCard>
+          })
+        }
+  </IonList>
 }

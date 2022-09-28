@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { IonContent, IonPage, IonTitle, IonToolbar,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton, IonSlides, IonSlide, IonCard, IonCardTitle } from '@ionic/react';
+import { IonContent, IonPage, IonTitle, IonToolbar,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton, IonSlides, IonSlide, IonCard, IonCardTitle, IonSegment, IonSegmentButton } from '@ionic/react';
 import { useGlobals } from '../providers/globalsProvider';
 import { collection, doc, FieldValue, getFirestore, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
@@ -12,6 +12,8 @@ const ApplicationsPage: React.FC = () => {
     const {user,profile} = useGlobals()
     const [loading,setLoading]=useState(true)
     const [data,setData] = useState<any>(undefined)
+    const [segment,setsegment] = useState<"byUser"|"forUser">("byUser")
+
     const auth= getAuth()
     const id:any = useParams()
     const history =useHistory()
@@ -44,18 +46,25 @@ const ApplicationsPage: React.FC = () => {
           {TT("application to order")}
         </IonTitle>
       </IonToolbar>
-
+      <IonSegment>
+        <IonSegmentButton></IonSegmentButton>
+      </IonSegment>
       <IonContent>
-              {/* 
-              orderID
-        "Bk1iNLv0MwqULsVPtBOt"
-        (string)
-        orderOwner
-        "j0YWDXTDAThHiNsaHz6dkJazjyI3"
-        time
-        September 26, 2022 at 12:00:37 PM UTC+4
-        user
-        "j0YWDXTDAThHiNsaHz6dkJazjyI3" */}
+                {/*ordersApplications/docs
+                 byUser
+          ""
+          forOrder
+          ""
+          forUser
+          ""
+          isDone
+          true
+          timeAccepted
+          September 6, 2022 at 12:00:00 AM UTC+4
+          timeRejected
+          September 21, 2022 at 12:00:00 AM UTC+4
+          timeSend
+          Septe */}
           
           
             {data && !!data.length && data.map((value:any) => {
@@ -75,7 +84,7 @@ export default ApplicationsPage;
 export const ApplicationCard:React.FC<{data:any}> = ({data})=>{
   const [user,setUser]= useState<any>(undefined)
   useEffect(()=>{
-    const user = getProfile(data.user,(p)=>{
+    const user = getProfile(data.data().byUser,(p)=>{
       setUser(p.data())
     })
     
@@ -87,7 +96,7 @@ export const ApplicationCard:React.FC<{data:any}> = ({data})=>{
     </IonItem>
     <IonItem>
       <IonLabel>time :</IonLabel>
-      <IonLabel>{user?user.time:""}</IonLabel>
+      <IonLabel>{new Date(data.data().time.seconds*1000).toLocaleString()}</IonLabel>
     </IonItem>
     <IonItem>
       <IonLabel>Name :</IonLabel>
