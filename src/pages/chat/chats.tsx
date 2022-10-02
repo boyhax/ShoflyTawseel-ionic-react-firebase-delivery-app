@@ -1,11 +1,12 @@
-import React, { FC, useEffect, useState } from 'react';
-import { IonContent, IonPage, IonTitle, IonToolbar,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton, IonSlides, IonSlide, IonCard, IonCardTitle, IonAvatar, IonImg } from '@ionic/react';
+import React, { FC, FunctionComponent, useEffect, useState } from 'react';
+import { IonContent, IonPage, IonTitle, IonToolbar,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton, IonSlides, IonSlide, IonCard, IonCardTitle, IonAvatar, IonImg, IonRouterOutlet } from '@ionic/react';
 import { useGlobals } from '../../providers/globalsProvider';
 import { collection, doc, DocumentData, FieldValue, getDocs, getFirestore, onSnapshot, orderBy, query, QueryDocumentSnapshot, where } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
-import {  Redirect, useHistory, useParams } from 'react-router';
+import {  Redirect, Route, useHistory, useParams } from 'react-router';
 import { TT } from '../../components/utlis/tt';
 import { db } from '../../App';
+import Chat from './chat';
 
 
 export default  function Chats(props:any) {
@@ -14,14 +15,12 @@ export default  function Chats(props:any) {
     const [data,setData] = useState<any>(undefined)
     const [refreshing,setRefreshing] = useState(true)
     const [isMounted, setIsMounted] = useState(true)
+    const [currentChat, setCurrentChat] = useState<any|QueryDocumentSnapshot<DocumentData>>("")
+    
     const [list,setList]=useState<null|QueryDocumentSnapshot<DocumentData>[]>(null)
     const auth= getAuth()
-    const id:any = useParams()
+    const params:any = useParams()
     const history =useHistory()
-    
-
-
-    
     
     useEffect(()=>{
       if(!user){
@@ -54,6 +53,12 @@ export default  function Chats(props:any) {
            setRefreshing(false)    
           }
         })
+      };
+      if(!!params.id){
+        
+      }
+      if(!!currentChat){
+        return<Chat doc={currentChat}></Chat>
       }
     
     return (
@@ -70,7 +75,7 @@ export default  function Chats(props:any) {
 
       <IonContent>
              {!!list && list.map((value,key:any) => { 
-              return<ChatItem chatDocSnap={value} key={key}>
+              return<ChatItem onChatClicked={()=>setCurrentChat(value)} chatDocSnap={value} key={key}>
               
              </ChatItem>
              })
@@ -85,6 +90,7 @@ export default  function Chats(props:any) {
 
 interface ChatItemProps {
   chatDocSnap:QueryDocumentSnapshot<DocumentData>,
+  onChatClicked:()=>void
   
 }
  
@@ -94,14 +100,15 @@ interface ChatItemState {
   messagesDocs:QueryDocumentSnapshot<DocumentData>[],
   chaterPhotoURL:string,
   chaterName:string,
-  lastMessageTimeStamp:"" | Date
+  lastMessageTimeStamp:"" | Date,
+  unsubs:any[]
 
 }
  
 class ChatItem extends React.Component<ChatItemProps, ChatItemState> {
   constructor(props: ChatItemProps) {
     super(props);
-    this.state = {chaterID:this.getOtherChater(),
+    this.state = {chaterID:this.getOtherChater(),unsubs:[],
       lastMessage:"",messagesDocs:[],chaterPhotoURL:"" ,  chaterName:"",lastMessageTimeStamp:""    };
   };
   
@@ -114,8 +121,15 @@ class ChatItem extends React.Component<ChatItemProps, ChatItemState> {
   componentDidMount() {
     var unsub = this.getChatMessages();
     var unsub2 = this.getChaterPhotoURL();
+    this.setState({
+      unsubs :[unsub,unsub2]
+    })
+  }
+  componentWillUnmount(){
+    for(let n of this.state.unsubs){
+      n()
+    }
 
-    return ()=>{unsub();unsub2()}
   }
   componentDidUpdate(prevProps: ChatItemProps, prevState: ChatItemState) {
     console.log('state  :>> ', this.state );
@@ -129,7 +143,7 @@ class ChatItem extends React.Component<ChatItemProps, ChatItemState> {
     })
   }
  getChatMessages=()=> {
-return onSnapshot(query(collection(db,"chats/"+this.props.chatDocSnap.id,"messages"))
+return onSnapshot(query(collection(this.props.chatDocSnap.ref,"messages"))
 ,(snap)=>{
   this.setState({messagesDocs:snap.docs,
                 lastMessage:snap.docs[0].data().text,
@@ -138,14 +152,19 @@ return onSnapshot(query(collection(db,"chats/"+this.props.chatDocSnap.id,"messag
 })
 }
   render() { 
-    return (<IonItem dir='ltr'>
-      <IonAvatar><img src={this.state.chaterPhotoURL} ></img></IonAvatar>
+    return (<IonItem dir='ltr' onClick={()=>{this.props.onChatClicked()}}>
+      <IonAvatar><IonImg src={this.state.chaterPhotoURL} ></IonImg></IonAvatar>
       <IonLabel>{this.state.lastMessage}</IonLabel>
       <IonLabel slot='end'>{this.state.lastMessageTimeStamp !==""?
       this.state.lastMessageTimeStamp.toLocaleTimeString():""}</IonLabel>
     </IonItem> );
   }
 }
+
+
+ 
+
+ 
 //  message data
 // data 
 // ""
@@ -162,3 +181,4 @@ return onSnapshot(query(collection(db,"chats/"+this.props.chatDocSnap.id,"messag
 // September 26, 2022 at 9:52:36 AM UTC+4
 // type
 // "text"
+

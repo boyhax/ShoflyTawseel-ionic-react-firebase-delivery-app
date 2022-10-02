@@ -1,0 +1,48 @@
+.container{
+  display: flow-root;
+}
+.bubble{
+    border-radius: 5;
+    background-color: rgb(40, 220, 220);
+}
+.owner-bubble{
+    background-color:#63f1ee;
+    float: right;
+}
+.not-owner-bubble{
+    background-color:#e272ce;
+
+    float: left;
+}
+chatbubbleWrapper {
+    overflow: 'auto',
+  }
+  .chatbubble {
+    --background: #0084FF;
+    --border-radius: 20;
+    --margin-top: 1;
+    --margin-right: 'auto';
+    --margin-bottom: 1;
+    --margin-left: 'auto';
+    --max-width: 425;
+    --padding-top: 8;
+    --padding-bottom: 8;
+    --padding-left: 14;
+    --padding-right: 14;
+    width: '-webkit-fit-content';
+  };
+  .right {
+    float: 'right',
+  };
+  .owner {
+    --background: rgb(167, 210, 12);
+  };
+  .left {
+    float: 'left',
+  };
+  .p {
+    color: '#FFFFFF';
+    font-size: 16;
+    font-weight: '300';
+    margin: 0;
+  };

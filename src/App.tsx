@@ -2,7 +2,9 @@ import React, {  } from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import {
   IonApp,
+  IonContent,
   IonRouterOutlet,
+  IonTitle,
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import Home from './pages/Home';
@@ -82,14 +84,14 @@ const App: React.FC = () => {
           <Route path="/map" component={MapPage} />
           <Route path="/order/:id" component={OrderPage} />
           <Route path="/applications/:id" component={ApplicationsPage} />
-          <Route path="/chat/:id" component={Chat} />
-          <Route path="/chats" exact={true} component={Chats} />
+          {/* <Route path="/chat/:id" component={Chat} /> */}
+          <Route path="/chats/"  component={Chats} />
+          <Route path="/chats/:id"  component={Chats} />
 
 
 
           <Route path="/" render={() => <Redirect to="/home" />} exact={true} />
         </IonRouterOutlet>
-      
     </IonReactRouter>
   </IonApp>
   </GlobalProvider>

@@ -1,8 +1,9 @@
+import { Device } from "@capacitor/device";
 import { ComponentProps } from "@ionic/core";
-import { IonCard, IonLabel,IonContent ,IonChip, IonIcon, IonButton, IonPopover, IonTextarea, IonSpinner, IonCardHeader, IonTitle, IonBadge, IonFab, IonFabButton} from "@ionic/react";
+import { IonCard, IonLabel,IonContent ,IonChip, IonIcon, IonButton, IonPopover, IonTextarea, IonSpinner, IonCardHeader, IonTitle, IonBadge, IonFab, IonFabButton, IonItem} from "@ionic/react";
 import { getAuth } from "firebase/auth";
 import { doc, getFirestore, onSnapshot, } from "firebase/firestore";
-import {  alertCircle, trashOutline, thumbsDownOutline, thumbsUpOutline, chatboxEllipsesOutline, logoWhatsapp } from "ionicons/icons";
+import {  alertCircle, trashOutline, thumbsDownOutline, thumbsUpOutline, chatboxEllipsesOutline, logoWhatsapp, chatboxEllipses } from "ionicons/icons";
 import React, { useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router";
 import { applyForCard, deleteOrder, is_user_applied_to_card, orderProps, removeApplicationToOrder, reportOrder } from "../providers/firebaseMain";
@@ -20,8 +21,12 @@ canApplyFor?:any
 onDeleted?:()=>void,
 onRefresh?:()=>void,
 }
+export var Currentplatform = "web";
+Device.getInfo().then((v)=>{
+Currentplatform = v.platform
+})
 const SendSMSMessage = (phoneNumber:String, message:String) => {
-    const separator = 'ios' ? '&' : '?'
+    const separator = Currentplatform=='ios' ? '&' : '?'
     const url = `sms:${phoneNumber}${separator}body=${message}`
     window.open(url)
 }
@@ -118,8 +123,10 @@ return<IonCard className="card" color="tertiary" >
     </IonChip>
     </div>
 
-    <div className="w-min row">
-    {message &&
+    <IonItem >
+    {/* // className="w-min row" */}
+    
+    {/* {!owner && !!order.number &&
         <IonButton 
             onClick={()=>
                 SendSMSMessage(order.number,"السلام عليكم هل تحتاج مندوب توصيل ")} 
@@ -128,14 +135,14 @@ return<IonCard className="card" color="tertiary" >
         color="success" 
         icon={chatboxEllipsesOutline} >
         </IonIcon>
-    </IonButton>}
-    {whatsapp && 
+    </IonButton>} */}
+    {!owner && !!order.number && 
         <IonButton  
         onClick={()=>OpenWhatsapp(order.number)} 
-        color="light" shape="round" >
+        color="light" shape="round" fill="clear" size="small">
         <IonIcon size="large" color="success" icon={logoWhatsapp} ></IonIcon>
         </IonButton>}
-    {canApplyFor && 
+    {!owner && 
         <IonButton  
         onClick={()=>{_applyToOrder()}} 
         color="dark" 
@@ -148,20 +155,25 @@ return<IonCard className="card" color="tertiary" >
         {userApplied===undefined && <IonSpinner></IonSpinner>}
         {userApplied?"un accept":"accept"}
     </IonButton>}
-    { remove && <IonButton  onClick={()=>{deleteOrder(data);
+    { owner && <IonButton  onClick={()=>{deleteOrder(data);
         if(typeof onDeleted =="function")
         {onDeleted()}
         }} 
         color="light" shape="round" >
         <IonIcon size="large" color="success" icon={trashOutline} ></IonIcon>
     </IonButton>}
-    { report && <IonButton fill="clear"  onClick={()=>setReporting(!reporting)} 
+    { !owner && <IonButton fill="clear"  onClick={()=>setReporting(!reporting)} 
         color="dark" shape="round" >
         <IonIcon size="large" color="success" icon={alertCircle} ></IonIcon>
         إبلاغ
         </IonButton>}
+        { !owner && <IonButton fill="clear"  onClick={()=>history.push("/chat/"+order.uid)} 
+        color="dark" shape="round" >
+        <IonIcon size="large" color="success" icon={chatboxEllipses} ></IonIcon>
+        chat
+        </IonButton>}
     
-    </div>
+    </IonItem>
     </IonCard>
     
 }
