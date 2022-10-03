@@ -167,7 +167,7 @@ return<IonCard className="card" color="tertiary" >
         <IonIcon size="large" color="success" icon={alertCircle} ></IonIcon>
         إبلاغ
         </IonButton>}
-        { !owner && <IonButton fill="clear"  onClick={()=>history.push("/chat/"+order.uid)} 
+        { !owner && <IonButton fill="clear"  onClick={()=>history.push("/chats/"+order.uid)} 
         color="dark" shape="round" >
         <IonIcon size="large" color="success" icon={chatboxEllipses} ></IonIcon>
         chat

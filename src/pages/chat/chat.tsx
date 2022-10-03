@@ -105,7 +105,7 @@ export default  function Chat(props:any) {
         </IonTitle>
       </IonToolbar>
 
-      <IonContent className='container'>
+      <IonContent >
         {!! Messages && Messages.map((value:MessageProps,key:any) => { 
               return<MessageBubble owner={value.from === uid} messageData={value} key={key}>
               
@@ -140,28 +140,33 @@ interface ChatItemProps {
 }
  
 interface ChatItemState {
-
+  className:string
 }
  
 class MessageBubble extends React.Component<ChatItemProps, ChatItemState> {
   constructor(props: ChatItemProps) {
     super(props);
-    this.state = {};
+    this.state = {className : 'chatbubble' +this.props.owner?'right':'left'};
   };
   
   
-  // componentDidMount() {
-    
-  // }
+  componentDidMount() {
+  }
   // componentDidUpdate(prevProps: ChatItemProps, prevState: ChatItemState) {
   //   console.log('state  :>> ', this.state );
   // }
   
  
   render() { 
-    return (<div  className={this.props.owner?"chatbubble right owner":"chatbubble left"}>
-      <IonLabel>{this.props.messageData.text}</IonLabel>
-      <IonLabel slot='end'>
+    return (<div  className={"chatbubble"} style={{
+      float:this.props.owner?"right":"left",
+      background:this.props.owner?"#116246":"#35304A",
+      marginRight:this.props.owner?"0%":"30%",
+      marginLeft:this.props.owner?"30%":"0%",
+      color:"whitesmoke"
+      }}>
+      <IonLabel style={{padding:"10px"}}>{this.props.messageData.text}</IonLabel>
+      <IonLabel slot='end' style={{fontSize: "0.2rem",paddingTop:"35%"}}>
         {new Date(this.props.messageData.time.seconds*1000)
       .toLocaleTimeString()}</IonLabel>
     </div> );
