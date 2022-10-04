@@ -1,6 +1,7 @@
 make chat page work //done
 make chat page work / done
 add start chat button to order card and profiles /done
+add chat fab to home /done
 make profile edit page
 profile user orders and applyings lists
 
