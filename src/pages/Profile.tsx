@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton, IonChip, IonSegment, IonSegmentButton, IonCard, IonCardContent, IonGrid, IonRow, IonAvatar, IonImg, IonCol, IonItemDivider } from '@ionic/react';
 import { createOutline, logOutOutline, } from 'ionicons/icons';
 import { useGlobals } from '../providers/globalsProvider';
-import { collection, DocumentSnapshot, getDocs, getFirestore, onSnapshot, orderBy, query, where } from 'firebase/firestore';
+import { collection, DocumentData, DocumentSnapshot, getDocs, getFirestore, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import "./Profile.css"
 import OrderCard from '../components/OrderCard';
@@ -142,7 +142,7 @@ const ProfileEdit:React.FC=(props)=>{
   </IonAccordion></IonAccordionGroup>
 }
 const ProfileOrdersList:FC=(props)=>{
-  const [list,setList]=useState<null|orderProps[]>(null)
+  const [list,setList]=useState<DocumentSnapshot<DocumentData>[]>([])
   const [refreshing,setRefreshing] = useState(true)
   const [isMounted, setIsMounted] = useState(true)
   const {user,profile} = useGlobals()
@@ -170,12 +170,10 @@ const ProfileOrdersList:FC=(props)=>{
       })
     return onSnapshot(finalQuery,(snap)=>{
 
-      var newList:any[]=[]
-      snap.forEach((doc)=>{
-         newList.push(doc.data())
-        })
+        let newDocs:DocumentSnapshot[]=[]
+        snap.forEach((doc)=>{newDocs.push(doc)})
         if(isMounted){
-         setList(newList)
+         setList(newDocs)
          setRefreshing(false)    
         }
       })
@@ -190,7 +188,7 @@ const ProfileOrdersList:FC=(props)=>{
     {refreshing && <IonSpinner></IonSpinner>}
       {!!list && list.map((value, index, array) => {
         
-        return <OrderCard order={value} key={index} remove onDeleted={()=>onOrderRemoved(value)}></OrderCard>
+        return <OrderCard orderDocSnap={value} key={index} remove onDeleted={()=>onOrderRemoved(value)}></OrderCard>
         })}
         {!list && !refreshing && <IonButton onClick={()=>getData()}>refresh</IonButton>}
   </IonList>

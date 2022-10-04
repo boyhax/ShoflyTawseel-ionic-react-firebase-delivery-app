@@ -1,4 +1,6 @@
 import  { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, 
+  DocumentData, 
+  DocumentSnapshot, 
   getDoc, getFirestore, query, serverTimestamp, setDoc, 
    updateDoc } from 'firebase/firestore';
 import { getAuth, updateProfile } from "firebase/auth";
@@ -6,7 +8,46 @@ import { userProfile } from './globalsProvider';
 import { db } from '../App';
 
 
+type ApplicationProps ={
+  byUser:string,
+  forOrder:string,
+  forUser:string,
+  isAccepted:boolean,
+  isDone:boolean,
+  timeAccepted:Date,
+  timeDone:Date,
+  timeSend:Date,
+}
+type ApplicationInfo={
+  id:string,
+  byUser:string,
+  time:Date
+}
+type OrderReportInfo={
+  byUser:string,
+  time:Date,
+  why:string,
+  id:string
+}
+type OrderReportProps={
+  byUser:string,
+  time:Date,
+  why:string,
+  OrderId:string
+}
+export type orderProps={
+  name:string,
+  uid:string,
+  from:string,
+  to:string,
+  time:any,
+  number:string,
+  comment:string|undefined|null,
+  id?:string,
+  reports:OrderReportInfo[],
+  applications:ApplicationInfo[]
 
+}
 export async function getTripCard(id:String){
     var _data:any
     await getDoc(doc(getFirestore(),"orders/"+id)).then((data)=>{
@@ -20,20 +61,24 @@ export async function getTripCard(id:String){
   export async function updateTripCard(id:String,data:{}){
     updateDoc(doc(getFirestore(),"orders/"+id),data)
   }
-  export type orderProps={
-    name:string,
-    uid:string,
-    from:string,
-    to:string,
-    time:any,
-    flagged:boolean,
-    number:string,
-    comment:string|undefined|null,
-    id?:string,
-    reportsGot?:Array<string>,
-    appliedUsers?:String[]
 
+  
+  export function makeOrderFromDoc(orderDocSnap:DocumentSnapshot<DocumentData>):orderProps {
+    const o = orderDocSnap.exists()?orderDocSnap.data():{}
+    return{
+    name:o.name,
+    uid:o.uid,
+    from:o.from,
+    to:o.to,
+    time:o.time,
+    number:o.number,
+    comment:o.comment,
+    id:orderDocSnap.id,
+    reports:o.reports?o.reports:[],
+    applications:o.applications?o.applications:[]
   }
+
+}
   
   export async function addNewTripCard(data:orderProps){
     var state:any=false
@@ -76,31 +121,31 @@ console.log('new profile created :>> ', d);
     })
     return d
 }
-export const reportOrder=async(order:orderProps,why?:string,onDeleted?:()=>void)=>{
+export const reportOrder=async(order:orderProps,why:string="")=>{
   const uid = getAuth().currentUser?.uid
-  var reportedByUser =false
-  const profile = userProfile
-  if(order && order.reportsGot! && profile && profile.reportsDone!){
-      const filteredArray = intersection(profile.reportsDone,order.reportsGot)
-      console.log('filteredArray :>> ', filteredArray);
-        reportedByUser = filteredArray.length >0
-      }
-  if(reportedByUser){
-    console.log("already reported by")
-    return
+  var userReport =order.reports.find((v)=>{return v.byUser ===uid})
+  if(!!userReport ){
+    alert("already reported");
+    return;
   }
-  
-  const report={
-    orderId:order.id,
-    orderOwner:order.uid,
-    from:uid,
-    why:why?why:null
-  } 
-   
-  
-   return await addDoc(collection(db,"ordersReports"),report)
-    
-  
+  else{
+    const report:OrderReportProps={
+      byUser:uid!,
+      time:new Date(),
+      why:why,
+      OrderId:order.id!
+    } 
+     const newDoc = await addDoc(collection(db,"ordersReports"),report)
+     const reportInfo:OrderReportInfo={
+      byUser:uid!,
+      time: new Date(),
+      id:newDoc.id,
+      why:why
+     }
+    return updateDoc(doc(db,"orders",order.id!),{
+      reports:arrayUnion(reportInfo)
+    })
+  }    
 }
 export async function deleteOrder(order:orderProps) {
   deleteDoc_("orders/"+order.id)
@@ -130,18 +175,31 @@ async function getOrderReports(id:string){
   return data.exists()?data.data().reports!?data.data().reports:[]:undefined
 }
 export async function applyForCard(UserUID:string,cardUID:string,orderOwner:string) {
-  const newApplication = {
-    time:serverTimestamp(),
-    orderID:cardUID,
-    user:UserUID,
-    orderOwner:orderOwner
-  }
-  await setDoc(doc(db,"ordersApplications/"+cardUID+"/col"+UserUID),newApplication)
-  const res = await updateDoc(doc(getFirestore(),"orders/"+cardUID),
-  {
-    "appliedUsers":arrayUnion(UserUID),
-  }
-    )
+  let timeNow = new Date()
+  const newApplication:ApplicationProps = {
+    timeSend:timeNow,
+    forOrder:cardUID,
+    forUser:orderOwner,
+    byUser:UserUID,
+    isAccepted:false,
+    isDone:false,
+    timeAccepted:timeNow,
+    timeDone:timeNow,
+      };
+      try {
+        let d =  await addDoc(collection(db,"ordersApplications"),newApplication)
+        
+        let info :ApplicationInfo={
+          byUser:UserUID,
+          id:d.id,
+          time:timeNow,
+        }
+        var res = await updateDoc(doc(getFirestore(),"orders/"+cardUID),
+                {"applications":arrayUnion(info)})
+      } catch (error) {
+        console.log('error on add applictaion to order ${cardUID} : :>> '," error :", error);
+      }
+  
   
   return res
 }
@@ -152,14 +210,14 @@ export async function getApplicationsToOrder(cardUID:string) {
   }
   return []
 }
-export async function removeApplicationToOrder(UserUID:string,cardUID:string) {
-  const res = await updateDoc(doc(getFirestore(),"orders/"+cardUID),
-  {"appliedUsers":arrayRemove(UserUID)})
+export async function removeApplicationToOrder(info:ApplicationInfo,orderDoc:DocumentSnapshot<DocumentData>) {
+  const res = await updateDoc(orderDoc.ref,
+  {"applications":arrayRemove(info)})
   return res
 }
 
 export function is_user_applied_to_card(UserUID:string,order:orderProps){
-  return order.appliedUsers?.includes(UserUID)
+  return !!order.applications.find((value)=>{return value.byUser === UserUID})
 }
 
 export function intersection(a:Array<any>,b:Array<any>){

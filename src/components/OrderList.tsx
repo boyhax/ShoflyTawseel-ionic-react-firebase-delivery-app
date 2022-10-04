@@ -1,6 +1,6 @@
 import React, {  useEffect, useRef, useState } from "react";
 
-import {  collection, getDocs, getFirestore, query, where, limit, orderBy, startAfter  } from "firebase/firestore";
+import {  collection, getDocs, getFirestore, query, where, limit, orderBy, startAfter, DocumentSnapshot, DocumentData  } from "firebase/firestore";
 import { IonContent, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonItem, IonLabel, IonList, IonRefresher, IonRefresherContent } from "@ionic/react";
 import {  filter } from "ionicons/icons";
 import { RefresherEventDetail } from '@ionic/core';
@@ -15,7 +15,7 @@ import { useGlobals } from "../providers/globalsProvider";
 
 export default function OrderList(props:any) {
   const [isMounted, setIsMounted] = useState(true)
-const [list,setList]=useState<null|Array<orderProps>|any>(null)
+const [list,setList]=useState<DocumentSnapshot<DocumentData>[]>([])
   const [refreshing,setRefreshing] = useState(false)
   const [count,setCount] = useState(10)
   const [showFilter,setShowFilter] = useState(false)
@@ -86,12 +86,12 @@ useEffect(()=>{
             return
           }
           if( !snapshot.empty){
-            setList(newList)
+            setList(docs)
             setLastDoc(newLastDoc)
             setListQ(finalQuery)
           }
           if(snapshot.empty){
-            setList(null)
+            setList([])
             setLastDoc(null)
             setListMessage({text:"لايوجد طلبات توصيل حاليا",color:"green"})
           }else{
@@ -177,8 +177,9 @@ useEffect(()=>{
     
       {!!list && 
       <IonList  className='list'>
-        {list.map((v:any,i:any)=>{
-          return <OrderCard key={i} order={v}  report canApplyFor onRefresh={()=>Refresh()} onDeleted={()=>{delete list[i];setList(list)}}>
+        {list.map((v,i:any)=>{
+          
+          return <OrderCard orderDocSnap={v} key={i}  report canApplyFor onRefresh={()=>Refresh()} onDeleted={()=>{delete list[i];setList(list)}}>
               </OrderCard>
         })}
         </IonList>}

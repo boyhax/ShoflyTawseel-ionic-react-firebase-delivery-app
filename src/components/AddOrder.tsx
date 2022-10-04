@@ -1,9 +1,11 @@
 import { IonAlert, IonButton, IonCard, IonContent, IonIcon, IonItem, IonLabel, IonModal, IonSpinner, IonTextarea, IonTitle, IonToolbar } from "@ionic/react";
 import { getAuth } from "firebase/auth";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { closeCircle } from "ionicons/icons";
 import React, { useState } from "react";
 import { useHistory } from "react-router";
-import { addNewTripCard } from "../providers/firebaseMain";
+import { db } from "../App";
+import { addNewTripCard, orderProps } from "../providers/firebaseMain";
 import { useGlobals } from "../providers/globalsProvider";
 import ListPicker from "./ListPicker";
 import { Cities } from "./utlis/citiesUtlis";
@@ -44,17 +46,20 @@ const {profile,user} = useGlobals()
     async function addTrip(){
         setLoading(true)
         try {
-            const newId = await addNewTripCard({
+            const newId = await addDoc(collection(db,"orders"),{})
+            const newOrder:orderProps = {
                 from:from!,
                 to:to!,
                 number:auth.currentUser?.phoneNumber!,
                 name:profile.name,
                 uid:uid!,
                 time:new Date(),
-                flagged:false,
                 comment:comment,
-                
-            })
+                applications:[],
+                reports:[],
+                id:newId.id,
+            }
+            await setDoc(doc(db,"orders",newId.id),newOrder)
             setErr({message:"تم أضافة الطلب",color:"blue"})
             setLoading(false)
 

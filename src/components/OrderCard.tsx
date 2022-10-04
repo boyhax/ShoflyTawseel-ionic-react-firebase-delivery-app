@@ -1,18 +1,18 @@
 import { Device } from "@capacitor/device";
 import { ComponentProps } from "@ionic/core";
-import { IonCard, IonLabel,IonContent ,IonChip, IonIcon, IonButton, IonPopover, IonTextarea, IonSpinner, IonCardHeader, IonTitle, IonBadge, IonFab, IonFabButton, IonItem} from "@ionic/react";
+import { IonCard, IonLabel,IonContent ,IonChip, IonIcon, IonButton, IonPopover, IonTextarea, IonSpinner, IonCardHeader, IonTitle, IonBadge, IonFab, IonFabButton, IonItem, IonAvatar, IonImg} from "@ionic/react";
 import { getAuth } from "firebase/auth";
-import { doc, getFirestore, onSnapshot, } from "firebase/firestore";
+import { doc, DocumentData, DocumentSnapshot, getFirestore, onSnapshot, } from "firebase/firestore";
 import {  alertCircle, trashOutline, thumbsDownOutline, thumbsUpOutline, chatboxEllipsesOutline, logoWhatsapp, chatboxEllipses } from "ionicons/icons";
 import React, { useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router";
-import { applyForCard, deleteOrder, is_user_applied_to_card, orderProps, removeApplicationToOrder, reportOrder } from "../providers/firebaseMain";
+import { applyForCard, deleteOrder, is_user_applied_to_card, makeOrderFromDoc, orderProps, removeApplicationToOrder, reportOrder } from "../providers/firebaseMain";
 import { useGlobals } from "../providers/globalsProvider";
 import "./OrderCard.css"
 const options:Object = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
 
 interface props extends ComponentProps{
-order: orderProps ,
+orderDocSnap:DocumentSnapshot<DocumentData>
 whatsapp?:any,
 message?:any,
 remove?:any,
@@ -33,8 +33,9 @@ const SendSMSMessage = (phoneNumber:String, message:String) => {
 const OpenWhatsapp=(number:any)=>{
     window.open("http://wa.me/"+number)
 }
-export default ({order,whatsapp,message,remove,report,canApplyFor,onDeleted,onRefresh}:props)=>{
-    const [data,setData] = useState<any>(order)
+
+export default ({orderDocSnap,whatsapp,message,remove,report,canApplyFor,onDeleted,onRefresh}:props)=>{
+    const [data,setData] = useState<orderProps>(makeOrderFromDoc(orderDocSnap))
     var date =!!data.time? new Date(data.time.seconds!*1000).toLocaleDateString("ar-om",options) + ' في ' + new Date(data.time.seconds*1000).toLocaleTimeString():null
     const comment = typeof data.comment! =="string"?data.comment:"no comment"
     const popOver = useRef<any>(null)
@@ -42,14 +43,17 @@ export default ({order,whatsapp,message,remove,report,canApplyFor,onDeleted,onRe
     const [reportWhy,setReportWhy]=useState<undefined|string>(undefined)
     const uid= getAuth().currentUser?.uid
     const {user} = useGlobals()
-    const [userApplied,setApplied] = useState<boolean|undefined>(data.appliedUsers?is_user_applied_to_card(uid!,data):false)
+    const [userApplied,setApplied] = useState<boolean|undefined>(is_user_applied_to_card(uid!,data))
     const history=useHistory()
-    const owner = data.uid == uid
+    const owner = data!.uid == uid
     
     useEffect(()=>{
         const unsub = onSnapshot(doc(getFirestore(),"orders/"+data.id),(doc)=>{
-            setData(doc.data())
-        })
+            let d= makeOrderFromDoc(doc)
+            setData(d)
+            setApplied(is_user_applied_to_card(uid!,d))
+        }
+        )
         return ()=>{
             unsub()
         }
@@ -62,19 +66,21 @@ export default ({order,whatsapp,message,remove,report,canApplyFor,onDeleted,onRe
             alert("يرجى تسجيل الدخول اولا")
             return
         }
-        setApplied(undefined)
         if(!userApplied){
-            applyForCard(uid!,data.id!,data.uid!).finally(()=>{
-                setApplied(true)
-            })
+            applyForCard(uid!,data.id!,data.uid!)
+            setApplied(undefined)
         }else{
-            removeApplicationToOrder(uid!,data.id!).finally(()=>{
-                setApplied(false)
-            })
+            const info = data.applications.find((value)=>{return value.byUser ===uid})
+            if(info){
+                removeApplicationToOrder(info,orderDocSnap)
+                setApplied(undefined)
+            }else{
+                console.log("no application found on order ")
+            }
         }
     }
     function onReport(){
-        reportOrder(order,reportWhy)
+        reportOrder(data,reportWhy)
         if(onRefresh){
             onRefresh()
             console.log("message")
@@ -96,10 +102,11 @@ return<IonCard className="card" color="tertiary" >
     </IonPopover>
 
     <div className="content" >
+        <IonAvatar><IonImg src={userInfo.photoURL}></IonImg></IonAvatar>
     <IonChip className="BoldText" color="secondary">{data.name}</IonChip>
     <IonChip className="BoldText" color="secondary">{"من: "+data.from}</IonChip>
     <IonChip className="BoldText" color="secondary">{"الى: "+data.to}</IonChip>
-    {data.appliedUsers &&
+    {
      <IonChip className="BoldText" color="secondary"
      onClick={()=>{
         if(owner){
@@ -107,7 +114,7 @@ return<IonCard className="card" color="tertiary" >
         }
      }}>
         {"قبول الطلب: "}
-         {data.appliedUsers.length}        
+         {data.applications.length}        
         </IonChip>
         }
     
@@ -124,21 +131,10 @@ return<IonCard className="card" color="tertiary" >
     </div>
 
     <IonItem >
-    {/* // className="w-min row" */}
     
-    {/* {!owner && !!order.number &&
-        <IonButton 
-            onClick={()=>
-                SendSMSMessage(order.number,"السلام عليكم هل تحتاج مندوب توصيل ")} 
-            color="light" shape="round" >
-        <IonIcon size="large" 
-        color="success" 
-        icon={chatboxEllipsesOutline} >
-        </IonIcon>
-    </IonButton>} */}
-    {!owner && !!order.number && 
+    {!owner && !!data.number && 
         <IonButton  
-        onClick={()=>OpenWhatsapp(order.number)} 
+        onClick={()=>OpenWhatsapp(data.number)} 
         color="light" shape="round" fill="clear" size="small">
         <IonIcon size="large" color="success" icon={logoWhatsapp} ></IonIcon>
         </IonButton>}
@@ -149,11 +145,10 @@ return<IonCard className="card" color="tertiary" >
         fill="clear" >
         {userApplied!==undefined && 
         <IonIcon 
-            // size="xl" 
             color="success" 
             icon={ userApplied?thumbsDownOutline:thumbsUpOutline} ></IonIcon>}
         {userApplied===undefined && <IonSpinner></IonSpinner>}
-        {userApplied?"un accept":"accept"}
+        {userApplied!==undefined? userApplied?"un accept":"accept":""}
     </IonButton>}
     { owner && <IonButton  onClick={()=>{deleteOrder(data);
         if(typeof onDeleted =="function")
@@ -167,7 +162,7 @@ return<IonCard className="card" color="tertiary" >
         <IonIcon size="large" color="success" icon={alertCircle} ></IonIcon>
         إبلاغ
         </IonButton>}
-        { !owner && <IonButton fill="clear"  onClick={()=>history.push("/chats/"+order.uid)} 
+        { !owner && <IonButton fill="clear"  onClick={()=>history.push("/chats/"+data.uid)} 
         color="dark" shape="round" >
         <IonIcon size="large" color="success" icon={chatboxEllipses} ></IonIcon>
         chat

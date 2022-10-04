@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton, IonSlides, IonSlide } from '@ionic/react';
 import { exitSharp, } from 'ionicons/icons';
 import { useGlobals } from '../providers/globalsProvider';
-import { collection, getDocs, getFirestore, orderBy, query, where } from 'firebase/firestore';
+import { collection, DocumentData, DocumentSnapshot, getDocs, getFirestore, orderBy, query, where } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import "./Profile.css"
 import OrderCard from '../components/OrderCard';
@@ -72,7 +72,7 @@ export default OrdersPage;
 
 
 const ProfileOrdersList:FC=(props)=>{
-  const [list,setList]=useState<null|orderProps[]>(null)
+  const [list,setList]=useState<DocumentSnapshot<DocumentData>[]>([])
   const [refreshing,setRefreshing] = useState(true)
   const [isMounted, setIsMounted] = useState(true)
   const {user,profile} = useGlobals()
@@ -92,9 +92,9 @@ const ProfileOrdersList:FC=(props)=>{
     var firstQuery = query(ref,orderBy("time","desc"))
     var finalQuery= query(firstQuery,where("uid","==",getAuth().currentUser?.uid))
     const snapshot = await getDocs(finalQuery)
-    var newList:any[]=[]
+    var newList:DocumentSnapshot<DocumentData>[]=[]
      snapshot.forEach((doc)=>{
-        newList.push({id:doc.id,...doc.data()})
+        newList.push(doc)
        })
        if(isMounted){
         setList(newList)
@@ -102,28 +102,13 @@ const ProfileOrdersList:FC=(props)=>{
        }
     
   } 
-  function onOrderRemoved(value:object){
-    const newList:any = list?.filter((value_)=>{
-      return value_===value?false:true
-    })
-    setList(newList)
-  }
+
   return<IonList>
     {refreshing && <IonSpinner></IonSpinner>}
       {!!list && list.map((value, index, array) => {
-        if(profile){
-          checkName(value,profile)
-        }
         
-        return <OrderCard order={value} key={index} remove onDeleted={()=>onOrderRemoved(value)}></OrderCard>
+        return <OrderCard orderDocSnap={value} key={index} remove ></OrderCard>
         })}
         {!list && !refreshing && <IonButton onClick={()=>getData()}>refresh</IonButton>}
   </IonList>
-}
-function checkName(value:orderProps,profile:any){
-  // to be added to function
-  if (value.name !== profile.name){
-    updateTripCard(value.id!,{name:profile.name})
-  }
-
 }
