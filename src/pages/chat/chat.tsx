@@ -6,7 +6,7 @@ import { getAuth } from 'firebase/auth';
 import {  Redirect, useHistory, useParams } from 'react-router';
 import { TT } from '../../components/utlis/tt';
 import { db } from '../../App';
-import { attachOutline, sendOutline } from 'ionicons/icons';
+import { attachOutline, chevronBack, sendOutline } from 'ionicons/icons';
 
 import "./chat.css"
 
@@ -98,7 +98,8 @@ export default  function Chat(props:any) {
       
       <IonToolbar color="secondary">
         <IonButtons slot="start">
-          <IonBackButton defaultHref="/home" />
+          {/* <IonBackButton defaultHref="chats" /> */}
+          <IonButton onClick={()=>props.onGoBack()}><IonIcon icon={chevronBack}></IonIcon></IonButton>
         </IonButtons>
         <IonTitle slot='primary' >
           {TT("Chat")}

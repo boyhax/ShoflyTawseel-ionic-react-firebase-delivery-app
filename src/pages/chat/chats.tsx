@@ -78,7 +78,7 @@ export default  function Chats(props:any) {
 
       
       if(!!currentChat){
-        return<Chat doc={currentChat}></Chat>
+        return<Chat doc={currentChat} onGoBack={()=>{setCurrentChat("")}}></Chat>
       }
     
     return (

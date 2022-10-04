@@ -4,7 +4,7 @@ import { IonAvatar, IonButton, IonButtons, IonContent, IonFab, IonFabButton,
      IonTitle,
      IonToolbar } from '@ionic/react';
 import './Home.css';
-import { add, menuOutline, personCircle } from 'ionicons/icons';
+import { add, chatbox, menuOutline, personCircle } from 'ionicons/icons';
 import { useHistory } from "react-router-dom";
 import { useGlobals } from '../providers/globalsProvider';
 import OrderList from '../components/OrderList';
@@ -60,6 +60,9 @@ const Tab1= () => {
       <IonFab vertical="bottom" horizontal="start" slot="float">
       <IonFabButton onClick={(e)=>{onAddOrder()}}>
         <IonIcon icon={add} />
+      </IonFabButton>
+      <IonFabButton onClick={(e)=>{history.push("chats/")}}>
+        <IonIcon icon={chatbox} />
       </IonFabButton>
     </IonFab>
     </IonPage>
