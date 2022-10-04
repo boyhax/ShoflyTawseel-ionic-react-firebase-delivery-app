@@ -1,7 +1,7 @@
 import React, { FC, FunctionComponent, useEffect, useState } from 'react';
 import { IonContent, IonPage, IonTitle, IonToolbar,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton, IonSlides, IonSlide, IonCard, IonCardTitle, IonAvatar, IonImg, IonRouterOutlet } from '@ionic/react';
 import { useGlobals } from '../../providers/globalsProvider';
-import { collection, doc, DocumentData, FieldValue, getDocs, getFirestore, onSnapshot, orderBy, query, QueryDocumentSnapshot, where } from 'firebase/firestore';
+import { addDoc, collection, doc, DocumentData, FieldValue, getDoc, getDocs, getFirestore, onSnapshot, orderBy, query, QueryDocumentSnapshot, where } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import {  Redirect, Route, useHistory, useParams } from 'react-router';
 import { TT } from '../../components/utlis/tt';
@@ -16,9 +16,9 @@ export default  function Chats(props:any) {
     const [refreshing,setRefreshing] = useState(true)
     const [isMounted, setIsMounted] = useState(true)
     const [currentChat, setCurrentChat] = useState<any|QueryDocumentSnapshot<DocumentData>>("")
-    
+    const [makingChat,setMakingChat]= useState(false)
     const [list,setList]=useState<null|QueryDocumentSnapshot<DocumentData>[]>(null)
-    const auth= getAuth()
+    const uid= getAuth().currentUser?.uid
     const params:any = useParams()
     const history =useHistory()
     
@@ -35,6 +35,25 @@ export default  function Chats(props:any) {
         setIsMounted(false)
       }
     },[])
+    useEffect(()=>{
+      if(!!params.id && !!list){
+        console.log('list on effect :>> ', list);
+        const chat = list.find((value, index, array) => {
+          return value.data().chaters.includes(params.id,0)
+        })
+        console.log('chat :>> ', chat);
+        if(!!chat){
+          setCurrentChat(chat)
+        }else{
+          if(!makingChat){
+            setMakingChat(true)
+            addDoc(collection(db,"chats"),{chaters:[uid,params.id]}).finally(()=>{
+              setMakingChat(false)
+            }) 
+            }
+          }
+      }
+    },[list])
   
      function getData() {
       setRefreshing(true)
@@ -49,14 +68,15 @@ export default  function Chats(props:any) {
            newList.push(doc)
           })
           if(isMounted){
+            
            setList(newList)
            setRefreshing(false)    
           }
         })
       };
-      if(!!params.id){
-        
-      }
+      
+
+      
       if(!!currentChat){
         return<Chat doc={currentChat}></Chat>
       }
@@ -145,6 +165,7 @@ class ChatItem extends React.Component<ChatItemProps, ChatItemState> {
  getChatMessages=()=> {
 return onSnapshot(query(collection(this.props.chatDocSnap.ref,"messages"))
 ,(snap)=>{
+  if(snap.empty){return}
   this.setState({messagesDocs:snap.docs,
                 lastMessage:snap.docs[0].data().text,
                 lastMessageTimeStamp:new Date(snap.docs[0].data().time.seconds*1000),

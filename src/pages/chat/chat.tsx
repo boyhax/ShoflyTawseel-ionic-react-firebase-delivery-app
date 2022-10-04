@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
-import { IonContent, IonPage, IonTitle, IonToolbar,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton, IonSlides, IonSlide, IonCard, IonCardTitle, IonAvatar, IonImg, IonButton, IonIcon, IonFooter, IonGrid, IonCol } from '@ionic/react';
+import { IonContent, IonPage, IonTitle, IonToolbar,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton, IonSlides, IonSlide, IonCard, IonCardTitle, IonAvatar, IonImg, IonButton, IonIcon, IonFooter, IonGrid, IonCol, IonText } from '@ionic/react';
 import { useGlobals } from '../../providers/globalsProvider';
 import { addDoc, collection, doc, DocumentData, DocumentReference, DocumentSnapshot, FieldValue, getDoc, getDocs, getFirestore, onSnapshot, orderBy, query, QueryDocumentSnapshot, QuerySnapshot, serverTimestamp, setDoc, Timestamp, Unsubscribe, where } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
@@ -160,13 +160,15 @@ class MessageBubble extends React.Component<ChatItemProps, ChatItemState> {
   render() { 
     return (<div  className={"chatbubble"} style={{
       float:this.props.owner?"right":"left",
-      background:this.props.owner?"#116246":"#35304A",
-      marginRight:this.props.owner?"0%":"30%",
-      marginLeft:this.props.owner?"30%":"0%",
-      color:"whitesmoke"
-      }}>
-      <IonLabel style={{padding:"10px"}}>{this.props.messageData.text}</IonLabel>
-      <IonLabel slot='end' style={{fontSize: "0.2rem",paddingTop:"35%"}}>
+      background:this.props.owner?"var(--ion-color-secondary-shade)":"var(--ion-color-tertiary)",
+      right:this.props.owner?"0%":"30%",
+      left:this.props.owner?"30":"0%",
+      maxWidth:"70%",
+      color:"whitesmoke",
+      
+            }}>
+      <IonText style={{padding:"10px",maxInlineSize: "75%"}}>{this.props.messageData.text}</IonText>
+      <IonLabel slot='end' style={{fontSize: "small",alignSelf:'flex-end',}}>
         {new Date(this.props.messageData.time.seconds*1000)
       .toLocaleTimeString()}</IonLabel>
     </div> );
