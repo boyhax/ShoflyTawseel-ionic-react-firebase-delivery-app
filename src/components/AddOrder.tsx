@@ -21,16 +21,17 @@ interface Props   {
 const AddOrder=({isOpen,setOpen}:Props)=>{
     const [from,setFrom]= useState<null|string>(null)
     const [to,setTo]= useState<null|string>(null)
-    const [comment,setComment]= useState<null|string|undefined>(undefined)
+    const [comment,setComment]= useState<string>("")
     const [err,setErr]= useState<{message:string,color:"red"|"blue"}|undefined>(undefined)
     const [loading,setLoading]= useState(false)
     const [map,setMap]= useState(false)
     const [location,setLocation]= useState<any>(null)
 
     const history = useHistory()
-const {profile,user} = useGlobals()
+    const {profile,user} = useGlobals()
     const auth = getAuth()
     const uid = auth.currentUser?.uid
+    
     function onAddPressed(){
         if(!user){
             console.log('profile name :>> ', profile);
@@ -127,7 +128,7 @@ const {profile,user} = useGlobals()
             spellCheck={true}
             maxlength={200}
             placeholder="اكتب ملاحضات عن اغراض التوصيل" 
-            onIonChange={(v)=>setComment(v.detail.value)} 
+            onIonChange={(v)=>setComment(v.detail.value?v.detail.value:"")} 
             debounce={5}></IonTextarea>
             </IonCard>
             {loading?

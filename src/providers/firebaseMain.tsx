@@ -7,6 +7,11 @@ import { getAuth, updateProfile } from "firebase/auth";
 import { userProfile } from './globalsProvider';
 import { db } from '../App';
 
+export type userInfo={
+  name:string,
+  photoURL:string,
+  phoneNumber:string|""
+}
 
 type ApplicationProps ={
   byUser:string,
@@ -202,6 +207,14 @@ export async function applyForCard(UserUID:string,cardUID:string,orderOwner:stri
   
   
   return res
+}
+export function getUserInfoPlaceHolder() {
+  let info :userInfo={
+    name:"nnnn nnnn",
+    phoneNumber:"*** *******",
+    photoURL:require("../assets/avatarPlaceHolder.png"),
+  }
+  return info
 }
 export async function getApplicationsToOrder(cardUID:string) {
   const res = await query(collection(getFirestore(),"ordersApplications/"+cardUID+"/col"))

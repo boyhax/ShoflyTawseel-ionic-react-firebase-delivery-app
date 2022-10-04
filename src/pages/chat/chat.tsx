@@ -27,13 +27,13 @@ export default  function Chat(props:any) {
     const [chatInput, setChatInput] = useState<string>("")
     const uid = getAuth().currentUser?.uid
 
-    const [Messages,setMessages]=useState<null|MessageProps[]>(null)
+    const [Messages,setMessages]=useState<MessageProps[]>([])
     const auth= getAuth()
     const params:any = useParams()
     const history =useHistory()
     const {doc} = props
     const inputRef:any =useRef()
-
+    const chatContainer:any = useRef()
 
     useEffect( ()=>{
       if(!user){
@@ -70,6 +70,7 @@ export default  function Chat(props:any) {
                 })
               })
               setMessages(messages)
+              chatContainer.current.scrollToBottom(500)
             }
             setRefreshing(false)    
             })
@@ -106,7 +107,7 @@ export default  function Chat(props:any) {
         </IonTitle>
       </IonToolbar>
 
-      <IonContent >
+      <IonContent ref={chatContainer}>
         {!! Messages && Messages.map((value:MessageProps,key:any) => { 
               return<MessageBubble owner={value.from === uid} messageData={value} key={key}>
               
@@ -175,19 +176,3 @@ class MessageBubble extends React.Component<ChatItemProps, ChatItemState> {
     </div> );
   }
 }
-//  message data
-// data 
-// ""
-// (string)
-// isRead
-// true
-// receiver 
-// "asdsd"
-// sender
-// "dsfdfs"
-// text
-// "hello first message"
-// time
-// September 26, 2022 at 9:52:36 AM UTC+4
-// type
-// "text"

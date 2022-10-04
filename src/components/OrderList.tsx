@@ -56,7 +56,6 @@ useEffect(()=>{
       setRefreshing(true)
       const ref = collection(getFirestore(),"orders")
       var firstQuery = query(ref)
-      firstQuery = query(firstQuery,where("flagged","==",false))
       firstQuery= query(firstQuery,orderBy("time","desc"))
 
 
@@ -203,8 +202,6 @@ useEffect(()=>{
             loadingText="بحث المزيد من الطلبات"
           ></IonInfiniteScrollContent>
         </IonInfiniteScroll>
-    {/* {refreshing && <IonSpinner color="blue" name='lines' className='spinner'/>} */}
-    
     </IonContent>
       }
 const CitiePicker =(props:{value:string|null,onItemPicked:(v:string|null)=>void,placeHolder:string})=>{

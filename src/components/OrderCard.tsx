@@ -6,7 +6,8 @@ import { doc, DocumentData, DocumentSnapshot, getFirestore, onSnapshot, } from "
 import {  alertCircle, trashOutline, thumbsDownOutline, thumbsUpOutline, chatboxEllipsesOutline, logoWhatsapp, chatboxEllipses } from "ionicons/icons";
 import React, { useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router";
-import { applyForCard, deleteOrder, is_user_applied_to_card, makeOrderFromDoc, orderProps, removeApplicationToOrder, reportOrder } from "../providers/firebaseMain";
+import { db } from "../App";
+import { applyForCard, deleteOrder, getUserInfoPlaceHolder, is_user_applied_to_card, makeOrderFromDoc, orderProps, removeApplicationToOrder, reportOrder, userInfo } from "../providers/firebaseMain";
 import { useGlobals } from "../providers/globalsProvider";
 import "./OrderCard.css"
 const options:Object = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -46,18 +47,31 @@ export default ({orderDocSnap,whatsapp,message,remove,report,canApplyFor,onDelet
     const [userApplied,setApplied] = useState<boolean|undefined>(is_user_applied_to_card(uid!,data))
     const history=useHistory()
     const owner = data!.uid == uid
+    const [userInfo,setUserInfo] = useState<userInfo>(getUserInfoPlaceHolder())
     
     useEffect(()=>{
+
         const unsub = onSnapshot(doc(getFirestore(),"orders/"+data.id),(doc)=>{
             let d= makeOrderFromDoc(doc)
             setData(d)
             setApplied(is_user_applied_to_card(uid!,d))
-        }
+
+         }
         )
+        const unsub2 = onSnapshot(doc(db,"users",data.uid),(doc)=>{
+            let d:userInfo={
+                name:doc.data()!.name,
+                phoneNumber:doc.data()!.phoneNumber,
+                photoURL:doc.data()!.photoURL!,
+            } 
+            setUserInfo(d)
+            
+        })
         return ()=>{
-            unsub()
-        }
-    })
+            unsub();
+            unsub2();
+    }})
+
     const toggleComment=()=>{
         popOver.current!.present()
     }
