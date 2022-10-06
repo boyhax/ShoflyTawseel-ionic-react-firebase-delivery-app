@@ -10,6 +10,7 @@ import { Redirect } from 'react-router';
 import { orderProps, updateTripCard, updateUserProfile } from '../providers/firebaseMain';
 import { TT } from '../components/utlis/tt';
 import { ApplicationCard } from './ApplicationsPage';
+import { db } from '../App';
 
 const Profile: React.FC = () => {
     const {user,profile} = useGlobals()
@@ -45,8 +46,7 @@ const Profile: React.FC = () => {
                 </IonAvatar>
                 <IonCol>
                   <IonLabel>Name : {profile.name}</IonLabel>
-                  <IonLabel>                     </IonLabel>
-                  <IonLabel>email : {profile.email}</IonLabel>
+                  {/* <IonLabel>email : {profile.email}</IonLabel> */}
                 </IonCol>
                 
                 
@@ -97,50 +97,6 @@ const Profile: React.FC = () => {
 export default Profile;
 
 
-
-const ProfileEdit:React.FC=(props)=>{
-  const auth= getAuth()
-  const user = auth.currentUser
-  const uid = user?.uid
-  const[loading,setLoading] = useState(false)
-  const {profile} = useGlobals()
-  const [newName,setNewName] = useState(profile.name!)
-  function updateProfile(){
-      setLoading(true);
-      updateUserProfile(uid,{name:newName})
-      .finally(()=>setLoading(false))
-  }
-  if(loading){
-    return<IonSpinner slot='primary'>
-      <IonLabel>Saving...</IonLabel>
-       </IonSpinner>
-  }
-  return<IonAccordionGroup>
-  <IonAccordion value="colors">
-    <IonItem slot="header" >
-      <IonLabel>معلومات المستخدم</IonLabel>
-    </IonItem>
-
-    <IonList slot="content">
-      <IonItem >
-        <IonLabel>الاسم</IonLabel>
-        <IonInput placeholder='name' onIonChange={(e)=>{
-            setNewName(e.detail.value)
-          
-        }} 
-        value={newName}></IonInput>
-        <IonButton onClick={()=>updateProfile()}
-        >
-          <IonLabel>حفظ</IonLabel></IonButton>
-      </IonItem>
-      <IonItem>
-        <IonLabel>الرقم</IonLabel>
-        <IonLabel >{auth.currentUser?.phoneNumber}</IonLabel>
-      </IonItem>
-      
-    </IonList>
-  </IonAccordion></IonAccordionGroup>
-}
 const ProfileOrdersList:FC=(props)=>{
   const [list,setList]=useState<DocumentSnapshot<DocumentData>[]>([])
   const [refreshing,setRefreshing] = useState(true)
@@ -157,44 +113,34 @@ const ProfileOrdersList:FC=(props)=>{
     const ref = collection(getFirestore(),"orders")
     var firstQuery = query(ref,orderBy("time","desc"))
     var finalQuery= query(firstQuery,where("uid","==",getAuth().currentUser?.uid))
-    getDocs(finalQuery).then((snap)=>{
-
-      var newList:any[]=[]
-      snap.forEach((doc)=>{
-         newList.push(doc.data())
-        })
-        if(isMounted){
-         setList(newList)
-         setRefreshing(false)    
-        }
-      })
+    
     return onSnapshot(finalQuery,(snap)=>{
 
         let newDocs:DocumentSnapshot[]=[]
+
         snap.forEach((doc)=>{newDocs.push(doc)})
+
         if(isMounted){
          setList(newDocs)
          setRefreshing(false)    
         }
       })
   } 
-  function onOrderRemoved(value:object){
-    const newList:any = list?.filter((value_)=>{
-      return value_===value?false:true
-    })
-    setList(newList)
-  }
+  
   return<IonList>
     {refreshing && <IonSpinner></IonSpinner>}
       {!!list && list.map((value, index, array) => {
         
-        return <OrderCard orderDocSnap={value} key={index} remove onDeleted={()=>onOrderRemoved(value)}></OrderCard>
+        return <OrderCard orderDocSnap={value} key={index} remove ></OrderCard>
         })}
         {!list && !refreshing && <IonButton onClick={()=>getData()}>refresh</IonButton>}
   </IonList>
 }
+
+
+
 const ProfileApplicationsList:FC=(props)=>{
-  const [list,setList]=useState<null|any>(null)
+  const [list,setList]=useState<DocumentSnapshot<DocumentData>[]>([])
   const [refreshing,setRefreshing] = useState(true)
   const [isMounted, setIsMounted] = useState(true)
   const {user,profile} = useGlobals()
@@ -211,13 +157,15 @@ const ProfileApplicationsList:FC=(props)=>{
 
    function getData() {
     setRefreshing(true)
-    const ref = collection(getFirestore(),"ordersApplications")
-    var firstQuery = query(ref,orderBy("time","desc"))
-    var finalQuery= query(firstQuery,where("byUser","==",getAuth().currentUser?.uid))
+    const ref = collection(db,"ordersApplications")
+    // var firstQuery = query(ref,orderBy("timeSend","desc"))
+    var finalQuery= query(ref,where("byUser","==",getAuth().currentUser?.uid))
     
     return onSnapshot(finalQuery,(snap)=>{
+      if(snap.empty){return};
 
-      var newList:any[]=[]
+      let newList:DocumentSnapshot<DocumentData>[]=[]
+
       snap.forEach((doc)=>{
          newList.push(doc)
         })
@@ -226,14 +174,12 @@ const ProfileApplicationsList:FC=(props)=>{
          setRefreshing(false)    
         }
     })
-    
-    
   } 
   
   return<IonList>
     {refreshing && <IonSpinner></IonSpinner>}
-      {!!list && list.map((value:any) => {
-        return <ApplicationCard data={value}></ApplicationCard>
+      {!!list && list.map((value,index:any) => {
+        return <ApplicationCard docsnap={value} key={index}></ApplicationCard>
           })
         }
   </IonList>

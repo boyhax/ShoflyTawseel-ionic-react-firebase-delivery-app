@@ -3,6 +3,8 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import "./globalsProvider.css"
 import { doc, getDoc, getFirestore, onSnapshot } from "firebase/firestore";
 import { Network } from '@capacitor/network';
+import CreateProfile from "../pages/CreatProfile";
+import { Redirect } from "react-router";
 
 export var userProfile:any = null
 const globalsContext = createContext<{
@@ -12,9 +14,10 @@ const globalsContext = createContext<{
 
 const GlobalProvider:React.FC =(props)=>{
     const [user,setUser] = useState<boolean|undefined>(undefined)
-    const [profile,setProfile] = useState<null|Object|undefined>(undefined)
+    const [profile,setProfile] = useState<any|undefined>(null)
     const [online,setOnline] = useState<boolean|undefined>(undefined)
-    
+    const [profileNotComplete,setProfileNotComplete] = useState<boolean>(false)
+
     const uid=getAuth().currentUser?.uid
 
     const logCurrentNetworkStatus = async () => {
@@ -22,6 +25,7 @@ const GlobalProvider:React.FC =(props)=>{
       console.log('online :>> ', status);
       setOnline(status.connected)
     }
+
     useEffect(()=>{
       logCurrentNetworkStatus()
       Network.addListener('networkStatusChange', status => {
@@ -38,39 +42,46 @@ const GlobalProvider:React.FC =(props)=>{
         
         
       },[])
+
       useEffect(()=>{
         if(user){
           const unsub = fetchProfile()
           return ()=>{unsub()}
       }
       },[user])
-    
+
+    useEffect(()=>{
+        if(profile === undefined || !!profile){
+          isProfileComplete()
+        }
+      },[profile])
       
   
    function fetchProfile(){
-    setProfile(undefined)
     const uid = getAuth().currentUser!.uid
 
     console.log('uid :>> ', uid);
+    
     const ref = doc(getFirestore(),"users/"+uid)
-    const unsub =  onSnapshot(ref,(doc)=>{
-        if(!doc.exists()){
-          return
-        }
-        console.log('profile update :>> ', doc.data());
-
+    return   onSnapshot(ref,(doc)=>{
         setProfile(doc.data())
+        
       })
-        getDoc(ref).then((snap)=>{
-        console.log('profile :>> ', snap.data());
-      });
-    return unsub
+        
+    
   }
-
+function isProfileComplete() {
+    let res = (!!profile 
+    && (!!profile.name && profile.name.length >= 5) 
+    &&!!profile.email
+    && (!!profile.phoneNumber && profile.phoneNumber.length >=8))
+      console.log('profile is complete? :>> ', res);
+    setProfileNotComplete(!res) 
+}
     
     return<globalsContext.Provider value={{user,profile}}>
-        {props.children}
-        
+      {profileNotComplete && <CreateProfile onSave={()=>{}}></CreateProfile>}
+    {!profileNotComplete && props.children}        
     </globalsContext.Provider>
 }
 export const useGlobals=()=>{

@@ -1,17 +1,19 @@
-import React, { FC, useEffect, useState } from 'react';
-import { IonContent, IonPage, IonTitle, IonToolbar,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton, IonSlides, IonSlide, IonCard, IonCardTitle, IonSegment, IonSegmentButton } from '@ionic/react';
+import React, { FC, useEffect, useReducer, useState } from 'react';
+import { IonContent, IonPage, IonTitle, IonToolbar,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton, IonSlides, IonSlide, IonCard, IonCardTitle, IonSegment, IonSegmentButton, IonChip, IonIcon } from '@ionic/react';
 import { useGlobals } from '../providers/globalsProvider';
-import { collection, doc, FieldValue, getFirestore, onSnapshot, orderBy, query, where } from 'firebase/firestore';
+import { collection, doc, DocumentData, DocumentSnapshot, FieldValue, getFirestore, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import "./Profile.css"
 import {  useHistory, useParams } from 'react-router';
 import { TT } from '../components/utlis/tt';
-import { getProfile } from '../providers/firebaseMain';
+import { db } from '../App';
+import { ApplicationProps, getUserInfoPlaceHolder, makeApplicationPropsFromDoc, makeUSerInfoFromDoc, userInfo } from '../providers/firebaseMain';
+import { thumbsDown, thumbsUp } from 'ionicons/icons';
 
 const ApplicationsPage: React.FC = () => {
     const {user,profile} = useGlobals()
     const [loading,setLoading]=useState(true)
-    const [data,setData] = useState<any>(undefined)
+    const [data,setData] = useState<DocumentSnapshot<DocumentData>[]>([])
     const [segment,setsegment] = useState<"byUser"|"forUser">("byUser")
 
     const auth= getAuth()
@@ -50,25 +52,8 @@ const ApplicationsPage: React.FC = () => {
         <IonSegmentButton></IonSegmentButton>
       </IonSegment>
       <IonContent>
-                {/*ordersApplications/docs
-                 byUser
-          ""
-          forOrder
-          ""
-          forUser
-          ""
-          isDone
-          true
-          timeAccepted
-          September 6, 2022 at 12:00:00 AM UTC+4
-          timeRejected
-          September 21, 2022 at 12:00:00 AM UTC+4
-          timeSend
-          Septe */}
-          
-          
-            {data && !!data.length && data.map((value:any) => {
-            return<ApplicationCard data={value}>
+            {data &&  data.map((value) => {
+            return<ApplicationCard docsnap={value}>
               
             </ApplicationCard>
           })}
@@ -81,30 +66,40 @@ const ApplicationsPage: React.FC = () => {
 export default ApplicationsPage;
 
 
-export const ApplicationCard:React.FC<{data:any}> = ({data})=>{
-  const [user,setUser]= useState<any>(undefined)
+export const ApplicationCard:React.FC<{docsnap:DocumentSnapshot<DocumentData>}> = ({docsnap})=>{
+  const [user,setUser]= useState<userInfo>(getUserInfoPlaceHolder())
+  const [data,setData]= useState<ApplicationProps>(makeApplicationPropsFromDoc(docsnap))
+  
   useEffect(()=>{
-    const user = getProfile(data.data().byUser,(p)=>{
-      setUser(p.data())
+
+    const unsub = onSnapshot(doc(db,"users",data.byUser),(snap)=>{
+      setUser(makeUSerInfoFromDoc(snap))
     })
-    
+    return()=>{unsub()}
   },[])
+
   return<IonCard>
     <IonItem>
       <IonLabel>Name :</IonLabel>
-      <IonLabel>{user?user.name:""}</IonLabel>
+      <IonLabel>{user.name}</IonLabel>
     </IonItem>
     <IonItem>
       <IonLabel>time :</IonLabel>
-      <IonLabel>{new Date(data.data().time.seconds*1000).toLocaleString()}</IonLabel>
+      {new Date(data.timeSend.seconds*1000).toLocaleString()}
     </IonItem>
     <IonItem>
-      <IonLabel>Name :</IonLabel>
-      <IonLabel>{user?user.name:""}</IonLabel>
+      <IonLabel>isAccepted :</IonLabel>
+      <IonLabel>{data.isAccepted?"Yes":"No"}</IonLabel>
+    </IonItem>
+    <IonItem dir='ltr'>
+      Done: {data.isDone?"YES ":"NO "}
+        <IonIcon icon={data.isDone?thumbsUp:thumbsDown}></IonIcon>
+        On Date {new Date(data.timeDone.seconds*1000).toLocaleString()}
+      
     </IonItem>
     <IonItem>
-      <IonLabel>Name :</IonLabel>
-      <IonLabel>{user?user.name:""}</IonLabel>
+      <IonLabel>for user :</IonLabel>
+      <IonLabel>{"for user"}</IonLabel>
     </IonItem>
   </IonCard>
 }

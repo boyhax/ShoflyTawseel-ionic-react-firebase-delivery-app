@@ -2,6 +2,7 @@ import  { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc,
   DocumentData, 
   DocumentSnapshot, 
   getDoc, getFirestore, query, serverTimestamp, setDoc, 
+   Timestamp, 
    updateDoc } from 'firebase/firestore';
 import { getAuth, updateProfile } from "firebase/auth";
 import { userProfile } from './globalsProvider';
@@ -13,28 +14,28 @@ export type userInfo={
   phoneNumber:string|""
 }
 
-type ApplicationProps ={
+export type ApplicationProps ={
   byUser:string,
   forOrder:string,
   forUser:string,
   isAccepted:boolean,
   isDone:boolean,
-  timeAccepted:Date,
-  timeDone:Date,
-  timeSend:Date,
+  timeAccepted:any,
+  timeDone:any,
+  timeSend:any,
 }
-type ApplicationInfo={
+export type ApplicationInfo={
   id:string,
   byUser:string,
   time:Date
 }
-type OrderReportInfo={
+export type OrderReportInfo={
   byUser:string,
   time:Date,
   why:string,
   id:string
 }
-type OrderReportProps={
+export type OrderReportProps={
   byUser:string,
   time:Date,
   why:string,
@@ -67,7 +68,27 @@ export async function getTripCard(id:String){
     updateDoc(doc(getFirestore(),"orders/"+id),data)
   }
 
-  
+  export function makeApplicationPropsFromDoc(doc:DocumentSnapshot):ApplicationProps{
+    let d = doc.exists()?doc.data():{}
+    return {
+      byUser:d.byUser,
+      forOrder:d.forOrder,
+      forUser:d.forUser,
+      isAccepted:d.isAccepted,
+      isDone:d.isDone,
+      timeAccepted:d.timeAccepted,
+      timeDone:d.timeDone,
+      timeSend:d.timeSend,
+    }
+  }
+export function makeUSerInfoFromDoc(s:DocumentSnapshot):userInfo{
+  let d = s.exists()?s.data():{}
+    return{
+      name:d.name,
+      phoneNumber:d.phoneNumber,
+      photoURL:d.photoURL
+    }
+  }
   export function makeOrderFromDoc(orderDocSnap:DocumentSnapshot<DocumentData>):orderProps {
     const o = orderDocSnap.exists()?orderDocSnap.data():{}
     return{
@@ -104,13 +125,7 @@ export async function getProfile(uid:string,callback:(profile:any)=>void=(c)=>{}
 }
 export async function updateUserProfile(uid:any,data:any){
   
-  if(! await profileExist(uid)){
-   return createNewProfile(uid,data)
-  }else{
-    updateProfile(getAuth().currentUser!,{displayName:data.name!})
-    return updateDoc(doc(getFirestore(),"users/"+uid),data)
-  
-  }
+    return updateDoc(doc(db,"users/"+uid),data)
   
 }
 export async function profileExist(uid:string){

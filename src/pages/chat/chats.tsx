@@ -116,7 +116,7 @@ interface ChatItemProps {
  
 interface ChatItemState {
   chaterID:string,
-  lastMessage:"",
+  lastMessage:string,
   messagesDocs:QueryDocumentSnapshot<DocumentData>[],
   chaterPhotoURL:string,
   chaterName:string,
@@ -129,7 +129,7 @@ class ChatItem extends React.Component<ChatItemProps, ChatItemState> {
   constructor(props: ChatItemProps) {
     super(props);
     this.state = {chaterID:this.getOtherChater(),unsubs:[],
-      lastMessage:"",messagesDocs:[],chaterPhotoURL:"" ,  chaterName:"",lastMessageTimeStamp:""    };
+      lastMessage:'chat here',messagesDocs:[],chaterPhotoURL:require("../../assets/avatarPlaceHolder.png") ,  chaterName:"",lastMessageTimeStamp:""    };
   };
   
   getOtherChater(){
@@ -152,7 +152,7 @@ class ChatItem extends React.Component<ChatItemProps, ChatItemState> {
 
   }
   componentDidUpdate(prevProps: ChatItemProps, prevState: ChatItemState) {
-    console.log('state  :>> ', this.state );
+    // console.log('state  :>> ', this.state );
   }
   getChaterPhotoURL(){
     return onSnapshot(doc(db,"users/"+this.state.chaterID),(snap)=>{

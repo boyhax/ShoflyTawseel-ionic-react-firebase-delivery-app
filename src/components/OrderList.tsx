@@ -39,9 +39,7 @@ const [list,setList]=useState<DocumentSnapshot<DocumentData>[]>([])
   },[])
 useEffect(()=>{
   getNewList()
-  return () => {
-    setIsMounted(false)
-  }
+  
 },[profile])
   
   
@@ -76,9 +74,6 @@ useEffect(()=>{
             }
           newList.push({id:doc.id,...doc.data()})
           })
-          
-          
-          
           const docs = snapshot.docs
           const newLastDoc = docs[docs.length -1]
           if(!isMounted){
@@ -89,7 +84,7 @@ useEffect(()=>{
             setLastDoc(newLastDoc)
             setListQ(finalQuery)
           }
-          if(snapshot.empty){
+          if(snapshot.empty ){
             setList([])
             setLastDoc(null)
             setListMessage({text:"لايوجد طلبات توصيل حاليا",color:"green"})
@@ -126,10 +121,8 @@ useEffect(()=>{
             })
             const docs = snapshot.docs
             const newLastDoc = docs[docs.length -1]
-            if(!isMounted ){
-              return
-            }
-            if( !snapshot.empty){
+
+            if( !snapshot.empty && isMounted){
               setList([...list!,...newList])
               setLastDoc(newLastDoc)
             }

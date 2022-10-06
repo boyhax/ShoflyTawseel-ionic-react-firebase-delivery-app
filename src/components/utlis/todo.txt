@@ -6,4 +6,9 @@ application system refactoring /done
 make profile edit page
 profile user orders and applyings lists
 sign in page google and email
+add place holder for chats page items
+add catagories to orders
+add user avatar and name in chat header
+add location and camera attachment in chat 
+add location to add order 
 
