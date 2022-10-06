@@ -51,21 +51,19 @@ const Profile: React.FC = () => {
       <IonItem>
           <IonGrid >
             <IonRow>
-              <IonCol>
+              <IonRow>
                 <IonAvatar>
-                  <IonImg src={
-                    !!profile.photoURL?profile.photoURL
-                      :require("../assets/avatarPlaceHolder.png")}
-                      onClick={()=>{setPickAvatar(!pickAvatar)}}>
-                    
-                </IonImg>
-                </IonAvatar>
-                <IonCol>
-                  <IonLabel>Name : {profile.name}</IonLabel>
-                  {/* <IonLabel>email : {profile.email}</IonLabel> */}
-                </IonCol>
+                    <IonImg src={
+                      !!profile.photoURL?profile.photoURL
+                        :require("../assets/avatarPlaceHolder.png")}
+                        onClick={()=>{setPickAvatar(!pickAvatar)}}>
+                      
+                  </IonImg>
+                  </IonAvatar>
+                  <IonTitle>{profile.name}</IonTitle>
+              </IonRow>
                 
-              </IonCol>
+                
               <IonCol>
                 <IonButton onClick={()=>content !=="editProfile"?setContent("editProfile"):setContent("orders")}>{TT("edit")}
                 </IonButton>
@@ -148,7 +146,7 @@ const ProfileOrdersList:FC=(props)=>{
     {refreshing && <IonSpinner></IonSpinner>}
       {!!list && list.map((value, index, array) => {
         
-        return <OrderCard orderDocSnap={value} key={index} remove ></OrderCard>
+        return <OrderCard orderDocSnap={value} key={index} ></OrderCard>
         })}
         {!list && !refreshing && <IonButton onClick={()=>getData()}>refresh</IonButton>}
   </IonList>

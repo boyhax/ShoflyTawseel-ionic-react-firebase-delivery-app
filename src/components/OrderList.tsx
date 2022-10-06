@@ -173,6 +173,9 @@ useEffect(()=>{
       <IonList  className='list'>
         {list.map((v,i:any)=>{
           
+          if(!v["exists"]){
+            return
+          }
           return <OrderCard orderDocSnap={v} key={i}  report canApplyFor onRefresh={()=>Refresh()} onDeleted={()=>{delete list[i];setList(list)}}>
               </OrderCard>
         })}

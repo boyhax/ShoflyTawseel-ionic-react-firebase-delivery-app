@@ -52,7 +52,6 @@ const AddOrder=({isOpen,setOpen}:Props)=>{
                 from:from!,
                 to:to!,
                 number:auth.currentUser?.phoneNumber!,
-                name:profile.name,
                 uid:uid!,
                 time:new Date(),
                 comment:comment,

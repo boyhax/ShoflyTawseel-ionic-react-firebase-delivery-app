@@ -1,6 +1,6 @@
 import { Device } from "@capacitor/device";
 import { ComponentProps } from "@ionic/core";
-import { IonCard, IonLabel,IonContent ,IonChip, IonIcon, IonButton, IonPopover, IonTextarea, IonSpinner, IonCardHeader, IonTitle, IonBadge, IonFab, IonFabButton, IonItem, IonAvatar, IonImg} from "@ionic/react";
+import { IonCard, IonLabel,IonContent ,IonChip, IonIcon, IonButton, IonPopover, IonTextarea, IonSpinner, IonCardHeader, IonTitle, IonBadge, IonFab, IonFabButton, IonItem, IonAvatar, IonImg, IonRow} from "@ionic/react";
 import { getAuth } from "firebase/auth";
 import { doc, DocumentData, DocumentSnapshot, getFirestore, onSnapshot, } from "firebase/firestore";
 import {  alertCircle, trashOutline, thumbsDownOutline, thumbsUpOutline, chatboxEllipsesOutline, logoWhatsapp, chatboxEllipses } from "ionicons/icons";
@@ -43,7 +43,7 @@ export default ({orderDocSnap,whatsapp,message,remove,report,canApplyFor,onDelet
     const [reporting,setReporting]=useState(false)
     const [reportWhy,setReportWhy]=useState<undefined|string>(undefined)
     const uid= getAuth().currentUser?.uid
-    const {user} = useGlobals()
+    const {user,profile} = useGlobals()
     const [userApplied,setApplied] = useState<boolean|undefined>(is_user_applied_to_card(uid!,data))
     const history=useHistory()
     const owner = data!.uid == uid
@@ -58,20 +58,27 @@ export default ({orderDocSnap,whatsapp,message,remove,report,canApplyFor,onDelet
 
          }
         )
-        const unsub2 = onSnapshot(doc(db,"users",data.uid),(doc)=>{
-            let d:userInfo={
-                name:doc.data()!.name,
-                phoneNumber:doc.data()!.phoneNumber,
-                photoURL:doc.data()!.photoURL!,
-            } 
-            setUserInfo(d)
-            
-        })
+        var unsub2 = ()=>{}
+        if(data.uid !==uid){
+
+             unsub2 = onSnapshot(doc(db,"users",data.uid),(doc)=>{
+                let d:userInfo={
+                    name:doc.data()!.name,
+                    phoneNumber:doc.data()!.phoneNumber,
+                    photoURL:doc.data()!.photoURL!,
+                } 
+                setUserInfo(d)
+                
+            })
+        }else{
+            setUserInfo(profile)
+        }
+        
         return ()=>{
             unsub();
             unsub2();
     }})
-
+    
     const toggleComment=()=>{
         popOver.current!.present()
     }
@@ -116,8 +123,15 @@ return<IonCard className="card" color="tertiary" >
     </IonPopover>
 
     <div className="content" >
-        <IonAvatar><IonImg src={userInfo.photoURL}></IonImg></IonAvatar>
-    <IonChip className="BoldText" color="secondary">{data.name}</IonChip>
+        <IonRow>
+            <IonAvatar>
+                <IonImg 
+                src={userInfo.photoURL}>
+                </IonImg>
+            </IonAvatar>
+            <IonTitle className="BoldText" color="secondary">{userInfo.name}</IonTitle>
+        </IonRow>
+       
     <IonChip className="BoldText" color="secondary">{"من: "+data.from}</IonChip>
     <IonChip className="BoldText" color="secondary">{"الى: "+data.to}</IonChip>
     {

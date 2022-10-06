@@ -42,7 +42,6 @@ export type OrderReportProps={
   OrderId:string
 }
 export type orderProps={
-  name:string,
   uid:string,
   from:string,
   to:string,
@@ -92,7 +91,6 @@ export function makeUSerInfoFromDoc(s:DocumentSnapshot):userInfo{
   export function makeOrderFromDoc(orderDocSnap:DocumentSnapshot<DocumentData>):orderProps {
     const o = orderDocSnap.exists()?orderDocSnap.data():{}
     return{
-    name:o.name,
     uid:o.uid,
     from:o.from,
     to:o.to,
