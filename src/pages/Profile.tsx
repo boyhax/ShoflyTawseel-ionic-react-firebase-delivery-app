@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton, IonChip, IonSegment, IonSegmentButton, IonCard, IonCardContent, IonGrid, IonRow, IonAvatar, IonImg, IonCol, IonItemDivider } from '@ionic/react';
+import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton, IonChip, IonSegment, IonSegmentButton, IonCard, IonCardContent, IonGrid, IonRow, IonAvatar, IonImg, IonCol, IonItemDivider, IonHeader } from '@ionic/react';
 import { createOutline, logOutOutline, } from 'ionicons/icons';
 import { useGlobals } from '../providers/globalsProvider';
 import { collection, DocumentData, DocumentSnapshot, getDocs, getFirestore, onSnapshot, orderBy, query, where } from 'firebase/firestore';
@@ -11,10 +11,11 @@ import { orderProps, updateTripCard, updateUserProfile } from '../providers/fire
 import { TT } from '../components/utlis/tt';
 import { ApplicationCard } from './ApplicationsPage';
 import { db } from '../App';
+import CreatProfile from './CreatProfile';
 
 const Profile: React.FC = () => {
     const {user,profile} = useGlobals()
-    const [content,setContent]=useState<"orders"|"deliver">("orders")
+    const [content,setContent]=useState<"orders"|"deliver"|"editProfile">("orders")
     // const auth= getAuth()
     // const id = useParams()
     // const history =useHistory()
@@ -30,13 +31,7 @@ const Profile: React.FC = () => {
     return (
     <IonPage >
       
-      <IonToolbar color="secondary">
-        <IonButtons slot="start">
-          <IonBackButton defaultHref="/home" />
-        </IonButtons>
-        
-        
-      </IonToolbar>
+      <IonHeader>
       <IonItem>
           <IonGrid >
             <IonRow>
@@ -52,7 +47,7 @@ const Profile: React.FC = () => {
                 
               </IonCol>
               <IonCol>
-                <IonButton>{TT("edit")}
+                <IonButton onClick={()=>content !=="editProfile"?setContent("editProfile"):setContent("orders")}>{TT("edit")}
                 </IonButton>
                 <IonButton color={'danger'} onClick={()=>{getAuth().signOut()}}>
                   {TT("logOut")}
@@ -63,33 +58,31 @@ const Profile: React.FC = () => {
 
               </IonRow>
           </IonGrid>
+          <IonBackButton defaultHref='/'></IonBackButton>
+
         </IonItem>
-      <IonSegment  value={content}>
+        </IonHeader>
+      {content !=="editProfile" &&<IonSegment  value={content}>
         <IonSegmentButton value="orders" onClick={()=>setContent('orders')}>
           <IonLabel>orders</IonLabel>
         </IonSegmentButton>
         <IonSegmentButton value="deliver" onClick={()=>setContent('deliver')}>
           <IonLabel>deliver</IonLabel>
         </IonSegmentButton>
-      </IonSegment>
-
-       
-      
+      </IonSegment>}
       {user && content ==="orders"&& 
             <IonContent>
               <ProfileOrdersList/>
             </IonContent>}
       
-        {user && content ==="deliver"&& 
-            <IonContent>
-              <ProfileApplicationsList/>
-            </IonContent>}
-  
-        
-          
-        
-        
-      
+      {user && content ==="deliver"&& 
+          <IonContent>
+            <ProfileApplicationsList/>
+        </IonContent>}
+      {user && content ==="editProfile"&& 
+      <IonContent>
+        <CreatProfile onSave={()=>{setContent("deliver")}}/>
+      </IonContent>}
     </IonPage>
   );
 };
