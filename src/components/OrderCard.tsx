@@ -59,9 +59,15 @@ export default ({orderDocSnap,whatsapp,message,remove,report,canApplyFor,onDelet
          }
         )
         var unsub2 = ()=>{}
-        if(data.uid !==uid){
-
-             unsub2 = onSnapshot(doc(db,"users",data.uid),(doc)=>{
+        if(data.uid === uid && profile){
+            setUserInfo({
+                name:profile.name,
+                photoURL:profile.photoURL,
+                phoneNumber:profile.phoneNumber
+            })
+        }else{
+           
+            unsub2 = onSnapshot(doc(db,"users",data.uid),(doc)=>{
                 let d:userInfo={
                     name:doc.data()!.name,
                     phoneNumber:doc.data()!.phoneNumber,
@@ -70,14 +76,12 @@ export default ({orderDocSnap,whatsapp,message,remove,report,canApplyFor,onDelet
                 setUserInfo(d)
                 
             })
-        }else{
-            setUserInfo(profile)
         }
         
         return ()=>{
             unsub();
             unsub2();
-    }})
+    }},[])
     
     const toggleComment=()=>{
         popOver.current!.present()
@@ -108,6 +112,7 @@ export default ({orderDocSnap,whatsapp,message,remove,report,canApplyFor,onDelet
         }
 
     }
+    console.log(userInfo)
 return<IonCard className="card" color="tertiary" >
     <IonPopover isOpen={reporting}>
         <IonLabel slot="primary">اذكر السبب</IonLabel>

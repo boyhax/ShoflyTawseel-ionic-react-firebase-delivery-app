@@ -19,7 +19,7 @@ import { TT } from "../components/utlis/tt";
      useEffect(()=>{
          
         
-     },[profile])
+     },[name])
 
      const history = useHistory()
      
@@ -70,7 +70,7 @@ import { TT } from "../components/utlis/tt";
         <IonLabel position="floating">name</IonLabel>
         <IonInput 
         value={name}
-        onIonChange={(e)=>e.detail.value!.length>=5?setName(e.detail.value):setMessage(TT("please make name with more than 4 alphabits"))} 
+        onIonChange={(e)=>setName(e.detail.value)} 
         placeholder='name'></IonInput>
         
       </IonItem>

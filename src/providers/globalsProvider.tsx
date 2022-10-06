@@ -6,7 +6,9 @@ import { Network } from '@capacitor/network';
 import CreateProfile from "../pages/CreatProfile";
 import { Redirect } from "react-router";
 
-export var userProfile:any = null
+export type userProfile ={
+  name:string
+}
 const globalsContext = createContext<{
     user:boolean|undefined,
     profile:any,
@@ -75,7 +77,6 @@ function isProfileComplete() {
     && (!!profile.name && profile.name.length >= 5) 
     &&!!profile.email
     && (!!profile.phoneNumber && profile.phoneNumber.length >=8))
-      console.log('profile is complete? :>> ', res);
     setProfileNotComplete(!res) 
 }
     

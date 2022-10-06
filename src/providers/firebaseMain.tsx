@@ -221,11 +221,12 @@ export async function applyForCard(UserUID:string,cardUID:string,orderOwner:stri
   
   return res
 }
+const avatarPLaceholder=require("../assets/avatarPlaceHolder.png")
 export function getUserInfoPlaceHolder() {
   let info :userInfo={
     name:"nnnn nnnn",
     phoneNumber:"*** *******",
-    photoURL:require("../assets/avatarPlaceHolder.png"),
+    photoURL:avatarPLaceholder,
   }
   return info
 }
