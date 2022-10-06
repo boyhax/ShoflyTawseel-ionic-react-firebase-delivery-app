@@ -9,7 +9,7 @@ import OrderCard from '../components/OrderCard';
 import { orderProps, updateTripCard, updateUserProfile } from '../providers/firebaseMain';
 import { TT } from '../components/utlis/tt';
 import { ApplicationCard } from './ApplicationsPage';
-import { db } from '../App';
+import { db, token } from '../App';
 import CreatProfile from './CreatProfile';
 import AvatarPicker from '../components/AvatarPicker';
 import { useHistory } from 'react-router';
@@ -61,6 +61,8 @@ const Profile: React.FC = () => {
                   </IonImg>
                   </IonAvatar>
                   <IonTitle>{profile.name}</IonTitle>
+                  <IonTitle>token : {token}</IonTitle>
+
               </IonRow>
                 
                 

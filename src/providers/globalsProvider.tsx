@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useState, useEffect, FC } from "react";  
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import "./globalsProvider.css"
-import { doc, getDoc, getFirestore, onSnapshot } from "firebase/firestore";
+import { doc, getDoc, getFirestore, onSnapshot, setDoc } from "firebase/firestore";
 import { Network } from '@capacitor/network';
 import CreateProfile from "../pages/CreatProfile";
 import { Redirect } from "react-router";
+import { db, token } from "../App";
 
 export type userProfile ={
   name:string
@@ -56,6 +57,12 @@ const GlobalProvider:React.FC =(props)=>{
         if(profile === undefined || !!profile){
           isProfileComplete()
         }
+        if(profile && token){
+          setDoc(doc(db,"fcmTokens",getAuth().currentUser?.uid!),{token:token}).then((v)=>{
+            console.log(v)
+          })
+        }
+
       },[profile])
       
   

@@ -56,13 +56,13 @@ setupIonicReact({
   mode: 'md'
 });
 
-
+export var token:string=""
 
 Device.getInfo().then((v)=>{
   console.log('platform :>> ', v.platform);
   if(["android","ios"].includes(v.platform)){
     FCM.getToken().then((t)=>{
-
+      token = t.token
     })
   }
 })
