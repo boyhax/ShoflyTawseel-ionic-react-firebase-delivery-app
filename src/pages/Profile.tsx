@@ -3,30 +3,46 @@ import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons,
 import { createOutline, logOutOutline, } from 'ionicons/icons';
 import { useGlobals } from '../providers/globalsProvider';
 import { collection, DocumentData, DocumentSnapshot, getDocs, getFirestore, onSnapshot, orderBy, query, where } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
+import { getAuth, updateCurrentUser } from 'firebase/auth';
 import "./Profile.css"
 import OrderCard from '../components/OrderCard';
-import { Redirect } from 'react-router';
 import { orderProps, updateTripCard, updateUserProfile } from '../providers/firebaseMain';
 import { TT } from '../components/utlis/tt';
 import { ApplicationCard } from './ApplicationsPage';
 import { db } from '../App';
 import CreatProfile from './CreatProfile';
+import AvatarPicker from '../components/AvatarPicker';
+import { useHistory } from 'react-router';
 
 const Profile: React.FC = () => {
     const {user,profile} = useGlobals()
     const [content,setContent]=useState<"orders"|"deliver"|"editProfile">("orders")
+    const [pickAvatar,setPickAvatar] = useState(false)
     // const auth= getAuth()
     // const id = useParams()
-    // const history =useHistory()
-    
+    const history =useHistory()
+    const uid = getAuth().currentUser?.uid
     useEffect(()=>{
       
   },[user]);
    
-    if(!user || !profile){
-      return<Redirect to={"/SignIn"}></Redirect>
+  
+    if(user ===false){
+      return<IonPage><IonContent>
+      <IonTitle>Sign In First</IonTitle>
+      <IonButton onClick={()=>history.push("signIn")} fill="clear" color={"primary"}>Here</IonButton>
+    </IonContent>
+    </IonPage>
     }
+    
+    if(profile===null || user == undefined){
+      return(<IonPage>
+        <IonContent>
+          <IonSpinner slot='primary'>Plaese Wait</IonSpinner>
+        </IonContent>
+      </IonPage>)
+    }
+    
     
     return (
     <IonPage >
@@ -36,14 +52,18 @@ const Profile: React.FC = () => {
           <IonGrid >
             <IonRow>
               <IonCol>
-                <IonAvatar><IonImg src={!!profile.photoURL?profile.photoURL
-                :"https://avataaars.io/?avatarStyle=Circle&topType=ShortHairFrizzle&accessoriesType=Blank&hairColor=Brown&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Default&eyebrowType=FlatNatural&mouthType=Default&skinColor=Light"}></IonImg>
+                <IonAvatar>
+                  <IonImg src={
+                    !!profile.photoURL?profile.photoURL
+                      :require("../assets/avatarPlaceHolder.png")}
+                      onClick={()=>{setPickAvatar(!pickAvatar)}}>
+                    
+                </IonImg>
                 </IonAvatar>
                 <IonCol>
                   <IonLabel>Name : {profile.name}</IonLabel>
                   {/* <IonLabel>email : {profile.email}</IonLabel> */}
                 </IonCol>
-                
                 
               </IonCol>
               <IonCol>
@@ -70,6 +90,10 @@ const Profile: React.FC = () => {
           <IonLabel>deliver</IonLabel>
         </IonSegmentButton>
       </IonSegment>}
+
+      <AvatarPicker isOpen={pickAvatar} onDidDismiss={()=>setPickAvatar(false)}
+      onAvatarSubmit={(url)=>{updateUserProfile(uid,{photoURL:url})}} ></AvatarPicker>
+
       {user && content ==="orders"&& 
             <IonContent>
               <ProfileOrdersList/>

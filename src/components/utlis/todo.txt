@@ -3,8 +3,8 @@ make chat page work / done
 add start chat button to order card and profiles /done
 add chat fab to home /done
 application system refactoring /done
-make profile edit page
-profile user orders and applyings lists
+make profile edit page/done
+profile user orders and applyings lists/done but not styled
 sign in page google and email
 add place holder for chats page items
 add catagories to orders

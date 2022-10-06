@@ -47,7 +47,9 @@ useEffect(()=>{
     
    function doRefresh(event: CustomEvent<RefresherEventDetail>) {
     console.log('Begin async operation');
-      getNewList().finally(()=>event.detail.complete())
+      getNewList().finally(
+        // ()=>event.detail.complete()
+        )
 }   
     async function getNewList(){
       // IonRefresherElement.current!.start()
