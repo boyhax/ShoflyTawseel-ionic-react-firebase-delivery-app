@@ -52,7 +52,7 @@ import { TT } from "../components/utlis/tt";
             updateUserProfile(getAuth().currentUser!.uid,{
                 name:name,
                 email:email,
-                phone:phone
+                phoneNumber:phone
             }).then((value) => {
                 let v = props.onSave()?props.onSave():()=>{}
                 setMessage("updated seccesfuly")
