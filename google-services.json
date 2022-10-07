@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "261518911024",
+    "firebase_url": "https://mandubk-370d7-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "mandubk-370d7",
+    "storage_bucket": "mandubk-370d7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:261518911024:android:e94e045359715b5e93eff5",
+        "android_client_info": {
+          "package_name": "com.boyhax.shoflytawseel"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "261518911024-d9jv5hco56qc5k3ji58je0pnjgg6vvrg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1ItjtBmkIIEAuB6ps6Dl498lXf583LYk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "261518911024-d9jv5hco56qc5k3ji58je0pnjgg6vvrg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

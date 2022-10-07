@@ -105,7 +105,7 @@ const AddOrder=({isOpen,setOpen}:Props)=>{
                 <IonButton onClick={()=>{showMap()}}>use location</IonButton>
                 <IonModal isOpen={map}>
                     <IonButton onClick={()=>setMap(false)}>close</IonButton>
-                    <MyMap onLocationSet={((l)=>{setLocation(l)})}/>
+                    {/* <MyMap onLocationSet={((l)=>{setLocation(l)})}/> */}
                 </IonModal>
                 <IonLabel>{String(location)}</IonLabel>
             </IonItem>

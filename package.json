@@ -4,16 +4,17 @@
   "private": true,
   "dependencies": {
     "@capacitor-community/fcm": "^2.0.2",
-    "@capacitor/android": "^4.1.0",
+    "@capacitor/android": "4.3.0",
     "@capacitor/core": "^4.1.0",
     "@capacitor/device": "^4.0.1",
     "@capacitor/geolocation": "^4.0.1",
     "@capacitor/google-maps": "^4.1.0",
-    "@capacitor/ios": "^3.5.1",
+    "@capacitor/ios": "^4.3.0",
     "@capacitor/network": "^4.0.1",
+    "@capacitor/push-notifications": "^4.1.0",
     "@ionic/pwa-elements": "^3.1.1",
-    "@ionic/react": "^6.1.6",
-    "@ionic/react-router": "^5.9.4",
+    "@ionic/react": "^6.3.0",
+    "@ionic/react-router": "^6.3.0",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^10.4.9",
     "@testing-library/user-event": "^10.4.1",
@@ -38,7 +39,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --transformIgnorePatterns 'node_modules/(?!(@ionic/react|@ionic/react-router|@ionic/core|@stencil/core|ionicons)/)'",
-    "build android": "ionic cap build android"
+    "build android": "ionic cap build android",
+    "run android ": "ionic capacitor run android -l --external"
   },
   "eslintConfig": {
     "extends": "react-app"
