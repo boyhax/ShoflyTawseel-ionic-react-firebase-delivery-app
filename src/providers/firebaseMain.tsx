@@ -224,7 +224,7 @@ export async function applyForCard(UserUID:string,cardUID:string,orderOwner:stri
 const avatarPLaceholder=require("../assets/avatarPlaceHolder.png")
 export function getUserInfoPlaceHolder() {
   let info :userInfo={
-    name:"nnnn nnnn",
+    name:"Nick Name",
     phoneNumber:"*** *******",
     photoURL:avatarPLaceholder,
   }

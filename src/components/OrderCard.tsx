@@ -131,7 +131,7 @@ return<IonCard className="card" color="tertiary" >
     <div className="content" >
         
         <IonRow>
-            <IonAvatar>
+            <IonAvatar onClick={()=>history.push("/profile/"+data.uid)}>
                 <IonImg
                 src={userInfo.photoURL}>
                 </IonImg>
@@ -145,8 +145,8 @@ return<IonCard className="card" color="tertiary" >
             
         </IonRow>
     
-    <IonChip className="BoldText" color="secondary">{"من: "+data.from}</IonChip>
-    <IonChip className="BoldText" color="secondary">{"الى: "+data.to}</IonChip>
+    <IonChip style={{fontSize:15}} className="BoldText" color="secondary">{"من: "+data.from}</IonChip>
+    <IonChip style={{fontSize:15}} className="BoldText" color="secondary">{"الى: "+data.to}</IonChip>
     
      {/* <IonChip 
      className="BoldText" 
@@ -161,7 +161,7 @@ return<IonCard className="card" color="tertiary" >
     </IonChip> */}
         
     
-    <IonChip className="BoldText" color="secondary"
+    <IonChip style={{fontSize:15}} className="BoldText" color="secondary"
     onClick={()=>toggleComment()}>
         <IonPopover ref={popOver} >
         <IonContent >{comment?comment:TT("no comment")}</IonContent></IonPopover>

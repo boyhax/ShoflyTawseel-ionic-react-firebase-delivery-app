@@ -31,7 +31,7 @@ const Tab1= () => {
     <IonPage>
       <MainMenu menuRef={menuRef}></MainMenu>
       <IonHeader>
-        <IonToolbar color="secondary">
+        <IonToolbar color="primary">
           <IonTitle slot='primary' onClick={()=>history.push("/home")}>ShoflyTawseel</IonTitle>
           <IonButtons slot="start">            
             <IonButton onClick={()=>toggleMenu()}>

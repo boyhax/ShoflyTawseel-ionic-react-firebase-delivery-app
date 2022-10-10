@@ -46,6 +46,7 @@ import { setupIonicReact } from '@ionic/react';
 import { Config } from './config';
 import { getFirestore } from 'firebase/firestore';
 import CreateProfile from './pages/CreatProfile';
+import ProfileID from './pages/ProfileID';
 
 
 const firebaseConfig=Config()
@@ -80,7 +81,7 @@ const App: React.FC = () => {
     <IonRouterOutlet>
           <Route path="/home" component={Home} exact={true} />
           <Route path="/Profile" component={Profile} />
-          <Route path="/Profile/:id" component={Profile} />
+          <Route path="/Profile/:id" component={ProfileID} />
           <Route path="/createProfile" component={CreateProfile} />
 
           <Route path="/details" component={Details} />
