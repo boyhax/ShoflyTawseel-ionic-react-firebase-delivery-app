@@ -26,9 +26,11 @@ const Profile: React.FC = () => {
       
   },[user]);
    
-  
+  const header = <IonHeader><IonToolbar color="secondary" ><IonLabel slot='end'>Profile</IonLabel><IonButtons slot='start'><IonBackButton defaultHref='/'></IonBackButton></IonButtons></IonToolbar></IonHeader>
     if(user ===false){
-      return<IonPage><IonContent>
+      return<IonPage>
+        {header}
+        <IonContent>
       <IonTitle>Sign In First</IonTitle>
       <IonButton onClick={()=>history.push("signIn")} fill="clear" color={"primary"}>Here</IonButton>
     </IonContent>
@@ -37,6 +39,7 @@ const Profile: React.FC = () => {
     
     if(profile===null || user == undefined){
       return(<IonPage>
+        {header}
         <IonContent>
           <IonSpinner slot='primary'>Plaese Wait</IonSpinner>
         </IonContent>
@@ -61,7 +64,7 @@ const Profile: React.FC = () => {
                   </IonImg>
                   </IonAvatar>
                   <IonTitle>{profile.name}</IonTitle>
-                  <IonTitle>token : {token}</IonTitle>
+                  {/* <IonTitle>token : {token}</IonTitle> */}
 
               </IonRow>
                 

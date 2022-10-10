@@ -1,15 +1,16 @@
 import { Device } from "@capacitor/device";
 import { ComponentProps } from "@ionic/core";
-import { IonCard, IonLabel,IonContent ,IonChip, IonIcon, IonButton, IonPopover, IonTextarea, IonSpinner, IonCardHeader, IonTitle, IonBadge, IonFab, IonFabButton, IonItem, IonAvatar, IonImg, IonRow} from "@ionic/react";
+import { IonCard, IonLabel,IonContent ,IonChip, IonIcon, IonButton, IonPopover, IonTextarea, IonSpinner, IonCardHeader, IonTitle, IonBadge, IonFab, IonFabButton, IonItem, IonAvatar, IonImg, IonRow, IonCol, IonThumbnail} from "@ionic/react";
 import { getAuth } from "firebase/auth";
 import { doc, DocumentData, DocumentSnapshot, getFirestore, onSnapshot, } from "firebase/firestore";
-import {  alertCircle, trashOutline, thumbsDownOutline, thumbsUpOutline, chatboxEllipsesOutline, logoWhatsapp, chatboxEllipses } from "ionicons/icons";
+import {  alertCircle, trashOutline, thumbsDownOutline, thumbsUpOutline, chatboxEllipsesOutline, logoWhatsapp, chatboxEllipses, handRightOutline } from "ionicons/icons";
 import React, { useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router";
 import { db } from "../App";
-import { applyForCard, deleteOrder, getUserInfoPlaceHolder, is_user_applied_to_card, makeOrderFromDoc, orderProps, removeApplicationToOrder, reportOrder, userInfo } from "../providers/firebaseMain";
+import { applyForCard, deleteOrder, getUserInfoPlaceHolder, hands_up, is_user_applied_to_card, makeOrderFromDoc, orderProps, removeApplicationToOrder, reportOrder, userInfo } from "../providers/firebaseMain";
 import { useGlobals } from "../providers/globalsProvider";
 import "./OrderCard.css"
+import { TT } from "./utlis/tt";
 const options:Object = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
 
 interface props extends ComponentProps{
@@ -112,7 +113,7 @@ export default ({orderDocSnap,whatsapp,message,remove,report,canApplyFor,onDelet
         }
 
     }
-    console.log(userInfo)
+    // console.log(userInfo)
 return<IonCard className="card" color="tertiary" >
     <IonPopover isOpen={reporting}>
         <IonLabel slot="primary">اذكر السبب</IonLabel>
@@ -128,42 +129,52 @@ return<IonCard className="card" color="tertiary" >
     </IonPopover>
 
     <div className="content" >
+        
         <IonRow>
             <IonAvatar>
-                <IonImg 
+                <IonImg
                 src={userInfo.photoURL}>
                 </IonImg>
             </IonAvatar>
-            <IonTitle className="BoldText" color="secondary">{userInfo.name}</IonTitle>
+            <IonCol>
+            <IonLabel  color="secondary" style={{fontSize: 20}}>{userInfo.name}</IonLabel>
+            <IonLabel  color="secondary" position="fixed" style={{fontSize: 'small',margin: "5%"}}>
+                {date}
+            </IonLabel>
+            </IonCol>
+            
         </IonRow>
-       
+    
     <IonChip className="BoldText" color="secondary">{"من: "+data.from}</IonChip>
     <IonChip className="BoldText" color="secondary">{"الى: "+data.to}</IonChip>
-    {
-     <IonChip className="BoldText" color="secondary"
+    
+     {/* <IonChip 
+     className="BoldText" 
+     color="secondary"
      onClick={()=>{
         if(owner){
-            history.push("/applications/"+data.id)
+            history.push("/profile")
         }
      }}>
         {"قبول الطلب: "}
          {data.applications.length}        
-        </IonChip>
-        }
+    </IonChip> */}
+        
     
     <IonChip className="BoldText" color="secondary"
     onClick={()=>toggleComment()}>
         <IonPopover ref={popOver} >
-        <IonContent >{comment}</IonContent></IonPopover>
+        <IonContent >{comment?comment:TT("no comment")}</IonContent></IonPopover>
         {"الوصف: "+comment.slice(0,10)+"..."}
         </IonChip>
 
-    <IonChip className="fsize-small">
-        {date}
-    </IonChip>
+    
     </div>
 
     <IonItem >
+        <IonRow>
+
+        
     
     {!owner && !!data.number && 
         <IonButton  
@@ -200,7 +211,15 @@ return<IonCard className="card" color="tertiary" >
         <IonIcon size="large" color="success" icon={chatboxEllipses} ></IonIcon>
         chat
         </IonButton>}
-    
+        {<IonButton fill="clear"  onClick={()=>{if(owner){history.push("/profile")}}} 
+        color="dark" shape="round" >
+        
+        <IonIcon icon={handRightOutline}></IonIcon>
+        
+        <IonBadge slot="start">{data.applications.length}</IonBadge>
+        </IonButton>}
+        
+        </IonRow>
     </IonItem>
     </IonCard>
     

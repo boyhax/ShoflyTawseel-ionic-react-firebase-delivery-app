@@ -253,3 +253,4 @@ export function intersection(a:Array<any>,b:Array<any>){
 });
 return filteredArray
 }
+export const hands_up= require("../assets/hands-up.png")

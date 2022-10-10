@@ -4,6 +4,7 @@ import {
   IonApp,
   IonContent,
   IonRouterOutlet,
+  IonSplitPane,
   IonTitle,
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
@@ -74,6 +75,8 @@ const App: React.FC = () => {
   <GlobalProvider>
     <IonApp>
     <IonReactRouter>
+    {/* <IonSplitPane contentId="main"> */}
+
     <IonRouterOutlet>
           <Route path="/home" component={Home} exact={true} />
           <Route path="/Profile" component={Profile} />
@@ -93,6 +96,8 @@ const App: React.FC = () => {
 
           <Route path="/" render={() => <Redirect to="/home" />} exact={true} />
         </IonRouterOutlet>
+        {/* </IonSplitPane> */}
+
     </IonReactRouter>
   </IonApp>
   </GlobalProvider>

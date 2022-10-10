@@ -25,7 +25,7 @@ export default (Props:props)=>{
     
 return<IonMenu  side="start" ref={Props.menuRef} >
     <IonHeader>
-        <IonToolbar color="danger" >
+        <IonToolbar color="primary" >
             <IonTitle slot="start">Menu</IonTitle>
             <IonButtons slot="end">
                 <IonButton onClick={(e)=>close()}>
@@ -35,9 +35,9 @@ return<IonMenu  side="start" ref={Props.menuRef} >
         </IonToolbar>
     </IonHeader>
     <IonContent >
-        <IonList >
+        <IonList>
             
-            <IonItem className="item" onClick={()=>history.push("Profile")}>Profile
+            <IonItem  slot="end" className="item" onClick={()=>history.push("Profile")}>Profile
             <IonRippleEffect></IonRippleEffect>
             <IonLabel>{user?profile?profile.name!:profile === undefined?"signing in..":"":""}</IonLabel>
 
