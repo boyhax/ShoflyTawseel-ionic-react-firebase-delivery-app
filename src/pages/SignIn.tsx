@@ -58,15 +58,7 @@ const SignIn: React.FC = () => {
           history.push("/")
         
     }
-    function onCreateProfileSubmit(){
-      if(typeof name === "string"?name.length >5:false){
-          createNewProfile(auth.currentUser?.uid,{
-            name:name
-          })
-      }else{
-        alert("يجب ادخال اسم اكبر من 5 حروف")
-      }
-    }
+    
     function createProfile(){
       // createProfileModal.current!.present()
       return<IonLabel>create pr</IonLabel>
