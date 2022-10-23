@@ -9,19 +9,6 @@ import { createNewProfile, getProfile, profileExist } from '../providers/firebas
 import { StyledFirebaseAuth,FirebaseAuth } from 'react-firebaseui';
 import { useHistory } from 'react-router';
 
-const uiConfig = {
-  // Popup signin flow rather than redirect flow.
-  signInFlow: 'popup',
-  // We will display Google and Facebook as auth providers.
-  signInOptions: [
-    GoogleAuthProvider.PROVIDER_ID,
-    PhoneAuthProvider.PROVIDER_ID
-  ],
-  callbacks: {
-    // Avoid redirects after sign-in.
-    signInSuccessWithAuthResult: () => false,
-  },
-};
 
 const SignIn: React.FC = () => {
     const [phoneNumber,setPhoneNumber]=useState<any>(null)
@@ -38,7 +25,6 @@ const SignIn: React.FC = () => {
     auth.languageCode = "ar"
     const {user} = useGlobals()
     const history = useHistory()
-    const createProfileModal = useRef<any>(null)
     useEffect(()=>{
     },[])
     useEffect(()=>{
@@ -51,28 +37,17 @@ const SignIn: React.FC = () => {
       // document.getElementById("recaptcha-container")!.innerHTML
           },[phoneNumber])
     
-      async function getprofile() {
-      return await (await getProfile(auth.currentUser!.uid)).data
-    }
     async function onSignIn(){
           history.push("/")
         
     }
     
-    function createProfile(){
-      // createProfileModal.current!.present()
-      return<IonLabel>create pr</IonLabel>
-    }
-    function onSignOut(){
-      auth.signOut()
-    }
     
     async function  sendVerifyNumber(){
       if(String(phoneNumber).length !== 8){
         console.log("phone numbers <8")
         return 1
       }
-        const phoneProvider = new PhoneAuthProvider(auth);
           setVerifyError(undefined);
           setVerifyInProgress(true);
           setVerificationId('');
@@ -90,7 +65,7 @@ const SignIn: React.FC = () => {
             },
             auth
           );
-          const onSignInSubmit=(response:any)=>{
+          const onSignInSubmit=(v:any)=>{
               setRecaptchaVerified(true)
           }
            await signInWithPhoneNumber(
@@ -119,7 +94,6 @@ const SignIn: React.FC = () => {
             verificationId,
             verificationCode
           );
-          const authResult = await signInWithCredential(auth, credential);
           setConfirmInProgress(false);
           setVerificationId('');
           setVerificationCode('');
@@ -131,40 +105,6 @@ const SignIn: React.FC = () => {
           setConfirmInProgress(false);
         }
         }
-       const uiConfig = {
-        signInOptions: [
-          EmailAuthProvider.PROVIDER_ID,
-          {
-            provider: PhoneAuthProvider.PROVIDER_ID,
-            recaptchaParameters: {
-              type: 'image', // 'audio'
-              size: 'normal', // 'invisible' or 'compact'
-              badge: 'bottomleft' //' bottomright' or 'inline' applies to invisible.
-            },
-            defaultCountry: 'OM', // Set default country to the United Kingdom (+44).
-            // For prefilling the national number, set defaultNationNumber.
-            // This will only be observed if only phone Auth provider is used since
-            // for multiple providers, the NASCAR screen will always render first
-            // with a 'sign in with phone number' button.
-            defaultNationalNumber: '1234567890',
-            // You can also pass the full phone number string instead of the
-            // 'defaultCountry' and 'defaultNationalNumber'. However, in this case,
-            // the first country ID that matches the country code will be used to
-            // populate the country selector. So for countries that share the same
-            // country code, the selected country may not be the expected one.
-            // In that case, pass the 'defaultCountry' instead to ensure the exact
-            // country is selected. The 'defaultCountry' and 'defaultNationaNumber'
-            // will always have higher priority than 'loginHint' which will be ignored
-            // in their favor. In this case, the default country will be 'GB' even
-            // though 'loginHint' specified the country code as '+1'.
-            loginHint: '+11234567890'
-          },
-          GoogleAuthProvider.PROVIDER_ID
-        ],
-        signInSuccessUrl: '/',
-
-      }
-        var ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(auth);
         // ui.start('#firebaseui-auth-container', uiConfig);
 
         

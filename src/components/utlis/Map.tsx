@@ -29,12 +29,16 @@ const MyMap: React.FC<Props> = ({onLocationSet}) => {
       element: mapRef.current,
       apiKey: process.env.REACT_APP_map_api_key!,
       config: {
+        
+        androidLiteMode:true,
+
         center: {
           lat: 33.6,
           lng: -117.9
         },
-        zoom: 8
-      }
+        zoom: 8,
+      },
+
     })
     setMap(newMap)
     newMap.setOnMapClickListener((data)=>{
@@ -45,6 +49,10 @@ const MyMap: React.FC<Props> = ({onLocationSet}) => {
         });
       }
       
+    })
+    newMap.setOnMyLocationClickListener((e)=>{console.log(e)})
+    newMap.setOnMyLocationButtonClickListener((data)=>{
+      console.log('data my location button :>> ', data);
     })
   }
  async function markMyLocation(){
@@ -58,7 +66,7 @@ const MyMap: React.FC<Props> = ({onLocationSet}) => {
 
     if(!!map){
       
-      // map.removeMarker("1")
+      map.removeMarker("1")
      const id = await map.addMarker({
         coordinate:{
           lat:pos.coords.latitude,
@@ -83,11 +91,17 @@ const MyMap: React.FC<Props> = ({onLocationSet}) => {
     console.log('pos :>> ', pos);
   }
 
-  return<IonContent className="component-wrapper">
-          <capacitor-google-map ref={mapRef} style={{
-            display: 'inline-block',
-            width: 275,
-            height: 400
+  return<div style={{
+    height:"100%",
+    width: "100%",
+    border:"5px",
+    justifyItems:"center"
+    }}>
+          <capacitor-google-map options={{streetViewControl: false}} ref={mapRef} style={{
+             display: 'block',
+             width: '92vw',
+             height: '50vh',
+             
           }}>
             
           </capacitor-google-map>
@@ -95,8 +109,7 @@ const MyMap: React.FC<Props> = ({onLocationSet}) => {
                 <IonButton onClick={()=>markMyLocation()} >my location</IonButton>
             </IonButtons>
 
-          {/* <IonButton onClick={()=>createMap()}>Create Map</IonButton> */}
-        </IonContent>
+        </div>
   
 }
 
