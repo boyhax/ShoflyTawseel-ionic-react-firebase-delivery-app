@@ -1,15 +1,15 @@
 import React, { FC, useEffect, useState } from 'react';
-import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton, IonChip, IonSegment, IonSegmentButton, IonCard, IonCardContent, IonGrid, IonRow, IonAvatar, IonImg, IonCol, IonItemDivider, IonHeader } from '@ionic/react';
-import { createOutline, logOutOutline, } from 'ionicons/icons';
+import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonLabel, IonItem, IonList, IonSpinner, IonBackButton, IonSegment, IonSegmentButton, IonGrid, IonRow, IonAvatar, IonImg, IonCol, IonHeader } from '@ionic/react';
+import { logOutOutline, } from 'ionicons/icons';
 import { useGlobals } from '../providers/globalsProvider';
-import { collection, DocumentData, DocumentSnapshot, getDocs, getFirestore, onSnapshot, orderBy, query, where } from 'firebase/firestore';
-import { getAuth, updateCurrentUser } from 'firebase/auth';
+import { collection, DocumentData, DocumentSnapshot, getFirestore, onSnapshot, orderBy, query, where } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 import "./Profile.css"
 import OrderCard from '../components/OrderCard';
-import { orderProps, updateTripCard, updateUserProfile } from '../providers/firebaseMain';
+import { updateUserProfile } from '../providers/firebaseMain';
 import { TT } from '../components/utlis/tt';
 import { ApplicationCard } from './ApplicationsPage';
-import { db, token } from '../App';
+import { db } from '../App';
 import CreatProfile from './CreatProfile';
 import AvatarPicker from '../components/AvatarPicker';
 import { useHistory } from 'react-router';
