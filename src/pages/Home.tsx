@@ -14,7 +14,14 @@ import MainMenu from '../components/MainMenu';
 import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { getUserInfoPlaceHolder } from '../providers/firebaseMain';
+import { Geolocation } from '@capacitor/geolocation';
+import { Device } from '@capacitor/device';
 
+var dInfo:any =''
+var state:any = process.env.NODE_ENV
+Device.getInfo().then((info)=>{
+  dInfo = info
+})
 
 const Tab1= () => {
   
@@ -37,10 +44,24 @@ const Tab1= () => {
   function toggleMenu(){
     menuRef.current?.toggle()
   }
-  function getLocation(){
+  async function getLocation(){
+    
     Map?.locate()
+    try {
+      Geolocation.checkPermissions()
+      const location = await Geolocation.getCurrentPosition()
+      const latlng = {lat:location.coords.latitude,lng:location.coords.longitude}
+    if(Map && location){
+      Map?.flyTo(latlng)
+      L.marker(latlng,{icon:greenIcon,draggable:true}).addEventListener('dragend',(e)=>{console.log('e :>> ', e);}).addTo(Map)
+      return
+    }
+    } catch (error) {
+      alert('please enable GPS!  '+error)
+    }
     Map?.addEventListener('locationfound', (e)=>{console.log(e);
     Map.flyTo(e.latlng)
+    L.marker(e.latlng,{icon:greenIcon,draggable:true}).addEventListener('dragend',(e)=>{console.log('e :>> ', e);}).addTo(Map)
     }, {})
   }
  
@@ -100,6 +121,7 @@ const Tab1= () => {
           <IonCard style={{width: '100%'}} >
             <IonCardHeader>The Orders</IonCardHeader>
             <IonCardContent> 
+              {"dInfo: "+JSON.stringify( dInfo)}{"state: "+state}
               <IonButton 
               fill='clear' 
               onClick={()=>history.push('/OrdersPage')}>see the latest orders</IonButton> 

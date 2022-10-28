@@ -21,5 +21,5 @@ const Config_release={
 };
 export let Config=()=>{
      console.log('process.env.NODE_ENV :>> ', process.env.NODE_ENV);
-    return process.env.NODE_ENV=="production"?Config_release:Config_test
+    return process.env.NODE_ENV==="production"?Config_release:Config_test
 };

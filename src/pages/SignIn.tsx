@@ -94,15 +94,21 @@ const SignIn: React.FC = () => {
             verificationId,
             verificationCode
           );
-          setConfirmInProgress(false);
-          setVerificationId('');
-          setVerificationCode('');
-          alert('تم تاكيد التسجيل بنجاح');
-          setConfirmError({message:"تم التسجيل بنجاح"});
-          onSignIn()
+          const cred = await signInWithCredential(getAuth(),credential).then((v)=>{
+            setConfirmInProgress(false);
+            setVerificationId('');
+            setVerificationCode('');
+            alert('تم تاكيد التسجيل بنجاح');
+            setConfirmError({message:"تم التسجيل بنجاح"});
+            onSignIn()
+          },(err)=>{
+            setConfirmError(err);
+            setConfirmInProgress(false);
+          })
+          
+          
         } catch (err) {
-          setConfirmError(err);
-          setConfirmInProgress(false);
+
         }
         }
         // ui.start('#firebaseui-auth-container', uiConfig);
@@ -151,24 +157,19 @@ const SignIn: React.FC = () => {
         autocomplete='one-time-code' 
         onIonChange={(e)=>setVerificationCode(e.detail.value!)}>
             </IonInput>
-            <IonButton slot='start' size='default' onClick={()=>{VerifyNumber()}} 
+            {confirmInProgress?
+            <IonSpinner></IonSpinner>
+            :<IonButton slot='start' size='default' onClick={()=>{VerifyNumber()}} 
             disabled={String(verificationCode).length<1}>
             <IonIcon size='large' icon={arrowForwardCircle}></IonIcon>
-            </IonButton>
+            </IonButton>}
+            
         </IonItem>
         <IonLabel>{confirmError?.message!}</IonLabel>
         </IonContent>}
         {!verificationId &&    
            <div className='center' id='recaptcha-container' ></div>}
       </IonContent>}
-
-        
-          <IonContent>
-          {/* {user && <IonItem fill={'outline'} shape={'round'}  >
-      <IonTitle slot='start'>تم تسجيل الدخول</IonTitle>
-      <IonButton slot='start' onClick={()=>onSignOut()}>خروج</IonButton>
-      </IonItem>} */}
-          </IonContent>
     
       </IonContent>
     </IonPage>
