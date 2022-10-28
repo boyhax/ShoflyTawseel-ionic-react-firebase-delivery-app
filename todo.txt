@@ -6,9 +6,12 @@ application system refactoring /done
 make profile edit page/done
 profile user orders and applyings lists/done but not styled
 sign in page google and email
-add place holder for chats page items
+add place holder for chats page items/done
 add catagories to orders
-add user avatar and name in chat header
+add user avatar and name in chat header/done
 add location and camera attachment in chat 
 add location to add order 
+leaflet chat sto have ui for add order 
+also see near by orders 
+
 
