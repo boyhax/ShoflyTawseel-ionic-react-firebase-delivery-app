@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { IonAvatar, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonContent, IonFab, IonFabButton,
    IonGrid,
-   IonHeader, IonIcon, IonImg, IonPage,
+   IonHeader, IonIcon, IonImg, IonItem, IonPage,
      IonRow,
      IonTitle,
      IonToolbar } from '@ionic/react';
@@ -23,7 +23,7 @@ const Tab1= () => {
   const [addOrder,setAddOrder] = useState(false)
   const [fcmToken,setFcmToken] = useState<any>(null)
   const [_profile,_setProfile] = useState<any>(profile?profile:getUserInfoPlaceHolder())
-
+  const [Map,setMap] = useState<L.Map>()
   useEffect(() => {
     if(!!profile){
       _setProfile(profile)
@@ -36,6 +36,12 @@ const Tab1= () => {
   }
   function toggleMenu(){
     menuRef.current?.toggle()
+  }
+  function getLocation(){
+    Map?.locate()
+    Map?.addEventListener('locationfound', (e)=>{console.log(e);
+    Map.flyTo(e.latlng)
+    }, {})
   }
  
     return (
@@ -67,7 +73,7 @@ const Tab1= () => {
         <AddOrder isOpen={addOrder} setOpen={(v)=>setAddOrder(v)}/>
         <IonGrid style={{width:"100%",bottom: 0}}>
         <IonRow >
-          {profile && <IonCard onClick={()=>history.push('/profile')} style={{maxWidth: "50%"}}>
+          {/* {profile && <IonCard onClick={()=>history.push('/profile')} style={{maxWidth: "50%"}}>
             <IonCardHeader>
               {profile.name}
             </IonCardHeader>
@@ -90,10 +96,14 @@ const Tab1= () => {
                 </IonButton>
                 
               </IonCardContent>
-            </IonCard>}
-          <IonCard >
+            </IonCard>} */}
+          <IonCard style={{width: '100%'}} >
             <IonCardHeader>The Orders</IonCardHeader>
-            <IonCardContent> <IonButton fill='clear' onClick={()=>history.push('/OrdersPage')}>see the latest orders</IonButton> </IonCardContent>
+            <IonCardContent> 
+              <IonButton 
+              fill='clear' 
+              onClick={()=>history.push('/OrdersPage')}>see the latest orders</IonButton> 
+            </IonCardContent>
           </IonCard>
 
         </IonRow>
@@ -102,8 +112,18 @@ const Tab1= () => {
         </IonRow>
         <IonCard >
         <IonCardHeader>Map</IonCardHeader>
-        <IonCardContent style={{height: '300px'}}>
-          <LeafLetMap></LeafLetMap>
+        <IonCardContent style={{height: '400px'}}>
+          
+        <IonItem style={{
+                                padding: '10px',
+                                backgroundColor:'#dddd',
+                                display: 'flexbox',
+                                height:"50px",
+                                width: '100%',
+                                }} onClick={(e)=>{console.log('message');e.stopPropagation()}}>
+                    <button onClick={()=>getLocation()}> location</button>
+                    </IonItem>
+                    <LeafLetMap onMap={(map)=>setMap(map)}></LeafLetMap>
         </IonCardContent>
       </IonCard>
         </IonGrid>
@@ -136,7 +156,10 @@ var greenIcon = L.icon({
   shadowAnchor: [4, 62],  // the same for the shadow
   popupAnchor:  [0, 50] // point from which the popup should open relative to the iconAnchor
 });
-export const LeafLetMap:React.FC=()=>{
+type props={
+  onMap:(map:L.Map)=>void
+}
+export const LeafLetMap:React.FC<props>=({onMap})=>{
       let current_lat = 23.5880;
       let current_long = 58.3829;
       let current_zoom = 16;
@@ -153,6 +176,7 @@ export const LeafLetMap:React.FC=()=>{
                 zoom: center_zoom
               })
               setMap(map)
+              onMap(map)
               L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
                 attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
               }).addTo(map);  
@@ -162,7 +186,9 @@ export const LeafLetMap:React.FC=()=>{
               //     attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
               //   }).addTo(map);    
               const lg = L.layerGroup([]).addTo(map)
-              map.addEventListener('click',(e)=>{
+              
+              map.addEventListener('mousedown',(e)=>{
+                
                 console.log('markers :>> ', lg.getLayers());
                 console.log('e.latlong :>> ', e.latlng);
                 
@@ -230,6 +256,19 @@ export const LeafLetMap:React.FC=()=>{
                   height:'100%',
                  
                  }}>
+                  
+                  {/* <IonCard style={{position: 'absolute',
+                                top: '20px',
+                                right: '20px',
+                                padding: '10px',
+                                zIndex: '1000',
+                                backgroundColor:'#dddd',
+                                display: 'flexbox',
+                                height:"200px",
+                                }} onClick={(e)=>{console.log('message');e.stopPropagation()}}>
+                    <button > red</button>
+                    </IonCard> */}
+                  
                   
                 </div>);
 }
