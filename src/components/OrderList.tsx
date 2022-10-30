@@ -1,14 +1,14 @@
 import React, {  useEffect, useRef, useState } from "react";
 
 import {  collection, getDocs, getFirestore, query, where, limit, orderBy, startAfter, DocumentSnapshot, DocumentData  } from "firebase/firestore";
-import { IonContent, IonFooter, IonHeader, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonItem, IonLabel, IonList, IonRefresher, IonRefresherContent, IonRow } from "@ionic/react";
+import { IonContent, IonHeader, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonItem, IonLabel, IonRefresher, IonRefresherContent } from "@ionic/react";
 import {  filter } from "ionicons/icons";
 import { RefresherEventDetail } from '@ionic/core';
 import "./OrderList.css"
 import ListPicker from "./ListPicker";
 import { Cities } from "./utlis/citiesUtlis";
 import { getAuth } from "firebase/auth";
-import { intersection, orderProps } from "../providers/firebaseMain";
+import { intersection } from "../providers/firebaseMain";
 import OrderCard from "./OrderCard";
 import { useGlobals } from "../providers/globalsProvider";
 
@@ -157,7 +157,7 @@ useEffect(()=>{
     return<IonContent  >
       
       <IonHeader>
-      <IonItem onClick={()=>toggleFilter()}>
+      <IonItem onClick={()=>toggleFilter()} dir={'rtl'}>
             <IonIcon icon={filter}></IonIcon>
             <CitiePicker value={filterFrom} onItemPicked={(v)=>setFilterFrom(v)} 
             placeHolder={"من :"}/>
