@@ -1,25 +1,7 @@
 
-ion-page{
-  --background:var(--ion-color-primary)
-}
-ion-card{
-  --color :--ion-color-light
-}
-ion-title,ion-label{
-  /* font-family: baloo; */
-  direction: rtl;
-}
-ion-content,ion-item{
-  /* font-family: baloo; */
-  justify-content: center;
-  text-align: center;
-  direction: rtl;
-}
-ion-item{
-  background-color: "primary"; 
-}
 
-/* 
+
+
  @media (prefers-color-scheme: dark) {
   
  
@@ -161,4 +143,4 @@ ion-item{
   ion-title.title-large {
     --color: white;
   }
-}  */
+} 

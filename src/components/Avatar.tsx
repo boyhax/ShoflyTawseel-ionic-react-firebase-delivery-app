@@ -40,3 +40,7 @@ function shuffle(s:string):string{
     s = arr.toString().replaceAll(",","")
     return  s
 }
+export function  randomAvatarUrl(){
+    let seed = shuffle("abcdefghijklmnopqrstu1234567890")
+    return 'https://robohash.org/'+seed
+}

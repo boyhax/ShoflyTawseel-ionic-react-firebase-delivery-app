@@ -1,39 +1,38 @@
-import React, { createContext, useContext, useState, useEffect, FC } from "react";  
-import { getAuth, onAuthStateChanged,getAdditionalUserInfo } from "firebase/auth";
+import React, { createContext, useContext, useState, useEffect } from "react";  
+import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth";
 import "./globalsProvider.css"
-import { doc, getDoc, getFirestore, onSnapshot, setDoc } from "firebase/firestore";
+import { doc, getFirestore, onSnapshot, setDoc } from "firebase/firestore";
 import { Network } from '@capacitor/network';
 import CreateProfile from "../pages/CreatProfile";
 import { db, token } from "../App";
+import { createNewProfileForThisUser, UpdateProfileForThisUser, UserProfile, UserProfileFromDoc } from "./firebaseMain";
 
-export type userProfile ={
-  name:string
-}
+
 const globalsContext = createContext<{
     user:boolean|undefined,
-    profile:any,
-    }>({user:false,profile:null});
+    profile:UserProfile|undefined,
+    }>({user:false,profile:undefined});
 
 const GlobalProvider:React.FC =(props)=>{
     const [user,setUser] = useState<boolean|undefined>(undefined)
-    const [profile,setProfile] = useState<any>(null)
-    const [online,setOnline] = useState<boolean|undefined>(undefined)
-    const [profileNotComplete,setProfileNotComplete] = useState<boolean>(false)
+    const [profile,setProfile] = useState<UserProfile>()
+    const [online,setOnline] = useState<boolean>()
+    const [profileLoadingComplete,setProfileLoadingComplete] = useState<boolean>(false)
 
     const uid=getAuth().currentUser?.uid
 
-    const logCurrentNetworkStatus = async () => {
+    const CurrentNetworkStatus = async () => {
       const status = await Network.getStatus();
-      console.log('online :>> ', status);
+      console.log('online :>> ', status.connected);
       setOnline(status.connected)
+      Network.addListener('networkStatusChange', status => {
+        setOnline(status.connected)
+      });
     }
 
     useEffect(()=>{
-      logCurrentNetworkStatus()
-      Network.addListener('networkStatusChange', status => {
-        console.log('Network status changed', status);
-        setOnline(status.connected)
-      });
+      CurrentNetworkStatus()
+
       return onAuthStateChanged(getAuth(),(user)=>{
                 console.log('user  :>> ', !!user );
                 setUser(!!user)
@@ -50,27 +49,38 @@ const GlobalProvider:React.FC =(props)=>{
       },[user])
 
     useEffect(()=>{
-        if((profile || profile===undefined) && user){
-          isProfileComplete()
-        }
-        if(profile && token){
-          setDoc(doc(db,"fcmTokens",getAuth().currentUser?.uid!),{token:token}).then((v)=>{
-            console.log(v)
-          })
-        }
+        isProfileComplete()
+        tokenUpdate()
 
       },[profile])
-      
+
+    function tokenUpdate() {
+      if(user && profile && token){
+        setDoc(doc(db,"fcmTokens",getAuth().currentUser?.uid!),{token:token}).then((v)=>{
+          console.log(v)
+        })
+      }
+    }
   
    function fetchProfile(){
-    setProfile(null)
+    setProfileLoadingComplete(false)
     const uid = getAuth().currentUser!.uid
     console.log('uid :>> ', uid);
     const ref = doc(getFirestore(),"users/"+uid)
     return   onSnapshot(ref,(doc)=>{
-      
-        setProfile(doc.data())
-        console.log('profile :>> ', doc.data());
+        if(doc.exists()){
+          const p:UserProfile = UserProfileFromDoc(doc)
+          setProfile(p)
+          
+          console.log('profile :>> ', p);
+
+        }else{
+          createNewProfileForThisUser()
+        }
+        
+
+        console.log('profile is complete :>> ', doc.exists());
+        setProfileLoadingComplete(true)
       })
         
     
@@ -78,11 +88,10 @@ const GlobalProvider:React.FC =(props)=>{
       function isProfileComplete() {
           let res = (!!profile 
           && (!!profile.name && profile.name.length >= 5) 
-          &&!!profile.email
+         
           && (!!profile.phoneNumber && profile.phoneNumber.length >=8))
-          setProfileNotComplete(!res) 
         }       
-    if(user && (profileNotComplete || profile ===undefined)) {
+    if(user && profileLoadingComplete && profile ===undefined) {
         
         return<globalsContext.Provider value={{user,profile}}>
           {<CreateProfile onSave={()=>{}}></CreateProfile>}    

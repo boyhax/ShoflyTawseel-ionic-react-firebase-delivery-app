@@ -2,13 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import { IonAvatar, IonBadge, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCol, IonContent, IonFab, IonFabButton,
    IonFooter,
    IonGrid,
-   IonHeader, IonIcon, IonicSwiper, IonImg, IonItem, IonModal, IonPage,
+   IonHeader, IonIcon, IonicSwiper, IonImg, IonInput, IonItem, IonItemDivider, IonLabel, IonModal, IonPage,
      IonRow,
+     IonSearchbar,
      IonTitle,
      IonToolbar, 
      IonVirtualScroll} from '@ionic/react';
 import './Home.css';
-import { add, chatbox, menuOutline, personCircle } from 'ionicons/icons';
+import { add, chatbox, closeCircleOutline, closeSharp, menuOutline, personCircle } from 'ionicons/icons';
 import { useHistory } from "react-router-dom";
 import { useGlobals } from '../providers/globalsProvider';
 import AddOrder from '../components/AddOrder';
@@ -26,7 +27,7 @@ Device.getInfo().then((info)=>{
   dInfo = info
 })
 
-const Tab1= () => {
+const AddOrderPage= () => {
   
   const {user,profile}= useGlobals()
   const history = useHistory()
@@ -72,31 +73,26 @@ const Tab1= () => {
     <IonPage style={{width:"100vw",height: "100vh",bottom: '0px',backgroundColor: "#5e6bec"}}>
       <MainMenu menuRef={menuRef} ></MainMenu>
       <IonFab style={{left: '10px',top:'10px'}}>
-              <IonFabButton color={'light'}  onClick={()=>toggleMenu()}>
-                  <IonIcon color={'primary'} icon={menuOutline} />
+              <IonFabButton color={'light'}  onClick={()=>history.goBack()}>
+                  <IonIcon color={'primary'} icon={closeSharp} />
               </IonFabButton>
               
-              <IonFab>
-              <IonFabButton color={'light'} onClick={()=>{history.push("chats/")}}>
-                  <IonIcon color={'primary'} icon={chatbox} />
-              </IonFabButton>
-              <IonBadge style={{position: 'absolute',top:'-5px',left:'-5px'}}>5</IonBadge>
-
-              </IonFab>
               
             </IonFab>
       
        {/* map */}
-            {/* <LeafLetMap onMap={(map)=>setMap(map)}></LeafLetMap> */}
+            <LeafLetMap onMap={(map)=>setMap(map)}></LeafLetMap>
               
               {/* bottom panel */}
-                {true && <IonContent style={{height: '100%'}}>
-                  <OrderList></OrderList>
-                  </IonContent>}
-              <IonToolbar >
-
+                {true && 
+                    <IonSearchbar 
+                      style={{zIndex: '1000',minHeight: '10%',padding: '20px',position: 'absolute',top:'5',overflow: 'hidden'}} 
+                      placeholder={'set pick up point'}></IonSearchbar>
+                  }
+              
+                  <IonToolbar>
                   <IonButton onClick={()=>history.push('AddOrderPage')} shape={'round'} slot={'start'} >
-                    Add order now
+                    add order now
                   </IonButton>
                 </IonToolbar>
               
@@ -107,7 +103,7 @@ const Tab1= () => {
   );
 };
 
-export default Tab1;
+export default AddOrderPage;
 
 
 var greenIcon = L.icon({

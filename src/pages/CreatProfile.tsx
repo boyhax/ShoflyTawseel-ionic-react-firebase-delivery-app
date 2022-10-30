@@ -1,36 +1,26 @@
-import React, { ComponentProps, FC, useEffect, useState } from "react";
+import React, {  FC, useEffect, useState } from "react";
 import { IonButton, IonContent, IonHeader, IonInput, IonItem, IonLabel, IonPage, IonTitle, IonToast } from "@ionic/react";
-import { createNewProfile, updateUserProfile } from "../providers/firebaseMain";
+import {  updateUserProfile } from "../providers/firebaseMain";
 import { getAuth } from "firebase/auth";
 import { useGlobals } from "../providers/globalsProvider";
-import Input from "../components/Input";
 import { useHistory } from "react-router";
 import { onSnapshot } from "firebase/firestore";
 import { TT } from "../components/utlis/tt";
+import { randomAvatarUrl } from "../components/Avatar";
 
- export default (props:any)=>{
+ const CreateProfile= (props:any)=>{
     const {profile} = useGlobals()
 
      const [name,setName]= useState<any>(profile?profile.name!?profile.name:"":"")
      const [phone,setPhone]= useState<any>(profile?profile.phoneNumber!?profile.phoneNumber:"":"")
      const [email,setEmail]= useState<any>(profile?profile.email!?profile.email:"":"")
      const [message,setMessage] = useState("")
-
-     useEffect(()=>{
-         
-        
-     },[name])
-
+     const [photoURL,setPhotoURL] = useState(randomAvatarUrl())
+     
      const history = useHistory()
      
      function variablesOK(){
          if(!name){
-            return false
-         }
-         if(!phone){
-            return false
-         }
-         if(!email){
             return false
          }
         return true
@@ -40,19 +30,11 @@ import { TT } from "../components/utlis/tt";
             setMessage("please fill all ")
              return 
          }
-        if(!profile){
-            createNewProfile(getAuth().currentUser!.uid,{
-                name:name,
-                email:email,
-                phone:phone
-            }).then((value) => {
-                console.log("new profile created")
-            })
+        if(profile ===undefined){
+            console.log('new Profile shall be made ');
         }else{
             updateUserProfile(getAuth().currentUser!.uid,{
                 name:name,
-                email:email,
-                phoneNumber:phone
             }).then((value) => {
                 let v = props.onSave()?props.onSave():()=>{}
                 setMessage("updated seccesfuly")
@@ -77,6 +59,7 @@ import { TT } from "../components/utlis/tt";
       <IonItem>
         <IonLabel position="floating">Email</IonLabel>
         <IonInput 
+        disabled={true}
         value={email}
         onIonChange={(e)=>setEmail(e.detail.value)} 
         placeholder='Email' 
@@ -86,6 +69,7 @@ import { TT } from "../components/utlis/tt";
       <IonItem>
         <IonLabel position="floating">Phone Number</IonLabel>
         <IonInput 
+            disabled={true}
             value={phone}
             onIonChange={(e)=>setPhone(e.detail.value)} 
             placeholder='Number' 
@@ -102,3 +86,5 @@ import { TT } from "../components/utlis/tt";
         onDidDismiss={()=>setMessage("")}></IonToast>
       </IonPage>
   }
+
+  export default CreateProfile

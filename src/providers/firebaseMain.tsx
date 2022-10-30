@@ -1,13 +1,18 @@
 import  { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, 
   DocumentData, 
   DocumentSnapshot, 
-  getDoc, getFirestore, query, serverTimestamp, setDoc, 
-   Timestamp, 
+  getDoc, getFirestore, query, setDoc, 
    updateDoc } from 'firebase/firestore';
 import { getAuth, updateProfile } from "firebase/auth";
-import { userProfile } from './globalsProvider';
 import { db } from '../App';
+import { randomAvatarUrl } from '../components/Avatar';
 
+export type UserProfile ={
+  name:string,
+  phoneNumber:string,
+  photoURL:string,
+  email?:string
+}
 export type userInfo={
   name:string,
   photoURL:string,
@@ -103,6 +108,14 @@ export function makeUSerInfoFromDoc(s:DocumentSnapshot):userInfo{
   }
 
 }
+export function UserProfileFromDoc(doc:DocumentSnapshot):UserProfile{
+  const d = doc.data()
+  return {
+    name:d?.name,
+    phoneNumber:d?.phoneNumber,
+    photoURL:d?.photoURL
+  }
+}
   
   export async function addNewTripCard(data:orderProps){
     var state:any=false
@@ -129,15 +142,60 @@ export async function updateUserProfile(uid:any,data:any){
 export async function profileExist(uid:string){
   return await (await getProfile(uid)).exists()
 }
-export function createNewProfile(uid:any,data:any){
-    const col = doc(getFirestore(),"users/"+uid)
-     const d = setDoc(col,data).then((d)=>{
-console.log('new profile created :>> ', d);
-  alert("تم تاكيد معلومات الحساب شكرا")
+export function createNewProfileForThisUser(){
+    const uid = getAuth().currentUser?.uid
+    const user = getAuth().currentUser
+    const profile = {
+      name:user?.displayName,
+      phoneNumber:user?.phoneNumber,
+      email:user?.email,
+      photoURL:user?.photoURL
+    } 
+    const dref = doc(getFirestore(),"users",uid!)
+    const d = setDoc(dref,profile).then((d)=>{
+    console.log('new profile created :>> ', d);
     },(err)=>{
       console.log('err :>> ', err);
     })
     return d
+}
+export function UpdateProfileForThisUser(){
+  const uid = getAuth().currentUser?.uid
+  const user = getAuth().currentUser
+  if( user && !user.photoURL ){
+    updateProfile(user,{photoURL:randomAvatarUrl()})
+  }
+  const profile = {
+    name:user?.displayName,
+    phoneNumber:user?.phoneNumber,
+    email:user?.email,
+    photoURL:user?.photoURL
+  } 
+  
+  const dref = doc(getFirestore(),"users",uid!)
+  const d = updateDoc(dref,profile).then((d)=>{
+  console.log('new profile created :>> ', d);
+  },(err)=>{
+    console.log('err :>> ', err);
+  })
+  return d
+}
+export function UpdateProfileForThis(data:any){
+  const uid = getAuth().currentUser?.uid
+  const user = getAuth().currentUser
+  const profile = {
+    name:user?.displayName,
+    phoneNumber:user?.phoneNumber,
+    email:user?.email,
+    photoURL:user?.photoURL
+  } 
+  const dref = doc(getFirestore(),"users",uid!)
+  const d = updateDoc(dref,profile).then((d)=>{
+  console.log('new profile created :>> ', d);
+  },(err)=>{
+    console.log('err :>> ', err);
+  })
+  return d
 }
 export const reportOrder=async(order:orderProps,why:string="")=>{
   const uid = getAuth().currentUser?.uid
@@ -221,7 +279,7 @@ export async function applyForCard(UserUID:string,cardUID:string,orderOwner:stri
   
   return res
 }
-const avatarPLaceholder=require("../assets/avatarPlaceHolder.png")
+export const avatarPLaceholder=require("../assets/avatarPlaceHolder.png")
 export function getUserInfoPlaceHolder() {
   let info :userInfo={
     name:"Nick Name",

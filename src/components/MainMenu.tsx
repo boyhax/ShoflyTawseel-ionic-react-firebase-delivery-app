@@ -1,9 +1,10 @@
 import { ComponentProps } from "@ionic/core";
-import { IonContent , IonTitle, IonHeader, IonToolbar, IonList, IonItem, IonMenu, IonButtons, IonButton, IonIcon, IonRippleEffect, IonLabel} from "@ionic/react";
+import { IonContent , IonTitle, IonHeader, IonToolbar, IonList, IonItem, IonMenu, IonButtons, IonButton, IonIcon, IonRippleEffect, IonLabel, IonAvatar, IonImg} from "@ionic/react";
 import { getAuth } from "firebase/auth";
 import {  closeOutline,  } from "ionicons/icons";
 import React, {   useEffect,  } from "react";
 import { useHistory } from "react-router";
+import { avatarPLaceholder } from "../providers/firebaseMain";
 import { useGlobals } from "../providers/globalsProvider";
 import "./MainMenu.css"
 
@@ -11,7 +12,7 @@ interface props extends ComponentProps{
     menuRef?:any
 }
 
-export default (Props:props)=>{
+const MainMenu =(Props:props)=>{
     const {user,profile} = useGlobals()
     function close(){
         Props.menuRef.current.close()
@@ -23,25 +24,21 @@ export default (Props:props)=>{
     const SignInButton = <IonButton onClick={()=>history.push("SignIn")}>Sign In</IonButton>
     const SignOutButton = <IonButton color="danger" onClick={()=>getAuth().signOut()} >Sign Out</IonButton>
     
-return<IonMenu  side="start" ref={Props.menuRef} >
-    <IonHeader>
-        <IonToolbar color="primary" >
-            <IonTitle slot="start">Menu</IonTitle>
-            <IonButtons slot="end">
-                <IonButton onClick={(e)=>close()}>
-                    <IonIcon icon={closeOutline}></IonIcon>
-                </IonButton>
-            </IonButtons>
-        </IonToolbar>
-    </IonHeader>
-    <IonContent >
-        <IonList>
+return<IonMenu   side="start" ref={Props.menuRef} contentId='mainContent' >
+    <IonHeader >
+        {/* <IonToolbar color="primary" > */}
             
-            <IonItem  slot="end" className="item" onClick={()=>history.push("Profile")}>Profile
-            <IonRippleEffect></IonRippleEffect>
+            <IonItem color={'secondary'} className="item" onClick={()=>history.push("Profile")}>
             <IonLabel>{user?profile?profile.name!:profile === undefined?"signing in..":"":""}</IonLabel>
-
-</IonItem>
+            <IonAvatar><IonImg src={profile?.photoURL || avatarPLaceholder}></IonImg></IonAvatar>
+            </IonItem>
+        {/* </IonToolbar> */}
+        
+    </IonHeader>
+    <IonContent  >
+        <IonList >
+            
+           
             <IonItem className="item" onClick={()=>history.push("OrdersPage")}>My Orders
             <IonRippleEffect></IonRippleEffect>
 </IonItem>
@@ -55,3 +52,4 @@ return<IonMenu  side="start" ref={Props.menuRef} >
 </IonMenu>
     
 }
+export default MainMenu

@@ -64,8 +64,8 @@ const AddOrder=({isOpen,setOpen}:Props)=>{
             setLoading(false)
 
         } catch (error) {
-            console.log('error :>> ', error);
-            setErr({message:"لم يتم أضافة الطلب بسبب عدم تسجيل دخولك ",color:"red"})
+            console.log('error on add order  :>> ', error);
+            setErr({message:"لم يتم أضافة الطلب بسبب مشكله ما  ",color:"red"})
             setLoading(false)
         }
        

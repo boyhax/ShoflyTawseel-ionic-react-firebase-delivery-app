@@ -1,9 +1,9 @@
 import { Device } from "@capacitor/device";
 import { ComponentProps } from "@ionic/core";
-import { IonCard, IonLabel,IonContent ,IonChip, IonIcon, IonButton, IonPopover, IonTextarea, IonSpinner, IonCardHeader, IonTitle, IonBadge, IonFab, IonFabButton, IonItem, IonAvatar, IonImg, IonRow, IonCol, IonThumbnail} from "@ionic/react";
+import { IonCard, IonLabel,IonContent ,IonChip, IonIcon, IonButton, IonPopover, IonTextarea, IonSpinner, IonCardHeader, IonTitle, IonBadge, IonFab, IonFabButton, IonItem, IonAvatar, IonImg, IonRow, IonCol, IonThumbnail, IonGrid} from "@ionic/react";
 import { getAuth } from "firebase/auth";
 import { doc, DocumentData, DocumentSnapshot, getFirestore, onSnapshot, } from "firebase/firestore";
-import {  alertCircle, trashOutline, thumbsDownOutline, thumbsUpOutline, chatboxEllipsesOutline, logoWhatsapp, chatboxEllipses, handRightOutline } from "ionicons/icons";
+import {  alertCircle, trashOutline, thumbsDownOutline, thumbsUpOutline, chatboxEllipsesOutline, logoWhatsapp, chatboxEllipses, handRightOutline, arrowForwardCircleSharp, arrowBackOutline } from "ionicons/icons";
 import React, { useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router";
 import { db } from "../App";
@@ -36,7 +36,7 @@ const OpenWhatsapp=(number:any)=>{
     window.open("http://wa.me/"+number)
 }
 
-export default ({orderDocSnap,whatsapp,message,remove,report,canApplyFor,onDeleted,onRefresh}:props)=>{
+const OrderCard= ({orderDocSnap,whatsapp,message,remove,report,canApplyFor,onDeleted,onRefresh}:props)=>{
     const [data,setData] = useState<orderProps>(makeOrderFromDoc(orderDocSnap))
     var date =!!data.time? new Date(data.time.seconds!*1000).toLocaleDateString("ar-om",options) + ' في ' + new Date(data.time.seconds*1000).toLocaleTimeString():null
     const comment = typeof data.comment! =="string"?data.comment:"no comment"
@@ -49,7 +49,7 @@ export default ({orderDocSnap,whatsapp,message,remove,report,canApplyFor,onDelet
     const history=useHistory()
     const owner = data!.uid == uid
     const [userInfo,setUserInfo] = useState<userInfo>(getUserInfoPlaceHolder())
-    
+    const [showComment,setShowComment] = useState(false)
     useEffect(()=>{
 
         const unsub = onSnapshot(doc(getFirestore(),"orders/"+data.id),(doc)=>{
@@ -85,7 +85,7 @@ export default ({orderDocSnap,whatsapp,message,remove,report,canApplyFor,onDelet
     }},[])
     
     const toggleComment=()=>{
-        popOver.current!.present()
+        setShowComment(!showComment)
     }
     async function _applyToOrder(){
         if(!user){
@@ -114,7 +114,7 @@ export default ({orderDocSnap,whatsapp,message,remove,report,canApplyFor,onDelet
 
     }
     // console.log(userInfo)
-return<IonCard className="card" color="tertiary" >
+return<IonCard dir={'rtl'}  >
     <IonPopover isOpen={reporting}>
         <IonLabel slot="primary">اذكر السبب</IonLabel>
         <IonTextarea onIonChange={(e)=>{
@@ -128,28 +128,30 @@ return<IonCard className="card" color="tertiary" >
         }}>submit</IonButton>
     </IonPopover>
 
-    <div className="content" >
+    <IonGrid >
         
         <IonRow>
-            <IonAvatar onClick={()=>history.push("/profile/"+data.uid)}>
-                <IonImg
+            <IonAvatar style={{width: '50px',height: '50px'}} onClick={()=>history.push("/profile/"+data.uid)}>
+                <IonImg 
                 src={userInfo.photoURL}>
                 </IonImg>
             </IonAvatar>
             <IonCol>
-            <IonLabel  color="secondary" style={{fontSize: 20}}>{userInfo.name}</IonLabel>
+            <IonLabel  color="secondary" style={{fontSize: 'small',fontStretch: '100%'}}>{userInfo.name}</IonLabel>
             <IonLabel  color="secondary" position="fixed" style={{fontSize: 'small',margin: "5%"}}>
                 {date}
             </IonLabel>
             </IonCol>
             
         </IonRow>
+    <IonRow>
+
+    <IonChip  color="secondary">{"من: "+data.from}</IonChip>
+    <IonIcon color={'primary'} size={'large'} icon={arrowBackOutline}></IonIcon>
+    <IonChip  color="secondary">{"الى: "+data.to}</IonChip>
     
-    <IonChip style={{fontSize:15}} className="BoldText" color="secondary">{"من: "+data.from}</IonChip>
-    <IonChip style={{fontSize:15}} className="BoldText" color="secondary">{"الى: "+data.to}</IonChip>
-    
-     {/* <IonChip 
-     className="BoldText" 
+    </IonRow>
+     <IonChip 
      color="secondary"
      onClick={()=>{
         if(owner){
@@ -158,24 +160,18 @@ return<IonCard className="card" color="tertiary" >
      }}>
         {"قبول الطلب: "}
          {data.applications.length}        
-    </IonChip> */}
+    </IonChip>
         
     
-    <IonChip style={{fontSize:15}} className="BoldText" color="secondary"
+    <IonChip  color="secondary"
     onClick={()=>toggleComment()}>
-        <IonPopover ref={popOver} >
-        <IonContent >{comment?comment:TT("no comment")}</IonContent></IonPopover>
-        {"الوصف: "+comment.slice(0,10)+"..."}
+        {"الوصف: "+(showComment?comment:comment.slice(0,50)+"...")}
         </IonChip>
 
     
-    </div>
+    </IonGrid>
 
     <IonItem >
-        <IonRow>
-
-        
-    
     {!owner && !!data.number && 
         <IonButton  
         onClick={()=>OpenWhatsapp(data.number)} 
@@ -211,16 +207,16 @@ return<IonCard className="card" color="tertiary" >
         <IonIcon size="large" color="success" icon={chatboxEllipses} ></IonIcon>
         chat
         </IonButton>}
-        {<IonButton fill="clear"  onClick={()=>{if(owner){history.push("/profile")}}} 
+        {/* {<IonButton fill="clear"  onClick={()=>{if(owner){history.push("/profile")}}} 
         color="dark" shape="round" >
         
         <IonIcon icon={handRightOutline}></IonIcon>
         
         <IonBadge slot="start">{data.applications.length}</IonBadge>
-        </IonButton>}
+        </IonButton>} */}
         
-        </IonRow>
     </IonItem>
     </IonCard>
     
 }
+export default OrderCard

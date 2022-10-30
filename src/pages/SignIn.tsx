@@ -5,7 +5,7 @@ import { getAuth, PhoneAuthProvider, signInWithCredential,RecaptchaVerifier,sign
 import './SignIn.css';
 import * as firebaseui from 'firebaseui';
 import { useGlobals } from '../providers/globalsProvider';
-import { createNewProfile, getProfile, profileExist } from '../providers/firebaseMain';
+import {  getProfile, profileExist } from '../providers/firebaseMain';
 import { StyledFirebaseAuth,FirebaseAuth } from 'react-firebaseui';
 import { useHistory } from 'react-router';
 

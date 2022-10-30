@@ -1,7 +1,7 @@
 import React, {  useEffect, useRef, useState } from "react";
 
 import {  collection, getDocs, getFirestore, query, where, limit, orderBy, startAfter, DocumentSnapshot, DocumentData  } from "firebase/firestore";
-import { IonContent, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonItem, IonLabel, IonList, IonRefresher, IonRefresherContent } from "@ionic/react";
+import { IonContent, IonFooter, IonHeader, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonItem, IonLabel, IonList, IonRefresher, IonRefresherContent, IonRow } from "@ionic/react";
 import {  filter } from "ionicons/icons";
 import { RefresherEventDetail } from '@ionic/core';
 import "./OrderList.css"
@@ -154,32 +154,34 @@ useEffect(()=>{
     setShowFilter(!showFilter)
   }
 
-    return<IonContent className="center">
-
+    return<IonContent  >
+      
+      <IonHeader>
       <IonItem onClick={()=>toggleFilter()}>
-        <IonIcon icon={filter}></IonIcon>
-        <CitiePicker value={filterFrom} onItemPicked={(v)=>setFilterFrom(v)} 
-        placeHolder={"من :"}/>
-        <CitiePicker value={filterTo} onItemPicked={(v)=>setFilterTo(v)} 
-        placeHolder={"الى :"}/>
-      </IonItem>
-
+            <IonIcon icon={filter}></IonIcon>
+            <CitiePicker value={filterFrom} onItemPicked={(v)=>setFilterFrom(v)} 
+            placeHolder={"من :"}/>
+            <CitiePicker value={filterTo} onItemPicked={(v)=>setFilterTo(v)} 
+            placeHolder={"الى :"}/>
+          </IonItem>
+      </IonHeader>
+      
     <IonRefresher ref={IonRefresherElement} slot="fixed"  onIonRefresh={doRefresh} >
     <IonRefresherContent refreshingText="refreshing..."></IonRefresherContent>
   </IonRefresher>
   
-    
-      {!!list && 
-      <IonList  className='list'>
-        {list.map((v,i:any)=>{
-          
-          if(!v["exists"]){
-            return
-          }
-          return <OrderCard orderDocSnap={v} key={i}  report canApplyFor onRefresh={()=>Refresh()} onDeleted={()=>{delete list[i];setList(list)}}>
-              </OrderCard>
-        })}
-        </IonList>}
+    {!!list && 
+      
+      list.map((v:any,i:any)=>{
+        
+        if(!v["exists"]){
+          return
+        }
+        return <OrderCard orderDocSnap={v} key={i}  report canApplyFor onRefresh={()=>Refresh()} onDeleted={()=>{delete list[i];setList(list)}}>
+            </OrderCard>
+      })
+      }
+      
         {!!listMessage &&<IonItem style={{display:"flex",flexDirection:"column"}}>
           <IonLabel color={listMessage.color}>{listMessage.text}</IonLabel>
           {/* <IonButton onClick={()=>{Refresh()}}>اعد المحاوله</IonButton> */}
@@ -200,6 +202,7 @@ useEffect(()=>{
             loadingText="بحث المزيد من الطلبات"
           ></IonInfiniteScrollContent>
         </IonInfiniteScroll>
+          
     </IonContent>
       }
 const CitiePicker =(props:{value:string|null,onItemPicked:(v:string|null)=>void,placeHolder:string})=>{

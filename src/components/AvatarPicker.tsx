@@ -1,6 +1,5 @@
 import { IonButton, IonCol, IonContent, IonGrid, IonHeader, IonModal, IonRow, IonToolbar } from '@ionic/react';
 import * as React from 'react';
-import { ModifierFlags } from 'typescript';
 import Avatar from './Avatar';
 
 interface AvatarPickerProps {

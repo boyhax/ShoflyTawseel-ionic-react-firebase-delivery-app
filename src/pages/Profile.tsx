@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonLabel, IonItem, IonList, IonSpinner, IonBackButton, IonSegment, IonSegmentButton, IonGrid, IonRow, IonAvatar, IonImg, IonCol, IonHeader } from '@ionic/react';
+import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonLabel, IonItem, IonList, IonSpinner, IonBackButton, IonSegment, IonSegmentButton, IonGrid, IonRow, IonAvatar, IonImg, IonCol, IonHeader, IonCard, IonCardContent } from '@ionic/react';
 import { logOutOutline, } from 'ionicons/icons';
 import { useGlobals } from '../providers/globalsProvider';
 import { collection, DocumentData, DocumentSnapshot, getFirestore, onSnapshot, orderBy, query, where } from 'firebase/firestore';
@@ -57,13 +57,13 @@ const Profile: React.FC = () => {
               <IonRow>
                 <IonAvatar>
                     <IonImg src={
-                      !!profile.photoURL?profile.photoURL
+                      !!profile?.photoURL?profile.photoURL
                         :require("../assets/avatarPlaceHolder.png")}
                         onClick={()=>{setPickAvatar(!pickAvatar)}}>
                       
                   </IonImg>
                   </IonAvatar>
-                  <IonTitle>{profile.name}</IonTitle>
+                  <IonTitle>{profile?.name}</IonTitle>
                   {/* <IonTitle>token : {token}</IonTitle> */}
 
               </IonRow>
@@ -85,6 +85,10 @@ const Profile: React.FC = () => {
 
         </IonItem>
         </IonHeader>
+        <IonCard>
+          <IonCardContent>
+          {JSON.stringify(profile)}  
+          </IonCardContent></IonCard>
       {content !=="editProfile" &&<IonSegment  value={content}>
         <IonSegmentButton value="orders" onClick={()=>setContent('orders')}>
           <IonLabel>orders</IonLabel>
