@@ -110,19 +110,7 @@ const Tab1= () => {
 export default Tab1;
 
 
-var greenIcon = L.icon({
-  iconUrl: require('../assets/icons8-user-location-100.png'),
-  // shadowUrl: 'leaf-shadow.png',
 
-  iconSize:     [50, 50], // size of the icon
-  shadowSize:   [50, 64], // size of the shadow
-  iconAnchor:   [25, 50], // point of the icon which will correspond to marker's location
-  shadowAnchor: [4, 62],  // the same for the shadow
-  popupAnchor:  [0, 50] // point from which the popup should open relative to the iconAnchor
-});
-type props={
-  onMap:(map:L.Map)=>void
-}
 export const LeafLetMap:React.FC<props>=({onMap})=>{
       let current_lat = 23.5880;
       let current_long = 58.3829;
@@ -143,6 +131,7 @@ export const LeafLetMap:React.FC<props>=({onMap})=>{
               })
               setMap(map)
               onMap(map)
+              
               L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
                 attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
               }).addTo(map);  
@@ -151,7 +140,6 @@ export const LeafLetMap:React.FC<props>=({onMap})=>{
               //     maxZoom: 20,
               //     attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
               //   }).addTo(map);    
-              const lg = L.layerGroup([]).addTo(map)
               
               // map.addEventListener('mousedown',(e)=>{
                 
