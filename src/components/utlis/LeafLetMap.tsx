@@ -1,9 +1,10 @@
+import { eventMethod } from '@ionic/core/dist/types/utils/overlays';
 import L from 'leaflet';
 import * as React from 'react';
 import { useState } from 'react';
 
-var greenIcon = L.icon({
-  iconUrl: require('../assets/icons8-user-location-100.png'),
+export const greenIcon = L.icon({
+  iconUrl: require('../../assets/icons8-user-location-100.png'),
   // shadowUrl: 'leaf-shadow.png',
 
   iconSize:     [50, 50], // size of the icon
@@ -41,9 +42,7 @@ export const LeafLetMap:React.FC<props>=({onMap})=>{
             attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
           }).addTo(map);  
           map.setView(new L.LatLng(center_lat,center_long), center_zoom);
-          addEventListener('keydown',(ev)=>{
-            console.log('ev :>> ', ev);
-          })
+          
         },[]);
         React.useEffect(() => {
           if(map){

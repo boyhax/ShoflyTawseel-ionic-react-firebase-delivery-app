@@ -1,7 +1,7 @@
-import React, {  useEffect, useRef, useState } from "react";
+import React, {  Ref, useEffect, useRef, useState } from "react";
 
 import {  collection, getDocs, getFirestore, query, where, limit, orderBy, startAfter, DocumentSnapshot, DocumentData  } from "firebase/firestore";
-import { IonContent, IonHeader, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonItem, IonLabel, IonRefresher, IonRefresherContent } from "@ionic/react";
+import { IonContent, IonHeader, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonItem, IonLabel, IonRefresher, IonRefresherContent, IonSpinner } from "@ionic/react";
 import {  filter } from "ionicons/icons";
 import { RefresherEventDetail } from '@ionic/core';
 import "./OrderList.css"
@@ -21,7 +21,7 @@ const [list,setList]=useState<DocumentSnapshot<DocumentData>[]>([])
   const [showFilter,setShowFilter] = useState(false)
   const [filterTo,setFilterTo] = useState<null|string>(null)
   const [filterFrom,setFilterFrom] = useState<null|string>(null)
-  const IonRefresherElement = useRef<any>(null)
+  const IonRefresherElement = useRef<HTMLIonRefresherElement|any>()
   const infiniteScrollRef = useRef<any>(null)
   const [isInfiniteDisabled, setInfiniteDisabled] = useState(false);
   const [lastDoc,setLastDoc] = useState<any>(null)
@@ -52,7 +52,6 @@ useEffect(()=>{
         )
 }   
     async function getNewList(){
-      // IonRefresherElement.current!.start()
       setRefreshing(true)
       const ref = collection(getFirestore(),"orders")
       var firstQuery = query(ref)
@@ -100,7 +99,7 @@ useEffect(()=>{
       }
       if(isMounted){
         setRefreshing(false)
-        IonRefresherElement?.current!.complete()
+        IonRefresherElement?.current?.complete()
         infiniteScrollRef.current!.complete()
       }
     }
@@ -165,8 +164,8 @@ useEffect(()=>{
             placeHolder={"الى :"}/>
           </IonItem>
       </IonHeader>
-      
-    <IonRefresher ref={IonRefresherElement} slot="fixed"  onIonRefresh={doRefresh} >
+      {refreshing && <IonSpinner style={{left:'48%'}} name={'dots'} ></IonSpinner>}
+    <IonRefresher ref={IonRefresherElement} slot="fixed"   onIonRefresh={doRefresh} >
     <IonRefresherContent refreshingText="refreshing..."></IonRefresherContent>
   </IonRefresher>
   

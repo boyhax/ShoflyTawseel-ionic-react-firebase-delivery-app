@@ -48,6 +48,7 @@ import { getFirestore } from 'firebase/firestore';
 import CreateProfile from './pages/CreatProfile';
 import ProfileID from './pages/ProfileID';
 import AddOrderPage from './pages/AddOrderPage';
+import MainMenu from './components/MainMenu';
 
 
 const firebaseConfig=Config()
@@ -78,6 +79,7 @@ const App: React.FC = () => {
     <IonApp>
     <IonReactRouter>
     {/* <IonSplitPane contentId="main"> */}
+    <MainMenu  ></MainMenu>
 
     <IonRouterOutlet id='mainContent'>
           <Route path="/home" component={Home} exact={true} />

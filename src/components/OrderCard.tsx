@@ -11,7 +11,7 @@ import { applyForCard, deleteOrder, getUserInfoPlaceHolder, hands_up, is_user_ap
 import { useGlobals } from "../providers/globalsProvider";
 import "./OrderCard.css"
 import { TT } from "./utlis/tt";
-const options:Object = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+const options:Object = { weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric' };
 
 interface props extends ComponentProps{
 orderDocSnap:DocumentSnapshot<DocumentData>
@@ -38,7 +38,8 @@ const OpenWhatsapp=(number:any)=>{
 
 const OrderCard= ({orderDocSnap,whatsapp,message,remove,report,canApplyFor,onDeleted,onRefresh}:props)=>{
     const [data,setData] = useState<orderProps>(makeOrderFromDoc(orderDocSnap))
-    var date =!!data.time? new Date(data.time.seconds!*1000).toLocaleDateString("ar-om",options) + ' في ' + new Date(data.time.seconds*1000).toLocaleTimeString():null
+    var date =!!data.time? new Date(data.time.seconds!*1000).toLocaleDateString("ar-om",options) + ' ⏲ '
+    + new Date(data.time.seconds*1000).toLocaleTimeString():null
     const comment = typeof data.comment! =="string"?data.comment:"no comment"
     const popOver = useRef<any>(null)
     const [reporting,setReporting]=useState(false)
@@ -114,7 +115,7 @@ const OrderCard= ({orderDocSnap,whatsapp,message,remove,report,canApplyFor,onDel
 
     }
     // console.log(userInfo)
-return<IonCard dir={'rtl'}  >
+return<IonCard dir={'rtl'} style={{display: 'flex'}} >
     <IonPopover isOpen={reporting}>
         <IonLabel slot="primary">اذكر السبب</IonLabel>
         <IonTextarea onIonChange={(e)=>{

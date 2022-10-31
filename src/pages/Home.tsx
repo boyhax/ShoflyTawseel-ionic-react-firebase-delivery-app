@@ -1,17 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { IonAvatar, IonBadge, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCol, IonContent, IonFab, IonFabButton,
-   IonFooter,
-   IonGrid,
-   IonHeader, IonIcon, IonicSwiper, IonImg, IonItem, IonModal, IonPage,
-     IonRow,
-     IonTitle,
-     IonToolbar, 
-     IonVirtualScroll} from '@ionic/react';
+import { IonBadge, IonButton, IonContent, IonFab, IonFabButton,
+   IonIcon, IonMenuButton, IonPage} from '@ionic/react';
 import './Home.css';
-import { add, chatbox, menuOutline, personCircle } from 'ionicons/icons';
+import { chatbox, menuOutline } from 'ionicons/icons';
 import { useHistory } from "react-router-dom";
 import { useGlobals } from '../providers/globalsProvider';
-import AddOrder from '../components/AddOrder';
 import MainMenu from '../components/MainMenu';
 import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -19,6 +12,7 @@ import { getUserInfoPlaceHolder } from '../providers/firebaseMain';
 import { Geolocation } from '@capacitor/geolocation';
 import { Device } from '@capacitor/device';
 import OrderList from '../components/OrderList';
+import { greenIcon } from '../components/utlis/LeafLetMap';
 
 var dInfo:any =''
 var state:any = process.env.NODE_ENV
@@ -70,10 +64,10 @@ const Tab1= () => {
  
     return (
     <IonPage style={{width:"100vw",height: "100vh",bottom: '0px',backgroundColor: "#5e6bec"}}>
-      <MainMenu menuRef={menuRef} ></MainMenu>
       <IonFab style={{left: '10px',top:'10px'}}>
+
               <IonFabButton color={'light'}  onClick={()=>toggleMenu()}>
-                  <IonIcon color={'primary'} icon={menuOutline} />
+                  <IonMenuButton color={'primary'}></IonMenuButton>
               </IonFabButton>
               
               <IonFab>
@@ -108,107 +102,3 @@ const Tab1= () => {
 };
 
 export default Tab1;
-
-
-
-export const LeafLetMap:React.FC<props>=({onMap})=>{
-      let current_lat = 23.5880;
-      let current_long = 58.3829;
-      let current_zoom = 16;
-      let center_lat = current_lat;
-      let center_long = current_long;
-      let center_zoom = current_zoom;
-      const [map,setMap]= useState<L.Map>()
-      const [marker,setMarker]= useState<L.Marker|any>("")
-
-          // Similar to componentDidMount and componentDidUpdate:
-          useEffect(() => {
-              const map = L.map('map', {
-                center: [center_lat, center_long],
-                zoom: center_zoom,
-                zoomControl:false,
-
-              })
-              setMap(map)
-              onMap(map)
-              
-              L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-                attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-              }).addTo(map);  
-              map.setView(new L.LatLng(center_lat,center_long), center_zoom);
-              // var Stadia_Outdoors = L.tileLayer('https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}{r}.png', {
-              //     maxZoom: 20,
-              //     attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
-              //   }).addTo(map);    
-              
-              // map.addEventListener('mousedown',(e)=>{
-                
-              //   console.log('markers :>> ', lg.getLayers());
-              //   console.log('e.latlong :>> ', e.latlng);
-                
-              //   const nm = L.marker(e.latlng,
-              //     {autoPan:true,title:'your place',icon:greenIcon})
-
-              //   if(lg.getLayers().length){
-              //     const m = lg.getLayers()[0] as L.Marker
-              //     m.setLatLng(e.latlng)
-              //     setMarker(m)
-              //   }else{
-              //     lg.addLayer(nm)
-              //     setMarker(nm)
-              //   }
-              //   map.flyTo(e.latlng,15,{animate:true})
-              // })
-            },[]);
-            useEffect(() => {
-              if(map){
-                map.invalidateSize(true)
-              }
-            });
-            
-          function getCurrentLocation(){
-            if(!map){
-              return
-            }
-              map.locate({
-                // https://leafletjs.com/reference-1.7.1.html#locate-options-option
-                setView: true,
-                enableHighAccuracy: true,
-              })
-              // if location found show marker and circle
-              .on("locationfound", (e:L.LocationEvent) => {
-                console.log(e);
-                // marker
-                 L.marker([e.latlng.lat, e.latlng.lng]).addTo(map).bindPopup(
-                  "Your are here :)"
-                );
-                // circle
-                 L.circle([e.latlng.lat, e.latlng.lng], e.accuracy / 2, {
-                  weight: 2,
-                  color: "red",
-                  fillColor: "red",
-                  fillOpacity: 0.1,
-                }).addTo(map);
-                map.flyTo([e.latlng.lat, e.latlng.lng], 15);
-
-              })
-              // if error show alert
-              .on("locationerror", (e) => {
-                console.log(e);
-                // alert("Location access denied.");
-              });
-}
-        return (
-                <div id="map" 
-                  style={{
-                  display:'inline-block',
-                  overflow: 'hidden',
-                  background: '#ddd',
-                  outlineOffset: '1px',
-                  width:'100%',
-                  height:'100%',
-                 
-                 }}>
-                </div>);
-}
-
