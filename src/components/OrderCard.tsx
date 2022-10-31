@@ -132,17 +132,17 @@ return<IonCard dir={'rtl'} style={{display: 'flex'}} >
     <IonGrid >
         
         <IonRow>
-            <IonAvatar style={{width: '50px',height: '50px'}} onClick={()=>history.push("/profile/"+data.uid)}>
-                <IonImg 
+            <IonAvatar style={{width: '50px',height: '50px',display: 'flex'}} onClick={()=>history.push("/profile/"+data.uid)}>
+                <IonImg
                 src={userInfo.photoURL}>
                 </IonImg>
             </IonAvatar>
-            <IonCol>
-            <IonLabel  color="secondary" style={{fontSize: 'small',fontStretch: '100%'}}>{userInfo.name}</IonLabel>
-            <IonLabel  color="secondary" position="fixed" style={{fontSize: 'small',margin: "5%"}}>
+            <IonTitle  color="secondary" 
+            style={{fontSize: 'small',justifySelf: 'center',border: '5px',borderWidth: '2px',verticalAlign: 'middle'}}>{userInfo.name}</IonTitle>
+            <IonLabel  color="secondary" position="fixed" 
+            style={{fontSize: 'small',margin: "5%",fontDisplay: 'small'}}>
                 {date}
             </IonLabel>
-            </IonCol>
             
         </IonRow>
     <IonRow>
@@ -172,7 +172,7 @@ return<IonCard dir={'rtl'} style={{display: 'flex'}} >
     
     </IonGrid>
 
-    <IonItem >
+    <div style={{display:'grid',alignContent:'end'}} >
     {!owner && !!data.number && 
         <IonButton  
         onClick={()=>OpenWhatsapp(data.number)} 
@@ -191,7 +191,7 @@ return<IonCard dir={'rtl'} style={{display: 'flex'}} >
         {userApplied===undefined && <IonSpinner></IonSpinner>}
         {userApplied!==undefined? userApplied?"un accept":"accept":""}
     </IonButton>}
-    { owner && <IonButton  onClick={()=>{deleteOrder(data);
+    { owner && <IonButton fill="clear" onClick={()=>{deleteOrder(data);
         if(typeof onDeleted =="function")
         {onDeleted()}
         }} 
@@ -216,7 +216,7 @@ return<IonCard dir={'rtl'} style={{display: 'flex'}} >
         <IonBadge slot="start">{data.applications.length}</IonBadge>
         </IonButton>} */}
         
-    </IonItem>
+    </div>
     </IonCard>
     
 }
