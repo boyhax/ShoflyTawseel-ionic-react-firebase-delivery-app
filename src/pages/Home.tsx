@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { IonBadge, IonButton, IonContent, IonFab, IonFabButton,
-   IonIcon, IonMenuButton, IonPage} from '@ionic/react';
+import { IonBadge, IonButton, IonButtons, IonContent, IonFab, IonFabButton,
+   IonFabList,
+   IonFooter,
+   IonIcon, IonLabel, IonMenuButton, IonPage, IonToolbar} from '@ionic/react';
 import './Home.css';
-import { chatbox, menuOutline } from 'ionicons/icons';
+import { add, chatbox, menu, menuOutline, person } from 'ionicons/icons';
 import { useHistory } from "react-router-dom";
 import { useGlobals } from '../providers/globalsProvider';
 import MainMenu from '../components/MainMenu';
@@ -64,7 +66,7 @@ const Tab1= () => {
  
     return (
     <IonPage style={{width:"100vw",height: "100vh",bottom: '0px',backgroundColor: "#5e6bec"}}>
-      <IonFab style={{left: '10px',top:'10px'}}>
+      <IonFab vertical={'top'} horizontal={'start'}>
 
               <IonFabButton color={'light'}  onClick={()=>toggleMenu()}>
                   <IonMenuButton color={'primary'}></IonMenuButton>
@@ -88,11 +90,15 @@ const Tab1= () => {
                   <OrderList></OrderList>
                   </IonContent>}
 
-                  <IonButton 
-                  style={{position: 'absolute',bottom:'5px',right:'30%'}}
-                  onClick={()=>history.push('AddOrderPage')} shape={'round'} slot={'start'} >
-                    Add order now
-                  </IonButton>
+
+                  <IonFab horizontal={'start'} vertical={'bottom'} >
+                    <IonFabButton color={'light'} onClick={()=>history.push('AddOrderPage')}>
+                      <IonIcon color={'primary'} icon={add}></IonIcon>
+                    </IonFabButton>
+                  </IonFab>
+                       
+                  
+                  
               
 
               {/* {"dInfo: "+JSON.stringify( dInfo)}{"state: "+state} */}

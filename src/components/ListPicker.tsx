@@ -36,7 +36,7 @@ const ListPicker=(props:Props)=>{
         
     <IonModal ref={modal}  isOpen={isOpen} canDismiss={true} 
            onDidDismiss={()=>onClose()}> 
-    <IonItem>
+      <IonItem>
             <IonLabel>{props.placeHolder}</IonLabel>
           <IonChip color="success">
               <IonLabel>{props.value}</IonLabel>
@@ -53,7 +53,7 @@ const ListPicker=(props:Props)=>{
       <IonList>{data.sort((a,b) => {
         const A:string = a.value;
         const B:string = b.value;
-        return B.indexOf(searchValue?searchValue:"")!-A.indexOf(searchValue?searchValue:"")!
+        return B.indexOf(searchValue||"")!-A.indexOf(searchValue||"")!
       }).map((value:dataProps, index:Number) => 
       {
             return <IonItem 

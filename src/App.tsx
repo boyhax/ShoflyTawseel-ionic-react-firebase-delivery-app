@@ -71,6 +71,21 @@ Device.getInfo().then((v)=>{
   }
 })
 
+const url = 'https://trueway-places.p.rapidapi.com/FindPlaceByText?text=sur oman&language=ar';
+
+const options = {
+  method: 'GET',
+  headers: {
+    'X-RapidAPI-Key': '5db7bea325msh20d1ea444db0b53p123e53jsn3b35fd61bc13',
+    'X-RapidAPI-Host': 'trueway-places.p.rapidapi.com'
+  }
+};
+
+fetch(url, options)
+	.then(res => res.json())
+	.then(json => console.log(json))
+	.catch(err => console.error('error:' + err));
+
 const App: React.FC = () => {
   
   

@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
-import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonLabel, IonItem, IonList, IonSpinner, IonBackButton, IonSegment, IonSegmentButton, IonGrid, IonRow, IonAvatar, IonImg, IonCol, IonHeader, IonCard, IonCardContent } from '@ionic/react';
-import { logOutOutline, } from 'ionicons/icons';
+import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonLabel, IonItem, IonList, IonSpinner, IonBackButton, IonSegment, IonSegmentButton, IonGrid, IonRow, IonAvatar, IonImg, IonCol, IonHeader, IonCard, IonCardContent, IonFab, IonFabButton, IonInput } from '@ionic/react';
+import { close, logOutOutline, } from 'ionicons/icons';
 import { useGlobals } from '../providers/globalsProvider';
 import { collection, DocumentData, DocumentSnapshot, getFirestore, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
@@ -49,9 +49,7 @@ const Profile: React.FC = () => {
     
     return (
     <IonPage >
-      
-      <IonHeader>
-      <IonItem>
+      <IonItem dir={'rtl'} style={{paddingLeft: '50px'}}>
           <IonGrid >
             <IonRow>
               <IonRow>
@@ -63,12 +61,8 @@ const Profile: React.FC = () => {
                       
                   </IonImg>
                   </IonAvatar>
-                  <IonTitle>{profile?.name}</IonTitle>
                   {/* <IonTitle>token : {token}</IonTitle> */}
-
               </IonRow>
-                
-                
               <IonCol>
                 <IonButton onClick={()=>content !=="editProfile"?setContent("editProfile"):setContent("orders")}>{TT("edit")}
                 </IonButton>
@@ -77,18 +71,31 @@ const Profile: React.FC = () => {
                   <IonIcon icon={logOutOutline}></IonIcon>
                 </IonButton>
               </IonCol>
-              
-
               </IonRow>
           </IonGrid>
-          <IonBackButton defaultHref='/'></IonBackButton>
-
         </IonItem>
-        </IonHeader>
-        <IonCard>
-          <IonCardContent>
-          {JSON.stringify(profile)}  
-          </IonCardContent></IonCard>
+        <IonFab horizontal={'start'} vertical={'top'} >
+                <IonFabButton color={'light'}
+                 onClick={()=>history.goBack()}
+                >
+                  <IonIcon color={'primary'} icon={close}></IonIcon>
+                </IonFabButton>
+          </IonFab>
+        <IonList>
+          <IonItem>
+            <IonLabel>Name: </IonLabel>
+            <IonInput value={profile?.name||"Name"} disabled={true}></IonInput>  
+          </IonItem>
+          <IonItem>
+            <IonLabel>Email: </IonLabel>
+            <IonInput value={profile?.email||"No Email"} disabled={true}></IonInput>  
+          </IonItem>
+          <IonItem>
+            <IonLabel>Pnone: </IonLabel>
+            <IonInput value={profile?.phoneNumber||"No Email"} disabled={true}></IonInput>  
+          </IonItem>
+
+        </IonList>
       {content !=="editProfile" &&<IonSegment  value={content}>
         <IonSegmentButton value="orders" onClick={()=>setContent('orders')}>
           <IonLabel>orders</IonLabel>
