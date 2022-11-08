@@ -22,7 +22,7 @@ import { useHistory } from "react-router-dom";
 import { useGlobals } from '../providers/globalsProvider';
 import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { getUserInfoPlaceHolder } from '../providers/firebaseMain';
+import { getUserInfoPlaceHolder, orderProps } from '../providers/firebaseMain';
 import { Device } from '@capacitor/device';
 import { citiesList } from '../components/utlis/citiesUtlis';
 import { Url } from 'url';
@@ -35,9 +35,11 @@ for (let v of Array(4)) {
   optionsPlaceholder.push({ value: 'oman', title: 'muscat', subTitle: "oman" })
 }
 type locationOption = { value: Geolocation | any, title: string, subTitle?: string }
-type Geolocation = { latlng: LatLng, city?: string, state?: string }
+type Geolocation = { latlng: LatLng, city: string, state?: string }
 type LatLng = { lat: string, lng: string }
-type OrderType = { name: string, icon: any, value: string }
+type OrderType = { name: string, icon: any, value: OrderCatagorie }
+type OrderCatagorie = "SmallObjects"|'Food'|'PeopleTrans'|'AnimalTrans'|'BigObjects' ;
+
 const catagories: OrderType[] = [
   { name: 'Small Objects', icon: require('../assets/smallObjectsIcon.png'), value: 'SmallObjects' }
   , { name: 'Food & Drinks', icon: require('../assets/take-away.png'), value: 'Food' }
@@ -54,8 +56,8 @@ const AddOrderPage = () => {
   const [orderCatagory, setOrderCatagory] = useState<string>('')
   const [pickUpLocation, setPickUpLocation] = useState<Geolocation>()
   const [dropLocation, setDropLocation] = useState<Geolocation>()
+  const [comment, setComment] = useState<string>()
 
-  const [timeSegment, setTimeSegment] = useState<string>("anytimeSoon")
 
   const [pickUpSearchValue, setPickUpSearchValue] = useState<string>()
   const [dropSearchValue, setDropSearchValue] = useState<string>()
@@ -63,7 +65,6 @@ const AddOrderPage = () => {
   const [focusedPicker, setFocusedPicker] = useState<"pickUp" | "drop">()
   const [isLocationsConfirmed, setLocationsConfirmed] = useState<boolean>(false)
 
-  const [fcmToken, setFcmToken] = useState<any>(null)
   const [_profile, _setProfile] = useState<any>(profile ? profile : getUserInfoPlaceHolder())
   const [options, setOptions] = useState<locationOption[]>()
   const [isSubmitingOrder, setSubmitingOrder] = useState(false)
@@ -79,20 +80,19 @@ const AddOrderPage = () => {
 
   function onOptionPick(v: locationOption): void {
     focusedPicker === 'pickUp' ? setPickUpLocation(v.value || pesuedoLocation(v)) : setDropLocation(v.value || pesuedoLocation(v))
+    console.log('v.value || pesuedoLocation(v) :>> ', v.value || pesuedoLocation(v));
     focusedPicker === 'pickUp' ?
       setPickUpSearchValue(v.title || pickUpSearchValue)
       : setDropSearchValue(v.title || dropSearchValue)
     setOptions(undefined)
   }
-  function onAddOrder() {
-    // presentAlert({message:'hello',buttons:["submit"]})
-  }
+ 
   function onPickerFocused(v: "drop" | "pickUp") {
     setFocusedPicker(v)
     console.log('onset focused :>> ', v);
   }
-  function pesuedoLocation(v: locationOption | any): Geolocation {
-    return { latlng: { lat: '15.55555', lng: '51,00000' } }
+  function pesuedoLocation(v: locationOption): Geolocation {
+    return { latlng: { lat: '15.55555', lng: '51,00000' },city:v.value,state:v.value }
   }
   function updateOptions(text: string) {
 
@@ -108,13 +108,21 @@ const AddOrderPage = () => {
   function isLocationsSet() {
     return pickUpLocation && dropLocation
   }
-  const onSelect = (e: CustomEvent) => {
-    console.log('event of select :>> ', e.detail.value);
-  }
+ 
   const onSubmitOrder = async () => {
     if (!user) { presentAlert({ message: 'please Sign In First', animated: true, }) }
     setSubmitingOrder(true)
-    const newO = { from: pickUpLocation, to: dropLocation, uid: getAuth().currentUser?.uid, time: serverTimestamp(), type: orderCatagory }
+    const newO:orderProps = { 
+      urgent:isUrgent,
+      from: pickUpLocation?.city!, 
+      to: dropLocation?.city!, 
+      uid: getAuth().currentUser?.uid!, 
+      time: serverTimestamp(), 
+      type: orderCatagory,
+      comment:comment,
+      reports:[] ,
+      applications:[]
+    }
     try {
       await addDoc(collection(db, 'orders'), newO).finally(() => setSubmitingOrder(false))
       console.log('oreder submited')
@@ -185,9 +193,11 @@ const AddOrderPage = () => {
             <IonDatetime onIonChange={(e) => { setOrderDate(e.detail.value); console.log(e.detail.value) }} id="datetime"></IonDatetime>
           </IonModal>
         </IonItem>
-        {/* <IonDatetime presentation={'date'} 
-        onIonChange={(e) => { setOrderDate(e.detail.value); console.log(e.detail.value) }}
-         placeholder={'Time for Delivery'}></IonDatetime> */}
+<IonItem>
+  <textarea onChange={v=>console.log(v)} placeholder={"Please write any discreption.. "}>
+
+  </textarea>
+</IonItem>
       </div>
 
     </IonContent>

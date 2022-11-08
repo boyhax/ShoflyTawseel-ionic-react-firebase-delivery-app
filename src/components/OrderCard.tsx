@@ -1,16 +1,15 @@
 import { Device } from "@capacitor/device";
 import { ComponentProps } from "@ionic/core";
-import { IonCard, IonLabel,IonContent ,IonChip, IonIcon, IonButton, IonPopover, IonTextarea, IonSpinner, IonCardHeader, IonTitle, IonBadge, IonFab, IonFabButton, IonItem, IonAvatar, IonImg, IonRow, IonCol, IonThumbnail, IonGrid} from "@ionic/react";
+import { IonCard, IonLabel,IonChip, IonIcon, IonButton, IonPopover, IonTextarea, IonSpinner, IonTitle, IonAvatar, IonImg, IonRow, IonGrid, useIonAlert} from "@ionic/react";
 import { getAuth } from "firebase/auth";
 import { doc, DocumentData, DocumentSnapshot, getFirestore, onSnapshot, } from "firebase/firestore";
-import {  alertCircle, trashOutline, thumbsDownOutline, thumbsUpOutline, chatboxEllipsesOutline, logoWhatsapp, chatboxEllipses, handRightOutline, arrowForwardCircleSharp, arrowBackOutline } from "ionicons/icons";
-import React, { useEffect, useRef, useState } from "react";
+import {  alertCircle, trashOutline, thumbsDownOutline, thumbsUpOutline, logoWhatsapp, chatboxEllipses, arrowBackOutline } from "ionicons/icons";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router";
 import { db } from "../App";
-import { applyForCard, deleteOrder, getUserInfoPlaceHolder, hands_up, is_user_applied_to_card, makeOrderFromDoc, orderProps, removeApplicationToOrder, reportOrder, userInfo } from "../providers/firebaseMain";
+import { applyForCard, deleteOrder, getUserInfoPlaceHolder, is_user_applied_to_card, makeOrderFromDoc, orderProps, removeApplicationToOrder, reportOrder, userInfo } from "../providers/firebaseMain";
 import { useGlobals } from "../providers/globalsProvider";
 import "./OrderCard.css"
-import { TT } from "./utlis/tt";
 const options:Object = { weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric' };
 
 interface props extends ComponentProps{
@@ -38,6 +37,7 @@ const OpenWhatsapp=(number:any)=>{
 
 const OrderCard= ({orderDocSnap,whatsapp,message,remove,report,canApplyFor,onDeleted,onRefresh}:props)=>{
     const [data,setData] = useState<orderProps>(makeOrderFromDoc(orderDocSnap))
+    const id = orderDocSnap.id
     var date =!!data.time? new Date(data.time.seconds!*1000).toLocaleDateString("ar-om",options) + ' ⏲ '
     + new Date(data.time.seconds*1000).toLocaleTimeString():null
     const comment = typeof data.comment! =="string"?data.comment:"no comment"
@@ -45,7 +45,7 @@ const OrderCard= ({orderDocSnap,whatsapp,message,remove,report,canApplyFor,onDel
     const [reporting,setReporting]=useState(false)
     const [reportWhy,setReportWhy]=useState<undefined|string>(undefined)
     const uid= getAuth().currentUser?.uid
-    const {user,profile} = useGlobals()
+    const {user,profile,setCurrentOrder} = useGlobals()
     const [userApplied,setApplied] = useState<boolean|undefined>(is_user_applied_to_card(uid!,data))
     const history=useHistory()
     const owner = data!.uid == uid
@@ -53,11 +53,10 @@ const OrderCard= ({orderDocSnap,whatsapp,message,remove,report,canApplyFor,onDel
     const [showComment,setShowComment] = useState(false)
     useEffect(()=>{
 
-        const unsub = onSnapshot(doc(getFirestore(),"orders/"+data.id),(doc)=>{
+        const unsub = onSnapshot(doc(getFirestore(),"orders/"+id),(doc)=>{
             let d= makeOrderFromDoc(doc)
             setData(d)
             setApplied(is_user_applied_to_card(uid!,d))
-
          }
         )
         var unsub2 = ()=>{}
@@ -88,13 +87,14 @@ const OrderCard= ({orderDocSnap,whatsapp,message,remove,report,canApplyFor,onDel
     const toggleComment=()=>{
         setShowComment(!showComment)
     }
+    const [presentAlert] = useIonAlert()
     async function _applyToOrder(){
         if(!user){
-            alert("يرجى تسجيل الدخول اولا")
+            presentAlert({message:"يرجى تسجيل الدخول اولا"})
             return
         }
         if(!userApplied){
-            applyForCard(uid!,data.id!,data.uid!)
+            applyForCard(uid!,id,data.uid!)
             setApplied(undefined)
         }else{
             const info = data.applications.find((value)=>{return value.byUser ===uid})
@@ -107,7 +107,7 @@ const OrderCard= ({orderDocSnap,whatsapp,message,remove,report,canApplyFor,onDel
         }
     }
     function onReport(){
-        reportOrder(data,reportWhy)
+        reportOrder(orderDocSnap,reportWhy)
         if(onRefresh){
             onRefresh()
             console.log("message")
@@ -156,11 +156,12 @@ return<IonCard dir={'rtl'} style={{display: 'flex'}} >
      color="secondary"
      onClick={()=>{
         if(owner){
-            history.push("/profile")
+            setCurrentOrder(orderDocSnap)
+            history.push("/OrdersPage/"+orderDocSnap.id+"/applications")
         }
      }}>
-        {"قبول الطلب: "}
-         {data.applications.length}        
+        {"تم قبول الطلب: "}
+         {data.applications.length} 
     </IonChip>
         
     
@@ -173,9 +174,9 @@ return<IonCard dir={'rtl'} style={{display: 'flex'}} >
     </IonGrid>
 
     <div style={{display:'grid',alignContent:'end'}} >
-    {!owner && !!data.number && 
+    {!owner && !!userInfo.phoneNumber && 
         <IonButton  
-        onClick={()=>OpenWhatsapp(data.number)} 
+        onClick={()=>OpenWhatsapp(userInfo.phoneNumber)} 
         color="light" shape="round" fill="clear" size="small">
         <IonIcon size="large" color="success" icon={logoWhatsapp} ></IonIcon>
         </IonButton>}
@@ -191,7 +192,7 @@ return<IonCard dir={'rtl'} style={{display: 'flex'}} >
         {userApplied===undefined && <IonSpinner></IonSpinner>}
         {userApplied!==undefined? userApplied?"un accept":"accept":""}
     </IonButton>}
-    { owner && <IonButton fill="clear" onClick={()=>{deleteOrder(data);
+    { owner && <IonButton fill="clear" onClick={()=>{deleteOrder(orderDocSnap);
         if(typeof onDeleted =="function")
         {onDeleted()}
         }} 

@@ -105,9 +105,13 @@ const App: React.FC = () => {
           <Route path="/details" component={Details} />
           <Route path="/SignIn" component={SignIn} />
           <Route path="/OrdersPage" component={OrdersPage} />
+          <Route path="/OrdersPage/:id/:type" component={OrdersPage} />
+
+
+
           <Route path="/map/:location" component={MapPage} />
           <Route path="/map" component={MapPage} />
-          <Route path="/order/:id" component={OrderPage} />
+          <Route path="/order/:id?type" component={OrderPage} />
           <Route path="/applications/:id" component={ApplicationsPage} />
           {/* <Route path="/chat/:id" component={Chat} /> */}
           <Route path="/chats/"  component={Chats} />

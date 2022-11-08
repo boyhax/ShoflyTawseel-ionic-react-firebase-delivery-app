@@ -47,13 +47,13 @@ export type OrderReportProps={
   OrderId:string
 }
 export type orderProps={
+  urgent:boolean,
+  type:string,
   uid:string,
   from:string,
   to:string,
   time:any,
-  number:string,
   comment:string|undefined|null,
-  id?:string,
   reports:OrderReportInfo[],
   applications:ApplicationInfo[]
 
@@ -96,15 +96,15 @@ export function makeUSerInfoFromDoc(s:DocumentSnapshot):userInfo{
   export function makeOrderFromDoc(orderDocSnap:DocumentSnapshot<DocumentData>):orderProps {
     const o = orderDocSnap.exists()?orderDocSnap.data():{}
     return{
-    uid:o.uid,
-    from:o.from,
-    to:o.to,
-    time:o.time,
-    number:o.number,
-    comment:o.comment,
-    id:orderDocSnap.id,
-    reports:o.reports?o.reports:[],
-    applications:o.applications?o.applications:[]
+        urgent:o.urgent,
+        type:o.type,
+        uid:o.uid,
+        from:o.from,
+        to:o.to,
+        time:o.time,
+        comment:o.comment,
+        reports:o.reports?o.reports:[],
+        applications:o.applications?o.applications:[]
   }
 
 }
@@ -197,9 +197,9 @@ export function UpdateProfileForThis(data:any){
   })
   return d
 }
-export const reportOrder=async(order:orderProps,why:string="")=>{
+export const reportOrder=async(order:DocumentSnapshot<DocumentData>,why:string="")=>{
   const uid = getAuth().currentUser?.uid
-  var userReport =order.reports.find((v)=>{return v.byUser ===uid})
+  var userReport =order?.data()!.reports.find((v:any)=>{return v.byUser ===uid})
   if(!!userReport ){
     alert("already reported");
     return;
@@ -223,9 +223,8 @@ export const reportOrder=async(order:orderProps,why:string="")=>{
     })
   }    
 }
-export async function deleteOrder(order:orderProps) {
-  deleteDoc_("orders/"+order.id)
-
+export  function deleteOrder(order:DocumentSnapshot) {
+  return  deleteDoc(order.ref)
 }
 export async function deleteDoc_(path:string) {
    await deleteDoc(doc(getFirestore(),path))

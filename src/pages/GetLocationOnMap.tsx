@@ -1,17 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { IonAvatar, IonBadge, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCol, IonContent, IonFab, IonFabButton,
-   IonFooter,
-   IonGrid,
-   IonHeader, IonIcon, IonicSwiper, IonImg, IonItem, IonModal, IonPage,
-     IonRow,
-     IonTitle,
-     IonToolbar, 
-     IonVirtualScroll} from '@ionic/react';
+import { IonBadge, IonButton, IonContent, IonFab, IonFabButton,
+   IonIcon, IonPage} from '@ionic/react';
 import './Home.css';
-import { add, chatbox, menuOutline, personCircle } from 'ionicons/icons';
+import { chatbox, menuOutline } from 'ionicons/icons';
 import { useHistory } from "react-router-dom";
 import { useGlobals } from '../providers/globalsProvider';
-import AddOrder from '../components/AddOrder';
 import MainMenu from '../components/MainMenu';
 import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
