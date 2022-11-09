@@ -1,4 +1,4 @@
-import React, {  } from 'react';
+import React, { } from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import {
   IonApp,
@@ -49,9 +49,10 @@ import CreateProfile from './pages/CreatProfile';
 import ProfileID from './pages/ProfileID';
 import AddOrderPage from './pages/AddOrderPage';
 import MainMenu from './components/MainMenu';
+import ProtectedRoute from './components/ProtectedRoute';
 
 
-const firebaseConfig=Config()
+const firebaseConfig = Config()
 initializeApp(firebaseConfig)
 export const db = getFirestore()
 
@@ -60,12 +61,12 @@ setupIonicReact({
   mode: 'md'
 });
 
-export var token:string=""
+export var token: string = ""
 
-Device.getInfo().then((v)=>{
+Device.getInfo().then((v) => {
   console.log('platform :>> ', v.platform);
-  if(["android","ios"].includes(v.platform)){
-    FCM.getToken().then((t)=>{
+  if (["android", "ios"].includes(v.platform)) {
+    FCM.getToken().then((t) => {
       token = t.token
     })
   }
@@ -82,51 +83,52 @@ const options = {
 };
 
 fetch(url, options)
-	.then(res => res.json())
-	.then(json => console.log(json))
-	.catch(err => console.error('error:' + err));
+  .then(res => res.json())
+  .then(json => console.log(json))
+  .catch(err => console.error('error:' + err));
 
 const App: React.FC = () => {
-  
-  
-  return(
-  <GlobalProvider>
-    <IonApp>
-    <IonReactRouter>
-    {/* <IonSplitPane contentId="main"> */}
-    <MainMenu  ></MainMenu>
-
-    <IonRouterOutlet id='mainContent'>
-          <Route path="/home" component={Home} exact={true} />
-          <Route path="/Profile" component={Profile} />
-          <Route path="/Profile/:id" component={ProfileID} />
-          <Route path="/createProfile" component={CreateProfile} />
-
-          <Route path="/details" component={Details} />
-          <Route path="/SignIn" component={SignIn} />
-          <Route path="/OrdersPage" component={OrdersPage} />
-          <Route path="/OrdersPage/:id/:type" component={OrdersPage} />
 
 
+  return (
+    <GlobalProvider>
+      <IonApp>
+        <IonReactRouter>
+          {/* <IonSplitPane contentId="main"> */}
+          <MainMenu  ></MainMenu>
 
-          <Route path="/map/:location" component={MapPage} />
-          <Route path="/map" component={MapPage} />
-          <Route path="/order/:id?type" component={OrderPage} />
-          <Route path="/applications/:id" component={ApplicationsPage} />
-          {/* <Route path="/chat/:id" component={Chat} /> */}
-          <Route path="/chats/"  component={Chats} />
-          <Route path="/chats/:id"  component={Chats} />
-          <Route path="/AddOrderPage"  component={AddOrderPage} />
+          <IonRouterOutlet id='mainContent'>
+            <Route path="/home" component={Home} exact={true} />
+            <Route path="/Profile" component={Profile} />
+            <Route path="/Profile/:id" component={ProfileID} />
+            <Route path="/createProfile" component={CreateProfile} />
+
+            <Route path="/details" component={Details} />
+            <Route path="/SignIn" component={SignIn} />
+            <Route path="/OrdersPage" component={OrdersPage} />
+            <Route path="/OrdersPage/:id/:type" component={OrdersPage} />
 
 
-          <Route path="/" render={() => <Redirect to="/home" />} exact={true} />
-        </IonRouterOutlet>
-        {/* </IonSplitPane> */}
 
-    </IonReactRouter>
-  </IonApp>
-  </GlobalProvider>
-)};
+            <Route path="/map/:location" component={MapPage} />
+            <Route path="/map" component={MapPage} />
+            <Route path="/order/:id?type" component={OrderPage} />
+            <Route path="/applications/:id" component={ApplicationsPage} />
+            {/* <Route path="/chat/:id" component={Chat} /> */}
+            <Route path="/chats/" component={Chats} />
+            <Route path="/chats/:id" component={Chats} />
+            <Route path="/AddOrderPage" component={AddOrderPage} />
+
+
+            <Route path="/" render={() => <Redirect to="/home" />} exact={true} />
+          </IonRouterOutlet>
+          {/* </IonSplitPane> */}
+
+        </IonReactRouter>
+      </IonApp>
+    </GlobalProvider>
+  )
+};
 
 export default App;
 

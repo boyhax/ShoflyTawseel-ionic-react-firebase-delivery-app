@@ -15,6 +15,7 @@ import { Geolocation } from '@capacitor/geolocation';
 import { Device } from '@capacitor/device';
 import OrderList from '../components/OrderList';
 import { greenIcon } from '../components/utlis/LeafLetMap';
+import { TT } from '../components/utlis/tt';
 
 var dInfo:any =''
 var state:any = process.env.NODE_ENV
@@ -90,19 +91,17 @@ const Tab1= () => {
                   <OrderList></OrderList>
                   </IonContent>}
 
-
-                  <IonFab horizontal={'start'} vertical={'bottom'} >
-                    <IonFabButton color={'light'} onClick={()=>history.push('AddOrderPage')}>
-                      <IonIcon color={'primary'} icon={add}></IonIcon>
-                    </IonFabButton>
-                  </IonFab>
-                       
-                  
-                  
-              
-
-              {/* {"dInfo: "+JSON.stringify( dInfo)}{"state: "+state} */}
-           
+                    <IonButton style={{
+                      position: 'absolute',
+                      bottom:'5px',
+                      alignSelf: 'center'
+                    }} 
+                    
+                    onClick={()=>history.push('AddOrderPage')}
+                    shape='round'>
+                      {/* <IonIcon  icon={add}></IonIcon> */}
+                      {TT('Add New Order')}
+                    </IonButton>
     </IonPage>
   );
 };

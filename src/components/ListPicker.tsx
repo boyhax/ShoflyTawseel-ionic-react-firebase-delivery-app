@@ -10,7 +10,7 @@ type Props={
 data:dataProps[],
 placeHolder:string,
 value:string|null,
-onValueSet:(value:string|null)=>void
+onValueSet:(value:{value:string,key:string}|undefined)=>void
 }
 const ListPicker=(props:Props)=>{
     const {data} = props
@@ -31,20 +31,22 @@ const ListPicker=(props:Props)=>{
     }
 
     return<IonChip color="success" onClick={()=>onOpen()}>
-        {/* {props.value&& <IonIcon onClick={(e)=>props.onValueSet(null)} icon={removeCircleOutline} ></IonIcon>} */}
+        {props.value&& <IonIcon onClick={(e)=>props.onValueSet(undefined)} icon={removeCircleOutline} ></IonIcon>}
         <IonTitle>{props.placeHolder}{props.value}</IonTitle>
         
     <IonModal ref={modal}  isOpen={isOpen} canDismiss={true} 
            onDidDismiss={()=>onClose()}> 
       <IonItem>
             <IonLabel>{props.placeHolder}</IonLabel>
-          <IonChip color="success">
-              <IonLabel>{props.value}</IonLabel>
+          <IonChip
+           color="success">
+              <IonLabel>{props.value ||"     "}</IonLabel>
               <IonIcon icon={closeCircle} 
-              onClick={()=>{props.onValueSet(null)}}/>
+
+              onClick={()=>{props.onValueSet(undefined)}}/>
 
               </IonChip>
-          <IonInput placeholder="أبحث..."  onIonChange={(e)=>{setSearchValue(e.detail.value!)}}></IonInput>
+          <IonInput  placeholder="أبحث..."  onIonChange={(e)=>{setSearchValue(e.detail.value!)}}></IonInput>
           <IonChip color="danger" onClick={(e)=>onClose()}>Close</IonChip>
           
         </IonItem>
@@ -57,10 +59,9 @@ const ListPicker=(props:Props)=>{
       }).map((value:dataProps, index:Number) => 
       {
             return <IonItem 
-            
-            className={value.value === props.value?"optionActive":"option"}
+            color={value.value === props.value?'primary':'light'}
             key={value.key} 
-            onClick={()=>{props.onValueSet(value.key);onClose()}}>{value.value}</IonItem>
+            onClick={()=>{props.onValueSet(value);onClose()}}>{value.value}</IonItem>
       
         })}</IonList>
       

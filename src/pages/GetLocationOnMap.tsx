@@ -114,9 +114,10 @@ var greenIcon = L.icon({
   popupAnchor:  [0, 50] // point from which the popup should open relative to the iconAnchor
 });
 type props={
-  onMap:(map:L.Map)=>void
+  onMap:(map:L.Map)=>void,
+  onLocationChange?:(l:any)=>void
 }
-export const LeafLetMap:React.FC<props>=({onMap})=>{
+export const LeafLetMap:React.FC<props>=({onMap,onLocationChange})=>{
       let current_lat = 23.5880;
       let current_long = 58.3829;
       let current_zoom = 16;
@@ -146,24 +147,25 @@ export const LeafLetMap:React.FC<props>=({onMap})=>{
               //   }).addTo(map);    
               const lg = L.layerGroup([]).addTo(map)
               
-              // map.addEventListener('mousedown',(e)=>{
+              map.addEventListener('mousedown',(e)=>{
+                if(!onLocationChange){return}
+                console.log('markers :>> ', lg.getLayers());
+                console.log('e.latlong :>> ', e.latlng);
                 
-              //   console.log('markers :>> ', lg.getLayers());
-              //   console.log('e.latlong :>> ', e.latlng);
-                
-              //   const nm = L.marker(e.latlng,
-              //     {autoPan:true,title:'your place',icon:greenIcon})
+                const nm = L.marker(e.latlng,
+                  {autoPan:true,title:'your place',icon:greenIcon})
 
-              //   if(lg.getLayers().length){
-              //     const m = lg.getLayers()[0] as L.Marker
-              //     m.setLatLng(e.latlng)
-              //     setMarker(m)
-              //   }else{
-              //     lg.addLayer(nm)
-              //     setMarker(nm)
-              //   }
-              //   map.flyTo(e.latlng,15,{animate:true})
-              // })
+                if(lg.getLayers().length){
+                  const m = lg.getLayers()[0] as L.Marker
+                  m.setLatLng(e.latlng)
+                  setMarker(m)
+                }else{
+                  lg.addLayer(nm)
+                  setMarker(nm)
+                }
+                map.flyTo(e.latlng,15,{animate:true})
+                onLocationChange && onLocationChange(e.latlng)
+              })
             },[]);
             useEffect(() => {
               if(map){
@@ -188,12 +190,7 @@ export const LeafLetMap:React.FC<props>=({onMap})=>{
                   "Your are here :)"
                 );
                 // circle
-                 L.circle([e.latlng.lat, e.latlng.lng], e.accuracy / 2, {
-                  weight: 2,
-                  color: "red",
-                  fillColor: "red",
-                  fillOpacity: 0.1,
-                }).addTo(map);
+
                 map.flyTo([e.latlng.lat, e.latlng.lng], 15);
 
               })

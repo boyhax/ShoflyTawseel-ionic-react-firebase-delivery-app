@@ -26,7 +26,6 @@ const OrdersPage: React.FC = () => {
     
   }, [currentOrder]);
 
-  function hello(){ }
   const loadOrder = () => {
     const unsub1 = onSnapshot(doc(db, 'orders', id), (doc) => setCurrentOrder(doc))
     // ApplicationProps ={

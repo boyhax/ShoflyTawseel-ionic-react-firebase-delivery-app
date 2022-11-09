@@ -19,8 +19,8 @@ export default function OrderList(props: any) {
   const [refreshing, setRefreshing] = useState(false)
   const [count, setCount] = useState(10)
   const [showFilter, setShowFilter] = useState(false)
-  const [filterTo, setFilterTo] = useState<null | string>(null)
-  const [filterFrom, setFilterFrom] = useState<null | string>(null)
+  const [filterTo, setFilterTo] = useState<{key:string,value:string}>()
+  const [filterFrom, setFilterFrom] = useState<{key:string,value:string}>()
   const IonRefresherElement = useRef<HTMLIonRefresherElement | any>()
   const infiniteScrollRef = useRef<any>(null)
   const [isInfiniteDisabled, setInfiniteDisabled] = useState(false);
@@ -148,9 +148,9 @@ export default function OrderList(props: any) {
     <IonHeader>
       <IonItem onClick={() => toggleFilter()} dir={'rtl'}>
         <IonIcon icon={filter}></IonIcon>
-        <CitiePicker value={filterFrom} onItemPicked={(v) => setFilterFrom(v)}
+        <CitiePicker value={filterFrom?.value!} onItemPicked={(v) => setFilterFrom(v)}
           placeHolder={"من :"} />
-        <CitiePicker value={filterTo} onItemPicked={(v) => setFilterTo(v)}
+        <CitiePicker value={filterTo?.value!} onItemPicked={(v) => setFilterTo(v)}
           placeHolder={"الى :"} />
       </IonItem>
     </IonHeader>
@@ -175,8 +175,8 @@ export default function OrderList(props: any) {
       <IonLabel color={listMessage.color}>{listMessage.text}</IonLabel>
       {/* <IonButton onClick={()=>{Refresh()}}>اعد المحاوله</IonButton> */}
       <IonLabel color="primary" onClick={(e) => {
-        setFilterFrom(null);
-        setFilterTo(null);
+        setFilterFrom(undefined);
+        setFilterTo(undefined);
       }} >رجوع</IonLabel>
 
     </IonItem>
@@ -194,13 +194,13 @@ export default function OrderList(props: any) {
 
   </IonContent>
 }
-const CitiePicker = (props: { value: string | null, onItemPicked: (v: string | null) => void, placeHolder: string }) => {
+const CitiePicker = (props: { value: string , onItemPicked: (v: {value:string,key:string}) => void, placeHolder: string }) => {
   return <IonItem>
     <ListPicker
       value={props.value}
       data={Cities}
       placeHolder={props.placeHolder}
-      onValueSet={(v) => props.onItemPicked(v)}></ListPicker>
+      onValueSet={(v) => props.onItemPicked(v!)}></ListPicker>
   </IonItem>
 }
 
