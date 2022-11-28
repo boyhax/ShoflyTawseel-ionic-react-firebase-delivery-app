@@ -72,20 +72,31 @@ Device.getInfo().then((v) => {
   }
 })
 
-const url = 'https://trueway-places.p.rapidapi.com/FindPlaceByText?text=sur oman&language=ar';
 
-const options = {
-  method: 'GET',
-  headers: {
-    'X-RapidAPI-Key': '5db7bea325msh20d1ea444db0b53p123e53jsn3b35fd61bc13',
-    'X-RapidAPI-Host': 'trueway-places.p.rapidapi.com'
-  }
-};
-
-fetch(url, options)
-  .then(res => res.json())
-  .then(json => console.log(json))
-  .catch(err => console.error('error:' + err));
+export type Address={
+address: string,
+id:string,
+location: {lat: string, lng: string},
+name: string,
+types: string[]
+}
+export async function getAddressOptions(text:string,call:(t:Address[])=>void){
+  const options = {
+    method: 'GET',
+    headers: {
+      'X-RapidAPI-Key': '5db7bea325msh20d1ea444db0b53p123e53jsn3b35fd61bc13',
+      'X-RapidAPI-Host': 'trueway-places.p.rapidapi.com'
+    }
+  };
+  let r:any[] = []
+  let url = 'https://trueway-places.p.rapidapi.com/FindPlaceByText?text=sur oman&language=ar';
+  url.replace('text',text)
+  let t = await (await fetch(url, options)).json();
+  console.log('t :>> ', t);
+  r=t
+  call(r)
+  return r
+}
 
 const App: React.FC = () => {
 
@@ -93,38 +104,37 @@ const App: React.FC = () => {
   return (
     <GlobalProvider>
       <IonApp>
+      {/* <IonSplitPane contentId="main"> */}
+
         <IonReactRouter>
-          {/* <IonSplitPane contentId="main"> */}
-          <MainMenu  ></MainMenu>
+            <MainMenu  ></MainMenu>
 
-          <IonRouterOutlet id='mainContent'>
-            <Route path="/home" component={Home} exact={true} />
-            <Route path="/Profile" component={Profile} />
-            <Route path="/Profile/:id" component={ProfileID} />
-            <Route path="/createProfile" component={CreateProfile} />
+            <IonRouterOutlet id='mainContent'>
+              <Route path="/home" component={Home} exact={true} />
+              <Route path="/Profile" component={Profile} />
+              <Route path="/Profile/:id" component={ProfileID} />
+              <Route path="/createProfile" component={CreateProfile} />
 
-            <Route path="/details" component={Details} />
-            <Route path="/SignIn" component={SignIn} />
-            <Route path="/OrdersPage" component={OrdersPage} />
-            <Route path="/OrdersPage/:id/:type" component={OrdersPage} />
+              <Route path="/details" component={Details} />
+              <Route path="/SignIn" component={SignIn} />
+              <Route path="/OrdersPage" component={OrdersPage} />
+              <Route path="/OrdersPage/:id/:type" component={OrdersPage} />
 
+              <Route path="/map/:location" component={MapPage} />
+              <Route path="/map" component={MapPage} />
+              <Route path="/order/:id?type" component={OrderPage} />
+              <Route path="/applications/:id" component={ApplicationsPage} />
+              <Route path="/chats/" component={Chats} />
+              <Route path="/chats/:id" component={Chats} />
+              <Route path="/AddOrderPage" component={AddOrderPage} />
 
+              <Route path="/" render={() => <Redirect to="/home" />} exact={true} />
+            </IonRouterOutlet>
 
-            <Route path="/map/:location" component={MapPage} />
-            <Route path="/map" component={MapPage} />
-            <Route path="/order/:id?type" component={OrderPage} />
-            <Route path="/applications/:id" component={ApplicationsPage} />
-            {/* <Route path="/chat/:id" component={Chat} /> */}
-            <Route path="/chats/" component={Chats} />
-            <Route path="/chats/:id" component={Chats} />
-            <Route path="/AddOrderPage" component={AddOrderPage} />
-
-
-            <Route path="/" render={() => <Redirect to="/home" />} exact={true} />
-          </IonRouterOutlet>
-          {/* </IonSplitPane> */}
 
         </IonReactRouter>
+        {/* </IonSplitPane> */}
+
       </IonApp>
     </GlobalProvider>
   )

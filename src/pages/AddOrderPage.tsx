@@ -31,6 +31,7 @@ import { addDoc, collection, doc, FieldValue, serverTimestamp } from 'firebase/f
 import { db } from '../App';
 import { getAuth } from 'firebase/auth';
 import { LeafLetMap } from './GetLocationOnMap';
+import { Address, getAddressOptions } from '../components/utlis/AddressApi';
 
 const optionsPlaceholder: any = []
 for (let v of Array(4)) {
@@ -56,8 +57,8 @@ const AddOrderPage = () => {
   const { user, profile } = useGlobals()
   const history = useHistory()
   const [orderCatagory, setOrderCatagory] = useState<string>('')
-  const [pickUpLocation, setPickUpLocation] = useState<Geolocation>()
-  const [dropLocation, setDropLocation] = useState<Geolocation>()
+  const [pickUpLocation, setPickUpLocation] = useState<Address>()
+  const [dropLocation, setDropLocation] = useState<Address>()
   const [comment, setComment] = useState<string>()
   const [openMap, setOpenMap] = useState(false)
   const [map, setMap] = useState<L.Map>()
@@ -69,7 +70,7 @@ const AddOrderPage = () => {
   const [isLocationsConfirmed, setLocationsConfirmed] = useState<boolean>(false)
 
   const [_profile, _setProfile] = useState<any>(profile ? profile : getUserInfoPlaceHolder())
-  const [options, setOptions] = useState<locationOption[]>()
+  const [options, setOptions] = useState<Address[]>()
   const [isSubmitingOrder, setSubmitingOrder] = useState(false)
   const [isUrgent, setUrgent] = useState(false)
   const [OrderDate, setOrderDate] = useState<Date | any>(new Date().toDateString())
@@ -81,12 +82,12 @@ const AddOrderPage = () => {
     }
   }, [profile]);
 
-  function onOptionPick(v: locationOption): void {
-    focusedPicker === 'pickUp' ? setPickUpLocation(pesuedoLocation(v)) : setDropLocation(pesuedoLocation(v))
-    console.log('v.value || pesuedoLocation(v) :>> ', v.value || pesuedoLocation(v));
+  function onOptionPick(v: Address): void {
+    focusedPicker === 'pickUp' ? setPickUpLocation(v) : setDropLocation(v)
+    console.log('v.value || pesuedoLocation(v) :>> ', v.name);
     focusedPicker === 'pickUp' ?
-      setPickUpSearchValue(v.title || pickUpSearchValue)
-      : setDropSearchValue(v.title || dropSearchValue)
+      setPickUpSearchValue(v.name || pickUpSearchValue)
+      : setDropSearchValue(v.name || dropSearchValue)
     setOptions(undefined)
   }
 
@@ -99,10 +100,13 @@ const AddOrderPage = () => {
   }
   function updateOptions(text: string) {
 
-    let op: locationOption[] = []
+    let op: Address[] = []
     const c = citiesList.sort((a, b) => { return b.indexOf(text) - a.indexOf(text) }).slice(0, 4)
-    c.forEach((v) => op.push({ value: v, title: v, subTitle: v }))
+    c.forEach((v) => 
+    op.push({ address: v, name: v, location: {lat:'',lng:''},id:'',types:[""] }))
+    getAddressOptions(text,(d)=>op = [...op,...d])
     setOptions(op)
+    
 
   }
   const [presentAlert] = useIonAlert()
@@ -128,8 +132,8 @@ const AddOrderPage = () => {
     setSubmitingOrder(true)
     const newO: orderProps = {
       urgent: isUrgent,
-      from: pickUpLocation?.city!,
-      to: dropLocation?.city!,
+      from: pickUpLocation?.name!,
+      to: dropLocation?.name!,
       uid: getAuth().currentUser?.uid!,
       time: serverTimestamp(),
       type: orderCatagory,
@@ -149,10 +153,12 @@ const AddOrderPage = () => {
     console.log('location :>> drop ', dropLocation," pick ",pickUpLocation);
   }, [dropLocation,pickUpLocation]);
   const onLocationPick = (e:any) => {
-    const v: Geolocation = {
-      latlng: e,
-      city:"city name",
-      state:'state name'
+    const v: Address = {
+      location: e,
+      name:"city name",
+      address:'state name',
+      id:'',
+      types:['locals']
     }
     focusedPicker==="drop"?setDropLocation(v):setPickUpLocation(v)
   }
@@ -211,14 +217,7 @@ const AddOrderPage = () => {
           <IonCheckbox placeholder={'Is Order Urgent?'} value={isUrgent} onIonChange={() => { setUrgent(!isUrgent) }}>
           </IonCheckbox>
         </IonItem>
-        <IonItem>
-          <IonLabel>Time prefered for delivery</IonLabel>
-          <IonDatetimeButton datetime="datetime"></IonDatetimeButton>
 
-          <IonModal keepContentsMounted={true}>
-            <IonDatetime onIonChange={(e) => { setOrderDate(e.detail.value); console.log(e.detail.value) }} id="datetime"></IonDatetime>
-          </IonModal>
-        </IonItem>
         <IonCard>
           <IonTextarea
             onIonChange={v => setComment(v.detail.value!)}
@@ -286,7 +285,7 @@ const AddOrderPage = () => {
                 position={'floating'}>Pick up point</IonLabel>
               <IonInput
                 // onIonBlur={()=>setOptions(undefined)}
-                value={pickUpSearchValue||pickUpLocation?.city}
+                value={pickUpSearchValue||pickUpLocation?.name}
                 onIonChange={(e) => { updateOptions(e.detail.value || ""); setPickUpSearchValue(e.detail.value || "") }}
                 onClick={() => onPickerFocused("pickUp")}></IonInput>
             </IonItem>
@@ -295,7 +294,7 @@ const AddOrderPage = () => {
               <IonLabel position={'floating'}>Drop point</IonLabel>
               <IonInput
                 // onIonBlur={()=>setOptions(undefined)}
-                value={dropSearchValue||dropLocation?.city}
+                value={dropSearchValue||dropLocation?.name}
                 onIonChange={(e) => { updateOptions(e.detail.value || ""); setDropSearchValue(e.detail.value || "") }}
                 onClick={() => onPickerFocused("drop")}></IonInput>
             </IonItem>
@@ -315,8 +314,8 @@ const AddOrderPage = () => {
               <IonIcon size={'small'} color={'secondary'} icon={caretForwardOutline}></IonIcon>
 
               <div>
-                <IonLabel>{v.title}</IonLabel>
-                <IonCardSubtitle  >{v.subTitle || ''}</IonCardSubtitle>
+                <IonLabel>{v.name}</IonLabel>
+                <IonCardSubtitle  >{v.address || ''}</IonCardSubtitle>
               </div>
 
             </IonItem>
