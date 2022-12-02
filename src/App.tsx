@@ -50,6 +50,7 @@ import ProfileID from './pages/ProfileID';
 import AddOrderPage from './pages/AddOrderPage';
 import MainMenu from './components/MainMenu';
 import ProtectedRoute from './components/ProtectedRoute';
+import Demo from './pages/Demo';
 
 
 const firebaseConfig = Config()
@@ -127,6 +128,8 @@ const App: React.FC = () => {
               <Route path="/chats/" component={Chats} />
               <Route path="/chats/:id" component={Chats} />
               <Route path="/AddOrderPage" component={AddOrderPage} />
+              <Route path="/demo" component={Demo} />
+
 
               <Route path="/" render={() => <Redirect to="/home" />} exact={true} />
             </IonRouterOutlet>

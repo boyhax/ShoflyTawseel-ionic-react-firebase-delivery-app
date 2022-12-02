@@ -1,8 +1,9 @@
 import { Device } from "@capacitor/device";
+import { stringify } from "@firebase/util";
 import { ComponentProps } from "@ionic/core";
 import {
     IonCard, IonLabel, IonChip, IonIcon, IonButton, IonPopover,
-    IonTextarea, IonSpinner, IonTitle, IonAvatar, IonImg, IonRow, IonGrid, useIonAlert
+    IonTextarea, IonSpinner, IonTitle, IonAvatar, IonImg, IonRow, IonGrid, useIonAlert, IonItem, IonCol, IonCardHeader, IonCardTitle, IonCardSubtitle
 } from "@ionic/react";
 import { getAuth } from "firebase/auth";
 import {
@@ -13,16 +14,19 @@ import {
     logoWhatsapp, chatboxEllipses, arrowBackOutline
 } from "ionicons/icons";
 import moment, { duration } from "moment";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { FC, useContext, useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router";
 import { db } from "../App";
+import useOrder from "../hooks/useOrder";
 import {
     applyForCard, deleteOrder, getUserInfoPlaceHolder,
     is_user_applied_to_card, makeOrderFromDoc, orderProps,
     removeApplicationToOrder, reportOrder, userInfo
 } from "../providers/firebaseMain";
 import { useGlobals } from "../providers/globalsProvider";
+import { cardStyle } from "../styles";
 import "./OrderCard.css"
+import { prettyDate } from "./utlis/prettyDate";
 
 const options: Object = {
     weekday: 'long', year: 'numeric',
@@ -56,9 +60,8 @@ const OrderCard = ({ orderDocSnap, whatsapp, message, remove, report, canApplyFo
     onDeleted, onRefresh }: props) => {
     const [data, setData] = useState<orderProps>(makeOrderFromDoc(orderDocSnap))
     const id = orderDocSnap.id
-     moment.locale("ar");
-     console.log('data.time :>> ', data.time);
-     var date  = moment( new Date(data.time.seconds*1000)).fromNow(true)
+    moment.locale("ar");
+    var date = prettyDate(new Date(data.time.seconds * 1000))
 
     const comment = typeof data.comment! == "string" ? data.comment : "no comment"
     const popOver = useRef<any>(null)
@@ -72,6 +75,7 @@ const OrderCard = ({ orderDocSnap, whatsapp, message, remove, report, canApplyFo
     const owner = data!.uid == uid
     const [userInfo, setUserInfo] = useState<userInfo>(getUserInfoPlaceHolder())
     const [showComment, setShowComment] = useState(false)
+    // const order = useOrder(id)
     useEffect(() => {
 
         const unsub = onSnapshot(doc(getFirestore(), "orders/" + id), (doc) => {
@@ -136,8 +140,94 @@ const OrderCard = ({ orderDocSnap, whatsapp, message, remove, report, canApplyFo
         }
 
     }
-    // console.log(userInfo)
-    return <IonCard dir={'rtl'} style={{ display: 'flex' }} >
+    return <div style={cardStyle}>
+
+        <IonCardHeader style={{ display: 'flex', flexDirection: 'row' ,paddingBottom: 1}}>
+            <IonAvatar style={{ width: '50px', height: '50px' }} onClick={() => history.push("/profile/" + data.uid)}>
+                <IonImg
+                    src={userInfo.photoURL}>
+                </IonImg>
+            </IonAvatar>
+            <IonCardTitle style={{ alignSelf: "end" }}>@{userInfo.name}</IonCardTitle>
+            <IonCardSubtitle style={{ marginLeft: 'auto' }} >{date}</IonCardSubtitle>
+
+        </IonCardHeader>
+        <IonGrid  >
+
+
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+
+                <div style={{ alignSelf: 'center', direction: 'rtl' }}>
+                    {/* {order && order.loading? <IonSpinner></IonSpinner>: <IonLabel>{order.order?.from }</IonLabel> } */}
+
+                    <IonChip color="secondary">{"من: " + data.from}</IonChip>
+                    <IonIcon color={'primary'} size={'large'} icon={arrowBackOutline}></IonIcon>
+                    <IonChip color="secondary">{"الى: " + data.to}</IonChip>
+
+                </div>
+            </div>
+            <div style={{display:'flex',flexDirection:'row',justifyContent:'space-evenly'}}>
+            <h6
+                    color="secondary"
+                    onClick={() => {
+                        if (owner) {
+                            setCurrentOrder(orderDocSnap)
+                            history.push("/OrdersPage/" + orderDocSnap.id + "/applications")
+                        }
+                    }}>
+                    {"تم قبول الطلب: "}
+                    {data.applications.length}
+                </h6>
+
+
+                <h6 color="secondary"
+                    onClick={() => toggleComment()}>
+                    {"الوصف: " + (showComment ? comment : comment.slice(0, 50) + "...")}
+                </h6>
+            </div>
+            
+            <div 
+            style={{ display: 'flex', alignSelf: 'flex-end', justifyContent: 'space-evenly' }} 
+            >
+                {!owner && !!userInfo.phoneNumber &&
+                    <IonButton
+                        onClick={() => OpenWhatsapp(userInfo.phoneNumber)}
+                        color="light" shape="round" fill="clear" size="small">
+                        <IonIcon size="large" color="success" icon={logoWhatsapp} ></IonIcon>
+                    </IonButton>}
+                {!owner &&
+                    <IonButton
+                        onClick={() => { _applyToOrder() }}
+                        color="dark"
+                        fill="clear" >
+                        {userApplied !== undefined &&
+                            <IonIcon
+                                color="success"
+                                icon={userApplied ? thumbsDownOutline : thumbsUpOutline} ></IonIcon>}
+                        {userApplied === undefined && <IonSpinner></IonSpinner>}
+                        {userApplied !== undefined ? userApplied ? "un accept" : "accept" : ""}
+                    </IonButton>}
+                {owner && <IonButton fill="clear" onClick={() => {
+                    deleteOrder(orderDocSnap);
+                    if (typeof onDeleted == "function") { onDeleted() }
+                }}
+                    color="light" shape="round" >
+                    <IonIcon size="large" color="success" icon={trashOutline} ></IonIcon>
+                </IonButton>}
+                {!owner && <IonButton fill="clear" onClick={() => setReporting(!reporting)}
+                    color="dark" shape="round" >
+                    <IonIcon size="large" color="success" icon={alertCircle} ></IonIcon>
+                    إبلاغ
+                </IonButton>}
+                {!owner && <IonButton fill="clear" onClick={() => history.push("/chats/" + data.uid)}
+                    color="dark" shape="round" >
+                    <IonIcon size="large" color="success" icon={chatboxEllipses} ></IonIcon>
+                    chat
+                </IonButton>}
+
+
+            </div>
+        </IonGrid>
         <IonPopover isOpen={reporting}>
             <IonLabel slot="primary">اذكر السبب</IonLabel>
             <IonTextarea onIonChange={(e) => {
@@ -150,97 +240,9 @@ const OrderCard = ({ orderDocSnap, whatsapp, message, remove, report, canApplyFo
                 onReport()
             }}>submit</IonButton>
         </IonPopover>
-
-        <div >
-
-            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'start', justifyContent: 'flex-start' }}>
-                <IonAvatar style={{ width: '50px', height: '50px', display: 'flex' }} onClick={() => history.push("/profile/" + data.uid)}>
-                    <IonImg
-                        src={userInfo.photoURL}>
-                    </IonImg>
-                </IonAvatar>
-                <IonTitle color="secondary"
-                    style={{ fontSize: 'small', justifySelf: 'center', border: '5px', borderWidth: '2px', verticalAlign: 'middle' }}>{userInfo.name}</IonTitle>
-                <IonLabel color="secondary" position="fixed"
-                    style={{ fontSize: 'small', margin: "5%", fontDisplay: 'small' }}>
-                    {date}
-                </IonLabel>
-
-            </div>
-            <IonRow>
-
-                <IonChip color="secondary">{"من: " + data.from}</IonChip>
-                <IonIcon color={'primary'} size={'large'} icon={arrowBackOutline}></IonIcon>
-                <IonChip color="secondary">{"الى: " + data.to}</IonChip>
-
-            </IonRow>
-            <IonChip
-                color="secondary"
-                onClick={() => {
-                    if (owner) {
-                        setCurrentOrder(orderDocSnap)
-                        history.push("/OrdersPage/" + orderDocSnap.id + "/applications")
-                    }
-                }}>
-                {"تم قبول الطلب: "}
-                {data.applications.length}
-            </IonChip>
-
-
-            <IonChip color="secondary"
-                onClick={() => toggleComment()}>
-                {"الوصف: " + (showComment ? comment : comment.slice(0, 50) + "...")}
-            </IonChip>
-
-
-        </div>
-
-        <div style={{ display: 'grid', alignContent: 'end' }} >
-            {!owner && !!userInfo.phoneNumber &&
-                <IonButton
-                    onClick={() => OpenWhatsapp(userInfo.phoneNumber)}
-                    color="light" shape="round" fill="clear" size="small">
-                    <IonIcon size="large" color="success" icon={logoWhatsapp} ></IonIcon>
-                </IonButton>}
-            {!owner &&
-                <IonButton
-                    onClick={() => { _applyToOrder() }}
-                    color="dark"
-                    fill="clear" >
-                    {userApplied !== undefined &&
-                        <IonIcon
-                            color="success"
-                            icon={userApplied ? thumbsDownOutline : thumbsUpOutline} ></IonIcon>}
-                    {userApplied === undefined && <IonSpinner></IonSpinner>}
-                    {userApplied !== undefined ? userApplied ? "un accept" : "accept" : ""}
-                </IonButton>}
-            {owner && <IonButton fill="clear" onClick={() => {
-                deleteOrder(orderDocSnap);
-                if (typeof onDeleted == "function") { onDeleted() }
-            }}
-                color="light" shape="round" >
-                <IonIcon size="large" color="success" icon={trashOutline} ></IonIcon>
-            </IonButton>}
-            {!owner && <IonButton fill="clear" onClick={() => setReporting(!reporting)}
-                color="dark" shape="round" >
-                <IonIcon size="large" color="success" icon={alertCircle} ></IonIcon>
-                إبلاغ
-            </IonButton>}
-            {!owner && <IonButton fill="clear" onClick={() => history.push("/chats/" + data.uid)}
-                color="dark" shape="round" >
-                <IonIcon size="large" color="success" icon={chatboxEllipses} ></IonIcon>
-                chat
-            </IonButton>}
-            {/* {<IonButton fill="clear"  onClick={()=>{if(owner){history.push("/profile")}}} 
-        color="dark" shape="round" >
-        
-        <IonIcon icon={handRightOutline}></IonIcon>
-        
-        <IonBadge slot="start">{data.applications.length}</IonBadge>
-        </IonButton>} */}
-
-        </div>
-    </IonCard>
+    </div >
 
 }
 export default OrderCard
+
+

@@ -9,6 +9,7 @@ import { TT } from '../components/utlis/tt';
 import { db } from '../App';
 import { ApplicationProps, getUserInfoPlaceHolder, makeApplicationPropsFromDoc, makeUSerInfoFromDoc, userInfo } from '../providers/firebaseMain';
 import { thumbsDown, thumbsUp } from 'ionicons/icons';
+import { cardStyle } from '../styles';
 
 const ApplicationsPage: React.FC = () => {
   const { user, profile } = useGlobals()
@@ -78,7 +79,7 @@ export const ApplicationCard: React.FC<{ docsnap: DocumentSnapshot<DocumentData>
     return () => { unsub() }
   }, [])
 
-  return <IonCard>
+  return <div style={cardStyle}>
     <IonItem>
       <IonLabel>Name :</IonLabel>
       <IonLabel>{user.name}</IonLabel>
@@ -91,15 +92,16 @@ export const ApplicationCard: React.FC<{ docsnap: DocumentSnapshot<DocumentData>
       <IonLabel>isAccepted :</IonLabel>
       <IonLabel>{data.isAccepted ? "Yes" : "No"}</IonLabel>
     </IonItem>
-    <IonItem dir='ltr'>
+    <IonItem dir='ltr' style={{justifyContent: 'space-evenly'}}>
       Done: {data.isDone ? "YES " : "NO "}
       <IonIcon icon={data.isDone ? thumbsUp : thumbsDown}></IonIcon>
-      On Date {new Date(data.timeDone.seconds * 1000).toLocaleString()}
-
+      { data.isDone && 
+      ( "On Date" +new Date(data.timeDone.seconds * 1000).toLocaleString())
+      }
     </IonItem>
     <IonItem>
       <IonLabel>for user :</IonLabel>
       <IonLabel>{"for user"}</IonLabel>
     </IonItem>
-  </IonCard>
+  </div>
 }

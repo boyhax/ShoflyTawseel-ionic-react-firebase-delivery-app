@@ -1,8 +1,10 @@
 import  { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, 
   DocumentData, 
   DocumentSnapshot, 
-  getDoc, getFirestore, query, setDoc, 
-   updateDoc } from 'firebase/firestore';
+  getDoc, getDocs, getFirestore, limit, orderBy, query, QueryConstraint, setDoc, 
+   startAfter, 
+   updateDoc, 
+   where} from 'firebase/firestore';
 import { getAuth, updateProfile } from "firebase/auth";
 import { db } from '../App';
 import { randomAvatarUrl } from '../components/Avatar';
@@ -58,18 +60,38 @@ export type orderProps={
   applications:ApplicationInfo[]
 
 }
+
 export async function getTripCard(id:String){
-    var _data:any
-    await getDoc(doc(getFirestore(),"orders/"+id)).then((data)=>{
-      _data =data
-    },(err:object)=>{
-      console.log(err)
-      _data = null
-    })
-    return _data
+    return await getDoc(doc(getFirestore(),"orders/"+id))
+  }
+  export type orderFilter={
+    from?:string,
+    to?:string,
+    name?:string,
+    limit?:number
+  }
+  export async function getOrders(filter?:orderFilter,_limit?:number,fromDoc?:DocumentSnapshot){
+    var qu = query(collection(db,"orders/"))
+    qu = query(qu,orderBy('time','desc'))
+    // for(let c of filter){
+    //   console.log('c :>> ', c);
+    //   qu = query(qu,c)
+       
+    // } 
+     if(filter){
+      if(filter.from){qu = query(qu,where("from",'==',filter.from))}
+      if(filter.to){qu = query(qu,where("to",'==',filter.to))}
+      if(filter.name){qu = query(qu,where("name",'==',filter.name))}
+      
+    }
+    if (fromDoc){
+      qu = query(qu,startAfter(fromDoc))
+    }
+    qu=query(qu,limit(filter?.limit || 10))
+    return await getDocs(qu)
   }
   export async function updateTripCard(id:String,data:{}){
-    updateDoc(doc(getFirestore(),"orders/"+id),data)
+    return updateDoc(doc(getFirestore(),"orders/"+id),data)
   }
 
   export function makeApplicationPropsFromDoc(doc:DocumentSnapshot):ApplicationProps{

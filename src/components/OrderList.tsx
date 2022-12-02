@@ -8,9 +8,10 @@ import "./OrderList.css"
 import ListPicker from "./ListPicker";
 import { Cities } from "./utlis/citiesUtlis";
 import { getAuth } from "firebase/auth";
-import { intersection } from "../providers/firebaseMain";
+import { intersection, orderFilter } from "../providers/firebaseMain";
 import OrderCard from "./OrderCard";
 import { useGlobals } from "../providers/globalsProvider";
+import useOrders from "../hooks/useOrders";
 
 
 export default function OrderList(props: any) {
@@ -19,8 +20,8 @@ export default function OrderList(props: any) {
   const [refreshing, setRefreshing] = useState(false)
   const [count, setCount] = useState(10)
   const [showFilter, setShowFilter] = useState(false)
-  const [filterTo, setFilterTo] = useState<{key:string,value:string}>()
-  const [filterFrom, setFilterFrom] = useState<{key:string,value:string}>()
+  const [filterTo, setFilterTo] = useState<{ key: string, value: string }>()
+  const [filterFrom, setFilterFrom] = useState<{ key: string, value: string }>()
   const IonRefresherElement = useRef<HTMLIonRefresherElement | any>()
   const infiniteScrollRef = useRef<any>(null)
   const [isInfiniteDisabled, setInfiniteDisabled] = useState(false);
@@ -29,27 +30,16 @@ export default function OrderList(props: any) {
   const [listMessage, setListMessage] = useState<any>(null)
   const user = getAuth().currentUser
   const { profile } = useGlobals()
+  const orders = useOrders()
 
-  useEffect(() => {
-    getNewList()
-    setIsMounted(true)
-    return () => {
-      setIsMounted(false)
-    }
-  }, [])
-  useEffect(() => {
-    getNewList()
-
-  }, [profile])
-
-
-
-
+  
   function doRefresh(event: CustomEvent<RefresherEventDetail>) {
     console.log('Begin async operation');
     getNewList().finally(
-      // ()=>event.detail.complete()
+      ()=>event.detail.complete()
     )
+    orders.update(()=>event.detail.complete())
+
   }
   async function getNewList() {
     setRefreshing(true)
@@ -127,16 +117,18 @@ export default function OrderList(props: any) {
     }
   }
   function Refresh() {
-    getNewList()
+    orders.update(()=>{})
   }
   function onEndRefresh() {
-    getMoreList()
+    orders.add(10)
   }
 
   useEffect(() => {
-    getNewList()
-    console.log("filter")
-  }, [count, filterFrom, filterTo])
+    var filt:orderFilter = {to:undefined,from:undefined,name:undefined,limit:10};
+    if (filterFrom){filt.from = filterFrom.value}
+    if (filterTo){filt.to = filterTo.value}
+    orders.doFilter(filt)
+  }, [filterFrom, filterTo])
 
 
   function toggleFilter() {
@@ -159,12 +151,23 @@ export default function OrderList(props: any) {
       <IonRefresherContent refreshingText="refreshing..."></IonRefresherContent>
     </IonRefresher>
 
-    {!!list &&
+    {/* {!!list &&
 
       list.map((v: any, i: any) => {
 
         if (!v["exists"]) {
           return
+        }
+        return <OrderCard orderDocSnap={v} key={i} report canApplyFor onRefresh={() => Refresh()} onDeleted={() => { delete list[i]; setList(list) }}>
+        </OrderCard>
+      })
+    } */}
+    {orders.orders &&
+
+      orders.orders.map((v: DocumentSnapshot, i: any) => {
+
+        if (!v["exists"]) {
+          return ''
         }
         return <OrderCard orderDocSnap={v} key={i} report canApplyFor onRefresh={() => Refresh()} onDeleted={() => { delete list[i]; setList(list) }}>
         </OrderCard>
@@ -194,7 +197,7 @@ export default function OrderList(props: any) {
 
   </IonContent>
 }
-const CitiePicker = (props: { value: string , onItemPicked: (v: {value:string,key:string}) => void, placeHolder: string }) => {
+const CitiePicker = (props: { value: string, onItemPicked: (v: { value: string, key: string }) => void, placeHolder: string }) => {
   return <IonItem>
     <ListPicker
       value={props.value}

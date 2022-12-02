@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { IonBadge, IonButton, IonButtons, IonContent, IonFab, IonFabButton,
    IonFabList,
    IonFooter,
-   IonIcon, IonLabel, IonMenuButton, IonPage, IonToolbar} from '@ionic/react';
+   IonHeader,
+   IonIcon, IonLabel, IonMenuButton, IonPage, IonTitle, IonToolbar} from '@ionic/react';
 import './Home.css';
 import { add, chatbox, menu, menuOutline, person } from 'ionicons/icons';
 import { useHistory } from "react-router-dom";
@@ -66,8 +67,14 @@ const Tab1= () => {
   }
  
     return (
-    <IonPage style={{width:"100vw",height: "100vh",bottom: '0px',backgroundColor: "#5e6bec"}}>
-      <IonFab vertical={'top'} horizontal={'start'}>
+    <IonPage >
+      <IonHeader>
+        <IonToolbar>
+          <IonMenuButton slot={"start"}></IonMenuButton>
+          <IonTitle slot={"primary"}>Shofly Tawseel</IonTitle>
+        </IonToolbar>
+      </IonHeader>
+      {/* <IonFab vertical={'top'} horizontal={'start'}>
 
               <IonFabButton color={'light'}  onClick={()=>toggleMenu()}>
                   <IonMenuButton color={'primary'}></IonMenuButton>
@@ -81,7 +88,7 @@ const Tab1= () => {
 
               </IonFab>
               
-            </IonFab>
+            </IonFab> */}
       
        {/* map */}
             {/* <LeafLetMap onMap={(map)=>setMap(map)}></LeafLetMap> */}

@@ -39,9 +39,9 @@ return<IonMenu   side="start" ref={Props.menuRef} contentId='mainContent' >
         <IonList >
             
            
-            <IonItem className="item" onClick={()=>history.push("OrdersPage")}>My Orders
+            {/* <IonItem className="item" onClick={()=>history.push("OrdersPage")}>My Orders
             <IonRippleEffect></IonRippleEffect>
-</IonItem>
+</IonItem> */}
             {/* <IonItem onClick={()=>history.push("Settings")}>Settings</IonItem> */}
             <IonItem className="item" onClick={()=>history.push("Details")}>Info
             <IonRippleEffect></IonRippleEffect>
