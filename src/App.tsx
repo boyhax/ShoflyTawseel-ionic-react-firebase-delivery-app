@@ -72,7 +72,8 @@ Device.getInfo().then((v) => {
     })
   }
 })
-
+const language:"en"|"ar" = 'en'
+export const getLang=()=>{return language}
 
 export type Address={
 address: string,

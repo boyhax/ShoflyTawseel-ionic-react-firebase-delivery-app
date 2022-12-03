@@ -1,33 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import {
-  IonButton, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCheckbox, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonFab, IonFabButton,
+  IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCheckbox, IonContent, IonFab, IonFabButton,
   IonFooter,
-  IonGrid,
-  IonIcon, IonImg, IonInput, IonItem, IonLabel, IonList, IonMenu, IonModal, IonPage,
-  IonRow,
-  IonSearchbar,
-  IonSegment,
-  IonSegmentButton,
-  IonSelect,
-  IonSelectOption,
+  IonIcon, IonImg, IonInput, IonItem, IonLabel, IonList, IonPage,
   IonSpinner,
   IonTextarea,
   IonTitle,
-  IonVirtualScroll,
-  SelectChangeEventDetail,
   useIonAlert
 } from '@ionic/react';
 import './Home.css';
-import { arrowDown, arrowForwardOutline, caretForwardOutline, close, closeSharp, duplicateOutline, fastFood, location as locationIcon } from 'ionicons/icons';
+import { arrowForwardOutline, caretForwardOutline, close, closeSharp, location as locationIcon } from 'ionicons/icons';
 import { useHistory } from "react-router-dom";
 import { useGlobals } from '../providers/globalsProvider';
 import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { getUserInfoPlaceHolder, orderProps } from '../providers/firebaseMain';
-import { Device } from '@capacitor/device';
 import { citiesList } from '../components/utlis/citiesUtlis';
-import { Url } from 'url';
-import { addDoc, collection, doc, FieldValue, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '../App';
 import { getAuth } from 'firebase/auth';
 import { LeafLetMap } from './GetLocationOnMap';
@@ -41,9 +30,9 @@ type locationOption = { value: Geolocation | any, title: string, subTitle?: stri
 type Geolocation = { latlng: LatLng, city: string, state?: string }
 type LatLng = { lat: string, lng: string }
 type OrderType = { name: string, icon: any, value: OrderCatagorie }
-type OrderCatagorie = "SmallObjects" | 'Food' | 'PeopleTrans' | 'AnimalTrans' | 'BigObjects';
+export type OrderCatagorie = "SmallObjects" | 'Food' | 'PeopleTrans' | 'AnimalTrans' | 'BigObjects';
 
-const catagories: OrderType[] = [
+export const OrderCatagories: OrderType[] = [
   { name: 'Small Objects', icon: require('../assets/smallObjectsIcon.png'), value: 'SmallObjects' }
   , { name: 'Food & Drinks', icon: require('../assets/take-away.png'), value: 'Food' }
   , { name: 'People Transport', icon: require('../assets/peopleTransIcon.png'), value: 'PeopleTrans' }
@@ -190,7 +179,7 @@ const AddOrderPage = () => {
         </div>
       </IonCard>
       <div style={{ display: 'flex', justifyItems: 'space-between', justifyContent: 'center', alignItems: 'space-evenly' }}>
-        {catagories && catagories.map((value, index, array) => {
+        {OrderCatagories && OrderCatagories.map((value, index, array) => {
           return <div
             onClick={() => setOrderCatagory(value.value)}
             key={index}

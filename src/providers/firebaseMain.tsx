@@ -8,6 +8,7 @@ import  { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc,
 import { getAuth, updateProfile } from "firebase/auth";
 import { db } from '../App';
 import { randomAvatarUrl } from '../components/Avatar';
+import { OrderCatagorie } from '../pages/AddOrderPage';
 
 export type UserProfile ={
   name:string,
@@ -68,22 +69,21 @@ export async function getTripCard(id:String){
     from?:string,
     to?:string,
     name?:string,
-    limit?:number
+    limit?:number,
+    type:OrderCatagorie|'',
+    urgent:boolean
   }
   export async function getOrders(filter?:orderFilter,_limit?:number,fromDoc?:DocumentSnapshot){
     var qu = query(collection(db,"orders/"))
-    qu = query(qu,orderBy('time','desc'))
-    // for(let c of filter){
-    //   console.log('c :>> ', c);
-    //   qu = query(qu,c)
-       
-    // } 
-     if(filter){
+    if(filter){
       if(filter.from){qu = query(qu,where("from",'==',filter.from))}
       if(filter.to){qu = query(qu,where("to",'==',filter.to))}
       if(filter.name){qu = query(qu,where("name",'==',filter.name))}
       
     }
+    qu = query(qu,orderBy('time','desc'))
+
+     
     if (fromDoc){
       qu = query(qu,startAfter(fromDoc))
     }

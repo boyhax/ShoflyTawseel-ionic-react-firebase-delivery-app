@@ -1,9 +1,10 @@
 import React from "react";
+import { getLang } from "../../App";
 type dataProps={
     value:string,
     key:string
 }
-export const citiesList:string[] = require("../../assets/cities.json")[0]["oman"]["ar"]
+export const citiesList:string[] = require("../../assets/cities.json")[0]["oman"]['ar']
 
 export var Cities :dataProps[]=[]
 citiesList.map((value:string,i:number) => {
