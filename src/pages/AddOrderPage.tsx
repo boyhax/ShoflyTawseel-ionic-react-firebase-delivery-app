@@ -30,6 +30,7 @@ type locationOption = { value: Geolocation | any, title: string, subTitle?: stri
 type Geolocation = { latlng: LatLng, city: string, state?: string }
 type LatLng = { lat: string, lng: string }
 type OrderType = { name: string, icon: any, value: OrderCatagorie }
+
 export type OrderCatagorie = "SmallObjects" | 'Food' | 'PeopleTrans' | 'AnimalTrans' | 'BigObjects';
 
 export const OrderCatagories: OrderType[] = [
@@ -91,11 +92,11 @@ const AddOrderPage = () => {
 
     let op: Address[] = []
     const c = citiesList.sort((a, b) => { return b.indexOf(text) - a.indexOf(text) }).slice(0, 4)
-    c.forEach((v) => 
-    op.push({ address: v, name: v, location: {lat:'',lng:''},id:'',types:[""] }))
-    getAddressOptions(text,(d)=>op = [...op,...d])
+    c.forEach((v) =>
+      op.push({ address: v, name: v, location: { lat: '', lng: '' }, id: '', types: [""] }))
+    getAddressOptions(text, (d) => op = [...op, ...d])
     setOptions(op)
-    
+
 
   }
   const [presentAlert] = useIonAlert()
@@ -126,7 +127,7 @@ const AddOrderPage = () => {
       uid: getAuth().currentUser?.uid!,
       time: serverTimestamp(),
       type: orderCatagory,
-      comment: comment||'no comment',
+      comment: comment || 'no comment',
       reports: [],
       applications: []
     }
@@ -139,18 +140,85 @@ const AddOrderPage = () => {
     }
   }
   useEffect(() => {
-    console.log('location :>> drop ', dropLocation," pick ",pickUpLocation);
-  }, [dropLocation,pickUpLocation]);
-  const onLocationPick = (e:any) => {
+    console.log('location :>> drop ', dropLocation, " pick ", pickUpLocation);
+  }, [dropLocation, pickUpLocation]);
+  const onLocationPick = (e: any) => {
     const v: Address = {
       location: e,
-      name:"city name",
-      address:'state name',
-      id:'',
-      types:['locals']
+      name: "city name",
+      address: 'state name',
+      id: '',
+      types: ['locals']
     }
-    focusedPicker==="drop"?setDropLocation(v):setPickUpLocation(v)
+    focusedPicker === "drop" ? setDropLocation(v) : setPickUpLocation(v)
   }
+  const Step1 = <IonPage >
+    <IonFab style={{ left: '10px', top: '10px' }}>
+      <IonFabButton color={'light'} onClick={() => history.goBack()}>
+        <IonIcon color={'primary'} icon={closeSharp} />
+      </IonFabButton>
+    </IonFab>
+    <IonContent style={{ top: '60px' }}>
+      <IonCard
+      // style={{top:'60px'}}
+      >
+        <IonCardContent>
+          {/* pick up point */}
+          <IonItem>
+            <IonLabel
+              position={'floating'}>Pick up point</IonLabel>
+            <IonInput
+              // onIonBlur={()=>setOptions(undefined)}
+              value={pickUpSearchValue || pickUpLocation?.name}
+              onIonChange={(e) => { updateOptions(e.detail.value || ""); setPickUpSearchValue(e.detail.value || "") }}
+              onClick={() => onPickerFocused("pickUp")}></IonInput>
+          </IonItem>
+          {/* drop point */}
+          <IonItem>
+            <IonLabel position={'floating'}>Drop point</IonLabel>
+            <IonInput
+              // onIonBlur={()=>setOptions(undefined)}
+              value={dropSearchValue || dropLocation?.name}
+              onIonChange={(e) => { updateOptions(e.detail.value || ""); setDropSearchValue(e.detail.value || "") }}
+              onClick={() => onPickerFocused("drop")}></IonInput>
+          </IonItem>
+        </IonCardContent>
+      </IonCard>
+
+      <IonList inset={true}  >
+        {!!focusedPicker && <IonItem key={'head'}>
+          <IonIcon color={'primary'} icon={locationIcon}></IonIcon>
+          <IonButton fill={'clear'} onClick={() => setOpenMap(true)}>
+            {'use map for location'}
+          </IonButton>
+          {/* <IonCardTitle >{'use map for location'}</IonCardTitle> */}
+        </IonItem>}
+        {options && options.map((v, i) => {
+          return <IonItem key={i} onClick={() => { onOptionPick(v) }}>
+            <IonIcon size={'small'} color={'secondary'} icon={caretForwardOutline}></IonIcon>
+
+            <div>
+              <IonLabel>{v.name}</IonLabel>
+              <IonCardSubtitle  >{v.address || ''}</IonCardSubtitle>
+            </div>
+
+          </IonItem>
+        })}
+
+      </IonList>
+
+    </IonContent>
+
+
+    <IonFooter style={{ display: "flex", justifyContent: 'center' }}>
+      <IonButton shape={'round'}
+        disabled={!isLocationsSet()}
+        onClick={() => setLocationsConfirmed(true)}   >
+        Set Locations
+      </IonButton>
+    </IonFooter>
+
+  </IonPage>
   const Step2 = <IonPage >
     <IonFab style={{ left: '10px', top: '10px' }}>
       <IonFabButton color={'light'} onClick={() => setLocationsConfirmed(false)}>
@@ -228,12 +296,6 @@ const AddOrderPage = () => {
         Submit Order 👍
       </IonButton>
     </IonFooter>
-
-
-
-
-    {/* {"dInfo: "+JSON.stringify( dInfo)}{"state: "+state} */}
-
   </IonPage>
   const MapLocationPicker = <IonPage>
     <IonFab horizontal={'start'} vertical='top'>
@@ -256,80 +318,7 @@ const AddOrderPage = () => {
     return Step2
   }
 
-  return (
-    <IonPage >
-      <IonFab style={{ left: '10px', top: '10px' }}>
-        <IonFabButton color={'light'} onClick={() => history.goBack()}>
-          <IonIcon color={'primary'} icon={closeSharp} />
-        </IonFabButton>
-      </IonFab>
-      <IonContent style={{ top: '60px' }}>
-        <IonCard
-        // style={{top:'60px'}}
-        >
-          <IonCardContent>
-            {/* pick up point */}
-            <IonItem>
-              <IonLabel
-                position={'floating'}>Pick up point</IonLabel>
-              <IonInput
-                // onIonBlur={()=>setOptions(undefined)}
-                value={pickUpSearchValue||pickUpLocation?.name}
-                onIonChange={(e) => { updateOptions(e.detail.value || ""); setPickUpSearchValue(e.detail.value || "") }}
-                onClick={() => onPickerFocused("pickUp")}></IonInput>
-            </IonItem>
-            {/* drop point */}
-            <IonItem>
-              <IonLabel position={'floating'}>Drop point</IonLabel>
-              <IonInput
-                // onIonBlur={()=>setOptions(undefined)}
-                value={dropSearchValue||dropLocation?.name}
-                onIonChange={(e) => { updateOptions(e.detail.value || ""); setDropSearchValue(e.detail.value || "") }}
-                onClick={() => onPickerFocused("drop")}></IonInput>
-            </IonItem>
-          </IonCardContent>
-        </IonCard>
-
-        <IonList inset={true}  >
-          {!!focusedPicker && <IonItem key={'head'}>
-            <IonIcon color={'primary'} icon={locationIcon}></IonIcon>
-            <IonButton fill={'clear'} onClick={() => setOpenMap(true)}>
-              {'use map for location'}
-            </IonButton>
-            {/* <IonCardTitle >{'use map for location'}</IonCardTitle> */}
-          </IonItem>}
-          {options && options.map((v, i) => {
-            return <IonItem key={i} onClick={() => { onOptionPick(v) }}>
-              <IonIcon size={'small'} color={'secondary'} icon={caretForwardOutline}></IonIcon>
-
-              <div>
-                <IonLabel>{v.name}</IonLabel>
-                <IonCardSubtitle  >{v.address || ''}</IonCardSubtitle>
-              </div>
-
-            </IonItem>
-          })}
-
-        </IonList>
-
-      </IonContent>
-
-
-      <IonFooter style={{ display: "flex", justifyContent: 'center' }}>
-        <IonButton shape={'round'}
-          disabled={!isLocationsSet()}
-          onClick={() => setLocationsConfirmed(true)}   >
-          Set Locations
-        </IonButton>
-      </IonFooter>
-
-
-
-
-      {/* {"dInfo: "+JSON.stringify( dInfo)}{"state: "+state} */}
-
-    </IonPage>
-  );
+  return Step1;
 };
 
 export default AddOrderPage;

@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { IonContent, IonPage, IonTitle, IonToolbar, IonButton, IonIcon, IonButtons, IonLabel, IonItem, IonList, IonSpinner, IonBackButton, IonSegment, IonSegmentButton, IonGrid, IonRow, IonAvatar, IonImg, IonCol, IonHeader, IonCard, IonCardContent, IonFab, IonFabButton, IonInput, IonPopover, IonChip } from '@ionic/react';
 import { close, logOutOutline, } from 'ionicons/icons';
 import { useGlobals } from '../providers/globalsProvider';
-import { collection, DocumentData, DocumentSnapshot, getFirestore, onSnapshot, orderBy, query, where } from 'firebase/firestore';
+import { collection, DocumentData, DocumentSnapshot, getDocs, getFirestore, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import "./Profile.css"
 import OrderCard from '../components/OrderCard';
@@ -158,7 +158,7 @@ const ProfileOrdersList: FC = (props) => {
   const { user, profile } = useGlobals()
   useEffect(() => {
     const unsub = getData();
-    return () => { unsub() }
+    // return () => { unsub() }
   }, [])
 
 
@@ -168,7 +168,8 @@ const ProfileOrdersList: FC = (props) => {
     var firstQuery = query(ref, orderBy("time", "desc"))
     var finalQuery = query(firstQuery, where("uid", "==", getAuth().currentUser?.uid))
 
-    return onSnapshot(finalQuery, (snap) => {
+    return getDocs(finalQuery).then(
+     (snap) => {
 
       let newDocs: DocumentSnapshot[] = []
 

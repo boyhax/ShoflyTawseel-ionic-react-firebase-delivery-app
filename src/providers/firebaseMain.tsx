@@ -56,8 +56,8 @@ export type orderProps={
   urgent:boolean,
   type:string,
   uid:string,
-  from:string,
-  to:string,
+  from:string|any,
+  to:string|any,
   time:any,
   comment:string|undefined|null,
   reports:OrderReportInfo[],
@@ -69,7 +69,7 @@ export async function setUserImage(photo: Blob, fileName: string,userid?:string)
   const p =  await uploadBytes(sref,photo)
   
   const url  = await getDownloadURL(sref)
-  
+
   console.log('p.url :>> ', url);
 
   if (userid && url){
