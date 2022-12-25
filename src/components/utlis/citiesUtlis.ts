@@ -9,8 +9,5 @@ export const citiesList:string[] = require("../../assets/cities.json")[0]["oman"
 export function Cities(lang?:string) :dataProps[]{
     return require("../../assets/cities.json")[0]["oman"][lang ||'en']
 }
-citiesList.map((value:string,i:number) => {
-    Cities.push({value:value,key:String(i)})
-    
-})
+
 // console.log(JSON.stringify(Cities))
