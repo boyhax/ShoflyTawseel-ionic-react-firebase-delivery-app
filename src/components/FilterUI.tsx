@@ -26,7 +26,7 @@ const FilterUI: React.FC<props> = (props) => {
       value={props.filter.from}
         placeholder={'from'}
         onIonChange={(v) => set({ from: v.detail.value })}
-        interface={'popover'} >
+        interface={'action-sheet'}  >
         <IonSelectOption value={''} key={''}>لاشي</IonSelectOption>
         {citiesList.map((v, key) => {
           return <IonSelectOption value={v} key={key}>
@@ -38,10 +38,13 @@ const FilterUI: React.FC<props> = (props) => {
     </IonItem>
     <IonItem>
       <IonLabel>To</IonLabel>
-      <IonSelect value={props.filter.to} placeholder={'to'}
+      <IonSelect
+      interface={'action-sheet'} 
+      value={props.filter.to} 
+      placeholder={'select drop point'}
       cancelText={"cancel"}
         onIonChange={(v) => set({ to: v.detail.value })}
-        interface={'popover'} >
+         >
         <IonSelectOption value={''} key={''} onSelect={(v) => console.log(v)}>لاشي</IonSelectOption>
         {citiesList.map((v, key) => {
           return <IonSelectOption value={v} key={key}>
@@ -56,7 +59,7 @@ const FilterUI: React.FC<props> = (props) => {
 
       <IonSelect value={props.filter.type} placeholder={'type'}
         onIonChange={(v) => set({ type: v.detail.value })}
-        interface={'popover'} >
+        interface={'action-sheet'}  >
         <IonSelectOption value={''} key={''} onSelect={(v) => console.log(v)}>لاشي</IonSelectOption>
         {OrderCatagories.map((v, key) => {
           return <IonSelectOption value={v.name} key={key}>
