@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 
 import { DocumentSnapshot } from "firebase/firestore";
-import { IonContent, IonFab, IonFabButton, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonItem, IonLabel, IonList, IonLoading, IonModal, IonProgressBar, IonRefresher, IonRefresherContent, IonSpinner } from "@ionic/react";
+import { IonContent, IonFab, IonFabButton, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonItem, IonLabel, IonList, IonLoading, IonModal, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonSpinner } from "@ionic/react";
 import { filter as filterIcon } from "ionicons/icons";
 import { RefresherEventDetail } from '@ionic/core';
 import "./OrderList.css"
@@ -35,8 +35,8 @@ export default function OrderList(props: any) {
   function Refresh() {
     orders.update(() => { })
   }
-  function onEndRefresh(e:any) {
-    orders.add(10,()=>e.target.complete())
+  function onEndRefresh(e: any) {
+    orders.add(10, () => e.target.complete())
   }
 
 
@@ -45,8 +45,8 @@ export default function OrderList(props: any) {
   const toggleFilterModal = (bo: boolean) => {
     bo ? filterModal.current.present() : filterModal.current.dismiss()
   }
-  return <>
-    <IonFab horizontal={'start'} vertical={'top'} >
+  return <div >
+    <IonFab horizontal={'center'} vertical={'top'} >
       <IonFabButton onClick={() => toggleFilterModal(true)}>
         <IonIcon icon={filterIcon}></IonIcon>
       </IonFabButton>
@@ -59,14 +59,13 @@ export default function OrderList(props: any) {
 
     </IonModal>
 
-    {/* <IonProgressBar ></IonProgressBar> */}
 
-    <IonRefresher ref={IonRefresherElement} slot="fixed" onIonRefresh={doRefresh} >
-      <IonRefresherContent refreshingText="refreshing..."></IonRefresherContent>
-    </IonRefresher>
 
-    <IonList>
 
+    <IonContent >
+      <IonRefresher ref={IonRefresherElement} slot="fixed" onIonRefresh={doRefresh} >
+        <IonRefresherContent refreshingText="refreshing..."></IonRefresherContent>
+      </IonRefresher>
       {orders.orders &&
 
         orders.orders.map((v: DocumentSnapshot, i: any) => {
@@ -78,7 +77,18 @@ export default function OrderList(props: any) {
           </OrderCard>
         })
       }
-    </IonList>
+      <IonInfiniteScroll
+        ref={infiniteScrollRef}
+        onIonInfinite={onEndRefresh}
+        threshold="100px"
+        disabled={isInfiniteDisabled}>
+        <IonInfiniteScrollContent
+          loadingSpinner="dots"
+          loadingText="بحث المزيد من الطلبات"
+        ></IonInfiniteScrollContent>
+      </IonInfiniteScroll>
+
+    </IonContent>
 
     {!!listMessage && <IonItem style={{ display: "flex", flexDirection: "column" }}>
       <IonLabel color={listMessage.color}>{listMessage.text}</IonLabel>
@@ -89,18 +99,8 @@ export default function OrderList(props: any) {
 
     </IonItem>
     }
-    <IonInfiniteScroll
-      ref={infiniteScrollRef}
-      onIonInfinite={onEndRefresh}
-      threshold="100px"
-      disabled={isInfiniteDisabled}>
-      <IonInfiniteScrollContent
-        loadingSpinner="dots"
-        loadingText="بحث المزيد من الطلبات"
-      ></IonInfiniteScrollContent>
-    </IonInfiniteScroll>
 
-  </>
+  </div>
 }
 const CitiePicker = (props: { value: string, onItemPicked: (v: { value: string, key: string }) => void, placeHolder: string }) => {
   return <ListPicker

@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { IonBadge, IonButton, IonButtons, IonContent, IonFab, IonFabButton,
-   IonFabList,
-   IonFooter,
-   IonHeader,
-   IonIcon, IonLabel, IonMenuButton, IonPage, IonTitle, IonToolbar} from '@ionic/react';
+import {
+  IonBadge, IonButton, IonButtons, IonContent, IonFab, IonFabButton,
+  IonFabList,
+  IonFooter,
+  IonHeader,
+  IonIcon, IonLabel, IonList, IonMenuButton, IonPage, IonTitle, IonToolbar
+} from '@ionic/react';
 import './Home.css';
 import { add, chatbox, menu, menuOutline, person } from 'ionicons/icons';
 import { useHistory } from "react-router-dom";
@@ -18,55 +20,56 @@ import OrderList from '../components/OrderList';
 import { greenIcon } from '../components/utlis/LeafLetMap';
 import { TT } from '../components/utlis/tt';
 
-var dInfo:any =''
-var state:any = process.env.NODE_ENV
-Device.getInfo().then((info)=>{
+var dInfo: any = ''
+var state: any = process.env.NODE_ENV
+Device.getInfo().then((info) => {
   dInfo = info
 })
 
-const Tab1= () => {
-  
-  const {user,profile}= useGlobals()
+const Tab1 = () => {
+
+  const { user, profile } = useGlobals()
   const history = useHistory()
-  const [addOrder,setAddOrder] = useState(false)
-  const [fcmToken,setFcmToken] = useState<any>(null)
-  const [_profile,_setProfile] = useState<any>(profile?profile:getUserInfoPlaceHolder())
-  const [Map,setMap] = useState<L.Map>()
+  const [addOrder, setAddOrder] = useState(false)
+  const [fcmToken, setFcmToken] = useState<any>(null)
+  const [_profile, _setProfile] = useState<any>(profile ? profile : getUserInfoPlaceHolder())
+  const [Map, setMap] = useState<L.Map>()
   useEffect(() => {
-    if(!!profile){
+    if (!!profile) {
       _setProfile(profile)
     }
   }, [profile]);
 
   const menuRef = useRef<any>()
-  function onAddOrder(){
+  function onAddOrder() {
     setAddOrder(!addOrder)
   }
-  function toggleMenu(){
+  function toggleMenu() {
     menuRef.current?.toggle()
   }
-  async function getLocation(){
-    
+  async function getLocation() {
+
     Map?.locate()
     try {
       Geolocation.checkPermissions()
       const location = await Geolocation.getCurrentPosition()
-      const latlng = {lat:location.coords.latitude,lng:location.coords.longitude}
-    if(Map && location){
-      Map?.flyTo(latlng)
-      L.marker(latlng,{icon:greenIcon,draggable:true}).addEventListener('dragend',(e)=>{console.log('e :>> ', e);}).addTo(Map)
-      return
-    }
+      const latlng = { lat: location.coords.latitude, lng: location.coords.longitude }
+      if (Map && location) {
+        Map?.flyTo(latlng)
+        L.marker(latlng, { icon: greenIcon, draggable: true }).addEventListener('dragend', (e) => { console.log('e :>> ', e); }).addTo(Map)
+        return
+      }
     } catch (error) {
-      alert('please enable GPS!  '+error)
+      alert('please enable GPS!  ' + error)
     }
-    Map?.addEventListener('locationfound', (e)=>{console.log(e);
-    Map.flyTo(e.latlng)
-    L.marker(e.latlng,{icon:greenIcon,draggable:true}).addEventListener('dragend',(e)=>{console.log('e :>> ', e);}).addTo(Map)
+    Map?.addEventListener('locationfound', (e) => {
+      console.log(e);
+      Map.flyTo(e.latlng)
+      L.marker(e.latlng, { icon: greenIcon, draggable: true }).addEventListener('dragend', (e) => { console.log('e :>> ', e); }).addTo(Map)
     }, {})
   }
- 
-    return (
+
+  return (
     <IonPage >
       <IonHeader>
         <IonToolbar>
@@ -74,41 +77,22 @@ const Tab1= () => {
           <IonTitle slot={"primary"}>Shofly Tawseel</IonTitle>
         </IonToolbar>
       </IonHeader>
-      {/* <IonFab vertical={'top'} horizontal={'start'}>
 
-              <IonFabButton color={'light'}  onClick={()=>toggleMenu()}>
-                  <IonMenuButton color={'primary'}></IonMenuButton>
-              </IonFabButton>
-              
-              <IonFab>
-              <IonFabButton color={'light'} onClick={()=>{history.push("chats/")}}>
-                  <IonIcon color={'primary'} icon={chatbox} />
-              </IonFabButton>
-              <IonBadge style={{position: 'absolute',top:'-5px',left:'-5px'}}>5</IonBadge>
+      <div style={{ display: 'flex', }}>
+        <OrderList></OrderList>
+      </div>
 
-              </IonFab>
-              
-            </IonFab> */}
-      
-       {/* map */}
-            {/* <LeafLetMap onMap={(map)=>setMap(map)}></LeafLetMap> */}
-              
-              {/* bottom panel */}
-                {true && <IonContent style={{height: '100%'}}>
-                  <OrderList></OrderList>
-                  </IonContent>}
+      <IonButton style={{
+        position: 'absolute',
+        bottom: '5px',
+        alignSelf: 'center'
+      }}
 
-                    <IonButton style={{
-                      position: 'absolute',
-                      bottom:'5px',
-                      alignSelf: 'center'
-                    }} 
-                    
-                    onClick={()=>history.push('AddOrderPage')}
-                    shape='round'>
-                      {/* <IonIcon  icon={add}></IonIcon> */}
-                      {TT('Add New Order')}
-                    </IonButton>
+        onClick={() => history.push('AddOrderPage')}
+        shape='round'>
+        {/* <IonIcon  icon={add}></IonIcon> */}
+        {TT('Add New Order')}
+      </IonButton>
     </IonPage>
   );
 };
