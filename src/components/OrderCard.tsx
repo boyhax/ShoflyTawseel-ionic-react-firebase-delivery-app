@@ -187,9 +187,10 @@ const OrderCard = ({ orderDocSnap, whatsapp, message, remove, report, canApplyFo
             </div>
             
             <div 
-            style={{ display: 'flex', alignSelf: 'flex-end', justifyContent: 'space-evenly' }} 
+            style={{ display: 'flex', alignSelf: 'flex-end', justifyContent: 'space-evenly',overflow:"auto" }} 
             >
-                {!owner && !!userInfo.phoneNumber &&
+                {
+                !owner && !!userInfo.phoneNumber &&
                     <IonButton
                         onClick={() => OpenWhatsapp(userInfo.phoneNumber)}
                         color="light" shape="round" fill="clear" size="small">

@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { IonContent, IonPage, IonTitle, IonToolbar, IonButton, IonIcon, IonButtons, IonLabel, IonItem, IonList, IonSpinner, IonBackButton, IonSegment, IonSegmentButton, IonGrid, IonRow, IonAvatar, IonImg, IonCol, IonHeader, IonCard, IonCardContent, IonFab, IonFabButton, IonInput } from '@ionic/react';
+import { IonContent, IonPage, IonTitle, IonToolbar, IonButton, IonIcon, IonButtons, IonLabel, IonItem, IonList, IonSpinner, IonBackButton, IonSegment, IonSegmentButton, IonGrid, IonRow, IonAvatar, IonImg, IonCol, IonHeader, IonCard, IonCardContent, IonFab, IonFabButton, IonInput, IonPopover } from '@ionic/react';
 import { close, logOutOutline, } from 'ionicons/icons';
 import { useGlobals } from '../providers/globalsProvider';
 import { collection, DocumentData, DocumentSnapshot, getFirestore, onSnapshot, orderBy, query, where } from 'firebase/firestore';
@@ -13,6 +13,7 @@ import { db } from '../App';
 import CreatProfile from './CreatProfile';
 import AvatarPicker from '../components/AvatarPicker';
 import { useHistory } from 'react-router';
+import { usePhoto } from '../hooks/usePhoto';
 
 const Profile: React.FC = () => {
   const { user, profile } = useGlobals()
@@ -20,6 +21,7 @@ const Profile: React.FC = () => {
   const [pickAvatar, setPickAvatar] = useState(false)
   // const auth= getAuth()
   // const id = useParams()
+  const photo = usePhoto()
   const history = useHistory()
   const uid = getAuth().currentUser?.uid
 
@@ -54,14 +56,21 @@ const Profile: React.FC = () => {
         <IonGrid >
           <IonRow>
             <IonRow>
-              <IonAvatar>
+              <IonAvatar  
+               id="click-trigger">
                 <IonImg src={
                   !!profile?.photoURL ? profile.photoURL
                     : require("../assets/avatarPlaceHolder.png")}
                   onClick={() => { setPickAvatar(!pickAvatar) }}>
-
                 </IonImg>
               </IonAvatar>
+              <IonPopover trigger="click-trigger" triggerAction="click">
+        <IonContent 
+        class="ion-padding"
+        >
+        <IonButton onClick={()=>photo.takePhoto()} >new Photo</IonButton>
+        </IonContent>
+      </IonPopover>
               {/* <IonTitle>token : {token}</IonTitle> */}
             </IonRow>
             <IonCol>
@@ -105,9 +114,9 @@ const Profile: React.FC = () => {
           <IonLabel>deliver</IonLabel>
         </IonSegmentButton>
       </IonSegment>}
-
+{/* 
       <AvatarPicker isOpen={pickAvatar} onDidDismiss={() => setPickAvatar(false)}
-        onAvatarSubmit={(url) => { updateUserProfile(uid, { photoURL: url }) }} ></AvatarPicker>
+        onAvatarSubmit={(url) => { updateUserProfile(uid, { photoURL: url }) }} ></AvatarPicker> */}
 
       {user && content === "orders" &&
         <IonContent>

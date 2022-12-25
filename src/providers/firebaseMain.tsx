@@ -9,6 +9,9 @@ import { getAuth, updateProfile } from "firebase/auth";
 import { db } from '../App';
 import { randomAvatarUrl } from '../components/Avatar';
 import { OrderCatagorie } from '../pages/AddOrderPage';
+import { getDownloadURL, getStorage, ref, uploadBytes, } from "firebase/storage";
+
+
 
 export type UserProfile ={
   name:string,
@@ -61,7 +64,21 @@ export type orderProps={
   applications:ApplicationInfo[]
 
 }
+export async function setUserImage(photo: Blob, fileName: string,userid?:string){
+  const sref = ref(getStorage(),fileName)
+  const p =  await uploadBytes(sref,photo)
+  
+  const url  = await getDownloadURL(sref)
+  
+  console.log('p.url :>> ', url);
 
+  if (userid && url){
+    await updateUserProfile(userid,{photoURL:url})
+
+  }else{
+    await updateUserProfile(getAuth().currentUser?.uid,{photoURL:url})
+  }
+}
 export async function getTripCard(id:String){
     return await getDoc(doc(getFirestore(),"orders/"+id))
   }
@@ -76,6 +93,7 @@ export async function getTripCard(id:String){
   export async function getOrders(filter?:orderFilter,_limit?:number,fromDoc?:DocumentSnapshot){
     var qu = query(collection(db,"orders/"))
     if(filter){
+      console.log('filterFrom :>> ', filter.from?"true":"false");
       if(filter.from){qu = query(qu,where("from",'==',filter.from))}
       if(filter.to){qu = query(qu,where("to",'==',filter.to))}
       if(filter.name){qu = query(qu,where("name",'==',filter.name))}
@@ -88,6 +106,7 @@ export async function getTripCard(id:String){
       qu = query(qu,startAfter(fromDoc))
     }
     qu=query(qu,limit(filter?.limit || 10))
+    console.log('filter :>> ', filter);
     return await getDocs(qu)
   }
   export async function updateTripCard(id:String,data:{}){

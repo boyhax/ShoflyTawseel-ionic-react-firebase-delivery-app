@@ -78,7 +78,7 @@ const Tab1 = () => {
         </IonToolbar>
       </IonHeader>
 
-      <div style={{ display: 'flex', }}>
+      <div style={{ display: 'block',width:'100%',height:'100%' }}>
         <OrderList></OrderList>
       </div>
 

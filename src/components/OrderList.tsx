@@ -45,8 +45,8 @@ export default function OrderList(props: any) {
   const toggleFilterModal = (bo: boolean) => {
     bo ? filterModal.current.present() : filterModal.current.dismiss()
   }
-  return <div >
-    <IonFab horizontal={'center'} vertical={'top'} >
+  return <IonContent >
+    <IonFab style={{position:'sticky',top:'50px'}} horizontal={'start'} vertical={'center'} >
       <IonFabButton onClick={() => toggleFilterModal(true)}>
         <IonIcon icon={filterIcon}></IonIcon>
       </IonFabButton>
@@ -62,7 +62,7 @@ export default function OrderList(props: any) {
 
 
 
-    <IonContent >
+    {/* <IonList > */}
       <IonRefresher ref={IonRefresherElement} slot="fixed" onIonRefresh={doRefresh} >
         <IonRefresherContent refreshingText="refreshing..."></IonRefresherContent>
       </IonRefresher>
@@ -88,7 +88,7 @@ export default function OrderList(props: any) {
         ></IonInfiniteScrollContent>
       </IonInfiniteScroll>
 
-    </IonContent>
+    {/* </IonList> */}
 
     {!!listMessage && <IonItem style={{ display: "flex", flexDirection: "column" }}>
       <IonLabel color={listMessage.color}>{listMessage.text}</IonLabel>
@@ -100,7 +100,7 @@ export default function OrderList(props: any) {
     </IonItem>
     }
 
-  </div>
+  </IonContent>
 }
 const CitiePicker = (props: { value: string, onItemPicked: (v: { value: string, key: string }) => void, placeHolder: string }) => {
   return <ListPicker

@@ -1,4 +1,4 @@
-import { IonButton, IonCol, IonContent, IonGrid, IonHeader, IonIcon, IonImg, IonInput, IonItem, IonItemOption, IonItemOptions, IonLabel, IonList, IonModal, IonPopover, IonRow, IonSelect, IonSelectOption, IonToolbar } from '@ionic/react';
+import { IonButton, IonCol, IonContent, IonGrid, IonHeader, IonIcon, IonImg, IonInput, IonItem, IonItemOption, IonItemOptions, IonLabel, IonList, IonModal, IonPage, IonPopover, IonRow, IonSelect, IonSelectOption, IonToolbar } from '@ionic/react';
 import * as React from 'react';
 import { OrderCatagories } from '../pages/AddOrderPage';
 import { orderFilter } from '../providers/firebaseMain';
@@ -18,8 +18,10 @@ const FilterUI: React.FC<props> = (props) => {
     props.onfilter({ ...filter, ...obj })
     console.log('{...filter,...obj} :>> ', { ...filter, ...obj });
   }
-  return <IonList>
+  return <IonPage>
     <IonItem>
+    <IonLabel>From</IonLabel>
+
       <IonSelect
       value={props.filter.from}
         placeholder={'from'}
@@ -35,7 +37,9 @@ const FilterUI: React.FC<props> = (props) => {
       </IonSelect>
     </IonItem>
     <IonItem>
+      <IonLabel>To</IonLabel>
       <IonSelect value={props.filter.to} placeholder={'to'}
+      cancelText={"cancel"}
         onIonChange={(v) => set({ to: v.detail.value })}
         interface={'popover'} >
         <IonSelectOption value={''} key={''} onSelect={(v) => console.log(v)}>لاشي</IonSelectOption>
@@ -48,6 +52,8 @@ const FilterUI: React.FC<props> = (props) => {
       </IonSelect>
     </IonItem>
     <IonItem>
+    <IonLabel>Type</IonLabel>
+
       <IonSelect value={props.filter.type} placeholder={'type'}
         onIonChange={(v) => set({ type: v.detail.value })}
         interface={'popover'} >
@@ -63,7 +69,7 @@ const FilterUI: React.FC<props> = (props) => {
     </IonItem>
 
 
-  </IonList>
+  </IonPage>
 }
 
 export default FilterUI;
