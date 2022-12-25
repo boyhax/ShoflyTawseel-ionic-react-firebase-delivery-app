@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { IonContent, IonPage, IonTitle, IonToolbar, IonButton, IonIcon, IonButtons, IonLabel, IonItem, IonList, IonSpinner, IonBackButton, IonSegment, IonSegmentButton, IonGrid, IonRow, IonAvatar, IonImg, IonCol, IonHeader, IonCard, IonCardContent, IonFab, IonFabButton, IonInput, IonPopover } from '@ionic/react';
+import { IonContent, IonPage, IonTitle, IonToolbar, IonButton, IonIcon, IonButtons, IonLabel, IonItem, IonList, IonSpinner, IonBackButton, IonSegment, IonSegmentButton, IonGrid, IonRow, IonAvatar, IonImg, IonCol, IonHeader, IonCard, IonCardContent, IonFab, IonFabButton, IonInput, IonPopover, IonChip } from '@ionic/react';
 import { close, logOutOutline, } from 'ionicons/icons';
 import { useGlobals } from '../providers/globalsProvider';
 import { collection, DocumentData, DocumentSnapshot, getFirestore, onSnapshot, orderBy, query, where } from 'firebase/firestore';
@@ -56,21 +56,36 @@ const Profile: React.FC = () => {
         <IonGrid >
           <IonRow>
             <IonRow>
-              <IonAvatar  
-               id="click-trigger">
+              <IonAvatar
+                id="click-trigger">
                 <IonImg src={
                   !!profile?.photoURL ? profile.photoURL
                     : require("../assets/avatarPlaceHolder.png")}
-                  onClick={() => { setPickAvatar(!pickAvatar) }}>
+                  >
                 </IonImg>
               </IonAvatar>
               <IonPopover trigger="click-trigger" triggerAction="click">
-        <IonContent 
-        class="ion-padding"
-        >
-        <IonButton disabled={photo.loading} onClick={()=>photo.takePhoto()} >{photo.loading?"Loading...":"New Photo"}</IonButton>
-        </IonContent>
-      </IonPopover>
+                <IonContent
+                  class="ion-padding">
+                  <IonButton
+                    disabled={photo.loading}
+                    onClick={() => photo.takePhoto()}
+                    fill={'clear'}
+                  >{photo.loading ? "Loading..." : "Upload Photo"}
+                  </IonButton>
+                  <span>OR</span>
+                  <IonButton
+                  onClick={() => setPickAvatar(!pickAvatar)}
+                  fill={'clear'}
+                  > choose avatar</IonButton>
+                  <div>
+                    <AvatarPicker isOpen={pickAvatar} onDidDismiss={() => setPickAvatar(false)}
+                      onAvatarSubmit={(url) => { updateUserProfile(uid, { photoURL: url }) }} >
+                        </AvatarPicker> 
+
+                  </div>
+                </IonContent>
+              </IonPopover>
               {/* <IonTitle>token : {token}</IonTitle> */}
             </IonRow>
             <IonCol>
@@ -92,18 +107,18 @@ const Profile: React.FC = () => {
         </IonFabButton>
       </IonFab>
       <IonList>
-        <IonItem>
+        <div style={infoContainer}>
           <IonLabel>Name: </IonLabel>
           <IonInput value={profile?.name || "Name"} disabled={true}></IonInput>
-        </IonItem>
-        <IonItem>
+        </div>
+        <div style={infoContainer}>
           <IonLabel>Email: </IonLabel>
           <IonInput value={profile?.email || "No Email"} disabled={true}></IonInput>
-        </IonItem>
-        <IonItem>
+        </div>
+        <div style={infoContainer}>
           <IonLabel>Pnone: </IonLabel>
           <IonInput value={profile?.phoneNumber || "No Email"} disabled={true}></IonInput>
-        </IonItem>
+        </div>
 
       </IonList>
       {content !== "editProfile" && <IonSegment value={content}>
@@ -114,10 +129,8 @@ const Profile: React.FC = () => {
           <IonLabel>deliver</IonLabel>
         </IonSegmentButton>
       </IonSegment>}
-{/* 
-      <AvatarPicker isOpen={pickAvatar} onDidDismiss={() => setPickAvatar(false)}
-        onAvatarSubmit={(url) => { updateUserProfile(uid, { photoURL: url }) }} ></AvatarPicker> */}
-
+      
+    
       {user && content === "orders" &&
         <IonContent>
           <ProfileOrdersList />
@@ -225,3 +238,4 @@ const ProfileApplicationsList: FC = (props) => {
     }
   </IonList>
 }
+const infoContainer: any = { display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', fontSize: '0.8rem', paddingInlineStart: '2rem' }
