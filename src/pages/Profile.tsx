@@ -68,7 +68,7 @@ const Profile: React.FC = () => {
         <IonContent 
         class="ion-padding"
         >
-        <IonButton onClick={()=>photo.takePhoto()} >new Photo</IonButton>
+        <IonButton disabled={photo.loading} onClick={()=>photo.takePhoto()} >{photo.loading?"Loading...":"New Photo"}</IonButton>
         </IonContent>
       </IonPopover>
               {/* <IonTitle>token : {token}</IonTitle> */}
