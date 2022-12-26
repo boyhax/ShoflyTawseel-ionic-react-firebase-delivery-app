@@ -105,7 +105,7 @@ export default function OrderList(props: any) {
 const CitiePicker = (props: { value: string, onItemPicked: (v: { value: string, key: string }) => void, placeHolder: string }) => {
   return <ListPicker
     value={props.value}
-    data={Cities}
+    data={Cities()}
     placeHolder={props.placeHolder}
     onValueSet={(v) => props.onItemPicked(v!)}></ListPicker>
 }

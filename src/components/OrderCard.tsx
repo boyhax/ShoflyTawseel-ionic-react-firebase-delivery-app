@@ -160,9 +160,9 @@ const OrderCard = ({ orderDocSnap, whatsapp, message, remove, report, canApplyFo
                 <div style={{ alignSelf: 'center', direction: 'rtl' }}>
                     {/* {order && order.loading? <IonSpinner></IonSpinner>: <IonLabel>{order.order?.from }</IonLabel> } */}
 
-                    <IonChip color="secondary">{"من: " + data.from}</IonChip>
+                    <IonChip color="secondary">{"من: " + data.from.value}</IonChip>
                     <IonIcon color={'primary'} size={'large'} icon={arrowBackOutline}></IonIcon>
-                    <IonChip color="secondary">{"الى: " + data.to}</IonChip>
+                    <IonChip color="secondary">{"الى: " + data.to.value}</IonChip>
 
                 </div>
             </div>

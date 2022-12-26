@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { IonContent, IonPage, IonTitle, IonToolbar, IonButton, IonIcon, IonButtons, IonLabel, IonItem, IonList, IonSpinner, IonBackButton, IonSegment, IonSegmentButton, IonGrid, IonRow, IonAvatar, IonImg, IonCol, IonHeader, IonCard, IonCardContent, IonFab, IonFabButton, IonInput, IonPopover, IonChip } from '@ionic/react';
+import { IonContent, IonPage, IonTitle, IonToolbar, IonButton, IonIcon, IonButtons, IonLabel, IonItem, IonList, IonSpinner, IonBackButton, IonSegment, IonSegmentButton, IonGrid, IonRow, IonAvatar, IonImg, IonCol, IonHeader, IonCard, IonCardContent, IonFab, IonFabButton, IonInput, IonPopover, IonChip, IonLoading } from '@ionic/react';
 import { close, logOutOutline, } from 'ionicons/icons';
 import { useGlobals } from '../providers/globalsProvider';
 import { collection, DocumentData, DocumentSnapshot, getDocs, getFirestore, onSnapshot, orderBy, query, where } from 'firebase/firestore';
@@ -14,6 +14,7 @@ import CreatProfile from './CreatProfile';
 import AvatarPicker from '../components/AvatarPicker';
 import { useHistory } from 'react-router';
 import { usePhoto } from '../hooks/usePhoto';
+import useOrders from '../hooks/useOrders';
 
 const Profile: React.FC = () => {
   const { user, profile } = useGlobals()
@@ -52,6 +53,7 @@ const Profile: React.FC = () => {
 
   return (
     <IonPage >
+      <IonContent>
       <IonItem dir={'rtl'} style={{ paddingLeft: '50px' }}>
         <IonGrid >
           <IonRow>
@@ -144,6 +146,7 @@ const Profile: React.FC = () => {
         <IonContent>
           <CreatProfile onSave={() => { setContent("deliver") }} />
         </IonContent>}
+        </IonContent>
     </IonPage>
   );
 };
@@ -152,43 +155,22 @@ export default Profile;
 
 
 const ProfileOrdersList: FC = (props) => {
-  const [list, setList] = useState<DocumentSnapshot<DocumentData>[]>([])
-  const [refreshing, setRefreshing] = useState(true)
-  const [isMounted, setIsMounted] = useState(true)
-  const { user, profile } = useGlobals()
+
+  const uid :any= getAuth().currentUser?.uid
   useEffect(() => {
-    const unsub = getData();
-    // return () => { unsub() }
+    setFilter({userID:uid!})
   }, [])
 
-
-  function getData() {
-    setRefreshing(true)
-    const ref = collection(getFirestore(), "orders")
-    var firstQuery = query(ref, orderBy("time", "desc"))
-    var finalQuery = query(firstQuery, where("uid", "==", getAuth().currentUser?.uid))
-
-    return getDocs(finalQuery).then(
-     (snap) => {
-
-      let newDocs: DocumentSnapshot[] = []
-
-      snap.forEach((doc) => { newDocs.push(doc) })
-
-      if (isMounted) {
-        setList(newDocs)
-        setRefreshing(false)
-      }
-    })
-  }
+  const {orders,setFilter,loading,update} = useOrders()
+  
 
   return <IonList>
-    {refreshing && <IonSpinner></IonSpinner>}
-    {!!list && list.map((value, index, array) => {
+     {/* <IonLoading isOpen={refreshing}></IonLoading> */}
+    {orders && orders.map((value, index, array) => {
 
       return <OrderCard orderDocSnap={value} key={index} ></OrderCard>
     })}
-    {!list && !refreshing && <IonButton onClick={() => getData()}>refresh</IonButton>}
+    {!orders && !loading && <IonButton onClick={() => update(()=>{})}>refresh</IonButton>}
   </IonList>
 }
 

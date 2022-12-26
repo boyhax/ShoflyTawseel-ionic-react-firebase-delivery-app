@@ -10,6 +10,7 @@ import { db } from '../App';
 import { randomAvatarUrl } from '../components/Avatar';
 import { OrderCatagorie } from '../pages/AddOrderPage';
 import { getDownloadURL, getStorage, ref, uploadBytes, } from "firebase/storage";
+import { type } from 'os';
 
 
 
@@ -56,8 +57,8 @@ export type orderProps={
   urgent:boolean,
   type:string,
   uid:string,
-  from:string|any,
-  to:string|any,
+  from:keyValue,
+  to:keyValue,
   time:any,
   comment:string|undefined|null,
   reports:OrderReportInfo[],
@@ -82,33 +83,32 @@ export async function setUserImage(photo: Blob, fileName: string,userid?:string)
 export async function getTripCard(id:String){
     return await getDoc(doc(getFirestore(),"orders/"+id))
   }
+  type keyValue={key:string,value:string}
   export type orderFilter={
-    from?:string,
-    to?:string,
-    name?:string,
+    from?:keyValue|"",
+    to?:keyValue|"",
+    userID?:string,
     limit?:number,
-    type:OrderCatagorie|'',
-    urgent:boolean
+    type?:OrderCatagorie|'',
+    urgent?:boolean
   }
   export async function getOrders(filter?:orderFilter,_limit?:number,fromDoc?:DocumentSnapshot){
     var qu = query(collection(db,"orders/"))
     if(filter){
-      console.log('filterFrom :>> ', filter.from?"true":"false");
-      if(filter.from){qu = query(qu,where("from",'==',filter.from))}
-      if(filter.to){qu = query(qu,where("to",'==',filter.to))}
-      if(filter.name){qu = query(qu,where("name",'==',filter.name))}
-      
+      if(filter.from){qu = query(qu,where("from.key",'==',filter.from.key))}
+      if(filter.to){qu = query(qu,where("to.key",'==',filter.to.key))}
+      if(filter.userID){qu = query(qu,where("uid",'==',filter.userID))}
+      if(filter?.limit){qu=query(qu,limit(filter?.limit))}
     }
+
     qu = query(qu,orderBy('time','desc'))
 
-     
     if (fromDoc){
       qu = query(qu,startAfter(fromDoc))
     }
-    qu=query(qu,limit(filter?.limit || 10))
-    console.log('filter :>> ', filter);
     return await getDocs(qu)
   }
+
   export async function updateTripCard(id:String,data:{}){
     return updateDoc(doc(getFirestore(),"orders/"+id),data)
   }

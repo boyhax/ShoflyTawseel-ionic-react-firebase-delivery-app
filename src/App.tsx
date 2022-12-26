@@ -101,11 +101,18 @@ export async function getAddressOptions(text:string,call:(t:Address[])=>void){
 }
 
 const App: React.FC = () => {
-
+  // placeSearch({
+  //   key: 'KEY',
+  //   container: document.querySelector('#place-search-input')
+  // });
 
   return (
     <GlobalProvider>
+      <script src="https://api.mqcdn.com/sdk/place-search-js/v1.0.0/place-search.js"></script>
+      <link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/place-search-js/v1.0.0/place-search.css"/>
       <IonApp>
+      <input type="search" id="place-search-input" placeholder="Start Searching..."/>
+
       {/* <IonSplitPane contentId="main"> */}
 
         <IonReactRouter>

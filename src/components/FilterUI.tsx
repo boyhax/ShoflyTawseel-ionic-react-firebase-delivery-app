@@ -3,7 +3,7 @@ import * as React from 'react';
 import { OrderCatagories } from '../pages/AddOrderPage';
 import { orderFilter } from '../providers/firebaseMain';
 import Avatar from './Avatar';
-import { citiesList } from './utlis/citiesUtlis';
+import { Cities, citiesList } from './utlis/citiesUtlis';
 import { TT } from './utlis/tt';
 
 
@@ -16,46 +16,46 @@ const FilterUI: React.FC<props> = (props) => {
   const [focused, setFocused] = React.useState<'from' | 'to' | ''>('')
   const set = (obj: object) => {
     props.onfilter({ ...filter, ...obj })
-    console.log('{...filter,...obj} :>> ', { ...filter, ...obj });
   }
-  return <IonPage>
+  var citiesSelectOptions :Array<any>=[] 
+  Cities().map((v, key) => {
+    const option = <IonSelectOption value={v} key={v.key}>
+    {v.value}
+  </IonSelectOption>
+    citiesSelectOptions.push( option)
+  })
+
+  console.log('citiesSelectOption :>> ', citiesSelectOptions);
+
+  return <IonPage className={"ion-padding"}>
     <IonItem>
-    <IonLabel>From</IonLabel>
+      <IonLabel>From</IonLabel>
 
       <IonSelect
-      value={props.filter.from}
+        value={props.filter.from}
         placeholder={'from'}
-        onIonChange={(v) => set({ from: v.detail.value })}
+        onIonChange={(v) => {set({ from: v.detail.value });console.log('onselect :>> ', v.detail.value);}}
         interface={'action-sheet'}  >
         <IonSelectOption value={''} key={''}>لاشي</IonSelectOption>
-        {citiesList.map((v, key) => {
-          return <IonSelectOption value={v} key={key}>
-            {v}
-          </IonSelectOption>
-        })}
-
-      </IonSelect>
+        {citiesSelectOptions}    
+          </IonSelect>
     </IonItem>
     <IonItem>
       <IonLabel>To</IonLabel>
       <IonSelect
-      interface={'action-sheet'} 
-      value={props.filter.to} 
-      placeholder={'select drop point'}
-      cancelText={"cancel"}
+        interface={'action-sheet'}
+        value={props.filter.to}
+        placeholder={'select drop point'}
+        cancelText={"cancel"}
         onIonChange={(v) => set({ to: v.detail.value })}
-         >
+      >
         <IonSelectOption value={''} key={''} onSelect={(v) => console.log(v)}>لاشي</IonSelectOption>
-        {citiesList.map((v, key) => {
-          return <IonSelectOption value={v} key={key}>
-            {v}
-          </IonSelectOption>
-        })}
+        {citiesSelectOptions}
 
       </IonSelect>
     </IonItem>
     <IonItem>
-    <IonLabel>Type</IonLabel>
+      <IonLabel>Type</IonLabel>
 
       <IonSelect value={props.filter.type} placeholder={'type'}
         onIonChange={(v) => set({ type: v.detail.value })}

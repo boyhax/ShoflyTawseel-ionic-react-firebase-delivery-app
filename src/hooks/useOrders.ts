@@ -5,9 +5,8 @@ import { getOrders, getTripCard, makeOrderFromDoc, orderFilter, orderProps } fro
 const initalFilter:orderFilter={
     to:'',
     from:'',
-    name:'',
-    urgent:false,
-    type:''
+    userID:'',
+    urgent:undefined,
 }
 
 const useOrders = () => {
@@ -22,7 +21,7 @@ const useOrders = () => {
     }, [])
 
     React.useEffect(() => {
-        update(()=>{})
+        update(()=>{console.log('on update filter')})
     }, [filter])
 
     React.useEffect(() => {
@@ -39,7 +38,8 @@ const useOrders = () => {
         getOrders(filter , num, lastDoc).then((v) => { setOrders([...orders, ...v.docs]) }).finally(() => {setLoading(false);onEnd()})
 
     }
-    const reset=()=>{setFilter(initalFilter)}
-    return { orders, loading, update, add, setFilter,filter,reset }
+    const reset=()=>{setFilter(initalFilter)};
+
+    return { orders, loading, update, add, setFilter,filter,reset };
 }
 export default useOrders

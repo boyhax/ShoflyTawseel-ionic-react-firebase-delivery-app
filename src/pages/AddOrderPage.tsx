@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCheckbox, IonContent, IonFab, IonFabButton,
   IonFooter,
-  IonIcon, IonImg, IonInput, IonItem, IonLabel, IonList, IonPage,
+  IonIcon, IonImg, IonInput, IonItem, IonLabel, IonList, IonLoading, IonPage,
   IonSpinner,
   IonTextarea,
   IonTitle,
@@ -15,7 +15,7 @@ import { useGlobals } from '../providers/globalsProvider';
 import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { getUserInfoPlaceHolder, orderProps } from '../providers/firebaseMain';
-import { citiesList } from '../components/utlis/citiesUtlis';
+import { Cities, citiesList } from '../components/utlis/citiesUtlis';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '../App';
 import { getAuth } from 'firebase/auth';
@@ -91,9 +91,9 @@ const AddOrderPage = () => {
   function updateOptions(text: string) {
 
     let op: Address[] = []
-    const c = citiesList.sort((a, b) => { return b.indexOf(text) - a.indexOf(text) }).slice(0, 4)
+    const c = Cities().sort((a, b) => { return b.value.indexOf(text) - a.value.indexOf(text) }).slice(0, 4)
     c.forEach((v) =>
-      op.push({ address: v, name: v, location: { lat: '', lng: '' }, id: '', types: [""] }))
+      op.push({ address: v.value, name: v.value, location: { lat: '', lng: '' }, id: v.key, types: [""] }))
     getAddressOptions(text, (d) => op = [...op, ...d])
     setOptions(op)
 
@@ -122,8 +122,8 @@ const AddOrderPage = () => {
     setSubmitingOrder(true)
     const newO: orderProps = {
       urgent: isUrgent,
-      from: pickUpLocation?.name!,
-      to: dropLocation?.name!,
+      from: {key:pickUpLocation?.id!,value:pickUpLocation?.address!},
+      to: {key:dropLocation?.id!,value:dropLocation?.address!},
       uid: getAuth().currentUser?.uid!,
       time: serverTimestamp(),
       type: orderCatagory,
@@ -135,9 +135,13 @@ const AddOrderPage = () => {
     try {
       await addDoc(collection(db, 'orders'), newO).finally(() => setSubmitingOrder(false))
       console.log('oreder submited')
+      history.push('home')
+
     } catch (error) {
       console.log('error submitiing order :>> ', error);
     }
+    setSubmitingOrder(false)
+
   }
   useEffect(() => {
     console.log('location :>> drop ', dropLocation, " pick ", pickUpLocation);
@@ -179,7 +183,9 @@ const AddOrderPage = () => {
             <IonInput
               // onIonBlur={()=>setOptions(undefined)}
               value={dropSearchValue || dropLocation?.name}
-              onIonChange={(e) => { updateOptions(e.detail.value || ""); setDropSearchValue(e.detail.value || "") }}
+              onIonChange={(e) => { 
+                updateOptions(e.detail.value || ""); 
+                setDropSearchValue(e.detail.value || "") }}
               onClick={() => onPickerFocused("drop")}></IonInput>
           </IonItem>
         </IonCardContent>
@@ -292,7 +298,7 @@ const AddOrderPage = () => {
         onClick={() => {
           onSubmitOrder()
         }}   >
-        {isSubmitingOrder && <IonSpinner ></IonSpinner>}
+         <IonLoading isOpen={isSubmitingOrder} message={'Sending Order..'} ></IonLoading>
         Submit Order 👍
       </IonButton>
     </IonFooter>
