@@ -1,7 +1,6 @@
 import { IonButton, IonCol, IonContent, IonGrid, IonHeader, IonIcon, IonImg, IonInput, IonItem, IonItemOption, IonItemOptions, IonLabel, IonList, IonModal, IonPage, IonPopover, IonRow, IonSelect, IonSelectOption, IonToolbar } from '@ionic/react';
 import * as React from 'react';
-import { OrderCatagories } from '../pages/AddOrderPage';
-import { orderFilter } from '../providers/firebaseMain';
+import { orderFilter, OrderCatagories } from '../types';
 import Avatar from './Avatar';
 import { Cities, citiesList } from './utlis/citiesUtlis';
 import { TT } from './utlis/tt';

@@ -8,13 +8,13 @@ import "./Profile.css"
 import OrderCard from '../components/OrderCard';
 import { updateUserProfile } from '../providers/firebaseMain';
 import { TT } from '../components/utlis/tt';
-import { ApplicationCard } from './ApplicationsPage';
 import { db } from '../App';
 import CreatProfile from './CreatProfile';
 import AvatarPicker from '../components/AvatarPicker';
 import { useHistory } from 'react-router';
 import { usePhoto } from '../hooks/usePhoto';
 import useOrders from '../hooks/useOrders';
+import AuthRoute from '../routes/AuthRoute';
 
 const Profile: React.FC = () => {
   const { user, profile } = useGlobals()
@@ -215,10 +215,10 @@ const ProfileApplicationsList: FC = (props) => {
 
   return <IonList>
     {refreshing && <IonSpinner></IonSpinner>}
-    {!!list && list.map((value, index: any) => {
+    {/* {!!list && list.map((value, index: any) => {
       return <ApplicationCard docsnap={value} key={index}></ApplicationCard>
     })
-    }
+    } */}
   </IonList>
 }
 const infoContainer: any = { display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', fontSize: '0.8rem', paddingInlineStart: '2rem' }

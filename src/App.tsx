@@ -36,8 +36,6 @@ import GlobalProvider from './providers/globalsProvider';
 import OrdersPage from './pages/OrdersPage';
 import MapPage from './pages/MapPage';
 import OrderPage from './pages/OrderPage';
-import ApplicationsPage from './pages/ApplicationsPage';
-import Chat from './pages/chat/chat';
 import Chats from './pages/chat/chats';
 import { Device } from '@capacitor/device';
 import { FCM } from '@capacitor-community/fcm';
@@ -47,10 +45,14 @@ import { Config } from './config';
 import { getFirestore } from 'firebase/firestore';
 import CreateProfile from './pages/CreatProfile';
 import ProfileID from './pages/ProfileID';
-import AddOrderPage from './pages/AddOrderPage';
+import AddOrderPage from './pages/AddOrderPage/AddOrderPage';
 import MainMenu from './components/MainMenu';
 import ProtectedRoute from './components/ProtectedRoute';
 import Demo from './pages/Demo';
+import AuthRoute from './routes/AuthRoute';
+import DevloperRoute from './routes/DevloperRoute';
+
+
 
 
 const firebaseConfig = Config()
@@ -72,75 +74,64 @@ Device.getInfo().then((v) => {
     })
   }
 })
-const language:"en"|"ar" = 'en'
-export const getLang=()=>{return language}
+const language: "en" | "ar" = 'en'
+export const getLang = () => { return language }
 
-export type Address={
-address: string,
-id:string,
-location: {lat: string, lng: string},
-name: string,
-types: string[]
-}
-export async function getAddressOptions(text:string,call:(t:Address[])=>void){
-  const options = {
-    method: 'GET',
-    headers: {
-      'X-RapidAPI-Key': '5db7bea325msh20d1ea444db0b53p123e53jsn3b35fd61bc13',
-      'X-RapidAPI-Host': 'trueway-places.p.rapidapi.com'
-    }
-  };
-  let r:any[] = []
-  let url = 'https://trueway-places.p.rapidapi.com/FindPlaceByText?text=sur oman&language=ar';
-  url.replace('text',text)
-  let t = await (await fetch(url, options)).json();
-  console.log('t :>> ', t);
-  r=t
-  call(r)
-  return r
-}
+
 
 const App: React.FC = () => {
-  // placeSearch({
-  //   key: 'KEY',
-  //   container: document.querySelector('#place-search-input')
-  // });
 
   return (
+    <React.StrictMode>
     <GlobalProvider>
       <script src="https://api.mqcdn.com/sdk/place-search-js/v1.0.0/place-search.js"></script>
-      <link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/place-search-js/v1.0.0/place-search.css"/>
+      <link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/place-search-js/v1.0.0/place-search.css" />
       <IonApp>
-      <input type="search" id="place-search-input" placeholder="Start Searching..."/>
 
-      {/* <IonSplitPane contentId="main"> */}
+        {/* <IonSplitPane contentId="main"> */}
 
         <IonReactRouter>
-            <MainMenu  ></MainMenu>
+          <MainMenu  ></MainMenu>
 
-            <IonRouterOutlet id='mainContent'>
-              <Route path="/home" component={Home} exact={true} />
-              <Route path="/Profile" component={Profile} />
-              <Route path="/Profile/:id" component={ProfileID} />
-              <Route path="/createProfile" component={CreateProfile} />
+          <IonRouterOutlet id='mainContent'>
+            <Route path={"/Profile"}>
+              <AuthRoute>
+                <Profile></Profile>
+              </AuthRoute>
+            </Route>
+            <Route path={"/AddOrderPage"}>
+              <AuthRoute>
+              <AddOrderPage></AddOrderPage>
+              </AuthRoute>
+            </Route>
 
-              <Route path="/details" component={Details} />
-              <Route path="/SignIn" component={SignIn} />
-              <Route path="/OrdersPage" component={OrdersPage} />
-              <Route path="/OrdersPage/:id/:type" component={OrdersPage} />
+            <Route path="/Profile" component={Profile } />
+            <Route path="/home" component={Home} exact={true} />
+            <Route path="/Profile/:id" component={ProfileID} />
+            <Route path="/createProfile" component={CreateProfile} />
 
-              <Route path="/map/:location" component={MapPage} />
-              <Route path="/map" component={MapPage} />
-              <Route path="/order/:id?type" component={OrderPage} />
-              <Route path="/applications/:id" component={ApplicationsPage} />
-              <Route path="/chats/" component={Chats} />
-              <Route path="/chats/:id" component={Chats} />
-              <Route path="/AddOrderPage" component={AddOrderPage} />
-              <Route path="/demo" component={Demo} />
+            <Route path="/details" component={Details} />
+            <Route path="/SignIn" component={SignIn} />
+            <Route path="/OrdersPage" component={OrdersPage} />
+            <Route path="/OrdersPage/:id/:type" component={OrdersPage} />
+
+            <Route path="/map/:location" component={MapPage} />
+            <Route path="/map" component={MapPage} />
+            <Route path="/order/:id?type" component={OrderPage} />
+            {/* <Route path="/applications/:id" component={ApplicationsPage} /> */}
+            <Route path="/chats/" component={Chats} />
+            <Route path="/chats/:id" component={Chats} />
+            {/* <Route path="/AddOrderPage" component={AddOrderPage} /> */}
+            
+            <Route path="/demo"  >
+            <DevloperRoute>
+              <Demo></Demo>
+              </DevloperRoute>
+            </Route>
 
 
-              <Route path="/" render={() => <Redirect to="/home" />} exact={true} />
-            </IonRouterOutlet>
+            <Route path="/" render={() => <Redirect to="/home" />} exact={true} />
+          </IonRouterOutlet>
 
 
         </IonReactRouter>
@@ -148,6 +139,7 @@ const App: React.FC = () => {
 
       </IonApp>
     </GlobalProvider>
+    </React.StrictMode>
   )
 };
 

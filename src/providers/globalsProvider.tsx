@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from "react";  
-import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth";
+import { getAuth, onAuthStateChanged, updateProfile, } from "firebase/auth";
 import "./globalsProvider.css"
 import { doc, DocumentSnapshot, getFirestore, onSnapshot, setDoc } from "firebase/firestore";
 import { Network } from '@capacitor/network';
 import CreateProfile from "../pages/CreatProfile";
 import { db, token } from "../App";
-import { createNewProfileForThisUser, UpdateProfileForThisUser, UserProfile, UserProfileFromDoc } from "./firebaseMain";
+import { createNewProfileForThisUser, UpdateProfileForThisUser, UserProfileFromDoc } from "./firebaseMain";
+import { UserProfile } from "../types";
 
 
 const globalsContext = createContext<{
@@ -73,7 +74,7 @@ const GlobalProvider:React.FC =(props)=>{
     const ref = doc(getFirestore(),"users/"+uid)
     return   onSnapshot(ref,(doc)=>{
         if(doc.exists()){
-          const p:UserProfile = UserProfileFromDoc(doc)
+          const p:any = UserProfileFromDoc(doc)
           setProfile(p)
           
           console.log('profile :>> ', p);
@@ -112,13 +113,3 @@ export const useGlobals=()=>{
 
 export default GlobalProvider
 
-// moved to cloud functions
-// function generateName(){
-//   const str= "abcdefghijklmnopqrstuvwxyz"
-//   const num = "1234567890"
-//   const mix = str+num
-//   const newName = shuffle(mix).slice(0,10)
-//   console.log('newName :>> ', newName);
-//   return newName
-// }
-// const shuffle = (str:string) => str.split('').sort(()=>Math.random()-.5).join('');

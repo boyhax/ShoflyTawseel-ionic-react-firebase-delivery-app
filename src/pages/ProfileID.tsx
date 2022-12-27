@@ -1,17 +1,10 @@
 import React, { FC, useEffect, useState } from 'react';
-import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton, IonChip, IonSegment, IonSegmentButton, IonCard, IonCardContent, IonGrid, IonRow, IonAvatar, IonImg, IonCol, IonItemDivider, IonHeader } from '@ionic/react';
-import { createOutline, logOutOutline, } from 'ionicons/icons';
+import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonButtons, IonLabel, IonItem, IonList, IonSpinner, IonBackButton, IonSegment, IonSegmentButton, IonGrid, IonRow, IonAvatar, IonImg, IonHeader } from '@ionic/react';
 import { useGlobals } from '../providers/globalsProvider';
-import { collection, doc, DocumentData, DocumentSnapshot, getDoc, getDocs, getFirestore, onSnapshot, orderBy, query, where } from 'firebase/firestore';
-import { getAuth, updateCurrentUser } from 'firebase/auth';
+import { collection, doc, DocumentData, DocumentSnapshot, getDoc, getFirestore, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import "./Profile.css"
 import OrderCard from '../components/OrderCard';
-import { orderProps, updateTripCard, updateUserProfile } from '../providers/firebaseMain';
-import { TT } from '../components/utlis/tt';
-import { ApplicationCard } from './ApplicationsPage';
-import { db, token } from '../App';
-import CreatProfile from './CreatProfile';
-import AvatarPicker from '../components/AvatarPicker';
+import { db } from '../App';
 import { useHistory, useParams } from 'react-router';
 
 
@@ -185,9 +178,9 @@ const ProfileApplicationsList:FC<props>=({uid}:props)=>{
   
   return<IonList>
     {refreshing && <IonSpinner></IonSpinner>}
-      {!!list && list.map((value,index:any) => {
+      {/* {!!list && list.map((value,index:any) => {
         return <ApplicationCard docsnap={value} key={index}></ApplicationCard>
           })
-        }
+        } */}
   </IonList>
 }

@@ -1,68 +1,32 @@
 import  { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, 
   DocumentData, 
   DocumentSnapshot, 
-  getDoc, getDocs, getFirestore, limit, orderBy, query, QueryConstraint, setDoc, 
+  getDoc, getDocs, getFirestore, limit, orderBy, query, QueryConstraint, serverTimestamp, setDoc, 
    startAfter, 
    updateDoc, 
    where} from 'firebase/firestore';
 import { getAuth, updateProfile } from "firebase/auth";
 import { db } from '../App';
 import { randomAvatarUrl } from '../components/Avatar';
-import { OrderCatagorie } from '../pages/AddOrderPage';
 import { getDownloadURL, getStorage, ref, uploadBytes, } from "firebase/storage";
-import { type } from 'os';
+import { ApplicationInfo, ApplicationProps, Geolocation, newOrderProps, OrderCatagorie, orderFilter, orderProps, OrderReportInfo, OrderReportProps, userInfo, UserProfile } from '../types';
+import {keyValue} from '../types';
 
 
 
-export type UserProfile ={
-  name:string,
-  phoneNumber:string,
-  photoURL:string,
-  email?:string
-}
-export type userInfo={
-  name:string,
-  photoURL:string,
-  phoneNumber:string|""
-}
-
-export type ApplicationProps ={
-  byUser:string,
-  forOrder:string,
-  forUser:string,
-  isAccepted:boolean,
-  isDone:boolean,
-  timeAccepted:any,
-  timeDone:any,
-  timeSend:any,
-}
-export type ApplicationInfo={
-  id:string,
-  byUser:string,
-  time:Date
-}
-export type OrderReportInfo={
-  byUser:string,
-  time:Date,
-  why:string,
-  id:string
-}
-export type OrderReportProps={
-  byUser:string,
-  time:Date,
-  why:string,
-  OrderId:string
-}
-export type orderProps={
-  urgent:boolean,
-  type:string,
-  uid:string,
-  from:keyValue,
-  to:keyValue,
-  time:any,
-  comment:string|undefined|null,
-  reports:OrderReportInfo[],
-  applications:ApplicationInfo[]
+export async function uploadNewOrder(o:newOrderProps){
+  const newO:orderProps = {
+    urgent: o.urgent || false,
+    from: o.from,
+    to: o.to,
+    uid: getAuth().currentUser?.uid!,
+    time: serverTimestamp(),
+    type: o.type ||"smallObjects",
+    comment: o.comment || 'no comment',
+    reports: [],
+    applications: []
+  }
+  return await addDoc(collection(db, 'orders'), newO)
 
 }
 export async function setUserImage(photo: Blob, fileName: string,userid?:string){
@@ -83,15 +47,7 @@ export async function setUserImage(photo: Blob, fileName: string,userid?:string)
 export async function getTripCard(id:String){
     return await getDoc(doc(getFirestore(),"orders/"+id))
   }
-  type keyValue={key:string,value:string}
-  export type orderFilter={
-    from?:keyValue|"",
-    to?:keyValue|"",
-    userID?:string,
-    limit?:number,
-    type?:OrderCatagorie|'',
-    urgent?:boolean
-  }
+ 
   export async function getOrders(filter?:orderFilter,_limit?:number,fromDoc?:DocumentSnapshot){
     var qu = query(collection(db,"orders/"))
     if(filter){
@@ -154,7 +110,8 @@ export function UserProfileFromDoc(doc:DocumentSnapshot):UserProfile{
   return {
     name:d?.name,
     phoneNumber:d?.phoneNumber,
-    photoURL:d?.photoURL
+    photoURL:d?.photoURL,
+    devloper:!!d?.devloper
   }
 }
   

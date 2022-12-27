@@ -7,7 +7,7 @@ import { getAuth } from 'firebase/auth';
 import "./Profile.css"
 import OrderCard from '../components/OrderCard';
 import { Redirect, useHistory, useParams } from 'react-router';
-import { orderProps } from '../providers/firebaseMain';
+import { orderProps } from '../types';
 
 const OrderPage: React.FC = () => {
     const {user,profile} = useGlobals()

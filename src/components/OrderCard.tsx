@@ -20,11 +20,12 @@ import { db } from "../App";
 import useOrder from "../hooks/useOrder";
 import {
     applyForCard, deleteOrder, getUserInfoPlaceHolder,
-    is_user_applied_to_card, makeOrderFromDoc, orderProps,
-    removeApplicationToOrder, reportOrder, userInfo
+    is_user_applied_to_card, makeOrderFromDoc,
+    removeApplicationToOrder, reportOrder, 
 } from "../providers/firebaseMain";
 import { useGlobals } from "../providers/globalsProvider";
 import { cardStyle } from "../styles";
+import { orderProps, userInfo } from "../types";
 import "./OrderCard.css"
 import { prettyDate } from "./utlis/prettyDate";
 

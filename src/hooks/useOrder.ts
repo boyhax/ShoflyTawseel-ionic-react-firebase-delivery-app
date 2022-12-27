@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { getTripCard, makeOrderFromDoc, orderProps } from '../providers/firebaseMain';
+import { getTripCard, makeOrderFromDoc } from '../providers/firebaseMain';
+import { orderProps } from '../types';
 
 const useOrder =  (orderID:string)=>{
     const [order,setOrder] = React.useState<orderProps>()
