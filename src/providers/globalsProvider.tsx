@@ -17,7 +17,8 @@ interface Props {
     profile:UserProfile|undefined,
     currentOrder:DocumentSnapshot|undefined,
     setCurrentOrder:(doc:DocumentSnapshot)=>void|undefined,
-    online:boolean
+    online:boolean,
+    presentAlert:any,dissmissAlert:()=>void
     
 }
 const initialProps:Props={
@@ -25,7 +26,10 @@ const initialProps:Props={
     profile:undefined,
     currentOrder:undefined,
     setCurrentOrder:(v:any)=>undefined,
-    online:false
+    online:false,
+    presentAlert:'',
+    dissmissAlert:()=>'',
+
 }
 const globalsContext = createContext<Props>(initialProps);
 
@@ -42,8 +46,8 @@ const GlobalProvider:React.FC =(props)=>{
 
 
     
-    const [presentAlert] = useIonAlert()
-    
+    const [presentAlert,dissmissAlert] = useIonAlert()
+
     useEffect(()=>{
 
       return onAuthStateChanged(getAuth(),(user)=>{
@@ -114,7 +118,12 @@ const GlobalProvider:React.FC =(props)=>{
          
           && (!!profile.phoneNumber && profile.phoneNumber.length >=8))
         }       
-    const toProvide:Props = {user,profile,setCurrentOrder,currentOrder,online}
+    const toProvide:Props = {user,profile,
+      setCurrentOrder,
+      currentOrder,
+      online,
+      presentAlert,
+      dissmissAlert}
 
 
 

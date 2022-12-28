@@ -2,8 +2,12 @@ ionContent{
   padding:5%
 }
 .container{
+  display: flex;
   justify-content: center;
   align-items: center;
+  vertical-align: middle;
+  margin: auto;
+  flex-direction: column;
 }
 .center{
   justify-content: center;
@@ -17,4 +21,11 @@ ionContent{
   justify-self: center;
   justify-content: center;
   width: 200;
+}
+.backgroundDiagonal{
+  background-color: #e5e5f7;
+  opacity: 0.8;
+  background-image: radial-gradient(#444cf7 0.5px, #e5e5f7 0.5px);
+  background-size: 10px 10px;
+
 }

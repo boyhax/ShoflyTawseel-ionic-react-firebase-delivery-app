@@ -31,7 +31,8 @@ import './theme/variables.css';
 /* Global CSS */
 import './global.css';
 import Profile from './pages/Profile';
-import SignIn from './pages/authPages/SignIn';
+import SignIn from './pages/authPages';
+import SignedIn from './pages/authPages/SignedIn';
 import GlobalProvider from './providers/globalsProvider';
 import OrdersPage from './pages/OrdersPage';
 import MapPage from './pages/MapPage';
@@ -83,8 +84,6 @@ const App: React.FC = () => {
   return (
     <React.StrictMode>
     <GlobalProvider>
-      <script src="https://api.mqcdn.com/sdk/place-search-js/v1.0.0/place-search.js"></script>
-      <link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/place-search-js/v1.0.0/place-search.css" />
       <IonApp>
 
         {/* <IonSplitPane contentId="main"> */}
@@ -93,7 +92,7 @@ const App: React.FC = () => {
           <MainMenu  ></MainMenu>
 
           <IonRouterOutlet id='mainContent'>
-            <Route path={"/Profile"}>
+            <Route path={"/Profile"} exact={true}>
               <AuthRoute>
                 <Profile></Profile>
               </AuthRoute>
@@ -103,10 +102,14 @@ const App: React.FC = () => {
               <AddOrderPage></AddOrderPage>
               </AuthRoute>
             </Route>
+            <Route path={"/SignedIn"}>
+              <AuthRoute>
+              <SignedIn></SignedIn>
+              </AuthRoute>
+            </Route>
 
-            <Route path="/Profile" component={Profile } />
             <Route path="/home" component={Home} exact={true} />
-            <Route path="/Profile/:id" component={ProfileID} />
+            <Route path="/Profile/:id" exact={true} component={ProfileID} />
             <Route path="/createProfile" component={CreateProfile} />
 
             <Route path="/details" component={Details} />

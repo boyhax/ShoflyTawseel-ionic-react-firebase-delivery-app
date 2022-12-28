@@ -1,5 +1,5 @@
 import React from 'react';
-import SignIn from '../pages/authPages/SignIn';
+import SignIn from '../pages/authPages';
 import { useGlobals } from '../providers/globalsProvider';
 
 
