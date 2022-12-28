@@ -4,8 +4,8 @@ import { arrowBack, arrowForwardCircle, home, returnUpBack } from 'ionicons/icon
 import { getAuth, PhoneAuthProvider, signInWithCredential,RecaptchaVerifier,signInWithPhoneNumber, initializeAuth, browserSessionPersistence, browserPopupRedirectResolver, EmailAuthProvider, onAuthStateChanged, GoogleAuthProvider, OAuthProvider } from 'firebase/auth';
 import './SignIn.css';
 import * as firebaseui from 'firebaseui';
-import { useGlobals } from '../providers/globalsProvider';
-import {  getProfile, profileExist } from '../providers/firebaseMain';
+import { useGlobals } from '../../providers/globalsProvider';
+import {  getProfile, profileExist } from '../../providers/firebaseMain';
 import { StyledFirebaseAuth,FirebaseAuth } from 'react-firebaseui';
 import { useHistory } from 'react-router';
 

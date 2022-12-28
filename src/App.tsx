@@ -31,7 +31,7 @@ import './theme/variables.css';
 /* Global CSS */
 import './global.css';
 import Profile from './pages/Profile';
-import SignIn from './pages/SignIn';
+import SignIn from './pages/authPages/SignIn';
 import GlobalProvider from './providers/globalsProvider';
 import OrdersPage from './pages/OrdersPage';
 import MapPage from './pages/MapPage';
@@ -47,7 +47,6 @@ import CreateProfile from './pages/CreatProfile';
 import ProfileID from './pages/ProfileID';
 import AddOrderPage from './pages/AddOrderPage/AddOrderPage';
 import MainMenu from './components/MainMenu';
-import ProtectedRoute from './components/ProtectedRoute';
 import Demo from './pages/Demo';
 import AuthRoute from './routes/AuthRoute';
 import DevloperRoute from './routes/DevloperRoute';

@@ -1,75 +1,57 @@
-import { IonBadge, IonButton, IonCardHeader, IonChip, IonContent, IonIcon, IonInput, IonItem, IonLabel, IonList, IonModal, IonTabBar, IonTitle, IonToolbar, UseIonModalResult } from "@ionic/react";
-import { closeCircle, removeCircleOutline } from "ionicons/icons";
+import { IonButton, IonContent, IonIcon, IonInput, IonItem, IonLabel, IonList, IonModal, IonTabBar, IonTitle, IonToolbar, UseIonModalResult } from "@ionic/react";
 import React, { useEffect, useRef, useState } from "react";
+import { keyValue } from "../types";
 import "./ListPicker.css"
-type dataProps={
-    value:string,
-    key:string
-}
-type Props={
-data:dataProps[],
-placeHolder:string,
-value:string|null,
-onValueSet:(value:{value:string,key:string}|undefined)=>void
-}
-const ListPicker=(props:Props)=>{
-    const {data} = props
-    const [searchValue,setSearchValue] = useState<null|string>(null)
-    const [isOpen,setIsOpen] = useState(false)
-    const modal:any = useRef(null)
 
-    useEffect(()=>{})
-     
-    
-    function onOpen(){
-      setIsOpen(false)
-      modal.current!.present()
+
+interface Props {
+  data: keyValue[],
+  placeHolder: string,
+  onSearchValueChange: (v: string) => void,
+  onValueSet: (value: keyValue | undefined) => void
+  clear?: string
+}
+const ListPicker = ({ data, placeHolder, onValueSet, onSearchValueChange, clear }: Props) => {
+  const [searchValue, setSearchValue] = useState<null | string>(null)
+  const [value, setValue] = useState<keyValue>()
+  const modal: any = useRef(null)
+
+  useEffect(() => { })
+
+  const hundleClear = () => onValueSet(undefined)
+  const hundleSearch = (e: any) => {
+    setSearchValue(e.detail.value!);
+    onSearchValueChange(e.detail.value!)
   }
-    function onClose(){
-        setIsOpen(false)
-        modal.current!.dismiss()
-    }
 
-    return<IonChip color="success" onClick={()=>onOpen()}>
-        {props.value&& <IonIcon onClick={(e)=>props.onValueSet(undefined)} icon={removeCircleOutline} ></IonIcon>}
-        <IonTitle>{props.placeHolder}{props.value}</IonTitle>
-        
-    <IonModal ref={modal}  isOpen={isOpen} canDismiss={true} 
-           onDidDismiss={()=>onClose()}> 
-      <IonItem>
-            <IonLabel>{props.placeHolder}</IonLabel>
-          <IonChip
-           color="success">
-              <IonLabel>{props.value ||"     "}</IonLabel>
-              <IonIcon icon={closeCircle} 
 
-              onClick={()=>{props.onValueSet(undefined)}}/>
+  return <IonContent>
+    <IonItem>
+      <IonLabel>{placeHolder}</IonLabel>
 
-              </IonChip>
-          <IonInput  placeholder="أبحث..."  onIonChange={(e)=>{setSearchValue(e.detail.value!)}}></IonInput>
-          <IonChip color="danger" onClick={(e)=>onClose()}>Close</IonChip>
-          
+      <IonInput placeholder="Search .." onIonChange={hundleSearch}></IonInput>
+      {clear && <IonButton onClick={hundleClear}>CLEAR</IonButton>
+      }    </IonItem>
+
+    <IonContent>
+      <IonList>{data.sort((a, b) => sortFunction(a.value, b.value, searchValue || "")).map((_value: keyValue, index) => {
+        return <IonItem
+          color={_value === value ? 'primary' : 'light'}
+          key={index}
+          onClick={() => { onValueSet(_value); setValue(_value) }}>
+          {_value.value}
         </IonItem>
-        
-        <IonContent>
-      <IonList>{data.sort((a,b) => {
-        const A:string = a.value;
-        const B:string = b.value;
-        return B.indexOf(searchValue||"")!-A.indexOf(searchValue||"")!
-      }).map((value:dataProps, index:Number) => 
-      {
-            return <IonItem 
-            color={value.value === props.value?'primary':'light'}
-            key={value.key} 
-            onClick={()=>{props.onValueSet(value);onClose()}}>{value.value}</IonItem>
-      
-        })}</IonList>
-      
-      </IonContent>
-      </IonModal>
-      
-    </IonChip>
+
+      })}</IonList>
+
+    </IonContent>
+  </IonContent>
 }
 export default ListPicker
 
 
+const sortFunction = (a: string, b: string, value: string) => {
+  const A: string = a.toLowerCase();
+  const B: string = b.toLowerCase();
+  return B.indexOf(value || "")! - A.indexOf(value || "")!
+}

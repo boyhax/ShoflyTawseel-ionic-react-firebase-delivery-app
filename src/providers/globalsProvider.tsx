@@ -7,36 +7,44 @@ import CreateProfile from "../pages/CreatProfile";
 import { db, token } from "../App";
 import { createNewProfileForThisUser, UpdateProfileForThisUser, UserProfileFromDoc } from "./firebaseMain";
 import { UserProfile } from "../types";
+import { useIonAlert } from "@ionic/react";
+import useOnline from "../hooks/useOnline";
+import { randomAvatarUrl } from "../components/Avatar";
+import useSignTools from "../hooks/useSignTools";
 
-
-const globalsContext = createContext<{
+interface Props {
     user:boolean|undefined,
     profile:UserProfile|undefined,
     currentOrder:DocumentSnapshot|undefined,
     setCurrentOrder:(doc:DocumentSnapshot)=>void|undefined,
-    }>({user:false,profile:undefined,currentOrder:undefined,setCurrentOrder:(v)=>undefined});
+    online:boolean
+    
+}
+const initialProps:Props={
+    user:false,
+    profile:undefined,
+    currentOrder:undefined,
+    setCurrentOrder:(v:any)=>undefined,
+    online:false
+}
+const globalsContext = createContext<Props>(initialProps);
 
 const GlobalProvider:React.FC =(props)=>{
     const [user,setUser] = useState<boolean|undefined>(undefined)
     const [profile,setProfile] = useState<UserProfile>()
-    const [online,setOnline] = useState<boolean>()
     const [currentOrder,setCurrentOrder] = useState<DocumentSnapshot>()
 
     const [profileLoadingComplete,setProfileLoadingComplete] = useState<boolean>(false)
 
     const uid=getAuth().currentUser?.uid
+    const {getEmail,getPhone} = useSignTools()
+    const {online} = useOnline()
 
-    const CurrentNetworkStatus = async () => {
-      const status = await Network.getStatus();
-      console.log('online :>> ', status.connected);
-      setOnline(status.connected)
-      Network.addListener('networkStatusChange', status => {
-        setOnline(status.connected)
-      });
-    }
 
+    
+    const [presentAlert] = useIonAlert()
+    
     useEffect(()=>{
-      CurrentNetworkStatus()
 
       return onAuthStateChanged(getAuth(),(user)=>{
                 console.log('user  :>> ', !!user );
@@ -67,11 +75,12 @@ const GlobalProvider:React.FC =(props)=>{
       }
     }
   
-   function fetchProfile(){
+    function  fetchProfile(){
     setProfileLoadingComplete(false)
     const uid = getAuth().currentUser!.uid
     console.log('uid :>> ', uid);
     const ref = doc(getFirestore(),"users/"+uid)
+
     return   onSnapshot(ref,(doc)=>{
         if(doc.exists()){
           const p:any = UserProfileFromDoc(doc)
@@ -80,7 +89,16 @@ const GlobalProvider:React.FC =(props)=>{
           console.log('profile :>> ', p);
 
         }else{
-          createNewProfileForThisUser()
+          hundleNoProfileCreatedYet()
+          
+        }
+        async function hundleNoProfileCreatedYet(){
+          const user  = getAuth().currentUser!
+          const name = user.displayName || ("User"+user.uid.slice(0,5) )
+          const number:string= user.phoneNumber || await getPhone() || ""
+          const email:string = (user.emailVerified && user.email) || await getEmail() ||""
+          const photo = randomAvatarUrl()
+          createNewProfileForThisUser(name,number,email,photo)
         }
         
 
@@ -96,14 +114,11 @@ const GlobalProvider:React.FC =(props)=>{
          
           && (!!profile.phoneNumber && profile.phoneNumber.length >=8))
         }       
-    if(user && profileLoadingComplete && profile ===undefined) {
-        
-        return<globalsContext.Provider value={{user,profile,setCurrentOrder,currentOrder}}>
-          {<CreateProfile onSave={()=>{}}></CreateProfile>}    
-      </globalsContext.Provider>
-    }
+    const toProvide:Props = {user,profile,setCurrentOrder,currentOrder,online}
 
-    return<globalsContext.Provider value={{user,profile,setCurrentOrder,currentOrder}}>
+
+
+    return<globalsContext.Provider value={toProvide}>
      {props.children}    
     </globalsContext.Provider>
 }

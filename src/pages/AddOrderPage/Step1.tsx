@@ -43,9 +43,7 @@ const Step1:React.FC=(props)=>{
     setFocusedPicker(v)
     console.log('onset focused :>> ', v);
   }
-  function pesuedoLocation(v: locationOption): Geolocation {
-    return { latlng: { lat: '15.55555', lng: '51,00000' }, city: v.value, state: v.value }
-  }
+
   function updateOptions(text: string) {
 
     let op: Address[] = []
@@ -58,8 +56,9 @@ const Step1:React.FC=(props)=>{
 
   }
   function isLocationsSet() {
-    return pickUpLocation && dropLocation
+    return order.order.from && order.order.to
   }
+
     return<IonContent>
     <IonFab style={{ left: '10px', top: '10px' }}>
       <IonFabButton color={'light'} onClick={() => history.goBack()}>

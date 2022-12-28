@@ -46,47 +46,48 @@ export default function OrderList(props: any) {
     bo ? filterModal.current.present() : filterModal.current.dismiss()
   }
   return <IonContent >
-    <IonFab style={{position:'sticky',top:'20px'}} horizontal={'start'} vertical={'center'} >
+    <IonFab style={{ position: 'sticky', top: '20px' }} horizontal={'start'} vertical={'center'} >
       <IonFabButton onClick={() => toggleFilterModal(true)}>
         <IonIcon icon={filterIcon}></IonIcon>
       </IonFabButton>
     </IonFab>
-    <IonModal ref={filterModal} style={{ padding: '50px' }} >
+    <IonModal ref={filterModal} style={{ paddingRight: '70px', left: '0' }} >
 
-      <div style={{ display: 'flex', flexDirection: 'column', padding: '10px' }} >
+      <IonContent  >
         <FilterUI onfilter={(v) => orders.setFilter(v)} filter={orders.filter}></FilterUI>
-      </div>
+      </IonContent>
 
     </IonModal>
 
-
-
-
     {/* <IonList > */}
-      <IonRefresher ref={IonRefresherElement} slot="fixed" onIonRefresh={doRefresh} >
-        <IonRefresherContent refreshingText="refreshing..."></IonRefresherContent>
-      </IonRefresher>
-      {orders.orders &&
+    <IonRefresher
+      ref={IonRefresherElement}
+      slot="fixed"
+      onIonRefresh={doRefresh} >
+      <IonRefresherContent
+        refreshingText="refreshing..."></IonRefresherContent>
+    </IonRefresher>
+    {orders.orders &&
 
-        orders.orders.map((v: DocumentSnapshot, i: any) => {
+      orders.orders.map((v: DocumentSnapshot, i: any) => {
 
-          if (!v["exists"]) {
-            return ''
-          }
-          return <OrderCard orderDocSnap={v} key={i} report canApplyFor onRefresh={() => Refresh()} onDeleted={() => { delete list[i]; setList(list) }}>
-          </OrderCard>
-        })
-      }
-      <IonInfiniteScroll
-        ref={infiniteScrollRef}
-        onIonInfinite={onEndRefresh}
-        threshold="100px"
-        disabled={isInfiniteDisabled}>
-        <IonInfiniteScrollContent
-          loadingSpinner="dots"
-          loadingText="بحث المزيد من الطلبات"
-        ></IonInfiniteScrollContent>
-      </IonInfiniteScroll>
+        if (!v["exists"]) {
+          return ''
+        }
+        return <OrderCard orderDocSnap={v} key={i} report canApplyFor onRefresh={() => Refresh()} onDeleted={() => { delete list[i]; setList(list) }}>
+        </OrderCard>
+      })
+    }
+    <IonInfiniteScroll
+      ref={infiniteScrollRef}
+      onIonInfinite={onEndRefresh}
+      threshold="100px"
+      disabled={isInfiniteDisabled}>
+      <IonInfiniteScrollContent
+        loadingSpinner="dots"
+        loadingText="بحث المزيد من الطلبات"
+      ></IonInfiniteScrollContent>
+    </IonInfiniteScroll>
 
     {/* </IonList> */}
 
@@ -102,24 +103,6 @@ export default function OrderList(props: any) {
 
   </IonContent>
 }
-const CitiePicker = (props: { value: string, onItemPicked: (v: { value: string, key: string }) => void, placeHolder: string }) => {
-  return <ListPicker
-    value={props.value}
-    data={Cities()}
-    placeHolder={props.placeHolder}
-    onValueSet={(v) => props.onItemPicked(v!)}></ListPicker>
-}
 
-function isGoodOrder(data: any, profile: any) {
-  if (data!.reportsGot!) {
-    if (data!.reportsGot.length! >= 2) {
-      return false
-    }
-    if (profile && profile.reportsDone!) {
-      if (intersection(profile.reportsDone!, data.reportsGot!).length > 0) {
-        return false
-      }
-    }
-  }
-  return true
-}
+
+
