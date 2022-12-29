@@ -51,7 +51,7 @@ export default function OrderList(props: any) {
         <IonIcon icon={filterIcon}></IonIcon>
       </IonFabButton>
     </IonFab>
-    <IonModal ref={filterModal} style={{ paddingRight: '70px', left: '0' }} >
+    <IonModal ref={filterModal} id='filterModal' style={{ paddingRight: '70px', left: '0' }} >
 
       <IonContent  >
         <FilterUI onfilter={(v) => orders.setFilter(v)} filter={orders.filter}></FilterUI>

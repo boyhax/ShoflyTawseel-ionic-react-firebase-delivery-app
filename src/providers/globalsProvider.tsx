@@ -101,7 +101,7 @@ const GlobalProvider:React.FC =(props)=>{
           const name = user.displayName || ("User"+user.uid.slice(0,5) )
           const number:string= user.phoneNumber || await getPhone() || ""
           const email:string = (user.emailVerified && user.email) || await getEmail() ||""
-          const photo = randomAvatarUrl()
+          const photo = 'https://ui-avatars.com/api/?name=NAME'.replace('NAME',name)
           createNewProfileForThisUser(name,number,email,photo)
         }
         

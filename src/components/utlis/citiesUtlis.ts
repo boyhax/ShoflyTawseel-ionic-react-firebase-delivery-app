@@ -1,14 +1,27 @@
 import React from "react";
 import { getLang } from "../../App";
-type dataProps={
-    value:string,
-    key:string
-}
-export const citiesList:string[] = require("../../assets/cities.json")[0]["oman"]['en']
+import { keyValue } from "../../types";
 
-export function Cities(lang?:string) :dataProps[]{
-    return require("../../assets/cities.json")[0]["oman"][lang ||getLang()]
+const sortFunction = (a: string, b: string, value: string) => {
+    const A: string = a.toLowerCase();
+    const B: string = b.toLowerCase();
+    return B.indexOf(value || "")! - A.indexOf(value || "")!
+  }
+
+export const citiesList: string[] = require("../../assets/cities.json")[0]["oman"]['en']
+
+export function Cities(lang?: string): keyValue[] {
+    return require("../../assets/cities.json")[0]["oman"][lang || getLang()]
 }
+
+export function getLocationSuggetions(searchText: string,quantity:number,filter:any) {
+    var list: any[] = []
+    list =[...Cities('ar'),...Cities('en')]
+    list.sort((a,b)=>{return sortFunction(a.value,b.value,searchText)})
+    quantity>=0?list = list.slice(0,quantity):list = list
+    return list
+}
+// console.log('getLocationSuggetions :>> ', getLocationSuggetions('بد',10,{}));
 
 // console.log(JSON.stringify(Cities))
 

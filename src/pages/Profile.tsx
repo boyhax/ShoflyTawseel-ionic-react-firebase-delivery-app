@@ -221,4 +221,9 @@ const ProfileApplicationsList: FC = (props) => {
     } */}
   </IonList>
 }
-const infoContainer: any = { display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', fontSize: '0.8rem', paddingInlineStart: '2rem' }
+const infoContainer: any = { display: 'flex', 
+flexDirection: 'row', 
+justifyContent: 'center', 
+alignItems: 'center', 
+fontSize: '0.8rem', 
+paddingInlineStart: '2rem' }

@@ -7,38 +7,27 @@ import "./ListPicker.css"
 interface Props {
   data: keyValue[],
   placeHolder: string,
-  onSearchValueChange: (v: string) => void,
   onValueSet: (value: keyValue | undefined) => void
-  clear?: string
+  value:keyValue,
+  searchValue:string
 }
-const ListPicker = ({ data, placeHolder, onValueSet, onSearchValueChange, clear }: Props) => {
-  const [searchValue, setSearchValue] = useState<null | string>(null)
-  const [value, setValue] = useState<keyValue>()
-  const modal: any = useRef(null)
+const ListPicker = ({ data,
+  placeHolder, 
+  onValueSet,
+  value ,
+  searchValue}: Props) => {
 
   useEffect(() => { })
 
-  const hundleClear = () => onValueSet(undefined)
-  const hundleSearch = (e: any) => {
-    setSearchValue(e.detail.value!);
-    onSearchValueChange(e.detail.value!)
-  }
-
-
   return <IonContent>
-    <IonItem>
-      <IonLabel>{placeHolder}</IonLabel>
-
-      <IonInput placeholder="Search .." onIonChange={hundleSearch}></IonInput>
-      {clear && <IonButton onClick={hundleClear}>CLEAR</IonButton>
-      }    </IonItem>
+    
 
     <IonContent>
-      <IonList>{data.sort((a, b) => sortFunction(a.value, b.value, searchValue || "")).map((_value: keyValue, index) => {
+      <IonList>{data.map((_value: keyValue, index) => {
         return <IonItem
-          color={_value === value ? 'primary' : 'light'}
+          color={_value.key === value.key ? 'primary' : 'light'}
           key={index}
-          onClick={() => { onValueSet(_value); setValue(_value) }}>
+          onClick={() => { onValueSet(_value); }}>
           {_value.value}
         </IonItem>
 
@@ -50,8 +39,4 @@ const ListPicker = ({ data, placeHolder, onValueSet, onSearchValueChange, clear 
 export default ListPicker
 
 
-const sortFunction = (a: string, b: string, value: string) => {
-  const A: string = a.toLowerCase();
-  const B: string = b.toLowerCase();
-  return B.indexOf(value || "")! - A.indexOf(value || "")!
-}
+

@@ -1,4 +1,5 @@
-import { IonButton, IonButtons, IonContent, IonHeader, IonImg, IonItem, IonLabel, IonModal, IonPage, IonSelect, IonSelectOption } from '@ionic/react';
+import { IonAccordion, IonAccordionGroup, IonButton, IonButtons, IonContent, IonHeader, IonImg, IonItem, IonLabel, IonModal, IonPage, IonPicker, IonSelect, IonSelectOption, PickerColumn } from '@ionic/react';
+import { Store } from 'pullstate';
 import * as React from 'react';
 import { useHistory } from 'react-router';
 import { orderFilter, OrderCatagories } from '../types';
@@ -10,20 +11,25 @@ interface props {
   onfilter: (v: orderFilter) => void
   filter: orderFilter
 }
-const FilterUI: React.FC<props> = (props) => {
+export const UIStore = new Store({
+  isDarkMode: true,
+});const FilterUI: React.FC<props> = (props) => {
+  const isDarkMode = UIStore.useState(s => s.isDarkMode);
+  console.log('isDarkMode :>> ', isDarkMode);
   const filter: orderFilter = props.filter
   const [focused, setFocused] = React.useState<'from' | 'to' | ''>('')
-  const history  = useHistory()
+  const history = useHistory()
 
-  const modal:any = React.useRef()
+  const modal: any = React.useRef()
 
-  const close = ()=>modal.current.dismiss()
+  const ModalElement: any = () => document.getElementById('filterModal')
+  const close: any = () => ModalElement.dismiss()
 
   const header = <IonHeader>
     <IonButtons>
-      <IonButton onClick={close}>
+      {/* <IonButton onClick={close}>
         close
-      </IonButton>
+      </IonButton> */}
     </IonButtons>
   </IonHeader>
   const set = (obj: object) => {
@@ -50,20 +56,31 @@ const FilterUI: React.FC<props> = (props) => {
     citiesSelectOptions.push(option)
 
   })
-
+  const d:PickerColumn={name:'sdsd',options:[{text:'sdasdsss',value:'sadsd'}
+,{text:'sdasdsss',value:'sadsd'},{text:'sdasdsss',value:'sadsd'},{text:'sdasdsss',value:'sadsd'}]} 
 
   return <div className={"ion-padding"}>
+    {header}
+    <IonAccordionGroup>
+      <IonAccordion value="first">
+        <IonItem slot="header" color="light">
+          <IonLabel>First Accordion</IonLabel>
+        </IonItem>
+        <div className="ion-padding" slot="content">
+          First Content
+        </div>
+      </IonAccordion>
+    </IonAccordionGroup>
+    <IonPicker  isOpen={true} columns={[d]}  ></IonPicker>
+
     <IonItem>
       <IonLabel id='fromClick'>select From</IonLabel>
-      <IonModal ref={modal} trigger={'fromClick'}>
-        {header}
-        <IonContent>
-          <CityPicker
-            onValueSet={(e) => handleFilterValue({ from: e })}
-            placeHolder={'From'}
-          ></CityPicker>
-        </IonContent>
-      </IonModal>
+
+      {/* <CityPicker
+        onValueSet={(e) => handleFilterValue({ from: e })}
+        placeHolder={'From'}
+      ></CityPicker> */}
+
 
     </IonItem>
 

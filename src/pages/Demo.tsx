@@ -5,6 +5,7 @@ import './Tab3.css';
 import OrderCard from '../components/OrderCard';
 import { DocumentSnapshot } from 'firebase/firestore';
 import { Route } from 'react-router-dom';
+import MainHeader from '../components/MainHeader';
 
 const Demo: React.FC = () => {
   const DemoCard = (props:any)=>{return<IonPage><IonCard>heloo</IonCard></IonPage>}
@@ -12,10 +13,10 @@ const Demo: React.FC = () => {
 
   return (
     
-      <IonRouterOutlet>
-      <Route exact={true} path={'/card'}  component={DemoCard }></Route>
-      <Route  path={'/'}  component={DemoCard2 }></Route>
-      </IonRouterOutlet>
+      <IonPage>
+        <MainHeader></MainHeader>
+        
+      </IonPage>
   );
 };
 
