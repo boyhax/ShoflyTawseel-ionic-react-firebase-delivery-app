@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { IonContent, IonPage, IonTitle, IonToolbar, IonButtons, IonBackButton, IonCard, IonSpinner, IonLabel, IonItem, IonHeader, IonFabButton, IonFab, IonIcon, IonList } from '@ionic/react';
 import { useGlobals } from '../providers/globalsProvider';
 import { getAuth } from 'firebase/auth';
-import "./Profile.css"
 import { useHistory, useParams } from 'react-router';
 import OrderList from '../components/OrderList';
 import OrderCard from '../components/OrderCard';

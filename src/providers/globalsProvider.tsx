@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";  
 import { getAuth, onAuthStateChanged, updateProfile, } from "firebase/auth";
-import "./globalsProvider.css"
 import { doc, DocumentSnapshot, getFirestore, onSnapshot, setDoc } from "firebase/firestore";
 import { Network } from '@capacitor/network';
 import CreateProfile from "../pages/CreatProfile";

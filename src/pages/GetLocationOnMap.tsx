@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { IonBadge, IonButton, IonContent, IonFab, IonFabButton,
    IonIcon, IonPage} from '@ionic/react';
-import './Home.css';
 import { chatbox, menuOutline } from 'ionicons/icons';
 import { useHistory } from "react-router-dom";
 import { useGlobals } from '../providers/globalsProvider';

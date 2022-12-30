@@ -4,7 +4,6 @@ import { close, logOutOutline, } from 'ionicons/icons';
 import { useGlobals } from '../providers/globalsProvider';
 import { collection, DocumentData, DocumentSnapshot, getDocs, getFirestore, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
-import "./Profile.css"
 import OrderCard from '../components/OrderCard';
 import { updateUserProfile } from '../providers/firebaseMain';
 import { TT } from '../components/utlis/tt';

@@ -4,7 +4,6 @@ import { exitSharp, } from 'ionicons/icons';
 import { useGlobals } from '../providers/globalsProvider';
 import { collection, doc, getDocs, getFirestore, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
-import "./Profile.css"
 import OrderCard from '../components/OrderCard';
 import { Redirect, useHistory, useParams } from 'react-router';
 import { orderProps } from '../types';

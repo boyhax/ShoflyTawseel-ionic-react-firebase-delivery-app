@@ -6,7 +6,6 @@ import React, { useEffect, } from "react";
 import { useHistory } from "react-router";
 import { avatarPLaceholder } from "../providers/firebaseMain";
 import { useGlobals } from "../providers/globalsProvider";
-import "./MainMenu.css"
 
 interface props extends ComponentProps {
     menuRef?: any
@@ -44,8 +43,9 @@ const MainMenu = (Props: props) => {
                
                 {profile?.devloper && <IonItem className="item" 
 
-                onClick={() => history.push("Demo")}>Info
+                onClick={() => history.push("Demo")}>Dev Page
                 </IonItem>}
+                
                 {user ? SignOutButton : SignInButton}
             </IonList>
         </IonContent>

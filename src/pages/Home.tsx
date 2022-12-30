@@ -6,7 +6,6 @@ import {
   IonHeader,
   IonIcon, IonLabel, IonList, IonMenuButton, IonPage, IonTitle, IonToolbar
 } from '@ionic/react';
-import './Home.css';
 import { add, chatbox, menu, menuOutline, person } from 'ionicons/icons';
 import { useHistory } from "react-router-dom";
 import { useGlobals } from '../providers/globalsProvider';
@@ -26,7 +25,7 @@ Device.getInfo().then((info) => {
   dInfo = info
 })
 
-const Tab1 = () => {
+const Home = () => {
 
   const { user, profile } = useGlobals()
   const history = useHistory()
@@ -97,4 +96,4 @@ const Tab1 = () => {
   );
 };
 
-export default Tab1;
+export default Home;
