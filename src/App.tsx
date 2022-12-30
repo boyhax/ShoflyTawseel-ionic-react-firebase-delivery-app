@@ -2,9 +2,16 @@ import React, { } from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import {
   IonApp,
+  IonBadge,
   IonContent,
+  IonIcon,
+  IonLabel,
+  IonRoute,
   IonRouterOutlet,
   IonSplitPane,
+  IonTabBar,
+  IonTabButton,
+  IonTabs,
   IonTitle,
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
@@ -51,6 +58,8 @@ import MainMenu from './components/MainMenu';
 import Demo from './pages/Demo';
 import AuthRoute from './routes/AuthRoute';
 import DevloperRoute from './routes/DevloperRoute';
+import MainHeader from './components/MainHeader';
+import { calendar, homeSharp, informationCircle, map, personCircle } from 'ionicons/icons';
 
 
 
@@ -83,64 +92,92 @@ const App: React.FC = () => {
 
   return (
     <React.StrictMode>
-    <GlobalProvider>
-      <IonApp>
+      <GlobalProvider>
+        <IonApp>
 
-        {/* <IonSplitPane contentId="main"> */}
+          {/* <IonSplitPane contentId="main"> */}
 
-        <IonReactRouter>
-          <MainMenu  ></MainMenu>
+          <IonReactRouter>
+            <MainMenu  ></MainMenu>
+            <MainHeader></MainHeader>
+            <IonRouterOutlet id='mainContent'>
+              <Route path={"/Profile"} exact={true}>
+                <AuthRoute>
+                  <Profile></Profile>
+                </AuthRoute>
+              </Route>
+              <Route path={"/AddOrderPage"}>
+                <AuthRoute>
+                  <AddOrderPage></AddOrderPage>
+                </AuthRoute>
+              </Route>
+              <Route path={"/SignedIn"}>
+                <AuthRoute>
+                  <SignedIn></SignedIn>
+                </AuthRoute>
+              </Route>
 
-          <IonRouterOutlet id='mainContent'>
-            <Route path={"/Profile"} exact={true}>
-              <AuthRoute>
-                <Profile></Profile>
-              </AuthRoute>
-            </Route>
-            <Route path={"/AddOrderPage"}>
-              <AuthRoute>
-              <AddOrderPage></AddOrderPage>
-              </AuthRoute>
-            </Route>
-            <Route path={"/SignedIn"}>
-              <AuthRoute>
-              <SignedIn></SignedIn>
-              </AuthRoute>
-            </Route>
+              <Route path="/home" component={Home} exact={true} />
+              <Route path="/Profile/:id" exact={true} component={ProfileID} />
+              <Route path="/createProfile" component={CreateProfile} />
 
-            <Route path="/home" component={Home} exact={true} />
-            <Route path="/Profile/:id" exact={true} component={ProfileID} />
-            <Route path="/createProfile" component={CreateProfile} />
+              <Route path="/details" component={Details} />
+              <Route path="/SignIn" component={SignIn} />
+              <Route path="/OrdersPage" component={OrdersPage} />
+              <Route path="/OrdersPage/:id/:type" component={OrdersPage} />
 
-            <Route path="/details" component={Details} />
-            <Route path="/SignIn" component={SignIn} />
-            <Route path="/OrdersPage" component={OrdersPage} />
-            <Route path="/OrdersPage/:id/:type" component={OrdersPage} />
+              <Route path="/map/:location" component={MapPage} />
+              <Route path="/map" component={MapPage} />
+              <Route path="/order/:id?type" component={OrderPage} />
+              {/* <Route path="/applications/:id" component={ApplicationsPage} /> */}
+              <Route path="/chats/" component={Chats} />
+              <Route path="/chats/:id" component={Chats} />
+              {/* <Route path="/AddOrderPage" component={AddOrderPage} /> */}
 
-            <Route path="/map/:location" component={MapPage} />
-            <Route path="/map" component={MapPage} />
-            <Route path="/order/:id?type" component={OrderPage} />
-            {/* <Route path="/applications/:id" component={ApplicationsPage} /> */}
-            <Route path="/chats/" component={Chats} />
-            <Route path="/chats/:id" component={Chats} />
-            {/* <Route path="/AddOrderPage" component={AddOrderPage} /> */}
-            
-            <Route path="/demo"  >
-            <DevloperRoute>
-              <Demo></Demo>
-              </DevloperRoute>
-            </Route>
-
-
-            <Route path="/" render={() => <Redirect to="/home" />} exact={true} />
-          </IonRouterOutlet>
+              <Route path="/demo"  >
+                <DevloperRoute>
+                  <Demo></Demo>
+                </DevloperRoute>
+              </Route>
 
 
-        </IonReactRouter>
-        {/* </IonSplitPane> */}
+              <Route path="/" render={() => <Redirect to="/home" />} exact={true} />
+            </IonRouterOutlet>
+            <IonTabs>
+              <IonRouterOutlet>
+                <IonRoute path={'/'}  render={(props)=>{return <Home></Home>}}>
 
-      </IonApp>
-    </GlobalProvider>
+                </IonRoute>
+              </IonRouterOutlet>
+    <IonTabBar slot="bottom">
+      <IonTabButton tab="schedule">
+        <IonIcon icon={calendar} />
+        <IonLabel>Schedule</IonLabel>
+        <IonBadge>6</IonBadge>
+      </IonTabButton>
+
+      <IonTabButton tab="speakers">
+        <IonIcon icon={personCircle} />
+        <IonLabel>Speakers</IonLabel>
+      </IonTabButton>
+
+      <IonTabButton tab="map">
+        <IonIcon icon={map} />
+        <IonLabel>Map</IonLabel>
+      </IonTabButton>
+
+      <IonTabButton tab="about">
+        <IonIcon icon={informationCircle} />
+        <IonLabel>About</IonLabel>
+      </IonTabButton>
+    </IonTabBar>
+  </IonTabs>
+
+          </IonReactRouter>
+          {/* </IonSplitPane> */}
+
+        </IonApp>
+      </GlobalProvider>
     </React.StrictMode>
   )
 };

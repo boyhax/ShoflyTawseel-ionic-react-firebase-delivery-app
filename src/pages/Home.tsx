@@ -70,12 +70,7 @@ const Home = () => {
 
   return (
     <IonPage >
-      <IonHeader>
-        <IonToolbar>
-          <IonMenuButton slot={"start"}></IonMenuButton>
-          <IonTitle slot={"primary"}>Shofly Tawseel</IonTitle>
-        </IonToolbar>
-      </IonHeader>
+      
 
       <div style={{ display: 'block',width:'100%',height:'100%' }}>
         <OrderList></OrderList>
