@@ -98,10 +98,11 @@ const App: React.FC = () => {
           {/* <IonSplitPane contentId="main"> */}
 
           <IonReactRouter>
-            <MainMenu  ></MainMenu>
-            <MainHeader></MainHeader>
-            <IonRouterOutlet id='mainContent'>
-              <Route path={"/Profile"} exact={true}>
+            {/* <MainMenu  ></MainMenu>
+            <MainHeader></MainHeader> */}
+            {/* <IonRouterOutlet id='mainContent'> */}
+
+              {/* <Route path={"/profile"} exact={true}>
                 <AuthRoute>
                   <Profile></Profile>
                 </AuthRoute>
@@ -130,27 +131,33 @@ const App: React.FC = () => {
               <Route path="/map" component={MapPage} />
               <Route path="/order/:id?type" component={OrderPage} />
               {/* <Route path="/applications/:id" component={ApplicationsPage} /> */}
-              <Route path="/chats/" component={Chats} />
+              {/* <Route path="/chats/" component={Chats} />
               <Route path="/chats/:id" component={Chats} />
               {/* <Route path="/AddOrderPage" component={AddOrderPage} /> */}
-
+{/* 
               <Route path="/demo"  >
                 <DevloperRoute>
                   <Demo></Demo>
                 </DevloperRoute>
               </Route>
+              <Route path="/" 
+              render={() => <Redirect to="/home" />} exact={true} />   */}
 
-
-              <Route path="/" render={() => <Redirect to="/home" />} exact={true} />
-            </IonRouterOutlet>
+            {/* </IonRouterOutlet> */}
             <IonTabs>
               <IonRouterOutlet>
+              <Route path={"/profile"} exact={true} component={Profile}>
+                <AuthRoute>
+                  <Profile></Profile>
+                </AuthRoute>
+              </Route>
                 <IonRoute path={'/'}  render={(props)=>{return <Home></Home>}}>
 
                 </IonRoute>
-              </IonRouterOutlet>
+                </IonRouterOutlet>
+
     <IonTabBar slot="bottom">
-      <IonTabButton tab="schedule">
+      <IonTabButton tab="schedule" >
         <IonIcon icon={calendar} />
         <IonLabel>Schedule</IonLabel>
         <IonBadge>6</IonBadge>
@@ -161,16 +168,17 @@ const App: React.FC = () => {
         <IonLabel>Speakers</IonLabel>
       </IonTabButton>
 
-      <IonTabButton tab="map">
+      <IonTabButton tab="profile" href={'profile'} >
         <IonIcon icon={map} />
-        <IonLabel>Map</IonLabel>
+        <IonLabel>profile</IonLabel>
       </IonTabButton>
 
-      <IonTabButton tab="about">
+      <IonTabButton tab="details" >
         <IonIcon icon={informationCircle} />
         <IonLabel>About</IonLabel>
       </IonTabButton>
     </IonTabBar>
+
   </IonTabs>
 
           </IonReactRouter>
