@@ -36,7 +36,7 @@ const OrderPage: React.FC = () => {
     console.log('data :>> ', data);
     
     return (
-    <IonPage >
+    <div >
       
       <IonToolbar color="secondary">
         <IonButtons slot="start">
@@ -91,7 +91,7 @@ const OrderPage: React.FC = () => {
         
         
       
-    </IonPage>
+    </div>
   );
 };
 

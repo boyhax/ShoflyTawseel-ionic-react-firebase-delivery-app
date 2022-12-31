@@ -4,7 +4,6 @@ import { DocumentSnapshot } from "firebase/firestore";
 import { IonContent, IonFab, IonFabButton, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonItem, IonLabel, IonList, IonLoading, IonModal, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonSpinner } from "@ionic/react";
 import { filter as filterIcon } from "ionicons/icons";
 import { RefresherEventDetail } from '@ionic/core';
-import "./OrderList.css"
 import ListPicker from "./ListPicker";
 import { Cities } from "./utlis/citiesUtlis";
 import { intersection } from "../providers/firebaseMain";
@@ -45,8 +44,10 @@ export default function OrderList(props: any) {
   const toggleFilterModal = (bo: boolean) => {
     bo ? filterModal.current.present() : filterModal.current.dismiss()
   }
-  return <IonContent >
-    <IonFab style={{ position: 'sticky', top: '20px' }} horizontal={'start'} vertical={'center'} >
+  return <IonContent fullscreen={true}>
+    <IonFab
+     style={{ position: 'fixed' }}
+     horizontal={'start'} vertical={'bottom'} >
       <IonFabButton onClick={() => toggleFilterModal(true)}>
         <IonIcon icon={filterIcon}></IonIcon>
       </IonFabButton>

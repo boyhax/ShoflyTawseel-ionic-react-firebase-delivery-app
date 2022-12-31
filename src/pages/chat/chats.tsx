@@ -7,6 +7,7 @@ import {  Redirect, Route, useHistory, useParams } from 'react-router';
 import { TT } from '../../components/utlis/tt';
 import { db } from '../../App';
 import Chat from './chat';
+import Page from '../../components/Page';
 
 
 export default  function Chats(props:any) {
@@ -61,7 +62,7 @@ export default  function Chats(props:any) {
       var firstQuery = ref
       var finalQuery= query(firstQuery,where("chaters",'array-contains-any',[getAuth().currentUser?.uid]))
       
-      return onSnapshot(finalQuery,(snap)=>{
+      const unsub =  onSnapshot(finalQuery,(snap)=>{
         console.log('snap :>> ', snap);
         var newList:any[]=[]
         snap.forEach((doc)=>{
@@ -71,8 +72,11 @@ export default  function Chats(props:any) {
             
            setList(newList)
            setRefreshing(false)    
+          }else{
+            unsub()
           }
         })
+        return unsub
       };
       
 
@@ -82,18 +86,11 @@ export default  function Chats(props:any) {
       }
     
     return (
-    <IonPage >
+    <Page>
       
-      <IonToolbar color="secondary">
-        <IonButtons slot="start">
-          <IonBackButton defaultHref="/home" />
-        </IonButtons>
-        <IonTitle slot='primary' >
-          {TT("Chats")}
-        </IonTitle>
-      </IonToolbar>
 
-      <IonContent>
+      <IonContent fullscreen={true}>
+        <IonTitle className={'ion-padding'}>Chats</IonTitle>
              {!!list && list.map((value,key:any) => { 
               return<ChatItem onChatClicked={()=>setCurrentChat(value)} chatDocSnap={value} key={key}>
               
@@ -101,7 +98,7 @@ export default  function Chats(props:any) {
              })
              }
       </IonContent>
-    </IonPage>
+    </Page>
   );
 };
 

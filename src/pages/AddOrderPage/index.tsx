@@ -1,6 +1,7 @@
 import { useIonAlert } from '@ionic/react';
 import { getAuth } from 'firebase/auth';
 import { serverTimestamp } from 'firebase/firestore';
+import { Store } from 'pullstate';
 import * as React from 'react';
 
 import { createContext,useContext } from 'react';
@@ -22,6 +23,7 @@ const initialProps:Props={
     update:(d:any)=>{},
 
 }
+const newOrderStore = new Store(initialProps)
 
 const OrderContext = createContext(initialProps);
 

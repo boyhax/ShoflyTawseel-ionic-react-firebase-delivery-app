@@ -9,6 +9,7 @@ import { db } from '../../App';
 import { attachOutline, chevronBack, sendOutline } from 'ionicons/icons';
 
 import "./chat.css"
+import Page from '../../components/Page';
 
 interface MessageProps{
   time:any ,
@@ -95,19 +96,10 @@ export default  function Chat(props:any) {
       setChatInput("")
     }
     return (
-    <IonPage >
+    <Page >
       
-      <IonToolbar color="secondary">
-        <IonButtons slot="start">
-          {/* <IonBackButton defaultHref="chats" /> */}
-          <IonButton onClick={()=>props.onGoBack()}><IonIcon icon={chevronBack}></IonIcon></IonButton>
-        </IonButtons>
-        <IonTitle slot='primary' >
-          {TT("Chat")}
-        </IonTitle>
-      </IonToolbar>
 
-      <IonContent ref={chatContainer}>
+      <IonContent ref={chatContainer} fullscreen={true}>
         {!! Messages && Messages.map((value:MessageProps,key:any) => { 
               return<MessageBubble owner={value.from === uid} messageData={value} key={key}>
               
@@ -128,7 +120,7 @@ export default  function Chat(props:any) {
                 </IonButton>
               </IonItem>
              </IonFooter>
-    </IonPage>
+    </Page>
   );
 };
 

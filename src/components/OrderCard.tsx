@@ -190,13 +190,7 @@ const OrderCard = ({ orderDocSnap, whatsapp, message, remove, report, canApplyFo
             <div 
             style={{ display: 'flex', alignSelf: 'flex-end', justifyContent: 'space-evenly',overflow:"auto" }} 
             >
-                {
-                !owner && !!userInfo.phoneNumber &&
-                    <IonButton
-                        onClick={() => OpenWhatsapp(userInfo.phoneNumber)}
-                        color="light" shape="round" fill="clear" size="small">
-                        <IonIcon size="large" color="success" icon={logoWhatsapp} ></IonIcon>
-                    </IonButton>}
+                
                 {!owner &&
                     <IonButton
                         onClick={() => { _applyToOrder() }}
@@ -221,7 +215,7 @@ const OrderCard = ({ orderDocSnap, whatsapp, message, remove, report, canApplyFo
                     <IonIcon size="large" color="success" icon={alertCircle} ></IonIcon>
                     إبلاغ
                 </IonButton>}
-                {!owner && <IonButton fill="clear" onClick={() => history.push("/chats/" + data.uid)}
+                {!owner && <IonButton fill="clear" id={"massegeTrigegr"}
                     color="dark" shape="round" >
                     <IonIcon size="large" color="success" icon={chatboxEllipses} ></IonIcon>
                     chat
@@ -230,6 +224,25 @@ const OrderCard = ({ orderDocSnap, whatsapp, message, remove, report, canApplyFo
 
             </div>
         </IonGrid>
+        {/* //messengers popover */}
+        <IonPopover trigger={'massegeTrigegr'}>
+            <IonLabel slot="primary">اذكر السبب</IonLabel>
+            <IonGrid >
+                <IonRow>
+                {!owner && <IonButton fill="clear" onClick={() => history.push("/chats/" + data.uid)}
+                    color="dark" shape="round" >
+                    <IonIcon size="large" color="success" icon={chatboxEllipses} ></IonIcon>
+                    chat
+                </IonButton>}
+                {!owner && !!userInfo.phoneNumber &&
+                    <IonButton
+                        onClick={() => OpenWhatsapp(userInfo.phoneNumber)}
+                        color="light" shape="round" fill="clear" size="small">
+                        <IonIcon size="large" color="success" icon={logoWhatsapp} ></IonIcon>
+                    </IonButton>}
+                </IonRow>
+            </IonGrid>
+        </IonPopover>
         <IonPopover isOpen={reporting}>
             <IonLabel slot="primary">اذكر السبب</IonLabel>
             <IonTextarea onIonChange={(e) => {

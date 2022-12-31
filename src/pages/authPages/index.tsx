@@ -33,6 +33,7 @@ const SignIn: React.FC = () => {
       EmailAuthProvider.PROVIDER_ID
     ],
   };
+  
   return <IonPage>
     {user && <Redirect to={'signedin'} />}
     <AuthHeader></AuthHeader>
@@ -67,13 +68,11 @@ const SignIn: React.FC = () => {
       {method === 'phone' &&
         <PhoneAuth></PhoneAuth>
       }
-      {method === 'email' &&
+      {/* {(method === 'email' || method === 'google') &&
         <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={getAuth()}></StyledFirebaseAuth>
 
-      }
-      {method === 'google' &&
-        <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={getAuth()}></StyledFirebaseAuth>
-      }
+      } */}
+      
 
     </div>
     

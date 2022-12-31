@@ -14,6 +14,7 @@ import { useHistory } from 'react-router';
 import { usePhoto } from '../hooks/usePhoto';
 import useOrders from '../hooks/useOrders';
 import AuthRoute from '../routes/AuthRoute';
+import Page from '../components/Page';
 
 const Profile: React.FC = () => {
   const { user, profile } = useGlobals()
@@ -29,30 +30,10 @@ const Profile: React.FC = () => {
 
   }, [user]);
 
-  const header = <IonHeader><IonToolbar color="secondary" ><IonLabel slot='end'>Profile</IonLabel><IonButtons slot='start'><IonBackButton defaultHref='/'></IonBackButton></IonButtons></IonToolbar></IonHeader>
-  if (user === false) {
-    return <IonPage>
-      {header}
-      <IonContent>
-        <IonTitle>Sign In First</IonTitle>
-        <IonButton onClick={() => history.push("signIn")} fill="clear" color={"primary"}>Here</IonButton>
-      </IonContent>
-    </IonPage>
-  }
-
-  if (profile === null || user == undefined) {
-    return (<IonPage>
-      {header}
-      <IonContent>
-        <IonSpinner slot='primary'>Plaese Wait</IonSpinner>
-      </IonContent>
-    </IonPage>)
-  }
-
+  
 
   return (
-    <IonPage >
-      <IonContent>
+      <Page>
       <IonItem dir={'rtl'} style={{ paddingLeft: '50px' }}>
         <IonGrid >
           <IonRow>
@@ -100,13 +81,7 @@ const Profile: React.FC = () => {
           </IonRow>
         </IonGrid>
       </IonItem>
-      <IonFab horizontal={'start'} vertical={'top'} >
-        <IonFabButton color={'light'}
-          onClick={() => history.goBack()}
-        >
-          <IonIcon color={'primary'} icon={close}></IonIcon>
-        </IonFabButton>
-      </IonFab>
+      
       <IonList>
         <div style={infoContainer}>
           <IonLabel>Name: </IonLabel>
@@ -145,8 +120,7 @@ const Profile: React.FC = () => {
         <IonContent>
           <CreatProfile onSave={() => { setContent("deliver") }} />
         </IonContent>}
-        </IonContent>
-    </IonPage>
+        </Page>
   );
 };
 

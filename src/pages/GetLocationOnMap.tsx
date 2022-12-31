@@ -21,7 +21,7 @@ Device.getInfo().then((info)=>{
 const Tab1= () => {
   
   const {user,profile}= useGlobals()
-  const history = useHistory()
+  const navigate = useHistory()
   const [addOrder,setAddOrder] = useState(false)
   const [fcmToken,setFcmToken] = useState<any>(null)
   const [_profile,_setProfile] = useState<any>(profile?profile:getUserInfoPlaceHolder())
@@ -69,7 +69,7 @@ const Tab1= () => {
               </IonFabButton>
               
               <IonFab>
-              <IonFabButton color={'light'} onClick={()=>{history.push("chats/")}}>
+              <IonFabButton color={'light'} onClick={()=>{navigate.push("chats/")}}>
                   <IonIcon color={'primary'} icon={chatbox} />
               </IonFabButton>
               <IonBadge style={{position: 'absolute',top:'-5px',left:'-5px'}}>5</IonBadge>
@@ -88,7 +88,7 @@ const Tab1= () => {
 
                   <IonButton 
                   style={{position: 'absolute',bottom:'5px',right:'30%'}}
-                  onClick={()=>history.push('AddOrderPage')} shape={'round'} slot={'start'} >
+                  onClick={()=>navigate.push('AddOrderPage')} shape={'round'} slot={'start'} >
                     Add order now
                   </IonButton>
               

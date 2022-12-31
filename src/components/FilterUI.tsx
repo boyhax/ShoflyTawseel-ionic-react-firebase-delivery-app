@@ -60,18 +60,8 @@ export const UIStore = new Store({
 ,{text:'sdasdsss',value:'sadsd'},{text:'sdasdsss',value:'sadsd'},{text:'sdasdsss',value:'sadsd'}]} 
 
   return <div className={"ion-padding"}>
-    {header}
-    <IonAccordionGroup>
-      <IonAccordion value="first">
-        <IonItem slot="header" color="light">
-          <IonLabel>First Accordion</IonLabel>
-        </IonItem>
-        <div className="ion-padding" slot="content">
-          First Content
-        </div>
-      </IonAccordion>
-    </IonAccordionGroup>
-    <IonPicker  isOpen={true} columns={[d]}  ></IonPicker>
+    {/* {header} */}
+    
 
     <IonItem>
       <IonLabel id='fromClick'>select From</IonLabel>

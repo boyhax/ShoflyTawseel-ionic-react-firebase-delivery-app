@@ -55,7 +55,6 @@ const AddOrderPage:any=(props:any)=>{
   
   
   return <IonPage>
-    <h2>steps</h2>
     {order.step ===1 ?<Step1></Step1>:<Step2></Step2>}
   </IonPage>
 };

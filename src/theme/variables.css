@@ -18,6 +18,9 @@ ion-toolbar{
   /* --background :red; */
   border-bottom: #0cd1e8;
 }
+ion-page{
+  padding-top: 50px;
+}
 
 /** Ionic CSS Variables **/
 :root {

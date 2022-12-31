@@ -6,7 +6,7 @@ import {
   IonHeader,
   IonIcon, IonLabel, IonList, IonMenuButton, IonPage, IonTitle, IonToolbar
 } from '@ionic/react';
-import { add, chatbox, menu, menuOutline, person } from 'ionicons/icons';
+import { add, chatbox, menu, menuOutline, person, personCircle } from 'ionicons/icons';
 import { useHistory } from "react-router-dom";
 import { useGlobals } from '../providers/globalsProvider';
 import MainMenu from '../components/MainMenu';
@@ -18,6 +18,7 @@ import { Device } from '@capacitor/device';
 import OrderList from '../components/OrderList';
 import { greenIcon } from '../components/utlis/LeafLetMap';
 import { TT } from '../components/utlis/tt';
+import Page from '../components/Page';
 
 var dInfo: any = ''
 var state: any = process.env.NODE_ENV
@@ -28,7 +29,7 @@ Device.getInfo().then((info) => {
 const Home = () => {
 
   const { user, profile } = useGlobals()
-  const history = useHistory()
+  const navigate = useHistory()
   const [addOrder, setAddOrder] = useState(false)
   const [fcmToken, setFcmToken] = useState<any>(null)
   const [_profile, _setProfile] = useState<any>(profile ? profile : getUserInfoPlaceHolder())
@@ -69,12 +70,12 @@ const Home = () => {
   }
 
   return (
-    <IonPage >
+    <IonPage>
+
+    <IonContent fullscreen={true} >
       
 
-      <div style={{ display: 'block',width:'100%',height:'100%' }}>
         <OrderList></OrderList>
-      </div>
 
       <IonButton style={{
         position: 'absolute',
@@ -82,11 +83,13 @@ const Home = () => {
         alignSelf: 'center'
       }}
 
-        onClick={() => history.push('AddOrderPage')}
+        onClick={() => navigate.push('AddOrderPage')}
         shape='round'>
         {/* <IonIcon  icon={add}></IonIcon> */}
         {TT('Add New Order')}
       </IonButton>
+    </IonContent>
+    
     </IonPage>
   );
 };
