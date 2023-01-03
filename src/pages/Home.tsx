@@ -70,9 +70,8 @@ const Home = () => {
   }
 
   return (
-    <IonPage>
+    <Page menubutton>
 
-    <IonContent fullscreen={true} >
       
 
         <OrderList></OrderList>
@@ -88,9 +87,8 @@ const Home = () => {
         {/* <IonIcon  icon={add}></IonIcon> */}
         {TT('Add New Order')}
       </IonButton>
-    </IonContent>
     
-    </IonPage>
+    </Page>
   );
 };
 

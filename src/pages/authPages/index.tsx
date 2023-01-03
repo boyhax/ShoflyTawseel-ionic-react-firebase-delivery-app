@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IonButton, IonButtons, IonContent, IonIcon, IonPage } from '@ionic/react';
+import { IonButton, IonButtons, IonCard, IonCardContent, IonCardTitle, IonCol, IonContent, IonGrid, IonIcon, IonItem, IonItemDivider, IonLabel, IonPage, IonPopover, IonRow, IonTitle } from '@ionic/react';
 import './SignIn.css';
 import { StyledFirebaseAuth } from 'react-firebaseui';
 import AuthHeader from './AuthHeader';
@@ -7,75 +7,80 @@ import { GoogleAuthProvider, FacebookAuthProvider, getAuth, PhoneAuthProvider, E
 import { Redirect, useHistory } from 'react-router';
 import { useGlobals } from '../../providers/globalsProvider';
 import PhoneAuth from './PhoneAuth';
-import { returnUpBackSharp } from 'ionicons/icons';
-
+import { logoGoogle, phonePortraitSharp, returnUpBackSharp } from 'ionicons/icons';
+import EmailAuth from './EmailAuth';
+import GoogleSignin from './GoogleSignin';
+import './styles.css'
+import { useGoogleAuth } from '../../hooks/useGoogleAuth';
+import useOnline from '../../hooks/useOnline';
 
 const SignIn: React.FC = () => {
-  const { user } = useGlobals()
-  const history = useHistory()
-  const [method, setMethod] = useState<"email" | "phone" | 'google' | "main">("main")
+  const {online} = useOnline()
+  const googleAuth = useGoogleAuth()
+  const [phoneSignin, setPhoneSignin] = useState(false)
+  const [method, setMethod] = useState<"email" | "phone" | 'google' | "main">("email")
 
   const hundleAuth = (b: "email" | "phone" | 'google' | "main") => {
-    setMethod(b)
+    if (b === "phone") {
+      setPhoneSignin(true)
+    }
+    if (b === "google") {
+      googleAuth.signin()
+    }
   }
-  // Configure FirebaseUI.
-  const uiConfig = {
-    // Popup signin flow rather than redirect flow.
-    signInFlow: 'popup',
-    // Redirect to /signedIn after sign in is successful. Alternatively you can provide a callbacks.signInSuccess function.
-    signInSuccessUrl: '/signedIn',
 
-    // We will display Google and Facebook as auth providers.
-    signInOptions: [
-      GoogleAuthProvider.PROVIDER_ID,
-      // FacebookAuthProvider.PROVIDER_ID,
-      // PhoneAuthProvider.PROVIDER_ID
-      EmailAuthProvider.PROVIDER_ID
-    ],
-  };
-  
-  return <IonPage>
-    {user && <Redirect to={'signedin'} />}
-    <AuthHeader></AuthHeader>
-    <div style={{margin:'auto'}}>
-    <IonButton onClick={()=>hundleAuth('main')} >
-        Return
-        <IonIcon icon={returnUpBackSharp}>
-        </IonIcon></IonButton>
 
-    </div>
-    
-    <div style={{display: 'flex',flexDirection: 'column',
-    justifyContent:'center',
-     marginLeft: 'auto',marginRight: 'auto',height: '100%' }}>
-      
-      {method === 'main' &&
-        <div style={{display:'flex',flexDirection:'column',
-        justifyContent:'center',alignItems:'center',alignContent:'space-between'}}>
+  return <IonPage style={{ display: 'block' }} >
 
-          <IonButton onClick={() => hundleAuth('phone')}>
-            Sign In By Phone
+    <IonContent hidden={!online} style={{ padding: 'auto 50px' }}>
+      <IonCard className={'margin-center'}>
+        <IonCardTitle className={'ion-padding'}>
+          Welcome
+        </IonCardTitle>
+        <IonCardContent>
+
+          {method === 'phone' &&
+            <PhoneAuth></PhoneAuth>
+          }
+
+          {(method === 'email') &&
+            <EmailAuth ></EmailAuth>
+          }
+          {(method === 'google') &&
+            <GoogleSignin ></GoogleSignin>
+          }
+        </IonCardContent>
+        <div className={'ion-flex flex-column ion-justify-content-center ion-align-items-center'}>
+          <IonTitle>OR</IonTitle>
+
+        </div>
+
+        <div className={'ion-flex flex-row justify-center align-center'}>
+
+          <IonButton id={'phoneSignin'} shape={'round'} onClick={() => hundleAuth('phone')}>
+            <IonIcon icon={phonePortraitSharp}></IonIcon>
           </IonButton>
-          <IonButton onClick={() => hundleAuth('email')}>
-            Sign In By Email
-          </IonButton>
-          <IonButton onClick={() => hundleAuth('google')}>
-            Sign In By Google
+
+          <IonButton shape={'round'} color={'danger'} onClick={() => hundleAuth('google')}>
+            <IonIcon icon={logoGoogle}></IonIcon>
+
           </IonButton>
         </div>
-      }
-      
-      {method === 'phone' &&
-        <PhoneAuth></PhoneAuth>
-      }
-      {/* {(method === 'email' || method === 'google') &&
-        <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={getAuth()}></StyledFirebaseAuth>
 
-      } */}
-      
 
-    </div>
-    
+      </IonCard>
+
+    </IonContent>
+    <IonContent hidden={online}>
+          <IonLabel>
+            Intenet connection required
+          </IonLabel>
+    </IonContent>
+    <IonPopover 
+    isOpen={phoneSignin}
+     onIonPopoverDidDismiss={() => setPhoneSignin(false)}>
+      <PhoneAuth></PhoneAuth>
+    </IonPopover>
   </IonPage>
     ;
 };

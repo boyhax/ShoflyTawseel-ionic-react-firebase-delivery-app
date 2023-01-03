@@ -1,0 +1,40 @@
+.authContent {}
+
+.formContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    flex-wrap: nowrap;
+}
+.form-input{
+    margin: 5px 2px;
+    border: 2px solid var('--ion-color-primary');
+    border-radius: 10px;
+   
+    
+}
+.ion-flex{
+    display: flex;
+}
+.flex-row{
+    flex-direction: row;
+}
+.flex-column{
+    flex-direction:column;
+}
+.justify-center{
+justify-content: center;
+} 
+.align-center{
+    align-items: center;
+}
+.full-height{
+    height:95%
+}
+.margin-center{
+    padding-right: 20%;
+    padding-left: 20%;
+
+    height: 95%;
+}

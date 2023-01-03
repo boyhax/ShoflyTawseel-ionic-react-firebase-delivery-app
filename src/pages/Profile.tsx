@@ -10,7 +10,7 @@ import { TT } from '../components/utlis/tt';
 import { db } from '../App';
 import CreatProfile from './CreatProfile';
 import AvatarPicker from '../components/AvatarPicker';
-import { useHistory } from 'react-router';
+import { Redirect, useHistory } from 'react-router';
 import { usePhoto } from '../hooks/usePhoto';
 import useOrders from '../hooks/useOrders';
 import AuthRoute from '../routes/AuthRoute';
@@ -34,6 +34,7 @@ const Profile: React.FC = () => {
 
   return (
       <Page>
+        {!user && <Redirect to={'signin'}></Redirect>}
       <IonItem dir={'rtl'} style={{ paddingLeft: '50px' }}>
         <IonGrid >
           <IonRow>
@@ -68,7 +69,6 @@ const Profile: React.FC = () => {
                   </div>
                 </IonContent>
               </IonPopover>
-              {/* <IonTitle>token : {token}</IonTitle> */}
             </IonRow>
             <IonCol>
               <IonButton onClick={() => content !== "editProfile" ? setContent("editProfile") : setContent("orders")}>{TT("edit")}

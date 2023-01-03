@@ -1,25 +1,21 @@
-import React, { useRef, useState } from "react";
+import React, { FunctionComponent, ReactComponentElement, useRef, useState } from "react";
 
 import { DocumentSnapshot } from "firebase/firestore";
 import { IonContent, IonFab, IonFabButton, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonItem, IonLabel, IonList, IonLoading, IonModal, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonSpinner } from "@ionic/react";
 import { filter as filterIcon } from "ionicons/icons";
 import { RefresherEventDetail } from '@ionic/core';
-import ListPicker from "./ListPicker";
-import { Cities } from "./utlis/citiesUtlis";
-import { intersection } from "../providers/firebaseMain";
 import OrderCard from "./OrderCard";
 import useOrders from "../hooks/useOrders";
 import FilterUI from "./FilterUI";
 
 
-export default function OrderList(props: any) {
+export default function OrderPLaceHolder(props:any ):JSX.Element {
   const [list, setList] = useState<DocumentSnapshot<any>[]>([])
-  const [refreshing, setRefreshing] = useState(false)
   const IonRefresherElement = useRef<HTMLIonRefresherElement | any>()
   const infiniteScrollRef = useRef<any>(null)
   const [isInfiniteDisabled, setInfiniteDisabled] = useState(false);
   const [listMessage, setListMessage] = useState<any>(null)
-  const orders = useOrders()
+  const {orders,loading,add,filter,reset,setFilter,update} = useOrders()
   const filterModal = useRef<any>()
 
   // orders.doFilter(filter.filter)
@@ -27,15 +23,15 @@ export default function OrderList(props: any) {
   function doRefresh(event: CustomEvent<RefresherEventDetail>) {
     console.log('Begin async operation');
 
-    orders.update(() => event.detail.complete())
+    update(() => event.detail.complete())
 
   }
 
   function Refresh() {
-    orders.update(() => { })
+    update(() => { })
   }
   function onEndRefresh(e: any) {
-    orders.add(10, () => e.target.complete())
+    add(10, () => e.target.complete())
   }
 
 
@@ -54,7 +50,7 @@ export default function OrderList(props: any) {
     <IonModal ref={filterModal} id='filterModal' style={{ paddingRight: '70px', left: '0' }} >
 
       <IonContent  >
-        <FilterUI onfilter={(v) => orders.setFilter(v)} filter={orders.filter}></FilterUI>
+        <FilterUI onfilter={(v) => setFilter(v)} filter={filter}></FilterUI>
       </IonContent>
 
     </IonModal>
@@ -67,9 +63,9 @@ export default function OrderList(props: any) {
       <IonRefresherContent
         refreshingText="refreshing..."></IonRefresherContent>
     </IonRefresher>
-    {orders.orders &&
+    {orders &&
 
-      orders.orders.map((v: DocumentSnapshot, i: any) => {
+      orders.map((v: DocumentSnapshot, i: any) => {
 
         if (!v["exists"]) {
           return ''
@@ -95,7 +91,7 @@ export default function OrderList(props: any) {
       <IonLabel color={listMessage.color}>{listMessage.text}</IonLabel>
       {/* <IonButton onClick={()=>{Refresh()}}>اعد المحاوله</IonButton> */}
       <IonLabel color="primary" onClick={(e) => {
-        orders.reset()
+        reset()
       }} >رجوع</IonLabel>
 
     </IonItem>

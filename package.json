@@ -5,14 +5,16 @@
   "dependencies": {
     "@capacitor-community/fcm": "^2.0.2",
     "@capacitor/android": "4.3.0",
+    "@capacitor/app": "^4.1.1",
     "@capacitor/camera": "^4.1.4",
-    "@capacitor/core": "^4.1.0",
+    "@capacitor/core": "^4.3.0",
     "@capacitor/device": "^4.0.1",
     "@capacitor/geolocation": "^4.0.1",
     "@capacitor/google-maps": "^4.2.1",
     "@capacitor/ios": "^4.3.0",
     "@capacitor/network": "^4.0.1",
     "@capacitor/push-notifications": "^4.1.0",
+    "@craco/craco": "^7.0.0",
     "@ionic/pwa-elements": "^3.1.1",
     "@ionic/react": "^6.3.0",
     "@ionic/react-router": "^6.4.1",
@@ -43,6 +45,9 @@
     "typescript": "^4.6.4"
   },
   "scripts": {
+    "craco start twWatch": "TAILWIND_MODE=watch craco start",
+    "craco start": " craco start",
+    "craco build": "craco build",
     "serve": "ionic serve",
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -69,8 +74,12 @@
     "@capacitor/cli": "^4.1.0",
     "@types/leaflet": "^1.9.0",
     "@types/react-leaflet": "^2.8.0",
+    "autoprefixer": "^9",
     "cordova-res": "0.15.4",
-    "react-scripts": "^5.0.1"
+    "postcss": "^7",
+    "react-scripts": "^5.0.1",
+    "@tailwindcss/postcss7-compat": "^2.0.3",
+    "tailwindcss": "yarn:@tailwindcss/postcss7-compat@^2.0.3"
   },
-  "description": "Build a photo gallery app that runs on iOS, Android, and the web - with just one codebase."
+  "description": "a delivery request app service."
 }

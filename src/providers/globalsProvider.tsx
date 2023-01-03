@@ -82,7 +82,7 @@ const GlobalProvider:React.FC =(props)=>{
     setProfileLoadingComplete(false)
     const uid = getAuth().currentUser!.uid
     console.log('uid :>> ', uid);
-    const ref = doc(getFirestore(),"users/"+uid)
+    const ref = doc(getFirestore(),"users",uid)
 
     return   onSnapshot(ref,(doc)=>{
         if(doc.exists()){

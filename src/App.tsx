@@ -2,9 +2,11 @@ import React, { } from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import {
   IonApp,
+  IonAvatar,
   IonBadge,
   IonContent,
   IonIcon,
+  IonImg,
   IonLabel,
   IonRoute,
   IonRouterOutlet,
@@ -13,6 +15,7 @@ import {
   IonTabButton,
   IonTabs,
   IonTitle,
+  useIonRouter,
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import Home from './pages/Home';
@@ -35,12 +38,14 @@ import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
+/* Tailwind styles */
+import './theme/tailwind.css';
 /* Global CSS */
 import './global.css';
 import Profile from './pages/Profile';
 import SignIn from './pages/authPages';
 import SignedIn from './pages/authPages/SignedIn';
-import GlobalProvider from './providers/globalsProvider';
+import GlobalProvider, { useGlobals } from './providers/globalsProvider';
 import OrdersPage from './pages/OrdersPage';
 import MapPage from './pages/MapPage';
 import OrderPage from './pages/OrderPage';
@@ -59,8 +64,11 @@ import Demo from './pages/Demo';
 import AuthRoute from './routes/AuthRoute';
 import DevloperRoute from './routes/DevloperRoute';
 import MainHeader from './components/MainHeader';
-import { calendar, homeSharp, informationCircle, map, personCircle } from 'ionicons/icons';
-
+import { calendar, chatboxOutline, chatboxSharp, ellipse, homeOutline, homeSharp, informationCircle, map, personCircle, personOutline, personSharp, square, triangle } from 'ionicons/icons';
+import Tab1 from './pages/GetLocationOnMap';
+import { avatarPLaceholder } from './providers/firebaseMain';
+import { userStore } from './Stores/userStore';
+import  {App as cApp}  from '@capacitor/app';
 
 
 
@@ -89,101 +97,63 @@ export const getLang = () => { return language }
 
 
 const App: React.FC = () => {
-
+  const { profile } = userStore.useState()
+  const ionRouter = useIonRouter();
+  document.addEventListener('ionBackButton', (ev:any) => {
+    ev.detail.register(-1, () => {
+      if (!ionRouter.canGoBack()) {
+        cApp.exitApp();
+      }
+    });
+  });
   return (
     <React.StrictMode>
       <GlobalProvider>
         <IonApp>
-
-          {/* <IonSplitPane contentId="main"> */}
-
           <IonReactRouter>
-            {/* <MainMenu  ></MainMenu>
-            <MainHeader></MainHeader> */}
-            {/* <IonRouterOutlet id='mainContent'> */}
-
-              {/* <Route path={"/profile"} exact={true}>
-                <AuthRoute>
-                  <Profile></Profile>
-                </AuthRoute>
-              </Route>
-              <Route path={"/AddOrderPage"}>
-                <AuthRoute>
-                  <AddOrderPage></AddOrderPage>
-                </AuthRoute>
-              </Route>
-              <Route path={"/SignedIn"}>
-                <AuthRoute>
-                  <SignedIn></SignedIn>
-                </AuthRoute>
-              </Route>
-
-              <Route path="/home" component={Home} exact={true} />
-              <Route path="/Profile/:id" exact={true} component={ProfileID} />
-              <Route path="/createProfile" component={CreateProfile} />
-
-              <Route path="/details" component={Details} />
-              <Route path="/SignIn" component={SignIn} />
-              <Route path="/OrdersPage" component={OrdersPage} />
-              <Route path="/OrdersPage/:id/:type" component={OrdersPage} />
-
-              <Route path="/map/:location" component={MapPage} />
-              <Route path="/map" component={MapPage} />
-              <Route path="/order/:id?type" component={OrderPage} />
-              {/* <Route path="/applications/:id" component={ApplicationsPage} /> */}
-              {/* <Route path="/chats/" component={Chats} />
-              <Route path="/chats/:id" component={Chats} />
-              {/* <Route path="/AddOrderPage" component={AddOrderPage} /> */}
-{/* 
-              <Route path="/demo"  >
-                <DevloperRoute>
-                  <Demo></Demo>
-                </DevloperRoute>
-              </Route>
-              <Route path="/" 
-              render={() => <Redirect to="/home" />} exact={true} />   */}
-
-            {/* </IonRouterOutlet> */}
             <IonTabs>
-              <IonRouterOutlet>
-              <Route path={"/profile"} exact={true} component={Profile}>
-                <AuthRoute>
-                  <Profile></Profile>
-                </AuthRoute>
-              </Route>
-                <IonRoute path={'/'}  render={(props)=>{return <Home></Home>}}>
+              <IonRouterOutlet id="main-content">
+                <Route exact path="/tab1">
+                  <AuthRoute />
+                </Route>
+                <Route exact path="/tab2">
+                  <Home />
+                </Route>
+                <Route path="/tab3">
+                  <Chats />
+                </Route>
+                <Route path="/demo">
+                  <Demo />
+                </Route>
+                <Route exact path="/">
+                  <Redirect to="/tab2" />
+                </Route>
+              </IonRouterOutlet>
+              <IonTabBar slot="bottom">
+                <IonTabButton tab="tab1" href="/tab1">
+                  <IonIcon icon={personOutline} />
+                  {/* <IonAvatar style={{ width: '30px', height: '30px' }}>
+                    <IonImg src={profile !== "loading" ? profile?.photoURL! : avatarPLaceholder}>
+                    </IonImg>
+                  </IonAvatar> */}
 
-                </IonRoute>
-                </IonRouterOutlet>
-
-    <IonTabBar slot="bottom">
-      <IonTabButton tab="schedule" >
-        <IonIcon icon={calendar} />
-        <IonLabel>Schedule</IonLabel>
-        <IonBadge>6</IonBadge>
-      </IonTabButton>
-
-      <IonTabButton tab="speakers">
-        <IonIcon icon={personCircle} />
-        <IonLabel>Speakers</IonLabel>
-      </IonTabButton>
-
-      <IonTabButton tab="profile" href={'profile'} >
-        <IonIcon icon={map} />
-        <IonLabel>profile</IonLabel>
-      </IonTabButton>
-
-      <IonTabButton tab="details" >
-        <IonIcon icon={informationCircle} />
-        <IonLabel>About</IonLabel>
-      </IonTabButton>
-    </IonTabBar>
-
-  </IonTabs>
-
+                  <IonLabel>Profile</IonLabel>
+                </IonTabButton>
+                <IonTabButton tab="tab2" href="/tab2">
+                  <IonIcon icon={homeOutline} />
+                  <IonLabel>Home</IonLabel>
+                </IonTabButton>
+                <IonTabButton tab="tab3" href="/tab3">
+                  <IonIcon icon={chatboxOutline} />
+                  <IonLabel>Chat</IonLabel>
+                </IonTabButton>
+                <IonTabButton tab="demo" href="/demo">
+                  <IonIcon icon={chatboxOutline} />
+                  <IonLabel>Demo</IonLabel>
+                </IonTabButton>
+              </IonTabBar>
+            </IonTabs>
           </IonReactRouter>
-          {/* </IonSplitPane> */}
-
         </IonApp>
       </GlobalProvider>
     </React.StrictMode>

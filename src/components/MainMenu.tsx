@@ -20,32 +20,48 @@ const MainMenu = (Props: props) => {
         //  menu.current!.toggle()
     })
     const history = useHistory()
-    const SignInButton = <IonButton onClick={() => history.push("SignIn")}>Sign In</IonButton>
-    const SignOutButton = <IonButton color="danger" onClick={() => getAuth().signOut()} >Sign Out</IonButton>
+    const SignInButton = <IonButton
+        onClick={() => history.push("SignIn")}>Sign In</IonButton>
+    const SignOutButton = <IonButton color="danger"
+        onClick={() => getAuth().signOut()} >Sign Out</IonButton>
 
-    return <IonMenu side="start" ref={Props.menuRef} contentId='mainContent' >
-        <IonHeader >
-            {/* <IonToolbar color="primary" > */}
+    return <IonMenu ref={Props.menuRef} contentId="main-content"  >
+        {/* <IonHeader >
+            <IonToolbar>
+                <IonTitle>Menu</IonTitle>
+            </IonToolbar>
 
-            <IonItem color={'secondary'} className="item" onClick={() => history.push("Profile")}>
-                <IonLabel>{user ? profile ? profile.name! : profile === undefined ? "signing in.." : "" : ""}</IonLabel>
-                <IonAvatar><IonImg src={profile?.photoURL || avatarPLaceholder}></IonImg></IonAvatar>
-            </IonItem>
-            {/* </IonToolbar> */}
-
-        </IonHeader>
-        <IonContent  >
-            <IonList >
-
-
-               <IonItem className="item" onClick={() => history.push("Details")}>Info
-                </IonItem>
-               
-                {profile?.devloper && <IonItem className="item" 
-
-                onClick={() => history.push("Demo")}>Dev Page
-                </IonItem>}
+        </IonHeader> */}
+        <IonContent class="ion-padding"  >
+            <IonList  >
                 
+                        <IonButtons slot={'primary'}>
+                        <IonButton>
+                        
+                    {user ?
+                     profile ? profile.name! 
+                     : profile === undefined ?
+                      "signing in.." : "" : ""}
+                        </IonButton>
+                        <IonAvatar slot={'primary'}>
+                        <IonImg src={profile?.photoURL || avatarPLaceholder}>
+                        </IonImg>
+                    </IonAvatar>
+                        </IonButtons>
+                       
+                    
+
+
+                {/* </IonToolbar> */}
+
+                <IonItem className="item" onClick={() => history.push("Details")}>Info
+                </IonItem>
+
+                {profile?.devloper && <IonItem className="item"
+
+                    onClick={() => history.push("Demo")}>Dev Page
+                </IonItem>}
+
                 {user ? SignOutButton : SignInButton}
             </IonList>
         </IonContent>

@@ -22,26 +22,6 @@ import { useHistory, useParams } from 'react-router';
   },[]);
   
    
-  const header = <IonHeader><IonToolbar color="secondary" ><IonLabel slot='end'>Profile</IonLabel><IonButtons slot='start'><IonBackButton defaultHref='/'></IonBackButton></IonButtons></IonToolbar></IonHeader>
-    
-  if(!uid ){
-      return<IonPage>
-        {header}
-        <IonContent>
-      <IonTitle>Error Wrong Id</IonTitle>
-    </IonContent>
-    </IonPage>
-    }
-    
-    if(userProfile===null){
-      return(<IonPage>
-        {header}
-        <IonContent>
-          <IonSpinner slot='primary'>Plaese Wait</IonSpinner>
-        </IonContent>
-      </IonPage>)
-    }
-    
     
     return (
     <IonPage >
@@ -59,7 +39,6 @@ import { useHistory, useParams } from 'react-router';
                   </IonImg>
                   </IonAvatar>
                   <IonTitle>{userProfile.name}</IonTitle>
-                  {/* <IonTitle>token : {token}</IonTitle> */}
 
               </IonRow>
               </IonRow>
@@ -157,7 +136,6 @@ const ProfileApplicationsList:FC<props>=({uid}:props)=>{
    function getData() {
     setRefreshing(true)
     const ref = collection(db,"ordersApplications")
-    // var firstQuery = query(ref,orderBy("timeSend","desc"))
     var finalQuery= query(ref,where("byUser","==",uid))
     
     return onSnapshot(finalQuery,(snap)=>{
