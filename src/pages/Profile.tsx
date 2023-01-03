@@ -150,10 +150,7 @@ const ProfileOrdersList: FC = (props) => {
 
 
 const ProfileApplicationsList: FC = (props) => {
-  const [list, setList] = useState<DocumentSnapshot<DocumentData>[]>([])
-  const [refreshing, setRefreshing] = useState(true)
-  const [isMounted, setIsMounted] = useState(true)
-  const { user, profile } = useGlobals()
+  useus
   useEffect(() => {
     const unsub = getData();
     return () => { unsub() }

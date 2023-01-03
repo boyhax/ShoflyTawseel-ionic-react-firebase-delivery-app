@@ -6,7 +6,7 @@ import { subscripeUserApplications, } from '../providers/firebaseMain';
 
 
 
-const useOrders = () => {
+const useUserApplications = () => {
     const [userApplications, setUserApplications] = React.useState<QuerySnapshot<DocumentData>>()
     const [loading, setLoading] = React.useState<boolean>(true)
     const [mounted, setMounted] = useState(true)
@@ -30,4 +30,4 @@ const useOrders = () => {
 
     return { userApplications, loading, update };
 }
-export default useOrders
+export default useUserApplications
