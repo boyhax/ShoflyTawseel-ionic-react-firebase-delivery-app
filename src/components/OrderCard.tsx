@@ -1,9 +1,8 @@
 import { Device } from "@capacitor/device";
-import { stringify } from "@firebase/util";
 import { ComponentProps } from "@ionic/core";
 import {
-    IonCard, IonLabel, IonChip, IonIcon, IonButton, IonPopover,
-    IonTextarea, IonSpinner, IonTitle, IonAvatar, IonImg, IonRow, IonGrid, useIonAlert, IonItem, IonCol, IonCardHeader, IonCardTitle, IonCardSubtitle
+    IonLabel, IonChip, IonIcon, IonButton, IonPopover,
+    IonTextarea, IonSpinner, IonAvatar, IonImg, IonRow, IonGrid, useIonAlert, IonCardHeader, IonCardTitle, IonCardSubtitle
 } from "@ionic/react";
 import { getAuth } from "firebase/auth";
 import {
@@ -13,11 +12,10 @@ import {
     alertCircle, trashOutline, thumbsDownOutline, thumbsUpOutline,
     logoWhatsapp, chatboxEllipses, arrowBackOutline
 } from "ionicons/icons";
-import moment, { duration } from "moment";
-import React, { FC, useContext, useEffect, useRef, useState } from "react";
+import moment from "moment";
+import React, { useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router";
 import { db } from "../App";
-import useOrder from "../hooks/useOrder";
 import {
     applyForCard, deleteOrder, getUserInfoPlaceHolder,
     is_user_applied_to_card, makeOrderFromDoc,

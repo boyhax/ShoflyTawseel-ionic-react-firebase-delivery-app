@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { getTripCard, makeOrderFromDoc } from '../providers/firebaseMain';
+import {  makeOrderFromDoc } from '../providers/firebaseMain';
 import { orderProps } from '../types';
 
 const useOrder =  (orderID:string)=>{
@@ -11,7 +11,7 @@ const useOrder =  (orderID:string)=>{
     },[])
     const update=()=>{
         setLoading(true)
-        getTripCard(orderID).then((v)=>{setOrder(makeOrderFromDoc(v))}).finally(()=>setLoading(false))
+        // getorder(orderID).then((v)=>{setOrder(makeOrderFromDoc(v))}).finally(()=>setLoading(false))
     }
     return {order,loading,update}
 }
