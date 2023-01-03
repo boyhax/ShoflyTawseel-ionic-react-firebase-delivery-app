@@ -41,28 +41,31 @@ const Page: React.FC<Props> = (props) => {
         <MainMenu menuRef={menu} ></MainMenu>
         <IonFab slot={'fixed'} horizontal={'start'} vertical={'top'} >
 
-        {props.backbutton && 
-            <IonFabButton size={'small'}>
-                <IonIcon icon={returnUpBackSharp}></IonIcon>
-            </IonFabButton>
-        }
-        {props.closebutton && 
-            <IonFabButton size={'small'}>
-                <IonIcon icon={closeSharp}></IonIcon>
-            </IonFabButton>
-        }
-        {props.menubutton && 
-            <IonFabButton >
-                <IonMenuButton></IonMenuButton>
-                {/* <IonIcon icon={menuSharp}></IonIcon> */}
-            </IonFabButton>
-        }
-                </IonFab>
+            {props.backbutton &&
+                <IonFabButton size={'small'}>
+                    <IonIcon icon={returnUpBackSharp}></IonIcon>
+                </IonFabButton>
+            }
+            {props.closebutton &&
+                <IonFabButton size={'small'}>
+                    <IonIcon icon={closeSharp}></IonIcon>
+                </IonFabButton>
+            }
+            {props.menubutton &&
+                <IonFabButton >
+                    <IonMenuButton></IonMenuButton>
+                    {/* <IonIcon icon={menuSharp}></IonIcon> */}
+                </IonFabButton>
+            }
+        </IonFab>
 
 
         <IonContent fullscreen>
+            <div className='flex items-center justify-center min-h-screen
+             from-red-100 via-red-300 to-blue-500 bg-gradient-to-br'>
 
-            {props.children}
+                {props.children}
+            </div>
         </IonContent>
 
 

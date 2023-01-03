@@ -20,8 +20,7 @@ const Profile: React.FC = () => {
   const { user, profile } = useGlobals()
   const [content, setContent] = useState<"orders" | "deliver" | "editProfile">("orders")
   const [pickAvatar, setPickAvatar] = useState(false)
-  // const auth= getAuth()
-  // const id = useParams()
+  
   const photo = usePhoto()
   const history = useHistory()
   const uid = getAuth().currentUser?.uid
@@ -107,19 +106,20 @@ const Profile: React.FC = () => {
       </IonSegment>}
       
     
-      {user && content === "orders" &&
+      { content === "orders" &&
         <IonContent>
           <ProfileOrdersList />
         </IonContent>}
 
-      {user && content === "deliver" &&
+      {content === "deliver" &&
         <IonContent>
           <ProfileApplicationsList />
         </IonContent>}
-      {user && content === "editProfile" &&
+      { content === "editProfile" &&
         <IonContent>
           <CreatProfile onSave={() => { setContent("deliver") }} />
         </IonContent>}
+
         </Page>
   );
 };

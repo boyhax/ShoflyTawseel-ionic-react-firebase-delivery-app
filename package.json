@@ -14,7 +14,6 @@
     "@capacitor/ios": "^4.3.0",
     "@capacitor/network": "^4.0.1",
     "@capacitor/push-notifications": "^4.1.0",
-    "@craco/craco": "^7.0.0",
     "@ionic/pwa-elements": "^3.1.1",
     "@ionic/react": "^6.3.0",
     "@ionic/react-router": "^6.4.1",
@@ -45,10 +44,8 @@
     "typescript": "^4.6.4"
   },
   "scripts": {
-    "craco start twWatch": "TAILWIND_MODE=watch craco start",
-    "craco start": " craco start",
-    "craco build": "craco build",
     "serve": "ionic serve",
+    "ionic build": "ionic build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --transformIgnorePatterns 'node_modules/(?!(@ionic/react|@ionic/react-router|@ionic/core|@stencil/core|ionicons)/)'",
@@ -78,8 +75,7 @@
     "cordova-res": "0.15.4",
     "postcss": "^7",
     "react-scripts": "^5.0.1",
-    "@tailwindcss/postcss7-compat": "^2.0.3",
-    "tailwindcss": "yarn:@tailwindcss/postcss7-compat@^2.0.3"
+    "tailwindcss": "^3.0.0"
   },
   "description": "a delivery request app service."
 }

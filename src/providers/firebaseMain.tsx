@@ -2,7 +2,7 @@ import {
   addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc,
   DocumentData,
   DocumentSnapshot,
-  getDoc, getDocs, getFirestore, limit, orderBy, query, QueryConstraint, serverTimestamp, setDoc,
+  getDoc, getDocs, getFirestore, limit, onSnapshot, orderBy, query, QueryConstraint, QuerySnapshot, serverTimestamp, setDoc,
   startAfter,
   updateDoc,
   where
@@ -47,8 +47,25 @@ export async function setUserImage(photo: Blob, fileName: string, userid?: strin
     await updateUserProfile(getAuth().currentUser?.uid, { photoURL: url })
   }
 }
-export async function getTripCard(id: String) {
-  return await getDoc(doc(getFirestore(), "orders/" + id))
+export  function getUserReports(id: String) {
+  return  getDocs(query(collection(db, "ordersReports"),where('from','==',id)));
+}
+export  function subscripeUserReports(id: String,result:(snap:QuerySnapshot<DocumentData>)=>boolean) {
+  const unsubHere =  onSnapshot(query(collection(db, "ordersReports")
+  ,where('from','==',id)),(snap)=>{let unsub = result(snap);
+  unsub && unsubHere()});
+}
+export  function subscripeUserApplications
+(id: String,result:(snap:QuerySnapshot<DocumentData>)=>boolean) {
+  const unsubHere =  onSnapshot(query(collection(db, "ordersApplications")
+  ,where('byUser','==',id)),(snap)=>{let unsub = result(snap);
+  unsub && unsubHere()});
+}
+export  function subscripeUserOrders
+(id: String,result:(snap:QuerySnapshot<DocumentData>)=>boolean) {
+  const unsubHere =  onSnapshot(query(collection(db, "orders")
+  ,where('uid','==',id)),(snap)=>{let unsub = result(snap);
+  unsub && unsubHere()});
 }
 
 export async function getOrders(filter?: orderFilter, _limit?: number, fromDoc?: DocumentSnapshot) {
