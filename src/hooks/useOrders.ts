@@ -1,7 +1,7 @@
-import { DocumentData, DocumentSnapshot, QueryConstraint } from 'firebase/firestore';
+import { DocumentData, DocumentSnapshot } from 'firebase/firestore';
 import * as React from 'react';
 import { useState } from 'react';
-import { getOrders, getTripCard, makeOrderFromDoc, } from '../providers/firebaseMain';
+import { getOrders, } from '../providers/firebaseMain';
 import { orderFilter } from '../types';
 
 const initalFilter: orderFilter = {

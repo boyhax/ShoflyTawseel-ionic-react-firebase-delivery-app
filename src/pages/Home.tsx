@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  IonBadge, IonButton, IonButtons, IonContent, IonFab, IonFabButton,
+  IonBadge, IonButton, IonButtons, IonCard, IonContent, IonFab, IonFabButton,
   IonFabList,
   IonFooter,
   IonHeader,
-  IonIcon, IonLabel, IonList, IonMenuButton, IonPage, IonTitle, IonToolbar
+  IonIcon, IonLabel, IonList, IonMenuButton, IonPage, IonSegment, IonSegmentButton, IonTitle, IonToolbar
 } from '@ionic/react';
 import { add, chatbox, menu, menuOutline, person, personCircle } from 'ionicons/icons';
 import { useHistory } from "react-router-dom";
@@ -19,6 +19,7 @@ import OrderList from '../components/OrderList';
 import { greenIcon } from '../components/utlis/LeafLetMap';
 import { TT } from '../components/utlis/tt';
 import Page from '../components/Page';
+import OrdersSegmentComponent from '../components/OrdersSegmentComponent';
 
 var dInfo: any = ''
 var state: any = process.env.NODE_ENV
@@ -71,25 +72,39 @@ const Home = () => {
 
   return (
     <Page menubutton>
+      <IonContent fullscreen scrollX>
+        <OrdersSegmentComponent></OrdersSegmentComponent>
+        
+        
+        
+       
+        
+        
+      </IonContent>
 
-      
 
-        <OrderList></OrderList>
 
-      <IonButton style={{
-        position: 'absolute',
-        bottom: '5px',
-        alignSelf: 'center'
-      }}
+      <div className={'sticky bottom-2 w-full flex justify-center'}>
+          <IonButton className={'mx-auto w-50'}
 
-        onClick={() => navigate.push('AddOrderPage')}
-        shape='round'>
-        {/* <IonIcon  icon={add}></IonIcon> */}
-        {TT('Add New Order')}
-      </IonButton>
-    
+            onClick={() => navigate.push('AddOrderPage')}
+            shape='round'>
+            <IonIcon  icon={add}></IonIcon>
+            {TT('Add New Order')}
+          </IonButton>
+        </div>
     </Page>
   );
 };
 
 export default Home;
+
+
+//x scroll
+{/* <div className={'flex flex-row w-100 overflow-x-scroll'}>
+        {[1,2,1,1,1,1,1,].map((v)=>{
+          return  <div className={'w-[100px] h-[100px]'}>
+          sfsdfsdfsdfsdfsdfdsf
+        </div>
+        })} 
+        </div> */}

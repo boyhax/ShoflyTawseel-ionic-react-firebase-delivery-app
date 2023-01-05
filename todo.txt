@@ -4,14 +4,16 @@ add start chat button to order card and profiles /done
 add chat fab to home /done
 application system refactoring /done
 make profile edit page/done
-profile user orders and applyings lists/done but not styled
-sign in page google and email
+profile user orders and applyings lists/done but not styled/done
+sign in page google and email/done
 add place holder for chats page items/done
-add catagories to orders
+add catagories to orders/done 
 add user avatar and name in chat header/done
 add location and camera attachment in chat 
-add location to add order 
+add location to add order /done
 leaflet chat sto have ui for add order 
 also see near by orders 
+make filter locations on orderslist
+
 
 

@@ -1,15 +1,13 @@
 import React, { useRef, useState } from "react";
 
 import { DocumentSnapshot } from "firebase/firestore";
-import { IonContent, IonFab, IonFabButton, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonItem, IonLabel, IonList, IonLoading, IonModal, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonSpinner } from "@ionic/react";
+import { IonContent, IonFab, IonFabButton, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonItem, IonLabel, IonModal, IonRefresher, IonRefresherContent } from "@ionic/react";
 import { filter as filterIcon } from "ionicons/icons";
 import { RefresherEventDetail } from '@ionic/core';
-import ListPicker from "./ListPicker";
-import { Cities } from "./utlis/citiesUtlis";
-import { intersection } from "../providers/firebaseMain";
 import OrderCard from "./OrderCard";
 import useOrders from "../hooks/useOrders";
 import FilterUI from "./FilterUI";
+import OrdersPlaceHolder from "./OrdersPLaceHolder";
 
 
 export default function OrderList(props: any) {
@@ -59,7 +57,9 @@ export default function OrderList(props: any) {
 
     </IonModal>
 
+      {orders.loading && <OrdersPlaceHolder></OrdersPlaceHolder>}
     {/* <IonList > */}
+
     <IonRefresher
       ref={IonRefresherElement}
       slot="fixed"

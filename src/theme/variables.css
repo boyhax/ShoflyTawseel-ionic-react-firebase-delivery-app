@@ -21,6 +21,10 @@ ion-toolbar{
 ion-page{
   padding-top: 50px;
 }
+.beuBg{
+  class:`flex items-center justify-center min-h-screen
+  from-red-100 via-red-300 to-blue-500 bg-gradient-to-br`
+}
 
 /** Ionic CSS Variables **/
 :root {

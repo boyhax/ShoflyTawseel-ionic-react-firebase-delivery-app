@@ -50,7 +50,77 @@ const Demo: React.FC = () => {
           </div>
 
         </a>
-      </IonContent>
+        <div
+  style={{ width: 527, height: 212, position: "relative", overflow: "hidden", background: "#fff" }}
+>
+  <div
+    style={{
+      width: 385,
+      height: 188,
+      position: "absolute",
+      left: 70,
+      top: 23,
+      borderRadius: 21,
+      background: "linear-gradient(to bottom, #4182e2 0%, #0c365e 71.87%, #02060a 75%, #000 100%)",
+      boxShadow: "0px 9px 13px 1px rgba(0,0,0,0.25)",
+    }}
+  />
+  <svg
+    width={54}
+    height={53}
+    viewBox="0 0 54 53"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ position: "absolute", left: 95, top: 52 }}
+    preserveAspectRatio="none"
+  >
+    <path
+      d="M0 26.5C0 11.8645 11.8645 0 26.5 0H27.5C42.1355 0 54 11.8645 54 26.5V26.5C54 41.1355 42.1355 53 27.5 53H26.5C11.8645 53 0 41.1355 0 26.5V26.5Z"
+      fill="#D9D9D9"
+    />
+  </svg>
+  <p
+    style={{
+      position: "absolute",
+      left: 156,
+      top: 67,
+      fontSize: 20,
+      textAlign: "left",
+      color: "#fff",
+    }}
+  >
+    @name{" "}
+  </p>
+  <svg
+    width={24}
+    height={25}
+    viewBox="0 0 24 25"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ position: "absolute", left: 104, top: 156 }}
+    preserveAspectRatio="none"
+  >
+    <path
+      d="M0 12C0 5.37258 5.37258 0 12 0V0C18.6274 0 24 5.37258 24 12V13C24 19.6274 18.6274 25 12 25V25C5.37258 25 0 19.6274 0 13V12Z"
+      fill="#D9D9D9"
+    />
+  </svg>
+  <p
+    style={{
+      width: 45,
+      height: 13,
+      position: "absolute",
+      left: 134,
+      top: 163,
+      fontSize: 12,
+      textAlign: "left",
+      color: "#000",
+    }}
+  >
+    chat
+  </p>
+</div>;
+   </IonContent>
     </IonPage >
   );
 };

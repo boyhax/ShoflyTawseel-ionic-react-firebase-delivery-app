@@ -10,6 +10,10 @@ import { useIonAlert } from "@ionic/react";
 import useOnline from "../hooks/useOnline";
 import { randomAvatarUrl } from "../components/Avatar";
 import useSignTools from "../hooks/useSignTools";
+import useUserApplications from "../hooks/useUserApplications";
+import useUserOrders from "../hooks/useUserOrders";
+import useUserReports from "../hooks/useUserReports";
+import useUserHooks from "../hooks/userHooks";
 
 interface Props {
     user:boolean|undefined,
@@ -18,7 +22,7 @@ interface Props {
     setCurrentOrder:(doc:DocumentSnapshot)=>void|undefined,
     online:boolean,
     presentAlert:any,dissmissAlert:()=>void
-    
+    userApplications:any,userOrders:any,userReports:any
 }
 const initialProps:Props={
     user:false,
@@ -28,6 +32,7 @@ const initialProps:Props={
     online:false,
     presentAlert:'',
     dissmissAlert:()=>'',
+    userApplications:{},userOrders:{},userReports:{}
 
 }
 const globalsContext = createContext<Props>(initialProps);
@@ -42,8 +47,7 @@ const GlobalProvider:React.FC =(props)=>{
     const uid=getAuth().currentUser?.uid
     const {getEmail,getPhone} = useSignTools()
     const {online} = useOnline()
-
-
+    const {userApplications,userOrders,userReports} =useUserHooks()
     
     const [presentAlert,dissmissAlert] = useIonAlert()
 
@@ -122,7 +126,7 @@ const GlobalProvider:React.FC =(props)=>{
       currentOrder,
       online,
       presentAlert,
-      dissmissAlert}
+      dissmissAlert,userApplications,userOrders,userReports}
 
 
 

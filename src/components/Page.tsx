@@ -61,11 +61,8 @@ const Page: React.FC<Props> = (props) => {
 
 
         <IonContent fullscreen>
-            <div className='flex items-center justify-center min-h-screen
-             from-red-100 via-red-300 to-blue-500 bg-gradient-to-br'>
 
                 {props.children}
-            </div>
         </IonContent>
 
 
@@ -75,3 +72,6 @@ const Page: React.FC<Props> = (props) => {
 
 
 export default Page;
+
+const beutBackgroundClassName = `flex items-center justify-center min-h-screen
+from-red-100 via-red-300 to-blue-500 bg-gradient-to-br`

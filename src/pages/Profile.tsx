@@ -98,16 +98,16 @@ const Profile: React.FC = () => {
         </div>
 
       </IonList>
-      {content !== "editProfile" && <IonSegment value={content}>
+      {/* {content !== "editProfile" && <IonSegment value={content}>
         <IonSegmentButton value="orders" onClick={() => setContent('orders')}>
           <IonLabel>orders</IonLabel>
         </IonSegmentButton>
         <IonSegmentButton value="deliver" onClick={() => setContent('deliver')}>
           <IonLabel>deliver</IonLabel>
         </IonSegmentButton>
-      </IonSegment>}
+      </IonSegment>} */}
 
-
+{/* 
       {content === "orders" &&
         <IonContent>
           <ProfileOrdersList />
@@ -116,7 +116,7 @@ const Profile: React.FC = () => {
       {content === "deliver" &&
         <IonContent>
           <ProfileApplicationsList />
-        </IonContent>}
+        </IonContent>} */}
       {content === "editProfile" &&
         <IonContent>
           <CreatProfile onSave={() => { setContent("deliver") }} />
