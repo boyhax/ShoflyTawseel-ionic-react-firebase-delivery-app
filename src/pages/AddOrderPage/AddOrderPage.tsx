@@ -18,7 +18,7 @@ import Step1 from './Step1';
 import Step2 from './Step2';
 import { useNewOrder } from '.';
 import { newOrderProps } from '../../types';
-import { useHistory } from 'react-router';
+import { Redirect, useHistory } from 'react-router';
 import { returnUpBackOutline } from 'ionicons/icons';
 
 
@@ -26,7 +26,7 @@ import { returnUpBackOutline } from 'ionicons/icons';
 
 
 const AddOrderPage: any = (props: any) => {
-
+  const [ finish,setFinish]=useState(false)
   const { user, profile } = useGlobals()
   const [orderProps, setOrderProps] = useState<newOrderProps>({
     from: { key: '', value: '' },
@@ -79,16 +79,20 @@ const AddOrderPage: any = (props: any) => {
     console.log('props :>> ', orderProps);
     try {
       await uploadNewOrder(orderProps)
+      // setFinish(true)
+      setLoading(false)
+
       navigate.push('/')
 
     } catch (error) {
+      setLoading(false)
+
       presentAlert({ message: 'Sorry some issue happen.. please try Again' })
     }
-    setLoading(false)
-    setStep(1)
   }
 
   return <IonPage>
+    {/* {finish && <Redirect to={'/'}/>} */}
     {step === 2 && <IonFab>
       <IonFabButton onClick={()=>setStep(1)}>
         <IonIcon icon={returnUpBackOutline}></IonIcon></IonFabButton></IonFab>}

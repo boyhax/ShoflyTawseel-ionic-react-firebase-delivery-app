@@ -1,4 +1,5 @@
-import { IonAccordion, IonAccordionGroup, IonButton, IonButtons, IonContent, IonHeader, IonImg, IonItem, IonLabel, IonModal, IonPage, IonPicker, IonSelect, IonSelectOption, PickerColumn } from '@ionic/react';
+import { IonAccordion, IonAccordionGroup, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonImg, IonItem, IonLabel, IonModal, IonPage, IonPicker, IonSelect, IonSelectOption, IonTitle, IonToolbar, PickerColumn } from '@ionic/react';
+import { filterOutline } from 'ionicons/icons';
 import { Store } from 'pullstate';
 import * as React from 'react';
 import { useHistory } from 'react-router';
@@ -13,104 +14,69 @@ interface props {
 }
 export const UIStore = new Store({
   isDarkMode: true,
-});const FilterUI: React.FC<props> = (props) => {
-  const isDarkMode = UIStore.useState(s => s.isDarkMode);
-  console.log('isDarkMode :>> ', isDarkMode);
-  const filter: orderFilter = props.filter
-  const [focused, setFocused] = React.useState<'from' | 'to' | ''>('')
-  const history = useHistory()
 
-  const modal: any = React.useRef()
+});const FilterUI: React.FC<props> = ({onfilter,filter}) => {
 
-  const ModalElement: any = () => document.getElementById('filterModal')
-  const close: any = () => ModalElement.dismiss()
 
-  const header = <IonHeader>
+  const set = (obj: object) => {
+    onfilter({ ...filter, ...obj })
+  }
+
+  const handleFilterValue = (e: object) => {
+    set(e)
+  }
+
+  
+  return <div className={"ion-padding"}>
+    {/* {header} */}
+    <IonHeader>
+      <IonToolbar>
+        <IonButtons slot={'primary'}>
+        <IonIcon icon={filterOutline}/>
+
+<IonTitle>Filter </IonTitle>
+        </IonButtons>
+        
+      </IonToolbar>
+
     <IonButtons>
       {/* <IonButton onClick={close}>
         close
       </IonButton> */}
     </IonButtons>
   </IonHeader>
-  const set = (obj: object) => {
-    props.onfilter({ ...filter, ...obj })
-  }
-  var citiesSelectOptions: Array<any> = []
-
-  const handleFilterValue = (e: object) => {
-    console.log('e :>> ', e);
-    set(e)
-  }
-
-  Cities("en").map((v, key) => {
-    const option = <IonSelectOption value={v} key={v.key}>
-      {v.value}
-    </IonSelectOption>
-    citiesSelectOptions.push(option)
-
-  })
-  Cities("ar").map((v, key) => {
-    const option = <IonSelectOption value={v} key={v.key}>
-      {v.value}
-    </IonSelectOption>
-    citiesSelectOptions.push(option)
-
-  })
-  const d:PickerColumn={name:'sdsd',options:[{text:'sdasdsss',value:'sadsd'}
-,{text:'sdasdsss',value:'sadsd'},{text:'sdasdsss',value:'sadsd'},{text:'sdasdsss',value:'sadsd'}]} 
-
-  return <div className={"ion-padding"}>
-    {/* {header} */}
-    
 
     <IonItem>
       <IonLabel id='fromClick'>select From</IonLabel>
 
-      {/* <CityPicker
-        onValueSet={(e) => handleFilterValue({ from: e })}
+      <CityPicker
+      clear
+        onValueSet={(e) => handleFilterValue({ from: (e && e.key)||'' })}
         placeHolder={'From'}
-      ></CityPicker> */}
+      ></CityPicker>
 
 
-    </IonItem>
-
-    {/* <IonItem>
-      <IonLabel>From</IonLabel>
-
-      <IonSelect
-        value={props.filter.from}
-        placeholder={'from'}
-        onIonChange={(v) => { set({ from: v.detail.value }); console.log('onselect :>> ', v.detail.value); }}
-        interface={'action-sheet'}  >
-          <IonItem>
-            hhhh
-          </IonItem>
-        <IonSelectOption value={''} key={''}>لاشي</IonSelectOption>
-        {citiesSelectOptions}
-      </IonSelect>
     </IonItem>
     <IonItem>
-      <IonLabel>To</IonLabel>
-      <IonSelect
-        interface={'action-sheet'}
-        value={props.filter.to}
-        placeholder={'select drop point'}
-        cancelText={"cancel"}
-        onIonChange={(v) => set({ to: v.detail.value })}
-      >
-        <IonSelectOption value={''} key={''} onSelect={(v) => console.log(v)}>لاشي</IonSelectOption>
-        {citiesSelectOptions}
+      <IonLabel id='fromClick'>select To</IonLabel>
 
-      </IonSelect>
-    </IonItem> */}
+      <CityPicker
+      clear
+        onValueSet={(e) => handleFilterValue({ to: (e && e.key)||'' })}
+        placeHolder={'To'}
+      ></CityPicker>
+
+
+    </IonItem>
+
+    
 
     <IonItem>
       <IonLabel>Type</IonLabel>
 
-      <IonSelect value={props.filter.type} placeholder={'type'}
+      <IonSelect value={filter.type} placeholder={'type'}
         onIonChange={(v) => set({ type: v.detail.value })}
         interface={'action-sheet'}  >
-        <IonSelectOption value={''} key={''} onSelect={(v) => console.log(v)}>لاشي</IonSelectOption>
         {OrderCatagories.map((v, key) => {
           return <IonSelectOption value={v.name} key={key}>
             {v.name}

@@ -1,5 +1,5 @@
-import { IonCardSubtitle, IonContent, IonIcon, IonInput, IonItem, IonLabel, IonList, IonPopover } from "@ionic/react";
-import { caretForwardOutline } from "ionicons/icons";
+import { IonButton, IonCardSubtitle, IonContent, IonIcon, IonInput, IonItem, IonLabel, IonList, IonPopover } from "@ionic/react";
+import { caretForwardOutline, removeOutline } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import { keyValue } from "../types";
 import { Cities, citiesList, getLocationSuggetions } from "./utlis/citiesUtlis";
@@ -7,15 +7,16 @@ import { Cities, citiesList, getLocationSuggetions } from "./utlis/citiesUtlis";
 
 interface Props extends React.ThHTMLAttributes<Element> {
   placeHolder: string,
-  onValueSet: (value: keyValue) => void | undefined,
+  onValueSet: (value: keyValue| "") => void ,
+  clear?:boolean
 }
 const CitiesEn = Cities('en')
 
-const CityPicker = ({ placeHolder, onValueSet }: Props) => {
+const CityPicker = ({ placeHolder, onValueSet ,clear}: Props) => {
   const [options, setOptions] = React.useState<any[]>()
   const [searchValue, setSearchValue] = useState("")
 
-  const [value, setValue] = useState<keyValue>()
+  const [value, setValue] = useState<keyValue|''>()
 
   useEffect(() => { 
     updateOptions(searchValue)
@@ -41,11 +42,11 @@ const CityPicker = ({ placeHolder, onValueSet }: Props) => {
 
 
   }
-  const hundlepick=(v:keyValue)=>{
+  const hundlepick=(v:keyValue|"")=>{
     setValue(v)
     onValueSet(v)
     setSearchValue('')
-    updateOptions(v.value)
+    v && updateOptions(v.value)
   }
 
   return <>
@@ -57,6 +58,7 @@ const CityPicker = ({ placeHolder, onValueSet }: Props) => {
       placeholder={'pick up point'}
       id={placeHolder+'LocationSelector'}>
     </IonInput>
+    {clear&& <IonIcon slot={'end'} onClick={()=>hundlepick({key:'',value:''})} icon={removeOutline}/>}
   </IonItem>
     
 

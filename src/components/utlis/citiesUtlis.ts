@@ -13,6 +13,7 @@ export const citiesList: string[] = require("../../assets/cities.json")[0]["oman
 export function Cities(lang?: string): keyValue[] {
     return require("../../assets/cities.json")[0]["oman"][lang || getLang()]
 }
+export const citienames = Cities('en').map((v)=>{return v.value})
 
 export function getLocationSuggetions(searchText: string,quantity:number,filter?:(a:any)=>boolean) {
     var list: any[] = []

@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 
 import { DocumentSnapshot } from "firebase/firestore";
-import { IonContent, IonFab, IonFabButton, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonItem, IonLabel, IonModal, IonRefresher, IonRefresherContent } from "@ionic/react";
+import { IonButton, IonContent, IonFab, IonFabButton, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonItem, IonLabel, IonModal, IonRefresher, IonRefresherContent } from "@ionic/react";
 import { filter as filterIcon } from "ionicons/icons";
 import { RefresherEventDetail } from '@ionic/core';
 import OrderCard from "./OrderCard";
@@ -12,15 +12,12 @@ import OrdersPlaceHolder from "./OrdersPLaceHolder";
 
 export default function OrderList(props: any) {
   const [list, setList] = useState<DocumentSnapshot<any>[]>([])
-  const [refreshing, setRefreshing] = useState(false)
   const IonRefresherElement = useRef<HTMLIonRefresherElement | any>()
   const infiniteScrollRef = useRef<any>(null)
   const [isInfiniteDisabled, setInfiniteDisabled] = useState(false);
   const [listMessage, setListMessage] = useState<any>(null)
   const orders = useOrders()
-  const filterModal = useRef<any>()
 
-  // orders.doFilter(filter.filter)
 
   function doRefresh(event: CustomEvent<RefresherEventDetail>) {
     console.log('Begin async operation');
@@ -38,26 +35,16 @@ export default function OrderList(props: any) {
 
 
 
-  const toggleFilterModal = (bo: boolean) => {
-    bo ? filterModal.current.present() : filterModal.current.dismiss()
-  }
+  
   return <IonContent fullscreen={true}>
-    <IonFab
-     style={{ position: 'fixed' }}
-     horizontal={'start'} vertical={'bottom'} >
-      <IonFabButton onClick={() => toggleFilterModal(true)}>
+    <IonFab  className={'sticky flex-row top-5  '}  >
+      <IonFabButton id='filterToggler'
+      className={'ml-auto'}>
         <IonIcon icon={filterIcon}></IonIcon>
       </IonFabButton>
     </IonFab>
-    <IonModal ref={filterModal} id='filterModal' style={{ paddingRight: '70px', left: '0' }} >
 
-      <IonContent  >
-        <FilterUI onfilter={(v) => orders.setFilter(v)} filter={orders.filter}></FilterUI>
-      </IonContent>
 
-    </IonModal>
-
-      {orders.loading && <OrdersPlaceHolder></OrdersPlaceHolder>}
     {/* <IonList > */}
 
     <IonRefresher
@@ -78,6 +65,8 @@ export default function OrderList(props: any) {
         </OrderCard>
       })
     }
+    {orders.loading && <OrdersPlaceHolder></OrdersPlaceHolder>}
+
     <IonInfiniteScroll
       ref={infiniteScrollRef}
       onIonInfinite={onEndRefresh}
@@ -91,16 +80,20 @@ export default function OrderList(props: any) {
 
     {/* </IonList> */}
 
-    {!!listMessage && <IonItem style={{ display: "flex", flexDirection: "column" }}>
+    {!orders.loading && !orders.orders && <IonItem style={{ display: "flex", flexDirection: "column" }}>
       <IonLabel color={listMessage.color}>{listMessage.text}</IonLabel>
-      {/* <IonButton onClick={()=>{Refresh()}}>اعد المحاوله</IonButton> */}
+      <IonButton onClick={()=>{Refresh()}}>اعد المحاوله</IonButton>
       <IonLabel color="primary" onClick={(e) => {
         orders.reset()
       }} >رجوع</IonLabel>
 
     </IonItem>
     }
+    <IonModal keepContentsMounted trigger={'filterToggler'}  id='filterModal' style={{ paddingRight: '70px', left: '0' }} >
 
+        <FilterUI onfilter={(v) => orders.setFilter(v)} filter={orders.filter}></FilterUI>
+
+    </IonModal>
   </IonContent>
 }
 

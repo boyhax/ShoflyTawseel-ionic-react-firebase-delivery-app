@@ -63,9 +63,7 @@ export const OrderPlaceHolder: React.FC = (props) => {
 const OrdersPlaceHolder: React.FC = (props) => {
 
   return <IonList>
-    <IonListHeader>
-      <IonSkeletonText animated={true} style={{ 'width': '80px' }}></IonSkeletonText>
-    </IonListHeader>
+    
     <OrderPlaceHolder />
     <OrderPlaceHolder />
     <OrderPlaceHolder />

@@ -20,8 +20,8 @@ import { ApplicationInfo, ApplicationProps, Geolocation,
 export async function uploadNewOrder(o: newOrderProps) {
   const newO: orderProps = {
     urgent: o.urgent || false,
-    from: o.from,
-    to: o.to,
+    from: o.from.key,
+    to: o.to.key,
     uid: getAuth().currentUser?.uid!,
     time: serverTimestamp(),
     type: o.type || "smallObjects",
@@ -71,8 +71,8 @@ export  function subscripeUserOrders
 export async function getOrders(filter?: orderFilter, _limit?: number, fromDoc?: DocumentSnapshot) {
   var qu = query(collection(db, "orders/"))
   if (filter) {
-    if (filter.from) { qu = query(qu, where("from.key", '==', filter.from.key)) }
-    if (filter.to) { qu = query(qu, where("to.key", '==', filter.to.key)) }
+    if (filter.from) { qu = query(qu, where("from", '==', filter.from)) }
+    if (filter.to) { qu = query(qu, where("to", '==', filter.to)) }
     if (filter.userID) { qu = query(qu, where("uid", '==', filter.userID)) }
     if (filter?.limit) { qu = query(qu, limit(filter?.limit)) }
   }
@@ -85,9 +85,7 @@ export async function getOrders(filter?: orderFilter, _limit?: number, fromDoc?:
   return await getDocs(qu)
 }
 
-export async function updateTripCard(id: String, data: {}) {
-  return updateDoc(doc(getFirestore(), "orders/" + id), data)
-}
+
 
 export function makeApplicationPropsFromDoc(doc: DocumentSnapshot): ApplicationProps {
   let d = doc.exists() ? doc.data() : {}
@@ -135,18 +133,7 @@ export function UserProfileFromDoc(doc: DocumentSnapshot): UserProfile {
   }
 }
 
-export async function addNewTripCard(data: orderProps) {
-  var state: any = false
-  try {
-    const newOrderRef = doc(collection(getFirestore(), "orders"));
-    await setDoc(newOrderRef, { id: newOrderRef.id, ...data });
-    state = true
-  } catch (error) {
-    console.log(error)
-    state = false
-  }
-  return state
-}
+
 export async function getProfile(uid: string, callback: (profile: any) => void = (c) => { }) {
   const res = await getDoc(doc(getFirestore(), "users/" + uid))
   callback(res)

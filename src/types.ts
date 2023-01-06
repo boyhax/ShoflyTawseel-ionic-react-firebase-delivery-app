@@ -56,8 +56,8 @@ export const OrderCatagories: OrderType[] = [
     urgent:boolean,
     type:string,
     uid:string,
-    from:keyValue,
-    to:keyValue,
+    from:string,
+    to:string,
     time:any,
     comment:string|undefined|null,
     reports:OrderReportInfo[],
@@ -84,5 +84,6 @@ export const OrderCatagories: OrderType[] = [
     userID?:string,
     limit?:number,
     type?:OrderCatagorie|'',
-    urgent?:boolean
+    urgent?:boolean,
+    afterDoc?:any
   }

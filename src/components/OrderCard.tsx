@@ -15,7 +15,7 @@ import {
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router";
-import { db } from "../App";
+import { db, getLang } from "../App";
 import {
     applyForCard, deleteOrder, getUserInfoPlaceHolder,
     is_user_applied_to_card, makeOrderFromDoc,
@@ -25,6 +25,7 @@ import { useGlobals } from "../providers/globalsProvider";
 import { cardStyle } from "../styles";
 import { orderProps, userInfo } from "../types";
 import "./OrderCard.css"
+import { citienames} from "./utlis/citiesUtlis";
 import { prettyDate } from "./utlis/prettyDate";
 
 const options: Object = {
@@ -71,10 +72,12 @@ const OrderCard = ({ orderDocSnap, whatsapp, message, remove, report, canApplyFo
     const [userApplied, setApplied] = useState<boolean | undefined>
         (is_user_applied_to_card(uid!, data))
     const history = useHistory()
-    const owner = data!.uid == uid
+    const owner = data!.uid === uid
     const [userInfo, setUserInfo] = useState<userInfo>(getUserInfoPlaceHolder())
     const [showComment, setShowComment] = useState(false)
     // const order = useOrder(id)
+    const from =citienames[Number(data.from)]
+    const to =citienames[Number(data.to)]
     useEffect(() => {
 
         const unsub = onSnapshot(doc(getFirestore(), "orders/" + id), (doc) => {
@@ -159,9 +162,9 @@ const OrderCard = ({ orderDocSnap, whatsapp, message, remove, report, canApplyFo
                 <div style={{ alignSelf: 'center', direction: 'rtl' }}>
                     {/* {order && order.loading? <IonSpinner></IonSpinner>: <IonLabel>{order.order?.from }</IonLabel> } */}
 
-                    <IonChip color="secondary">{"من: " + data.from.value}</IonChip>
+                    <IonChip color="secondary">{"من: " + from }</IonChip>
                     <IonIcon color={'primary'} size={'large'} icon={arrowBackOutline}></IonIcon>
-                    <IonChip color="secondary">{"الى: " + data.to.value}</IonChip>
+                    <IonChip color="secondary">{"الى: " + to}</IonChip>
 
                 </div>
             </div>
