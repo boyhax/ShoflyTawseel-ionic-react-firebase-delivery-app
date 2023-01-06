@@ -2,24 +2,16 @@ import React, { } from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import {
   IonApp,
-  IonAvatar,
-  IonBadge,
-  IonContent,
   IonIcon,
-  IonImg,
   IonLabel,
-  IonRoute,
   IonRouterOutlet,
-  IonSplitPane,
   IonTabBar,
   IonTabButton,
   IonTabs,
-  IonTitle,
   useIonRouter,
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import Home from './pages/Home';
-import Details from './pages/Details';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -42,13 +34,7 @@ import './theme/variables.css';
 import './theme/tailwind.css';
 /* Global CSS */
 import './global.css';
-import Profile from './pages/Profile';
-import SignIn from './pages/authPages';
-import SignedIn from './pages/authPages/SignedIn';
-import GlobalProvider, { useGlobals } from './providers/globalsProvider';
-import OrdersPage from './pages/OrdersPage';
-import MapPage from './pages/MapPage';
-import OrderPage from './pages/OrderPage';
+import GlobalProvider from './providers/globalsProvider';
 import Chats from './pages/chat/chats';
 import { Device } from '@capacitor/device';
 import { FCM } from '@capacitor-community/fcm';
@@ -56,17 +42,10 @@ import { initializeApp } from 'firebase/app';
 import { setupIonicReact } from '@ionic/react';
 import { Config } from './config';
 import { getFirestore } from 'firebase/firestore';
-import CreateProfile from './pages/CreatProfile';
-import ProfileID from './pages/ProfileID';
 import AddOrderPage from './pages/AddOrderPage/AddOrderPage';
-import MainMenu from './components/MainMenu';
 import Demo from './pages/Demo';
 import AuthRoute from './routes/AuthRoute';
-import DevloperRoute from './routes/DevloperRoute';
-import MainHeader from './components/MainHeader';
-import { calendar, chatboxOutline, chatboxSharp, ellipse, homeOutline, homeSharp, informationCircle, map, personCircle, personOutline, personSharp, square, triangle } from 'ionicons/icons';
-import Tab1 from './pages/GetLocationOnMap';
-import { avatarPLaceholder } from './providers/firebaseMain';
+import { chatboxOutline, homeOutline, personOutline } from 'ionicons/icons';
 import { userStore } from './Stores/userStore';
 import  {App as cApp}  from '@capacitor/app';
 
@@ -113,6 +92,9 @@ const App: React.FC = () => {
           <IonReactRouter>
             <IonTabs>
               <IonRouterOutlet id="main-content">
+              <Route exact path="/addorder">
+                  <AddOrderPage/>
+                </Route>
                 <Route exact path="/tab1">
                   <AuthRoute />
                 </Route>

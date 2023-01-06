@@ -14,7 +14,7 @@ export function Cities(lang?: string): keyValue[] {
     return require("../../assets/cities.json")[0]["oman"][lang || getLang()]
 }
 
-export function getLocationSuggetions(searchText: string,quantity:number,filter:any) {
+export function getLocationSuggetions(searchText: string,quantity:number,filter?:(a:any)=>boolean) {
     var list: any[] = []
     list =[...Cities('ar'),...Cities('en')]
     list.sort((a,b)=>{return sortFunction(a.value,b.value,searchText)})

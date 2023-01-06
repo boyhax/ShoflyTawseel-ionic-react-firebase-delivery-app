@@ -1,14 +1,9 @@
-import { useIonAlert } from '@ionic/react';
-import { getAuth } from 'firebase/auth';
-import { serverTimestamp } from 'firebase/firestore';
 import { Store } from 'pullstate';
 import * as React from 'react';
 
 import { createContext,useContext } from 'react';
 import { uploadNewOrder } from '../../providers/firebaseMain';
-import { useGlobals } from '../../providers/globalsProvider';
-import { keyValue, newOrderProps, OrderCatagorie,
-     OrderCatagories,orderProps } from '../../types';
+import { newOrderProps } from '../../types';
 import AddOrderPage from './AddOrderPage';
 interface Props{
     step:number,
@@ -100,22 +95,4 @@ export const useNewOrder=()=>{
 
 export default Provider
 
-class Order{
-    greeting:string
-    constructor(greeting:string){
-        this.greeting = greeting
-    }
-    greet(){
-          console.log(this.greeting)  
-    }
-    update(d:any){
-            
-        this.greeting = d
-    } 
-    
-      
-}
-const d = new Order("hellll")
-d.greet()
-d.update("ddd")
-d.greet()
+

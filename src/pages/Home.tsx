@@ -76,10 +76,6 @@ const Home = () => {
         <OrdersSegmentComponent></OrdersSegmentComponent>
         
         
-        
-       
-        
-        
       </IonContent>
 
 
@@ -87,7 +83,7 @@ const Home = () => {
       <div className={'sticky bottom-2 w-full flex justify-center'}>
           <IonButton className={'mx-auto w-50'}
 
-            onClick={() => navigate.push('AddOrderPage')}
+            onClick={() => navigate.push('addorder')}
             shape='round'>
             <IonIcon  icon={add}></IonIcon>
             {TT('Add New Order')}
