@@ -143,9 +143,12 @@ const OrderCard = ({ orderDocSnap, whatsapp, message, remove, report, canApplyFo
         }
 
     }
-    
-    return <IonCard className={'slide-fwd-center'}>
 
+    return <div className={(owner?
+        'bg-gradient-to-r from-red-200 via-red-300 to-yellow-200'
+    :'bg-[conic-gradient(at_right,_var(--tw-gradient-stops))] from-blue-100 via-blue-300 to-blue-500')+
+    'mx-1 my-1 rounded-xl h-40'}>
+        {owner && <p className="absolute z-10 bg-sky-500 w-fit px-4 py-1 text-sm font-bold text-white rounded-tl-lg rounded-br-xl"> Your order </p>}
         <IonGrid>
             <IonCol>
                 {/* top header date time */}
@@ -160,15 +163,16 @@ const OrderCard = ({ orderDocSnap, whatsapp, message, remove, report, canApplyFo
                                 src={userInfo.photoURL}>
                             </IonImg>
                         </IonAvatar>
-                        <p className={' text-center'}>{userInfo.name}</p>
+                        <IonLabel color='dark' className={' text-center'}>{userInfo.name}</IonLabel>
 
                     </div>
                     {/* right side col from to  */}
                     <IonCol className={'align-middle justify-evenly content-evenly'} >
                         <IonRow >
-                            <p style={{ marginLeft: 'auto' }} >
-                                <IonIcon icon={timeOutline}/>
-                                {date}</p>
+                            <IonLabel style={{ marginLeft: 'auto' }} 
+                            color='dark'>
+                                <IonIcon icon={timeOutline} />
+                                {date}</IonLabel>
                         </IonRow>
                         <IonRow className={'align-middle justify-center'}>
 
@@ -179,8 +183,8 @@ const OrderCard = ({ orderDocSnap, whatsapp, message, remove, report, canApplyFo
                         </IonRow>
 
                         <IonRow className={'align-middle justify-evenly'}>
-                            <p
-                                color="secondary"
+                            <IonLabel
+                                color="dark"
                                 onClick={() => {
                                     if (owner) {
                                         setCurrentOrder(orderDocSnap)
@@ -189,13 +193,13 @@ const OrderCard = ({ orderDocSnap, whatsapp, message, remove, report, canApplyFo
                                 }}>
                                 {"تم قبول الطلب: "}
                                 {data.applications.length}
-                            </p>
+                            </IonLabel>
 
 
-                            <p color="secondary"
+                            <IonLabel color="dark"
                                 onClick={() => toggleComment()}>
                                 {"الوصف: " + (showComment ? comment : comment.slice(0, 50) + "...")}
-                            </p>
+                            </IonLabel>
                         </IonRow>
                         {/* bottom bar row for buttons */}
                         <IonRow
@@ -274,7 +278,7 @@ const OrderCard = ({ orderDocSnap, whatsapp, message, remove, report, canApplyFo
                 </IonButtons>
             </IonContent>
         </IonPopover>
-    </IonCard >
+    </div >
 
 }
 export default OrderCard

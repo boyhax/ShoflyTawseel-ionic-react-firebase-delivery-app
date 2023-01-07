@@ -37,7 +37,7 @@ export default function OrderList(props: any) {
 
   
   return <IonContent fullscreen={true}>
-    <IonFab  className={'sticky flex-row top-5  '}  >
+    <IonFab  className={'fixed top-16 right-5 flex-row top-5  '}  >
       <IonFabButton id='filterToggler'
       className={'ml-auto'}>
         <IonIcon icon={filterIcon}></IonIcon>
