@@ -10,7 +10,7 @@ import {
 } from "firebase/firestore";
 import {
     alertCircle, trashOutline, thumbsDownOutline, thumbsUpOutline,
-    logoWhatsapp, chatboxEllipses, arrowBackOutline, watchOutline, timeOutline
+    logoWhatsapp, chatboxEllipses, arrowBackOutline, watchOutline, timeOutline, chatboxOutline, alertCircleOutline
 } from "ionicons/icons";
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
@@ -154,7 +154,7 @@ const OrderCard = ({ orderDocSnap, whatsapp, message, remove, report, canApplyFo
                     {/* left side col avatar and name */}
                     <div className={'w-[15%] '}>
                         <IonAvatar
-                            style={{ width: '50px', height: '50px' }}
+                            // style={{ width: '50px', height: '50px' }}
                             onClick={() => history.push("/profile/" + data.uid)}>
                             <IonImg
                                 src={userInfo.photoURL}>
@@ -164,7 +164,7 @@ const OrderCard = ({ orderDocSnap, whatsapp, message, remove, report, canApplyFo
 
                     </div>
                     {/* right side col from to  */}
-                    <IonCol >
+                    <IonCol className={'align-middle justify-evenly content-evenly'} >
                         <IonRow >
                             <p style={{ marginLeft: 'auto' }} >
                                 <IonIcon icon={timeOutline}/>
@@ -222,13 +222,13 @@ const OrderCard = ({ orderDocSnap, whatsapp, message, remove, report, canApplyFo
                             </IonButton>}
                             {!owner && <IonButton fill="clear" onClick={() => setReporting(!reporting)}
                                 color="dark" shape="round" >
-                                <IonIcon size="large" color="success" icon={alertCircle} ></IonIcon>
-                                إبلاغ
+                                <IonIcon size="large" color="success" icon={alertCircleOutline} ></IonIcon>
+                                {/* إبلاغ */}
                             </IonButton>}
                             {!owner && <IonButton fill="clear" id={"massegeTrigegr"}
                                 color="dark" shape="round" >
-                                <IonIcon size="large" color="success" icon={chatboxEllipses} ></IonIcon>
-                                chat
+                                <IonIcon size="large" color="success" icon={chatboxOutline} ></IonIcon>
+                                {/* chat */}
                             </IonButton>}
 
 
