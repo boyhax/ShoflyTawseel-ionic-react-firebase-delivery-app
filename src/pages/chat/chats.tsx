@@ -1,5 +1,5 @@
 import React, { FC, FunctionComponent, useEffect, useState } from 'react';
-import { IonContent, IonPage, IonTitle, IonToolbar,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton, IonSlides, IonSlide, IonCard, IonCardTitle, IonAvatar, IonImg, IonRouterOutlet } from '@ionic/react';
+import { IonContent, IonPage, IonTitle, IonToolbar,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton, IonSlides, IonSlide, IonCard, IonCardTitle, IonAvatar, IonImg, IonRouterOutlet, IonSkeletonText, IonCardSubtitle, IonGrid } from '@ionic/react';
 import { useGlobals } from '../../providers/globalsProvider';
 import { addDoc, collection, doc, DocumentData, FieldValue, getDoc, getDocs, getFirestore, onSnapshot, orderBy, query, QueryDocumentSnapshot, where } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
@@ -63,7 +63,6 @@ export default  function Chats(props:any) {
       var finalQuery= query(firstQuery,where("chaters",'array-contains-any',[getAuth().currentUser?.uid]))
       
       const unsub =  onSnapshot(finalQuery,(snap)=>{
-        console.log('snap :>> ', snap);
         var newList:any[]=[]
         snap.forEach((doc)=>{
            newList.push(doc)
@@ -90,20 +89,44 @@ export default  function Chats(props:any) {
       
 
       <IonContent fullscreen={true}>
+        <IonToolbar color={'primary'}>
         <IonTitle className={'ion-padding'}>Chats</IonTitle>
+        </IonToolbar>
              {!!list && list.map((value,key:any) => { 
               return<ChatItem onChatClicked={()=>setCurrentChat(value)} chatDocSnap={value} key={key}>
               
              </ChatItem>
              })
              }
+             {refreshing && <ChatsPlaceHolder/>}
+             {!refreshing && !list&& EmptyChat}
+
       </IonContent>
     </Page>
   );
 };
 
+const ChatsPlaceHolder:React.FC=(props)=>{
+  return (<IonGrid>
+    {[1,2,3,4,5,6].map(()=>{return CardSkeleton})}
+  </IonGrid>
+  )
+}
+const EmptyChat = <div className={'flex justify-center align-middle'}>
+  <IonTitle>No Chats now <IonCardSubtitle>Try to reach people </IonCardSubtitle></IonTitle>
+</div>
+const CardSkeleton = <IonItem>
+<IonAvatar>
+  <IonSkeletonText animated/>
+</IonAvatar>
+<IonTitle>
+<IonSkeletonText animated/>
+</IonTitle>
+<IonCardSubtitle>
+<IonSkeletonText animated/>
 
-
+</IonCardSubtitle>
+</IonItem>
 
 interface ChatItemProps {
   chatDocSnap:QueryDocumentSnapshot<DocumentData>,

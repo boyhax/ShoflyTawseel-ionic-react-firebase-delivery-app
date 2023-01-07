@@ -2,8 +2,10 @@ import React, { } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import {
   IonApp,
+  IonButton,
   IonIcon,
   IonLabel,
+  IonMenuToggle,
   IonRouterOutlet,
   IonTabBar,
   IonTabButton,
@@ -45,10 +47,10 @@ import { getFirestore } from 'firebase/firestore';
 import AddOrderPage from './pages/AddOrderPage/AddOrderPage';
 import Demo from './pages/Demo';
 import AuthRoute from './routes/AuthRoute';
-import { chatboxOutline, homeOutline, personOutline } from 'ionicons/icons';
+import { chatboxOutline, homeOutline, menuOutline, personOutline } from 'ionicons/icons';
 import { userStore } from './Stores/userStore';
-import  {App as cApp}  from '@capacitor/app';
-
+import { App as cApp } from '@capacitor/app';
+import MainMenu from './components/MainMenu';
 
 
 const firebaseConfig = Config()
@@ -74,62 +76,71 @@ const language: "en" | "ar" = 'en'
 export const getLang = () => { return language }
 
 
-
 const App: React.FC = () => {
+
   const { profile } = userStore.useState()
   const ionRouter = useIonRouter();
-  document.addEventListener('ionBackButton', (ev:any) => {
+
+  const toggleMenu = () => {
+    const menu: any = document.getElementById('mainMenu')
+    menu.toggle()
+  }
+
+  document.addEventListener('ionBackButton', (ev: any) => {
     ev.detail.register(-1, () => {
       if (!ionRouter.canGoBack()) {
         cApp.exitApp();
       }
     });
   });
+  
   return (
     <React.StrictMode>
       <GlobalProvider>
         <IonApp>
           <IonReactRouter>
+          <MainMenu ></MainMenu>
+
             <IonTabs>
               <IonRouterOutlet id="main-content">
-              <Switch>
+                <Switch>
 
-                <Route exact path="/tab1">
-                  <AuthRoute />
-                </Route>
-                <Route exact path="/tab2">
-                  <Home />
-                </Route>
-                <Route exact path="/tab3">
-                  <Chats />
-                </Route>
-                <Route exact path="/demo">
-                  <Demo />
-                </Route>
-                <Route exact path="/addorder">
-                  <AddOrderPage/>
-                </Route>
-                <Route exact path="/">
-                  <Redirect to="/tab2" />
-                </Route>
+                  <Route exact path="/tab1">
+                    <AuthRoute />
+                  </Route>
+                  <Route exact path="/tab2">
+                    <Home />
+                  </Route>
+                  <Route exact path="/chat">
+                    <Chats />
+                  </Route>
+                  <Route exact path="/demo">
+                    <Demo />
+                  </Route>
+                  <Route exact path="/addorder">
+                    <AddOrderPage />
+                  </Route>
+                  <Route exact path="/">
+                    <Redirect to="/tab2" />
+                  </Route>
                 </Switch>
 
               </IonRouterOutlet>
               <IonTabBar slot="bottom">
+                <IonTabButton tab="menu" onClick={toggleMenu} >
+                  <IonIcon icon={menuOutline} />
+                  <IonLabel>Menu</IonLabel>
+                </IonTabButton>
+
                 <IonTabButton tab="tab1" href="/tab1">
                   <IonIcon icon={personOutline} />
-                  {/* <IonAvatar style={{ width: '30px', height: '30px' }}>
-                    <IonImg src={profile !== "loading" ? profile?.photoURL! : avatarPLaceholder}>
-                    </IonImg>
-                  </IonAvatar> */}
-
                   <IonLabel>Profile</IonLabel>
                 </IonTabButton>
                 <IonTabButton tab="tab2" href="/tab2">
                   <IonIcon icon={homeOutline} />
                   <IonLabel>Home</IonLabel>
                 </IonTabButton>
-                <IonTabButton tab="tab3" href="/tab3">
+                <IonTabButton tab="chat" href="/chat">
                   <IonIcon icon={chatboxOutline} />
                   <IonLabel>Chat</IonLabel>
                 </IonTabButton>

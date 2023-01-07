@@ -25,7 +25,7 @@ const MainMenu = (Props: props) => {
     const SignOutButton = <IonButton color="danger"
         onClick={() => getAuth().signOut()} >Sign Out</IonButton>
 
-    return <IonMenu  ref={Props.menuRef} contentId="main-content"  >
+    return <IonMenu  id='mainMenu' ref={Props.menuRef} contentId="main-content"  >
         {/* <IonHeader >
             <IonToolbar>
                 <IonTitle>Menu</IonTitle>

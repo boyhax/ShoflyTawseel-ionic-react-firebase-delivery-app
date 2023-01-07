@@ -29,7 +29,6 @@ const useOrders = () => {
     }
     React.useEffect(() => {
         update(()=>{})
-        console.log('filter :>> ', filter?filter:'');
     }, [filter]);
 
     const update = (onfinish: () => void) => {

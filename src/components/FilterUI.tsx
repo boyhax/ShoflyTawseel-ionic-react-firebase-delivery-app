@@ -15,7 +15,7 @@ interface props {
 export const UIStore = new Store({
   isDarkMode: true,
 
-});const FilterUI: React.FC<props> = ({onfilter,filter}) => {
+}); const FilterUI: React.FC<props> = ({ onfilter, filter }) => {
 
 
   const set = (obj: object) => {
@@ -26,32 +26,32 @@ export const UIStore = new Store({
     set(e)
   }
 
-  
+
   return <div className={"ion-padding"}>
     {/* {header} */}
     <IonHeader>
       <IonToolbar>
         <IonButtons slot={'primary'}>
-        <IonIcon icon={filterOutline}/>
+          <IonIcon icon={filterOutline} />
 
-<IonTitle>Filter </IonTitle>
+          <IonTitle>Filter </IonTitle>
         </IonButtons>
-        
+
       </IonToolbar>
 
-    <IonButtons>
-      {/* <IonButton onClick={close}>
+      <IonButtons>
+        {/* <IonButton onClick={close}>
         close
       </IonButton> */}
-    </IonButtons>
-  </IonHeader>
+      </IonButtons>
+    </IonHeader>
 
     <IonItem>
       <IonLabel id='fromClick'>select From</IonLabel>
 
       <CityPicker
-      clear
-        onValueSet={(e) => handleFilterValue({ from: (e && e.key)||'' })}
+        clear
+        onValueSet={(e) => handleFilterValue({ from: (e && e.key) || '' })}
         placeHolder={'From'}
       ></CityPicker>
 
@@ -61,15 +61,15 @@ export const UIStore = new Store({
       <IonLabel id='fromClick'>select To</IonLabel>
 
       <CityPicker
-      clear
-        onValueSet={(e) => handleFilterValue({ to: (e && e.key)||'' })}
+        clear
+        onValueSet={(e) => handleFilterValue({ to: (e && e.key) || '' })}
         placeHolder={'To'}
       ></CityPicker>
 
 
     </IonItem>
 
-    
+
 
     <IonItem>
       <IonLabel>Type</IonLabel>

@@ -65,7 +65,7 @@ export default function OrderList(props: any) {
         </OrderCard>
       })
     }
-    {orders.loading && <OrdersPlaceHolder></OrdersPlaceHolder>}
+    {orders.loading && !orders.orders && <OrdersPlaceHolder></OrdersPlaceHolder>}
 
     <IonInfiniteScroll
       ref={infiniteScrollRef}
@@ -80,7 +80,7 @@ export default function OrderList(props: any) {
 
     {/* </IonList> */}
 
-    {!orders.loading && !orders.orders && <IonItem style={{ display: "flex", flexDirection: "column" }}>
+    {/* {!orders.loading && !orders.orders && <IonItem style={{ display: "flex", flexDirection: "column" }}>
       <IonLabel color={listMessage.color}>{listMessage.text}</IonLabel>
       <IonButton onClick={()=>{Refresh()}}>اعد المحاوله</IonButton>
       <IonLabel color="primary" onClick={(e) => {
@@ -88,7 +88,7 @@ export default function OrderList(props: any) {
       }} >رجوع</IonLabel>
 
     </IonItem>
-    }
+    } */}
     <IonModal keepContentsMounted trigger={'filterToggler'}  id='filterModal' style={{ paddingRight: '70px', left: '0' }} >
 
         <FilterUI onfilter={(v) => orders.setFilter(v)} filter={orders.filter}></FilterUI>

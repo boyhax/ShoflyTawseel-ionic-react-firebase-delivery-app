@@ -9,7 +9,6 @@ const Step2: React.FC<{ onFinish: (v: any) => void,orderProps:any }> = ({ onFini
   const [props,setProps] = React.useState<object|any>({})
   
   return <div>
-    <IonPage >
       <form onSubmit={(e)=>{e.preventDefault();onFinish({props})}}>
 
           <IonCard style={{ display: 'flex', justifyContent: 'center', justifyItems: 'space-between' }} >
@@ -83,7 +82,6 @@ const Step2: React.FC<{ onFinish: (v: any) => void,orderProps:any }> = ({ onFini
           </IonButton>
         </IonFooter>
       </form>
-    </IonPage>
     
   </div>
 }

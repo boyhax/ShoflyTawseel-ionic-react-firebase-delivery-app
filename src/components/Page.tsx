@@ -38,7 +38,6 @@ const Page: React.FC<Props> = (props) => {
         }
     }
     return <IonPage >
-        <MainMenu menuRef={menu} ></MainMenu>
         <IonFab slot={'fixed'} horizontal={'start'} vertical={'top'} >
 
             {props.backbutton &&
@@ -51,12 +50,12 @@ const Page: React.FC<Props> = (props) => {
                     <IonIcon icon={closeSharp}></IonIcon>
                 </IonFabButton>
             }
-            {props.menubutton &&
+            {/* {props.menubutton &&
                 <IonFabButton >
-                    <IonMenuButton></IonMenuButton>
+                    <IonMenuButton></IonMenuButton> */}
                     {/* <IonIcon icon={menuSharp}></IonIcon> */}
-                </IonFabButton>
-            }
+                {/* </IonFabButton>
+            } */}
         </IonFab>
 
 

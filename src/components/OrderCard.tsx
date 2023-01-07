@@ -2,7 +2,7 @@ import { Device } from "@capacitor/device";
 import { ComponentProps } from "@ionic/core";
 import {
     IonLabel, IonChip, IonIcon, IonButton, IonPopover,
-    IonTextarea, IonSpinner, IonAvatar, IonImg, IonRow, IonGrid, useIonAlert, IonCardHeader, IonCardTitle, IonCardSubtitle
+    IonTextarea, IonSpinner, IonAvatar, IonImg, IonRow, IonGrid, useIonAlert, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCol, IonCard, IonContent, IonButtons
 } from "@ionic/react";
 import { getAuth } from "firebase/auth";
 import {
@@ -10,7 +10,7 @@ import {
 } from "firebase/firestore";
 import {
     alertCircle, trashOutline, thumbsDownOutline, thumbsUpOutline,
-    logoWhatsapp, chatboxEllipses, arrowBackOutline
+    logoWhatsapp, chatboxEllipses, arrowBackOutline, watchOutline, timeOutline
 } from "ionicons/icons";
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
@@ -19,13 +19,13 @@ import { db, getLang } from "../App";
 import {
     applyForCard, deleteOrder, getUserInfoPlaceHolder,
     is_user_applied_to_card, makeOrderFromDoc,
-    removeApplicationToOrder, reportOrder, 
+    removeApplicationToOrder, reportOrder,
 } from "../providers/firebaseMain";
 import { useGlobals } from "../providers/globalsProvider";
 import { cardStyle } from "../styles";
 import { orderProps, userInfo } from "../types";
 import "./OrderCard.css"
-import { citienames} from "./utlis/citiesUtlis";
+import { citienames } from "./utlis/citiesUtlis";
 import { prettyDate } from "./utlis/prettyDate";
 
 const options: Object = {
@@ -76,8 +76,8 @@ const OrderCard = ({ orderDocSnap, whatsapp, message, remove, report, canApplyFo
     const [userInfo, setUserInfo] = useState<userInfo>(getUserInfoPlaceHolder())
     const [showComment, setShowComment] = useState(false)
     // const order = useOrder(id)
-    const from =citienames[Number(data.from)]
-    const to =citienames[Number(data.to)]
+    const from = citienames[Number(data.from)]
+    const to = citienames[Number(data.to)]
     useEffect(() => {
 
         const unsub = onSnapshot(doc(getFirestore(), "orders/" + id), (doc) => {
@@ -116,6 +116,7 @@ const OrderCard = ({ orderDocSnap, whatsapp, message, remove, report, canApplyFo
         setShowComment(!showComment)
     }
     const [presentAlert] = useIonAlert()
+
     async function _applyToOrder() {
         if (!user) {
             presentAlert({ message: "يرجى تسجيل الدخول اولا" })
@@ -142,121 +143,138 @@ const OrderCard = ({ orderDocSnap, whatsapp, message, remove, report, canApplyFo
         }
 
     }
-    return <div style={cardStyle}>
+    
+    return <IonCard className={'slide-fwd-center'}>
 
-        <IonCardHeader style={{ display: 'flex', flexDirection: 'row' ,paddingBottom: 1}}>
-            <IonAvatar style={{ width: '50px', height: '50px' }} onClick={() => history.push("/profile/" + data.uid)}>
-                <IonImg
-                    src={userInfo.photoURL}>
-                </IonImg>
-            </IonAvatar>
-            <IonCardTitle style={{ alignSelf: "end" }}>@{userInfo.name}</IonCardTitle>
-            <IonCardSubtitle style={{ marginLeft: 'auto' }} >{date}</IonCardSubtitle>
+        <IonGrid>
+            <IonCol>
+                {/* top header date time */}
 
-        </IonCardHeader>
-        <IonGrid  >
-
-
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-
-                <div style={{ alignSelf: 'center', direction: 'rtl' }}>
-                    {/* {order && order.loading? <IonSpinner></IonSpinner>: <IonLabel>{order.order?.from }</IonLabel> } */}
-
-                    <IonChip color="secondary">{"من: " + from }</IonChip>
-                    <IonIcon color={'primary'} size={'large'} icon={arrowBackOutline}></IonIcon>
-                    <IonChip color="secondary">{"الى: " + to}</IonChip>
-
-                </div>
-            </div>
-            <div style={{display:'flex',flexDirection:'row',justifyContent:'space-evenly'}}>
-            <h6
-                    color="secondary"
-                    onClick={() => {
-                        if (owner) {
-                            setCurrentOrder(orderDocSnap)
-                            history.push("/OrdersPage/" + orderDocSnap.id + "/applications")
-                        }
-                    }}>
-                    {"تم قبول الطلب: "}
-                    {data.applications.length}
-                </h6>
-
-
-                <h6 color="secondary"
-                    onClick={() => toggleComment()}>
-                    {"الوصف: " + (showComment ? comment : comment.slice(0, 50) + "...")}
-                </h6>
-            </div>
-            
-            <div 
-            style={{ display: 'flex', alignSelf: 'flex-end', justifyContent: 'space-evenly',overflow:"auto" }} 
-            >
-                
-                {!owner &&
-                    <IonButton
-                        onClick={() => { _applyToOrder() }}
-                        color="dark"
-                        fill="clear" >
-                        {userApplied !== undefined &&
-                            <IonIcon
-                                color="success"
-                                icon={userApplied ? thumbsDownOutline : thumbsUpOutline} ></IonIcon>}
-                        {userApplied === undefined && <IonSpinner></IonSpinner>}
-                        {userApplied !== undefined ? userApplied ? "un accept" : "accept" : ""}
-                    </IonButton>}
-                {owner && <IonButton fill="clear" onClick={() => {
-                    deleteOrder(orderDocSnap);
-                    if (typeof onDeleted == "function") { onDeleted() }
-                }}
-                    color="light" shape="round" >
-                    <IonIcon size="large" color="success" icon={trashOutline} ></IonIcon>
-                </IonButton>}
-                {!owner && <IonButton fill="clear" onClick={() => setReporting(!reporting)}
-                    color="dark" shape="round" >
-                    <IonIcon size="large" color="success" icon={alertCircle} ></IonIcon>
-                    إبلاغ
-                </IonButton>}
-                {!owner && <IonButton fill="clear" id={"massegeTrigegr"}
-                    color="dark" shape="round" >
-                    <IonIcon size="large" color="success" icon={chatboxEllipses} ></IonIcon>
-                    chat
-                </IonButton>}
-
-
-            </div>
-        </IonGrid>
-        {/* //messengers popover */}
-        <IonPopover trigger={'massegeTrigegr'}>
-            <IonLabel slot="primary">اذكر السبب</IonLabel>
-            <IonGrid >
                 <IonRow>
-                {!owner && <IonButton fill="clear" onClick={() => history.push("/chats/" + data.uid)}
-                    color="dark" shape="round" >
-                    <IonIcon size="large" color="success" icon={chatboxEllipses} ></IonIcon>
-                    chat
-                </IonButton>}
-                {!owner && !!userInfo.phoneNumber &&
-                    <IonButton
-                        onClick={() => OpenWhatsapp(userInfo.phoneNumber)}
-                        color="light" shape="round" fill="clear" size="small">
-                        <IonIcon size="large" color="success" icon={logoWhatsapp} ></IonIcon>
-                    </IonButton>}
+                    {/* left side col avatar and name */}
+                    <div className={'w-[15%] '}>
+                        <IonAvatar
+                            style={{ width: '50px', height: '50px' }}
+                            onClick={() => history.push("/profile/" + data.uid)}>
+                            <IonImg
+                                src={userInfo.photoURL}>
+                            </IonImg>
+                        </IonAvatar>
+                        <p className={' text-center'}>{userInfo.name}</p>
+
+                    </div>
+                    {/* right side col from to  */}
+                    <IonCol >
+                        <IonRow >
+                            <p style={{ marginLeft: 'auto' }} >
+                                <IonIcon icon={timeOutline}/>
+                                {date}</p>
+                        </IonRow>
+                        <IonRow className={'align-middle justify-center'}>
+
+                            <IonChip color="secondary">{"من: " + from}</IonChip>
+                            <IonIcon color={'primary'} size={'large'} icon={arrowBackOutline}></IonIcon>
+                            <IonChip color="secondary">{"الى: " + to}</IonChip>
+
+                        </IonRow>
+
+                        <IonRow className={'align-middle justify-evenly'}>
+                            <p
+                                color="secondary"
+                                onClick={() => {
+                                    if (owner) {
+                                        setCurrentOrder(orderDocSnap)
+                                        history.push("/OrdersPage/" + orderDocSnap.id + "/applications")
+                                    }
+                                }}>
+                                {"تم قبول الطلب: "}
+                                {data.applications.length}
+                            </p>
+
+
+                            <p color="secondary"
+                                onClick={() => toggleComment()}>
+                                {"الوصف: " + (showComment ? comment : comment.slice(0, 50) + "...")}
+                            </p>
+                        </IonRow>
+                        {/* bottom bar row for buttons */}
+                        <IonRow
+                            style={{ justifyContent: 'space-evenly', overflow: "auto" }} >
+
+                            {!owner &&
+                                <IonButton
+                                    onClick={() => { _applyToOrder() }}
+                                    color="dark"
+                                    fill="clear" >
+                                    {userApplied !== undefined &&
+                                        <IonIcon
+                                            color="success"
+                                            icon={userApplied ? thumbsDownOutline : thumbsUpOutline} ></IonIcon>}
+                                    {userApplied === undefined && <IonSpinner></IonSpinner>}
+                                    {userApplied !== undefined ? userApplied ? "un accept" : "accept" : ""}
+                                </IonButton>}
+                            {owner && <IonButton fill="clear" onClick={() => {
+                                deleteOrder(orderDocSnap);
+                                if (typeof onDeleted == "function") { onDeleted() }
+                            }}
+                                color="light" shape="round" >
+                                <IonIcon size="large" color="success" icon={trashOutline} ></IonIcon>
+                            </IonButton>}
+                            {!owner && <IonButton fill="clear" onClick={() => setReporting(!reporting)}
+                                color="dark" shape="round" >
+                                <IonIcon size="large" color="success" icon={alertCircle} ></IonIcon>
+                                إبلاغ
+                            </IonButton>}
+                            {!owner && <IonButton fill="clear" id={"massegeTrigegr"}
+                                color="dark" shape="round" >
+                                <IonIcon size="large" color="success" icon={chatboxEllipses} ></IonIcon>
+                                chat
+                            </IonButton>}
+
+
+                        </IonRow>
+                    </IonCol>
                 </IonRow>
-            </IonGrid>
-        </IonPopover>
+
+            </IonCol>
+        </IonGrid>
+
+
+        {/* //messengers popover */}
+
+
         <IonPopover isOpen={reporting}>
             <IonLabel slot="primary">اذكر السبب</IonLabel>
+
             <IonTextarea onIonChange={(e) => {
                 setReportWhy(e.detail.value!)
             }}>
 
             </IonTextarea>
+
             <IonButton onClick={(e) => {
                 setReporting(false);
                 onReport()
             }}>submit</IonButton>
         </IonPopover>
-    </div >
+        <IonPopover trigger={'massegeTrigegr'}>
+            <IonContent >
+                <IonButtons>
+                    {!owner && <IonButton fill="clear" onClick={() => history.push("/chats/" + data.uid)}
+                        color="dark" shape="round" >
+                        <IonIcon size="large" color="success" icon={chatboxEllipses} ></IonIcon>
+                        chat
+                    </IonButton>}
+                    {!owner && !!userInfo.phoneNumber &&
+                        <IonButton
+                            onClick={() => OpenWhatsapp(userInfo.phoneNumber)}
+                            color="light" shape="round" fill="clear" size="small">
+                            <IonIcon size="large" color="success" icon={logoWhatsapp} ></IonIcon>
+                        </IonButton>}
+                </IonButtons>
+            </IonContent>
+        </IonPopover>
+    </IonCard >
 
 }
 export default OrderCard

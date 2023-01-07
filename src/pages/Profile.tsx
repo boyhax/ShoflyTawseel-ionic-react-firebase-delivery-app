@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { IonContent, IonPage, IonTitle, IonToolbar, IonButton, IonIcon, IonButtons, IonLabel, IonItem, IonList, IonSpinner, IonBackButton, IonSegment, IonSegmentButton, IonGrid, IonRow, IonAvatar, IonImg, IonCol, IonHeader, IonCard, IonCardContent, IonFab, IonFabButton, IonInput, IonPopover, IonChip, IonLoading, IonCardHeader, IonCardTitle } from '@ionic/react';
-import { close, logOutOutline, } from 'ionicons/icons';
+import { close, logOutOutline, mailOutline, personCircleOutline, phonePortraitOutline, } from 'ionicons/icons';
 import { useGlobals } from '../providers/globalsProvider';
 import { collection, DocumentData, DocumentSnapshot, getDocs, getFirestore, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
@@ -36,68 +36,76 @@ const Profile: React.FC = () => {
   return (
     <Page>
       {!user && <Redirect to={'signin'}></Redirect>}
-      <IonItem dir={'rtl'} style={{ paddingLeft: '50px' }}>
-        <IonGrid >
-          <IonRow>
+      <IonGrid >
+        <IonRow>
+
+          <IonCol>
+            <IonAvatar className={'w-24 h-24'}
+              id="click-trigger">
+              <IonImg src={
+                !!profile?.photoURL ? profile.photoURL
+                  : require("../assets/avatarPlaceHolder.png")}
+              >
+              </IonImg>
+            </IonAvatar>
+            <IonPopover trigger="click-trigger" triggerAction="click">
+              <IonContent
+                class="ion-padding">
+                <IonButton
+                  disabled={photo.loading}
+                  onClick={() => photo.takePhoto()}
+                  fill={'clear'}
+                >{photo.loading ? "Loading..." : "Upload Photo"}
+                </IonButton>
+                <span>OR</span>
+                <IonButton
+                  onClick={() => setPickAvatar(!pickAvatar)}
+                  fill={'clear'}
+                > choose avatar</IonButton>
+                <div>
+                  <AvatarPicker isOpen={pickAvatar} onDidDismiss={() => setPickAvatar(false)}
+                    onAvatarSubmit={(url) => { updateUserProfile(uid, { photoURL: url }) }} >
+                  </AvatarPicker>
+
+                </div>
+              </IonContent>
+            </IonPopover>
             <IonRow>
-              <IonAvatar
-                id="click-trigger">
-                <IonImg src={
-                  !!profile?.photoURL ? profile.photoURL
-                    : require("../assets/avatarPlaceHolder.png")}
-                >
-                </IonImg>
-              </IonAvatar>
-              <IonPopover trigger="click-trigger" triggerAction="click">
-                <IonContent
-                  class="ion-padding">
-                  <IonButton
-                    disabled={photo.loading}
-                    onClick={() => photo.takePhoto()}
-                    fill={'clear'}
-                  >{photo.loading ? "Loading..." : "Upload Photo"}
-                  </IonButton>
-                  <span>OR</span>
-                  <IonButton
-                    onClick={() => setPickAvatar(!pickAvatar)}
-                    fill={'clear'}
-                  > choose avatar</IonButton>
-                  <div>
-                    <AvatarPicker isOpen={pickAvatar} onDidDismiss={() => setPickAvatar(false)}
-                      onAvatarSubmit={(url) => { updateUserProfile(uid, { photoURL: url }) }} >
-                    </AvatarPicker>
 
-                  </div>
-                </IonContent>
-              </IonPopover>
+
+              <IonButtons>
+                <IonButton onClick={() => content !== "editProfile" ? setContent("editProfile") : setContent("orders")}>{TT("edit")}
+                </IonButton>
+                <IonButton color={'danger'} onClick={() => { getAuth().signOut() }}>
+                  {TT("logOut")}
+                  <IonIcon icon={logOutOutline}></IonIcon>
+                </IonButton>
+              </IonButtons>
             </IonRow>
-            <IonCol>
-              <IonButton onClick={() => content !== "editProfile" ? setContent("editProfile") : setContent("orders")}>{TT("edit")}
-              </IonButton>
-              <IonButton color={'danger'} onClick={() => { getAuth().signOut() }}>
-                {TT("logOut")}
-                <IonIcon icon={logOutOutline}></IonIcon>
-              </IonButton>
-            </IonCol>
-          </IonRow>
-        </IonGrid>
-      </IonItem>
+          </IonCol>
+          <IonCol>
 
-      <IonList>
-        <div style={infoContainer}>
-          <IonLabel>Name: </IonLabel>
-          <IonInput value={profile?.name || "Name"} disabled={true}></IonInput>
-        </div>
-        <div style={infoContainer}>
-          <IonLabel>Email: </IonLabel>
-          <IonInput value={profile?.email || "No Email"} disabled={true}></IonInput>
-        </div>
-        <div style={infoContainer}>
-          <IonLabel>Pnone: </IonLabel>
-          <IonInput value={profile?.phoneNumber || "No Email"} disabled={true}></IonInput>
-        </div>
+            <IonList>
+              <div style={infoContainer}>
+                <IonIcon icon={personCircleOutline}/>
+                <IonInput value={profile?.name || "Name"} disabled={true}></IonInput>
+              </div>
+              <div style={infoContainer}>
+              <IonIcon icon={mailOutline}/>
+                <IonInput value={profile?.email || "No Email"} disabled={true}></IonInput>
+              </div>
+              <div style={infoContainer}>
+              <IonIcon icon={phonePortraitOutline}/>
+                <IonInput value={profile?.phoneNumber || "No Email"} disabled={true}></IonInput>
+              </div>
 
-      </IonList>
+            </IonList>
+          </IonCol>
+        </IonRow>
+
+      </IonGrid>
+
+
       {/* {content !== "editProfile" && <IonSegment value={content}>
         <IonSegmentButton value="orders" onClick={() => setContent('orders')}>
           <IonLabel>orders</IonLabel>
@@ -107,7 +115,7 @@ const Profile: React.FC = () => {
         </IonSegmentButton>
       </IonSegment>} */}
 
-{/* 
+      {/* 
       {content === "orders" &&
         <IonContent>
           <ProfileOrdersList />

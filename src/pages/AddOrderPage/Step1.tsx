@@ -16,7 +16,7 @@ const Step1: React.FC<{ onFinish: (v: any) => void }> = ({ onFinish }) => {
   const [dropLocation, setDropLocation] = React.useState<any>()
 
 
-  return <IonContent>
+  return <div>
 
     <form onSubmit={(e) => {
       e.preventDefault()
@@ -55,6 +55,6 @@ slot={'end'}
       
     </form>
 
-  </IonContent>
+  </div>
 }
 export default Step1

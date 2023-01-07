@@ -2,8 +2,9 @@ import * as React from 'react';
 
 import { useEffect, useState } from 'react';
 import {
-  IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCheckbox, IonContent, IonFab, IonFabButton,
+  IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCheckbox, IonCol, IonContent, IonFab, IonFabButton,
   IonFooter,
+  IonGrid,
   IonIcon, IonImg, IonInput, IonItem, IonLabel, IonList, IonLoading, IonPage,
   IonSpinner,
   IonTextarea,
@@ -26,7 +27,7 @@ import { returnUpBackOutline } from 'ionicons/icons';
 
 
 const AddOrderPage: any = (props: any) => {
-  const [ finish,setFinish]=useState(false)
+  const [finish, setFinish] = useState(false)
   const { user, profile } = useGlobals()
   const [orderProps, setOrderProps] = useState<newOrderProps>({
     from: { key: '', value: '' },
@@ -94,11 +95,20 @@ const AddOrderPage: any = (props: any) => {
   return <IonPage>
     {/* {finish && <Redirect to={'/'}/>} */}
     {step === 2 && <IonFab>
-      <IonFabButton onClick={()=>setStep(1)}>
+      <IonFabButton onClick={() => setStep(1)}>
         <IonIcon icon={returnUpBackOutline}></IonIcon></IonFabButton></IonFab>}
+
+    {/* {step === 1 ? <Step1 onFinish={hundlelocation} /> : <Step2 onFinish={hundleInfo} orderProps={orderProps} />} */}
+    <IonContent>
+        
+      <Step1 onFinish={hundlelocation} />
+      <Step2 onFinish={hundleInfo} orderProps={orderProps} />
+      
+
+    </IonContent>
     
-    {step === 1 ? <Step1 onFinish={hundlelocation} /> : <Step2 onFinish={hundleInfo} orderProps={orderProps} />}
-    
+
+
     <IonLoading
       isOpen={loading}
       message={'Submiting Order..'} ></IonLoading>

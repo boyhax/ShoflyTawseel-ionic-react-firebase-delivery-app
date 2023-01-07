@@ -1,12 +1,12 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
-import { IonContent, IonPage, IonTitle, IonToolbar,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton, IonSlides, IonSlide, IonCard, IonCardTitle, IonAvatar, IonImg, IonButton, IonIcon, IonFooter, IonGrid, IonCol, IonText } from '@ionic/react';
+import { IonContent, IonPage, IonTitle, IonToolbar,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton, IonSlides, IonSlide, IonCard, IonCardTitle, IonAvatar, IonImg, IonButton, IonIcon, IonFooter, IonGrid, IonCol, IonText, IonPopover } from '@ionic/react';
 import { useGlobals } from '../../providers/globalsProvider';
 import { addDoc, collection, doc, DocumentData, DocumentReference, DocumentSnapshot, FieldValue, getDoc, getDocs, getFirestore, onSnapshot, orderBy, query, QueryDocumentSnapshot, QuerySnapshot, serverTimestamp, setDoc, Timestamp, Unsubscribe, where } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import {  Redirect, useHistory, useParams } from 'react-router';
 import { TT } from '../../components/utlis/tt';
 import { db } from '../../App';
-import { attachOutline, chevronBack, sendOutline } from 'ionicons/icons';
+import { attachOutline, chevronBack, imageOutline, locationOutline, sendOutline } from 'ionicons/icons';
 
 import "./chat.css"
 import Page from '../../components/Page';
@@ -115,11 +115,23 @@ export default  function Chat(props:any) {
                 <IonInput type='text' clearInput={true} value={chatInput} 
                 onIonChange={(e)=>setChatInput(String(e.detail.value))} 
                 placeholder='write here'></IonInput>
-                <IonButton fill='clear'>
+                <IonButton fill='clear' id='attachTrigger'>
                   <IonIcon size='large' icon={attachOutline}></IonIcon>
                 </IonButton>
               </IonItem>
              </IonFooter>
+             <IonPopover trigger={'attachTrigger'}>
+              <IonContent>
+                <IonButtons>
+                  <IonButton>
+                    <IonIcon icon={imageOutline}/>
+                  </IonButton>
+                  <IonButton>
+                    <IonIcon icon={locationOutline}/>
+                  </IonButton>
+                </IonButtons>
+              </IonContent>
+             </IonPopover>
     </Page>
   );
 };
