@@ -98,14 +98,9 @@ const AddOrderPage: any = (props: any) => {
       <IonFabButton onClick={() => setStep(1)}>
         <IonIcon icon={returnUpBackOutline}></IonIcon></IonFabButton></IonFab>}
 
-    {/* {step === 1 ? <Step1 onFinish={hundlelocation} /> : <Step2 onFinish={hundleInfo} orderProps={orderProps} />} */}
-    <IonContent>
-        
-      <Step1 onFinish={hundlelocation} />
-      <Step2 onFinish={hundleInfo} orderProps={orderProps} />
-      
-
-    </IonContent>
+    {step === 1 ? <Step1 onFinish={hundlelocation} /> 
+    : <Step2 onFinish={hundleInfo}  />}
+  
     
 
 

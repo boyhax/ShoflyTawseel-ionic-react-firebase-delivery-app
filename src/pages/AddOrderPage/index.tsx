@@ -20,49 +20,32 @@ const initialProps:Props={
 }
 const newOrderStore = new Store(initialProps)
 
-const OrderContext = createContext(initialProps);
 
-
-const Provider= (p:any)=>{
-    const [props,setProps] = React.useState(initialProps)
-
-    const update = (d:Object)=>{
-        setProps({...props,...d})
-    }
-    const values = {...props,update}
-    
-    return<OrderContext.Provider value={values}>
-        <AddOrderPage></AddOrderPage>
-    </OrderContext.Provider>
-} 
-export const useOrderContext=()=>{
-    return useContext(OrderContext)
-};
 
 export const useNewOrder=()=>{
-    const {order,loading,update,step} = useOrderContext()
+    const {order,loading,update,step} = newOrderStore.useState()
 
     const [submitted,setSubmitted] = React.useState(false)
 
     const {urgent ,from,to,comment,geoLocation,type}= order
 
     function setUrgent(b:boolean){
-
+        newOrderStore.update(s=>s.order.urgent=b)
     }
     
     const setLoading = (b:boolean)=>{
-        update({loading:b})
+        newOrderStore.update(s=>s.loading=b)
     }
 
     
     const setStep = (b:number)=>{
-        update({step:b})
+        newOrderStore.update(s=>s.step=b)
     }
     const stepNext=()=>{
-        update({step:step+1})
+        setStep(step+1)    
     };
     const stepBack=()=>{
-        update({step:step-1})
+        setStep(step-1)    
 
     }
     const submitOrder = async () => {
@@ -93,6 +76,6 @@ export const useNewOrder=()=>{
 }
 
 
-export default Provider
+export default AddOrderPage
 
 

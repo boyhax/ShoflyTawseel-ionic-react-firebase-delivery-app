@@ -44,7 +44,7 @@ import { initializeApp } from 'firebase/app';
 import { setupIonicReact } from '@ionic/react';
 import { Config } from './config';
 import { getFirestore } from 'firebase/firestore';
-import AddOrderPage from './pages/AddOrderPage/AddOrderPage';
+import AddOrderPage from './pages/AddOrderPage';
 import Demo from './pages/Demo';
 import AuthRoute from './routes/AuthRoute';
 import { chatboxOutline, homeOutline, menuOutline, personOutline } from 'ionicons/icons';
@@ -56,7 +56,6 @@ import MainMenu from './components/MainMenu';
 const firebaseConfig = Config()
 initializeApp(firebaseConfig)
 export const db = getFirestore()
-
 
 setupIonicReact({
   mode: 'md'

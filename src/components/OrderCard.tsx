@@ -2,7 +2,7 @@ import { Device } from "@capacitor/device";
 import { ComponentProps } from "@ionic/core";
 import {
     IonLabel, IonChip, IonIcon, IonButton, IonPopover,
-    IonTextarea, IonSpinner, IonAvatar, IonImg, IonRow, IonGrid, useIonAlert, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCol, IonCard, IonContent, IonButtons
+    IonTextarea, IonSpinner, IonAvatar, IonImg, IonRow, IonGrid, useIonAlert, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCol, IonCard, IonContent, IonButtons, IonToolbar
 } from "@ionic/react";
 import { getAuth } from "firebase/auth";
 import {
@@ -144,10 +144,8 @@ const OrderCard = ({ orderDocSnap, whatsapp, message, remove, report, canApplyFo
 
     }
 
-    return <div className={(owner?
-        'bg-gradient-to-r from-red-200 via-red-300 to-yellow-200'
-    :'bg-[conic-gradient(at_right,_var(--tw-gradient-stops))] from-blue-100 via-blue-300 to-blue-500')+
-    'mx-1 my-1 rounded-xl h-40'}>
+    return <IonCard className={`
+    mx-1 my-1 rounded-lg h-fit shadow-md   max-w-[450px]`}>
         {owner && <p className="absolute z-10 bg-sky-500 w-fit px-4 py-1 text-sm font-bold text-white rounded-tl-lg rounded-br-xl"> Your order </p>}
         <IonGrid>
             <IonCol>
@@ -155,7 +153,7 @@ const OrderCard = ({ orderDocSnap, whatsapp, message, remove, report, canApplyFo
 
                 <IonRow>
                     {/* left side col avatar and name */}
-                    <div className={'w-[15%] '}>
+                    <IonCol size={'auto'}>
                         <IonAvatar
                             // style={{ width: '50px', height: '50px' }}
                             onClick={() => history.push("/profile/" + data.uid)}>
@@ -165,12 +163,12 @@ const OrderCard = ({ orderDocSnap, whatsapp, message, remove, report, canApplyFo
                         </IonAvatar>
                         <IonLabel color='dark' className={' text-center'}>{userInfo.name}</IonLabel>
 
-                    </div>
+                    </IonCol>
                     {/* right side col from to  */}
                     <IonCol className={'align-middle justify-evenly content-evenly'} >
                         <IonRow >
-                            <IonLabel style={{ marginLeft: 'auto' }} 
-                            color='dark'>
+                            <IonLabel className={'ml-auto mb-auto font-thin text-sm'}
+                                color='dark'>
                                 <IonIcon icon={timeOutline} />
                                 {date}</IonLabel>
                         </IonRow>
@@ -202,45 +200,62 @@ const OrderCard = ({ orderDocSnap, whatsapp, message, remove, report, canApplyFo
                             </IonLabel>
                         </IonRow>
                         {/* bottom bar row for buttons */}
-                        <IonRow
-                            style={{ justifyContent: 'space-evenly', overflow: "auto" }} >
 
-                            {!owner &&
-                                <IonButton
-                                    onClick={() => { _applyToOrder() }}
-                                    color="dark"
-                                    fill="clear" >
-                                    {userApplied !== undefined &&
-                                        <IonIcon
-                                            color="success"
-                                            icon={userApplied ? thumbsDownOutline : thumbsUpOutline} ></IonIcon>}
-                                    {userApplied === undefined && <IonSpinner></IonSpinner>}
-                                    {userApplied !== undefined ? userApplied ? "un accept" : "accept" : ""}
-                                </IonButton>}
-                            {owner && <IonButton fill="clear" onClick={() => {
-                                deleteOrder(orderDocSnap);
-                                if (typeof onDeleted == "function") { onDeleted() }
-                            }}
-                                color="light" shape="round" >
-                                <IonIcon size="large" color="success" icon={trashOutline} ></IonIcon>
-                            </IonButton>}
-                            {!owner && <IonButton fill="clear" onClick={() => setReporting(!reporting)}
-                                color="dark" shape="round" >
-                                <IonIcon size="large" color="success" icon={alertCircleOutline} ></IonIcon>
-                                {/* إبلاغ */}
-                            </IonButton>}
-                            {!owner && <IonButton fill="clear" id={"massegeTrigegr"}
-                                color="dark" shape="round" >
-                                <IonIcon size="large" color="success" icon={chatboxOutline} ></IonIcon>
-                                {/* chat */}
-                            </IonButton>}
-
-
-                        </IonRow>
                     </IonCol>
                 </IonRow>
 
+
             </IonCol>
+            <div
+                className={'flex flex-row self-end b-0 justify-evenly overflow-auto '} >
+
+                {!owner &&
+                    <IonButton
+                        onClick={() => { _applyToOrder() }}
+                        color="dark"
+                        fill="clear" >
+                        {userApplied !== undefined &&
+                            <IonIcon
+                                color="success"
+                                icon={userApplied ? thumbsDownOutline : thumbsUpOutline} ></IonIcon>}
+                        {userApplied === undefined && <IonSpinner></IonSpinner>}
+                        {userApplied !== undefined ? userApplied ? "un accept" : "accept" : ""}
+                    </IonButton>}
+                {owner && <IonButton fill="clear" onClick={() => {
+                    deleteOrder(orderDocSnap);
+                    if (typeof onDeleted == "function") { onDeleted() }
+                }}
+                    color="light" shape="round" >
+                    <IonIcon size="large" color="success" icon={trashOutline} ></IonIcon>
+                </IonButton>}
+                {!owner && <IonButton fill="clear" onClick={() => setReporting(!reporting)}
+                    color="dark" shape="round" >
+                    <IonIcon size="large" color="success" icon={alertCircleOutline} ></IonIcon>
+                    {/* إبلاغ */}
+                </IonButton>}
+                {!owner && <IonButton fill="clear" id={`massegeTrigegr ${id}`}
+                    color="dark" shape="round" >
+                    <IonIcon size="large" color="success" icon={chatboxOutline} ></IonIcon>
+                    {/* chat */}
+                    <IonPopover trigger={`massegeTrigegr ${id}`}>
+                        <IonButtons>
+                            {!owner && <IonButton fill="clear" onClick={() => history.push("/chats/" + data.uid)}
+                                color="dark" shape="round" >
+                                <IonIcon size="large" color="success" icon={chatboxEllipses} ></IonIcon>
+                                chat
+                            </IonButton>}
+                            {!owner && !!userInfo.phoneNumber &&
+                                <IonButton
+                                    onClick={() => OpenWhatsapp(userInfo.phoneNumber)}
+                                    color="light" shape="round" fill="clear" size="small">
+                                    <IonIcon size="large" color="success" icon={logoWhatsapp} ></IonIcon>
+                                </IonButton>}
+                        </IonButtons>
+                    </IonPopover>
+                </IonButton>}
+
+
+            </div>
         </IonGrid>
 
 
@@ -261,24 +276,8 @@ const OrderCard = ({ orderDocSnap, whatsapp, message, remove, report, canApplyFo
                 onReport()
             }}>submit</IonButton>
         </IonPopover>
-        <IonPopover trigger={'massegeTrigegr'}>
-            <IonContent >
-                <IonButtons>
-                    {!owner && <IonButton fill="clear" onClick={() => history.push("/chats/" + data.uid)}
-                        color="dark" shape="round" >
-                        <IonIcon size="large" color="success" icon={chatboxEllipses} ></IonIcon>
-                        chat
-                    </IonButton>}
-                    {!owner && !!userInfo.phoneNumber &&
-                        <IonButton
-                            onClick={() => OpenWhatsapp(userInfo.phoneNumber)}
-                            color="light" shape="round" fill="clear" size="small">
-                            <IonIcon size="large" color="success" icon={logoWhatsapp} ></IonIcon>
-                        </IonButton>}
-                </IonButtons>
-            </IonContent>
-        </IonPopover>
-    </div >
+
+    </IonCard >
 
 }
 export default OrderCard

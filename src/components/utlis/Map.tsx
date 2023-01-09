@@ -1,37 +1,73 @@
-import React, { useEffect, useState } from 'react';
-import { GoogleMap } from '@capacitor/google-maps';
+import React, { useCallback, useEffect, useState } from 'react';
+import { GoogleMap, Marker } from '@capacitor/google-maps';
 import { useRef } from 'react';
-import {  IonButton, IonButtons, IonContent } from '@ionic/react';
+import { IonButton, IonButtons, IonCol, IonContent, IonIcon, IonToolbar } from '@ionic/react';
 import { Geolocation } from '@capacitor/geolocation';
-
-interface Props  {
-  onLocationSet?:(l:{
-      lat:number,
-      lng:number
-})=>void,
+import './map.css'
+import { locateOutline } from 'ionicons/icons';
+import { LatLng } from '@capacitor/google-maps/dist/typings/definitions';
+interface Props {
+  onLocationSet?: (latlng: LatLng) => void,
 
 }
-const gkey = process.env.REACT_APP_map_api_key!
-const MyMap: React.FC<Props> = ({onLocationSet}) => {
+const MyMap: React.FC<Props> = ({ onLocationSet }) => {
   const mapRef = useRef<any>();
-  const[markers,setMarkers]=useState<any>([])
-  const[map,setMap] = useState<GoogleMap|null>(null)
-  useEffect(()=>{
-    createMap()
+  const [centerMarker, setCenterMarker] = useState<Marker>()
+  const [map, setMap] = useState<GoogleMap>()
+  const [centerlocation, setCenterlocation] = useState<LatLng>()
 
-},[])
+  useEffect(() => {
+    createMap()
+    return () => {
+      map && map.removeAllMapListeners()
+      map && map.destroy()
+      setMap(undefined)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (map) {
+
+      map.setOnBoundsChangedListener((data) => {
+        setCenterlocation({
+          lat: data.latitude,
+          lng: data.longitude
+        })
+        if (centerMarker) {
+          centerMarker.coordinate = { lat: data.latitude, lng: data.longitude }
+
+        } else {
+          const m = {
+            coordinate: {
+              lat: data.latitude,
+              lng: data.longitude
+            },
+            title: `The Point of drop`
+          }
+          map.addMarker(m)
+          setCenterMarker(m)
+
+        }
+      });
+    }
+  
+  }, [map])
+
+  const onSubmit = () => {
+    onLocationSet && centerlocation && onLocationSet(centerlocation);
+  }
 
   async function createMap() {
-    if (!mapRef.current) return;
+    // if (!mapRef.current) return;
 
     const newMap = await GoogleMap.create({
       id: 'my-cool-map',
       element: mapRef.current,
       apiKey: process.env.REACT_APP_map_api_key!,
       config: {
-        
-        androidLiteMode:true,
 
+        androidLiteMode: true,
+        disableDefaultUI: true,
         center: {
           lat: 33.6,
           lng: -117.9
@@ -41,76 +77,58 @@ const MyMap: React.FC<Props> = ({onLocationSet}) => {
 
     })
     setMap(newMap)
-    newMap.setOnMapClickListener((data)=>{
-      if(onLocationSet){
-        onLocationSet({
-          lat:data.latitude,
-            lng:data.longitude
-        });
-      }
-      
-    })
-    newMap.setOnMyLocationClickListener((e)=>{console.log(e)})
-    newMap.setOnMyLocationButtonClickListener((data)=>{
-      console.log('data my location button :>> ', data);
-    })
+
   }
- async function markMyLocation(){
+  async function markMyLocation() {
     const pos = await Geolocation.getCurrentPosition()
 
-    if(onLocationSet){
-    onLocationSet({
-      lat:pos.coords.latitude,
-        lng:pos.coords.longitude
-    })}
 
-    if(!!map){
-      
-      map.removeMarker("1")
-     const id = await map.addMarker({
-        coordinate:{
-          lat:pos.coords.latitude,
-          lng:pos.coords.longitude
-        },
-         
-       })
-       setMarkers([...markers,id])
-       map.setCamera({
-        coordinate: {
-          lat:pos.coords.latitude,
-        lng:pos.coords.longitude
-        },
-      })  
-      if(markers.length>0){
-        console.log('markers :>> ', markers);
-        map.removeMarkers(markers)
-        setMarkers([])
-      }
+    if (map) {
+      map.setCamera({
+        coordinate: { lat: pos.coords.latitude, lng: pos.coords.longitude },
+        zoom: 10,
+        animate: true,
+
+      })
+      // if(centerMarker){
+
+      // }
     }
-    
-    console.log('pos :>> ', pos);
+
+
   }
 
-  return<div style={{
-    height:"100%",
-    width: "100%",
-    border:"5px",
-    justifyItems:"center"
-    }}>
-          <capacitor-google-map options={{streetViewControl: false}} ref={mapRef} style={{
-             display: 'block',
-             width: '92vw',
-             height: '50vh',
-             
-          }}>
-            
-          </capacitor-google-map>
-          <IonButtons>
-                <IonButton onClick={()=>markMyLocation()} >my location</IonButton>
-            </IonButtons>
+  return <div className={'mapMainContainer '}>
+    <div className={' ui '}>
+      <div className={'item'}>
+        <button onClick={() => markMyLocation()} >
+          <IonIcon className={'w-3 h-3'} icon={locateOutline} />
+        </button>
 
-        </div>
-  
+
+      </div>
+
+    </div>
+    <div className={'mapContainer'}>
+
+      <capacitor-google-map options={{ streetViewControl: false }}
+        ref={mapRef}
+        className={'map'}
+      >
+
+      </capacitor-google-map>
+    </div>
+
+    <div className={'bottom-0 w-full h-fit'}>
+      <IonToolbar>
+        <IonButton>
+          Submit
+        </IonButton>
+      </IonToolbar>
+    </div>
+
+  </div>
+
 }
 
 export default MyMap;

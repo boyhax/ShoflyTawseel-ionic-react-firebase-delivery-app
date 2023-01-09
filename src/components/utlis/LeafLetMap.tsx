@@ -1,3 +1,4 @@
+import { Geolocation } from '@capacitor/geolocation';
 import { eventMethod } from '@ionic/core/dist/types/utils/overlays';
 import L from 'leaflet';
 import * as React from 'react';
@@ -26,7 +27,34 @@ export const LeafLetMap:React.FC<props>=({onMap})=>{
   let center_zoom = current_zoom;
   const [map,setMap]= useState<L.Map>()
   const [marker,setMarker]= useState<L.Marker|any>("")
-
+  async function getLocation() {
+    if (!map){
+      return
+    }
+    map.locate()
+    try {
+      Geolocation.checkPermissions()
+      const location = await Geolocation.getCurrentPosition()
+      const latlng = { lat: location.coords.latitude, lng: location.coords.longitude }
+      if (map && location) {
+        map.flyTo(latlng)
+        L.marker(latlng, { icon: greenIcon, draggable: true })
+        .addEventListener('dragend',
+         (e) => { console.log('e :>> ', e); }).addTo(map)
+        return
+      }
+    } catch (error) {
+      alert('please enable GPS!  ' + error)
+    }
+    map.addEventListener('locationfound', (e) => {
+      console.log(e);
+      map.flyTo(e.latlng)
+      L.marker(e.latlng,
+         { icon: greenIcon, draggable: true })
+         .addEventListener('dragend',
+          (e) => { console.log('e :>> ', e); }).addTo(map)
+    }, {})
+  }
       // Similar to componentDidMount and componentDidUpdate:
       React.useEffect(() => {
           const map = L.map('map', {

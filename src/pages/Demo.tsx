@@ -1,35 +1,96 @@
 import React, { useState } from 'react';
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import MainHeader from '../components/MainHeader';
-import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
+import GooglePlacesAutocomplete, { geocodeByAddress, geocodeByPlaceId } from 'react-google-places-autocomplete';
 import { OrderPlaceHolder } from '../components/OrdersPLaceHolder';
+import { Config } from '../config';
+import { Cities } from '../components/utlis/citiesUtlis';
+import MyMap from '../components/utlis/Map';
+import Page from '../components/Page';
 
+
+const ci = Cities('en')
 const Demo: React.FC = () => {
   const [value, setValue] = useState(null);
   console.log('value :>> ', value);
+  var newList: any = []
+
+  async function newGeoocdetolist(v: any) {
+    const geocode = await geocodeByAddress(v.value);
+    console.log('geocode :>> ', geocode);
+    newList.push(geocode)
+  }
+  function saveToJson() {
+    const json = JSON.stringify(newList)
+    console.log('newlist :>> ', json);
+
+  }
+
+  function codebyadree() {
+
+    ci.forEach((v, i) => {
+      setTimeout(() => {
+        newGeoocdetolist(v)
+        if (i === ci.length - 1) {
+          saveToJson()
+        }
+      }, 5000)
+
+    })
+
+  }
+
+  // codebyadree()
+
+  function newValue(v: any) {
+    console.log('new value place :>> ', v);
+
+
+    setValue(v)
+  }
 
   return (
 
-    <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>TailwindCSS</IonTitle>
-        </IonToolbar>
-      </IonHeader>
-      <IonContent fullscreen className="relative">
-        <a href="#" className="w-[30rem] border-2 border-b-4 border-gray-200 rounded-xl hover:bg-gray-50">
+    <Page >
 
-          {/* <!-- Badge --> */}
+      {/* <IonContent >
+
+        
+      </IonContent> */}
+      <GooglePlacesAutocomplete selectProps={{
+          value,
+          onChange: newValue,
+
+        }} apiKey={Config().mapApiKey} />
+
+
+      {/* <div className={' block h-full w-full'}> */}
+
+        <MyMap>
+
+        </MyMap>
+
+      {/* </div> */}
+
+    </ Page>
+  );
+};
+
+export default Demo;
+
+{/*    <a href="#" className="w-[30rem] border-2 border-b-4 border-gray-200 rounded-xl hover:bg-gray-50">
+
+          // <!-- Badge --> 
           <p className="bg-sky-500 w-fit px-4 py-1 text-sm font-bold text-white rounded-tl-lg rounded-br-xl"> FEATURED </p>
 
           <div className="grid grid-cols-6 p-5 gap-y-2">
 
-            {/* <!-- Profile Picture --> */}
+            {/* <!-- Profile Picture --> 
             <div>
               <img src="https://picsum.photos/seed/2/200/200" className="max-w-16 max-h-16 rounded-full" />
             </div>
 
-            {/* <!-- Description --> */}
+             <!-- Description --> 
             <div className="col-span-5 md:col-span-4 ml-4">
 
               <p className="text-sky-500 font-bold text-xs"> 20+ SPOTS LEFT </p>
@@ -42,22 +103,14 @@ const Demo: React.FC = () => {
 
             </div>
 
-            {/* <!-- Price --> */}
+            {/* <!-- Price --> 
             <div className="flex col-start-2 ml-4 md:col-start-auto md:ml-0 md:justify-end">
               <p className="rounded-lg text-sky-500 font-bold bg-sky-100  py-1 px-3 text-sm w-fit h-fit"> $ 5 </p>
             </div>
 
           </div>
 
-        </a>
-        
-   </IonContent>
-    </IonPage >
-  );
-};
-
-export default Demo;
-
+        </a>*/}
 
 {/* <div classNameName='flex items-center justify-center min-h-screen from-red-100 via-red-300 to-blue-500 bg-gradient-to-br'>
           <div classNameName="p-4 items-center justify-center w-[680px] rounded-xl group sm:flex space-x-6 bg-white bg-opacity-50 shadow-xl hover:rounded-2xl">

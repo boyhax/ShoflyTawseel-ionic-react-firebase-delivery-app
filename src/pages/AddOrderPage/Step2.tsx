@@ -1,13 +1,13 @@
 import { IonPage, IonFab, IonFabButton, IonIcon, IonContent, IonCard, IonLabel, IonTitle, IonImg, IonItem, IonCheckbox, IonTextarea, IonFooter, IonButton, IonLoading } from '@ionic/react';
 import { closeSharp, arrowForwardOutline } from 'ionicons/icons';
 import * as React from 'react';
-import { useNewOrder, useOrderContext } from '.';
+import { useNewOrder } from '.';
 import { uploadNewOrder } from '../../providers/firebaseMain';
 import { OrderCatagories } from '../../types';
 
-const Step2: React.FC<{ onFinish: (v: any) => void,orderProps:any }> = ({ onFinish,orderProps }) => {
+const Step2: React.FC<{ onFinish: (v: any) => void }> = ({ onFinish }) => {
   const [props,setProps] = React.useState<object|any>({})
-  
+  const orderProps = useNewOrder().order
   return <div>
       <form onSubmit={(e)=>{e.preventDefault();onFinish({props})}}>
 
