@@ -5,13 +5,16 @@ import GooglePlacesAutocomplete, { geocodeByAddress, geocodeByPlaceId } from 're
 import { OrderPlaceHolder } from '../components/OrdersPLaceHolder';
 import { Config } from '../config';
 import { Cities } from '../components/utlis/citiesUtlis';
-import MyMap from '../components/utlis/Map';
+import GMap from '../components/utlis/GMap';
 import Page from '../components/Page';
+import { GoogleMap } from '@capacitor/google-maps';
 
 
 const ci = Cities('en')
 const Demo: React.FC = () => {
   const [value, setValue] = useState(null);
+  const [map, setMap] = useState<GoogleMap>();
+
   console.log('value :>> ', value);
   var newList: any = []
 
@@ -48,9 +51,14 @@ const Demo: React.FC = () => {
 
     setValue(v)
   }
-
-  return (
-
+  function onSubmitLocation(){
+    map && console.log('map :>> ', map);
+    console.log(' place submit :>> ', map?.getMapBounds().then((v)=>
+    {
+      console.log('points :>> ', v);
+    }));
+  }
+return(
     <Page >
 
       {/* <IonContent >
@@ -66,9 +74,9 @@ const Demo: React.FC = () => {
 
       {/* <div className={' block h-full w-full'}> */}
 
-        <MyMap>
+        <GMap onMap={setMap}>
 
-        </MyMap>
+        </GMap>
 
       {/* </div> */}
 

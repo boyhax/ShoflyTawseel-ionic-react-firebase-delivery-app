@@ -2,6 +2,7 @@ import {
   addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc,
   DocumentData,
   DocumentSnapshot,
+  GeoPoint,
   getDoc, getDocs, getFirestore, limit, onSnapshot, orderBy, query, QueryConstraint, QuerySnapshot, serverTimestamp, setDoc,
   startAfter,
   updateDoc,
@@ -14,14 +15,15 @@ import { getDownloadURL, getStorage, ref, uploadBytes, } from "firebase/storage"
 import { ApplicationInfo, ApplicationProps, Geolocation, 
   newOrderProps, OrderCatagorie, orderFilter, orderProps,
    OrderReportInfo, OrderReportProps, userInfo, UserProfile ,keyValue} from '../types';
+   import {initializeApp,} from 'geofirestore';
 
 
 
 export async function uploadNewOrder(o: newOrderProps) {
   const newO: orderProps = {
     urgent: o.urgent || false,
-    from: o.from.key,
-    to: o.to.key,
+    from: o.from,
+    to: o.to,
     uid: getAuth().currentUser?.uid!,
     time: serverTimestamp(),
     type: o.type || "smallObjects",
@@ -84,8 +86,16 @@ export async function getOrders(filter?: orderFilter, _limit?: number, fromDoc?:
   }
   return await getDocs(qu)
 }
+const GeoFirestore = initializeApp(new FirebaseFirestore.Firestore());
 
+export async function getBoundeOrders(filter:any) {
+  const geocollection = GeoFirestore.collection('ordersFromGeo');
+  const query = geocollection.near({ center: new GeoPoint(40.7589, -73.9851), radius: 1000 });
 
+  const querylast = query.get()
+  
+  return await querylast
+}
 
 export function makeApplicationPropsFromDoc(doc: DocumentSnapshot): ApplicationProps {
   let d = doc.exists() ? doc.data() : {}

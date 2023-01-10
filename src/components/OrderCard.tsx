@@ -172,7 +172,7 @@ const OrderCard = ({ orderDocSnap, whatsapp, message, remove, report, canApplyFo
                                 <IonIcon icon={timeOutline} />
                                 {date}</IonLabel>
                         </IonRow>
-                        <IonRow className={'align-middle justify-center'}>
+                        <IonRow dir={'rtl'} className={'align-middle justify-center'}>
 
                             <IonChip color="secondary">{"من: " + from}</IonChip>
                             <IonIcon color={'primary'} size={'large'} icon={arrowBackOutline}></IonIcon>

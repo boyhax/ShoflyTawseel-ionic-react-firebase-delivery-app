@@ -1,0 +1,26 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow  write: if request.auth != null;
+      allow read;
+    }
+    
+  }
+  match /databases/users/{UID} {
+      allow  write: if request.auth.uid == UID;
+      allow read;
+    }
+match /databases/ordersFromGeo/{key} {
+  allow write: if request.resource.data.g.size() == 2
+               && request.resource.data.g.geohash is string
+               && request.resource.data.g.geopoint is latlng
+               && request.resource.data.coordinates is latlng
+    }
+    match /databases/ordersToGeo/{key} {
+  allow write: if request.resource.data.g.size() == 2
+               && request.resource.data.g.geohash is string
+               && request.resource.data.g.geopoint is latlng
+               && request.resource.data.coordinates is latlng
+    }
+}

@@ -59,10 +59,8 @@ const Page: React.FC<Props> = (props) => {
         </IonFab>
 
 
-        <IonContent fullscreen>
 
                 {props.children}
-        </IonContent>
 
 
 

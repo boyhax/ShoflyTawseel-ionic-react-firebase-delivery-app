@@ -2,6 +2,7 @@ export interface locationOption  { value: Geolocation | any, title: string, subT
 export interface Geolocation  { latlng: LatLng, city: string, state?: string }
 export interface LatLng  { lat: string, lng: string }
 export interface OrderType  { name: string, icon: any, value: OrderCatagorie }
+export interface orderGeolocation  { geo: LatLng, name: string, geohash: string }
 
 export type OrderCatagorie = "SmallObjects" | 'Food' | 'PeopleTrans' | 'AnimalTrans' | 'BigObjects';
 
@@ -56,8 +57,8 @@ export const OrderCatagories: OrderType[] = [
     urgent:boolean,
     type:string,
     uid:string,
-    from:string,
-    to:string,
+    from:orderGeolocation,
+    to:orderGeolocation,
     time:any,
     comment:string|undefined|null,
     reports:OrderReportInfo[],
@@ -65,10 +66,9 @@ export const OrderCatagories: OrderType[] = [
   
   }
   export interface newOrderProps {
-    to:keyValue,
-    from:keyValue,
+    to:orderGeolocation,
+    from:orderGeolocation,
     urgent?:boolean,
-    geoLocation?:Geolocation,
     comment?:string,
     type?:OrderCatagorie
   

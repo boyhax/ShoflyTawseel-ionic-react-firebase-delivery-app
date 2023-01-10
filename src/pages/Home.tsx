@@ -20,6 +20,7 @@ import { greenIcon } from '../components/utlis/LeafLetMap';
 import { TT } from '../components/utlis/tt';
 import Page from '../components/Page';
 import OrdersSegmentComponent from '../components/OrdersSegmentComponent';
+import MapPage from './MapPage';
 
 
 
@@ -54,14 +55,14 @@ const Home = () => {
   return (
     <Page menubutton>
       <IonContent fullscreen scrollX>
-        <OrdersSegmentComponent></OrdersSegmentComponent>
-        
+        {/* <OrdersSegmentComponent></OrdersSegmentComponent> */}
+        <MapPage />
         
       </IonContent>
 
 
 
-      <div className={'sticky bottom-2 w-full flex justify-center'}>
+      {/* <div className={'sticky bottom-2 w-full flex justify-center'}>
           <IonButton className={'mx-auto w-50'}
 
             onClick={() => navigate.push('addorder')}
@@ -69,7 +70,7 @@ const Home = () => {
             <IonIcon  icon={add}></IonIcon>
             {TT('Add New Order')}
           </IonButton>
-        </div>
+        </div> */}
     </Page>
   );
 };
