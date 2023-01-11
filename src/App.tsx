@@ -53,10 +53,6 @@ import { App as cApp } from '@capacitor/app';
 import MainMenu from './components/MainMenu';
 
 
-const firebaseConfig = Config()
-initializeApp(firebaseConfig)
-export const db = getFirestore()
-
 setupIonicReact({
   mode: 'md'
 });

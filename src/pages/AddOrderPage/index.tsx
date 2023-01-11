@@ -8,7 +8,7 @@ import AddOrderPage from './AddOrderPage';
 interface Props{
     step:number,
     loading:boolean,
-    order:newOrderProps,
+    order:newOrderProps|any,
     update:(d:any)=>void
 }
 const initialProps:Props={

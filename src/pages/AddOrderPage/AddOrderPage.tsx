@@ -29,7 +29,7 @@ import { returnUpBackOutline } from 'ionicons/icons';
 const AddOrderPage: any = (props: any) => {
   const [finish, setFinish] = useState(false)
   const { user, profile } = useGlobals()
-  const [orderProps, setOrderProps] = useState<newOrderProps>({
+  const [orderProps, setOrderProps] = useState<any>({
     from: { key: '', value: '' },
     to: { key: '', value: '' },
     comment: '',

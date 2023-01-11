@@ -4,10 +4,9 @@ import { useGlobals } from '../../providers/globalsProvider';
 import { addDoc, collection, doc, DocumentData, getFirestore, onSnapshot, query, QueryDocumentSnapshot, where } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { useHistory, useParams } from 'react-router';
-import { db } from '../../App';
 import Chat from './chat';
 import Page from '../../components/Page';
-
+import { db } from '../../providers/firebaseMain';
 
 export default function Chats(props: any) {
   const { user, profile } = useGlobals()

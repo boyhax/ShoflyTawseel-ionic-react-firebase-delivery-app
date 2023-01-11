@@ -1,23 +1,59 @@
 import {
-  addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc,
+  addDoc,
+  arrayRemove,
+  arrayUnion,
+  collection,
+  deleteDoc,
+  doc,
   DocumentData,
+  documentId,
   DocumentSnapshot,
   GeoPoint,
-  getDoc, getDocs, getFirestore, limit, onSnapshot, orderBy, query, QueryConstraint, QuerySnapshot, serverTimestamp, setDoc,
+  getDoc,
+  getDocs,
+  getFirestore,
+  limit,
+  onSnapshot,
+  orderBy,
+  query,
+  QuerySnapshot,
+  serverTimestamp,
+  setDoc,
   startAfter,
   updateDoc,
-  where
-} from 'firebase/firestore';
-import { getAuth, updateProfile } from "firebase/auth";
-import { db } from '../App';
-import { randomAvatarUrl } from '../components/Avatar';
-import { getDownloadURL, getStorage, ref, uploadBytes, } from "firebase/storage";
-import { ApplicationInfo, ApplicationProps, Geolocation, 
-  newOrderProps, OrderCatagorie, orderFilter, orderProps,
-   OrderReportInfo, OrderReportProps, userInfo, UserProfile ,keyValue} from '../types';
-   import {initializeApp,} from 'geofirestore';
+  where,
+  
+} from "firebase/firestore";
+import 'firebase/compat/firestore';
+import { getAuth } from "firebase/auth";
+import { getDownloadURL, getStorage,ref, uploadBytes } from "firebase/storage";
+import {
+  ApplicationInfo,
+  ApplicationProps,
+  newOrderProps,
+  orderFilter,
+  orderProps,
+  OrderReportInfo,
+  OrderReportProps,
+  userInfo,
+  UserProfile,
+} from "../types";
+import {
+  LatLng,
+} from "@capacitor/google-maps/dist/typings/definitions";
+import { initializeApp } from "firebase/app";
+import { Config } from "../config";
+import { geoClass } from "./geofirestore";
 
+class firebaseClass{
+  constructor(){
+    console.log('firebase Class')
+    initializeApp(Config())
 
+  }
+}
+new firebaseClass()
+export const db = getFirestore()
 
 export async function uploadNewOrder(o: newOrderProps) {
   const newO: orderProps = {
@@ -27,78 +63,135 @@ export async function uploadNewOrder(o: newOrderProps) {
     uid: getAuth().currentUser?.uid!,
     time: serverTimestamp(),
     type: o.type || "smallObjects",
-    comment: o.comment || 'no comment',
+    comment: o.comment || "no comment",
     reports: [],
-    applications: []
-  }
-  return await addDoc(collection(db, 'orders'), newO)
-
+    applications: [],
+  };
+  return await addDoc(collection(db, "orders"), newO);
 }
-export async function setUserImage(photo: Blob, fileName: string, userid?: string) {
-  const sref = ref(getStorage(), fileName)
-  const p = await uploadBytes(sref, photo)
+export async function setUserImage(
+  photo: Blob,
+  fileName: string,
+  userid?: string
+) {
+  const sref = ref(getStorage(), fileName);
+  const p = await uploadBytes(sref, photo);
 
-  const url = await getDownloadURL(sref)
+  const url = await getDownloadURL(sref);
 
-  console.log('p.url :>> ', url);
+  console.log("p.url :>> ", url);
 
   if (userid && url) {
-    await updateUserProfile(userid, { photoURL: url })
-
+    await updateUserProfile(userid, { photoURL: url });
   } else {
-    await updateUserProfile(getAuth().currentUser?.uid, { photoURL: url })
+    await updateUserProfile(getAuth().currentUser?.uid, { photoURL: url });
   }
 }
-export  function getUserReports(id: String) {
-  return  getDocs(query(collection(db, "ordersReports"),where('from','==',id)));
+export function getUserReports(id: String) {
+  return getDocs(
+    query(collection(db, "ordersReports"), where("from", "==", id))
+  );
 }
-export  function subscripeUserReports(id: String,result:(snap:QuerySnapshot<DocumentData>)=>boolean) {
-  const unsubHere =  onSnapshot(query(collection(db, "ordersReports")
-  ,where('from','==',id)),(snap)=>{let unsub = result(snap);
-  unsub && unsubHere()});
+export function subscripeUserReports(
+  id: String,
+  result: (snap: QuerySnapshot<DocumentData>) => boolean
+) {
+  const unsubHere = onSnapshot(
+    query(collection(db, "ordersReports"), where("from", "==", id)),
+    (snap) => {
+      let unsub = result(snap);
+      unsub && unsubHere();
+    }
+  );
 }
-export  function subscripeUserApplications
-(id: String,result:(snap:QuerySnapshot<DocumentData>)=>boolean) {
-  const unsubHere =  onSnapshot(query(collection(db, "ordersApplications")
-  ,where('byUser','==',id)),(snap)=>{let unsub = result(snap);
-  unsub && unsubHere()});
+export function subscripeUserApplications(
+  id: String,
+  result: (snap: QuerySnapshot<DocumentData>) => boolean
+) {
+  const unsubHere = onSnapshot(
+    query(collection(db, "ordersApplications"), where("byUser", "==", id)),
+    (snap) => {
+      let unsub = result(snap);
+      unsub && unsubHere();
+    }
+  );
 }
-export  function subscripeUserOrders
-(id: String,result:(snap:QuerySnapshot<DocumentData>)=>boolean) {
-  const unsubHere =  onSnapshot(query(collection(db, "orders")
-  ,where('uid','==',id)),(snap)=>{let unsub = result(snap);
-  unsub && unsubHere()});
+export function subscripeUserOrders(
+  id: String,
+  result: (snap: QuerySnapshot<DocumentData>) => boolean
+) {
+  const unsubHere = onSnapshot(
+    query(collection(db, "orders"), where("uid", "==", id)),
+    (snap) => {
+      let unsub = result(snap);
+      unsub && unsubHere();
+    }
+  );
 }
 
-export async function getOrders(filter?: orderFilter, _limit?: number, fromDoc?: DocumentSnapshot) {
-  var qu = query(collection(db, "orders/"))
+export async function getOrders(
+  filter?: orderFilter,
+  _limit?: number,
+  fromDoc?: DocumentSnapshot
+) {
+  var qu = query(collection(db, "orders/"));
   if (filter) {
-    if (filter.from) { qu = query(qu, where("from", '==', filter.from)) }
-    if (filter.to) { qu = query(qu, where("to", '==', filter.to)) }
-    if (filter.userID) { qu = query(qu, where("uid", '==', filter.userID)) }
-    if (filter?.limit) { qu = query(qu, limit(filter?.limit)) }
+    if (filter.from) {
+      qu = query(qu, where("from", "==", filter.from));
+    }
+    if (filter.to) {
+      qu = query(qu, where("to", "==", filter.to));
+    }
+    if (filter.userID) {
+      qu = query(qu, where("uid", "==", filter.userID));
+    }
+    if (filter?.limit) {
+      qu = query(qu, limit(filter?.limit));
+    }
   }
 
-  qu = query(qu, orderBy('time', 'desc'))
+  qu = query(qu, orderBy("time", "desc"));
 
   if (fromDoc) {
-    qu = query(qu, startAfter(fromDoc))
+    qu = query(qu, startAfter(fromDoc));
   }
-  return await getDocs(qu)
+  return await getDocs(qu);
 }
-const GeoFirestore = initializeApp(new FirebaseFirestore.Firestore());
 
-export async function getBoundeOrders(filter:any) {
-  const geocollection = GeoFirestore.collection('ordersFromGeo');
-  const query = geocollection.near({ center: new GeoPoint(40.7589, -73.9851), radius: 1000 });
 
-  const querylast = query.get()
+
+
+export async function getBoundeOrders(v: {
+  point: LatLng;
+  from: boolean;
+  radius: number;
+}) {
+    const collection = v.from ? "ordersFromGeo" : "ordersToGeo"
   
-  return await querylast
+  const query = {
+    center: new GeoPoint(v.point.lat, v.point.lng),
+    radius: v.radius,
+  }
+
+  // const querylast = await query.get();
+  var ides: String[] = [];
+  // querylast.forEach((doc: any) => {
+  //   ides.push(doc.id);
+  // });
+  const ordersSnap = getOrdersById(ides);
+
+  return await ordersSnap;
+}
+async function getOrdersById(ides: String[]) {
+  var qu = query(collection(db, "orders"), where(documentId(), "in", ides));
+
+  return getDocs(qu);
 }
 
-export function makeApplicationPropsFromDoc(doc: DocumentSnapshot): ApplicationProps {
-  let d = doc.exists() ? doc.data() : {}
+export function makeApplicationPropsFromDoc(
+  doc: DocumentSnapshot
+): ApplicationProps {
+  let d = doc.exists() ? doc.data() : {};
   return {
     byUser: d.byUser,
     forOrder: d.forOrder,
@@ -108,18 +201,20 @@ export function makeApplicationPropsFromDoc(doc: DocumentSnapshot): ApplicationP
     timeAccepted: d.timeAccepted,
     timeDone: d.timeDone,
     timeSend: d.timeSend,
-  }
+  };
 }
 export function makeUSerInfoFromDoc(s: DocumentSnapshot): userInfo {
-  let d = s.exists() ? s.data() : {}
+  let d = s.exists() ? s.data() : {};
   return {
     name: d.name,
     phoneNumber: d.phoneNumber,
-    photoURL: d.photoURL
-  }
+    photoURL: d.photoURL,
+  };
 }
-export function makeOrderFromDoc(orderDocSnap: DocumentSnapshot<DocumentData>): orderProps {
-  const o = orderDocSnap.exists() ? orderDocSnap.data() : {}
+export function makeOrderFromDoc(
+  orderDocSnap: DocumentSnapshot<DocumentData>
+): orderProps {
+  const o = orderDocSnap.exists() ? orderDocSnap.data() : {};
   return {
     urgent: o.urgent,
     type: o.type,
@@ -129,117 +224,130 @@ export function makeOrderFromDoc(orderDocSnap: DocumentSnapshot<DocumentData>): 
     time: o.time,
     comment: o.comment,
     reports: o.reports ? o.reports : [],
-    applications: o.applications ? o.applications : []
-  }
-
+    applications: o.applications ? o.applications : [],
+  };
 }
 export function UserProfileFromDoc(doc: DocumentSnapshot): UserProfile {
-  const d = doc.data()
+  const d = doc.data();
   return {
     name: d?.name,
     phoneNumber: d?.phoneNumber,
     photoURL: d?.photoURL,
-    devloper: !!d?.devloper
-  }
+    devloper: !!d?.devloper,
+  };
 }
 
-
-export async function getProfile(uid: string, callback: (profile: any) => void = (c) => { }) {
-  const res = await getDoc(doc(getFirestore(), "users/" + uid))
-  callback(res)
-  return res
+export async function getProfile(
+  uid: string,
+  callback: (profile: any) => void = (c) => {}
+) {
+  const res = await getDoc(doc(getFirestore(), "users/" + uid));
+  callback(res);
+  return res;
 }
 export async function updateUserProfile(uid: any, data: any) {
-
-  return updateDoc(doc(db, "users/" + uid), data)
-
+  return updateDoc(doc(db, "users/" + uid), data);
 }
 export async function profileExist(uid: string) {
-  return await (await getProfile(uid)).exists()
+  return await (await getProfile(uid)).exists();
 }
- export async function createNewProfileForThisUser(name: string ,
+export async function createNewProfileForThisUser(
+  name: string,
   phoneNumber: string,
   email: string,
-  photoURL: string) {
-  const uid = getAuth().currentUser?.uid
-  const user = getAuth().currentUser
-  const profile:UserProfile = {
-    name: name ,
+  photoURL: string
+) {
+  const uid = getAuth().currentUser?.uid;
+  const user = getAuth().currentUser;
+  const profile: UserProfile = {
+    name: name,
     phoneNumber: phoneNumber,
     email: email,
-    photoURL: photoURL ,
-    devloper:false,
-    
-  }
-  const dref = doc(getFirestore(), "users", uid!)
-  const d = setDoc(dref, profile).then((d) => {
-    console.log('new profile created :>> ', d);
-  }, (err) => {
-    console.log('err :>> ', err);
-  })
-  return d
+    photoURL: photoURL,
+    devloper: false,
+  };
+  const dref = doc(getFirestore(), "users", uid!);
+  const d = setDoc(dref, profile).then(
+    (d) => {
+      console.log("new profile created :>> ", d);
+    },
+    (err) => {
+      console.log("err :>> ", err);
+    }
+  );
+  return d;
 }
 
 export function UpdateProfileForThisUser(data: any) {
-  const uid = getAuth().currentUser?.uid
+  const uid = getAuth().currentUser?.uid;
 
-  return updateUserProfile(uid!,data)
-  
+  return updateUserProfile(uid!, data);
 }
-export const reportOrder = async (order: DocumentSnapshot<DocumentData>, why: string = "") => {
-  const uid = getAuth().currentUser?.uid
-  var userReport = order?.data()!.reports.find((v: any) => { return v.byUser === uid })
+export const reportOrder = async (
+  order: DocumentSnapshot<DocumentData>,
+  why: string = ""
+) => {
+  const uid = getAuth().currentUser?.uid;
+  var userReport = order?.data()!.reports.find((v: any) => {
+    return v.byUser === uid;
+  });
   if (!!userReport) {
     alert("already reported");
     return;
-  }
-  else {
+  } else {
     const report: OrderReportProps = {
       byUser: uid!,
       time: new Date(),
       why: why,
-      OrderId: order.id!
-    }
-    const newDoc = await addDoc(collection(db, "ordersReports"), report)
+      OrderId: order.id!,
+    };
+    const newDoc = await addDoc(collection(db, "ordersReports"), report);
     const reportInfo: OrderReportInfo = {
       byUser: uid!,
       time: new Date(),
       id: newDoc.id,
-      why: why
-    }
+      why: why,
+    };
     return updateDoc(doc(db, "orders", order.id!), {
-      reports: arrayUnion(reportInfo)
-    })
+      reports: arrayUnion(reportInfo),
+    });
   }
-}
+};
 export function deleteOrder(order: DocumentSnapshot) {
-  return deleteDoc(order.ref)
+  return deleteDoc(order.ref);
 }
 export async function deleteDoc_(path: string) {
-  await deleteDoc(doc(getFirestore(), path))
-  console.log(' deleted doc path :>> ', path);
-
+  await deleteDoc(doc(getFirestore(), path));
+  console.log(" deleted doc path :>> ", path);
 }
 export async function isReportedBy(userUID: string, docUID: string) {
-  const reports = await getOrderReports(docUID)
+  const reports = await getOrderReports(docUID);
   if (!reports === undefined) {
-    console.log('reports :>> ', reports);
+    console.log("reports :>> ", reports);
     reports.forEach((value: any) => {
       if (value.by === userUID) {
-        return true
+        return true;
       }
-    })
-    return false
+    });
+    return false;
   }
-  return true
+  return true;
 }
 async function getOrderReports(id: string) {
-  const data = await getDoc(doc(getFirestore(), "orders/" + id))
+  const data = await getDoc(doc(getFirestore(), "orders/" + id));
 
-  return data.exists() ? data.data().reports! ? data.data().reports : [] : undefined
+  return data.exists()
+    ? data.data().reports!
+      ? data.data().reports
+      : []
+    : undefined;
 }
-export async function applyForCard(UserUID: string, cardUID: string, orderOwner: string) {
-  let timeNow = new Date()
+export async function applyForCard(
+  UserUID: string,
+  cardUID: string,
+  orderOwner: string
+) {
+  let timeNow = new Date();
   const newApplication: ApplicationProps = {
     timeSend: timeNow,
     forOrder: cardUID,
@@ -251,52 +359,64 @@ export async function applyForCard(UserUID: string, cardUID: string, orderOwner:
     timeDone: timeNow,
   };
   try {
-    let d = await addDoc(collection(db, "ordersApplications"), newApplication)
+    let d = await addDoc(collection(db, "ordersApplications"), newApplication);
 
     let info: ApplicationInfo = {
       byUser: UserUID,
       id: d.id,
       time: timeNow,
-    }
-    var res = await updateDoc(doc(getFirestore(), "orders/" + cardUID),
-      { "applications": arrayUnion(info) })
+    };
+    var res = await updateDoc(doc(getFirestore(), "orders/" + cardUID), {
+      applications: arrayUnion(info),
+    });
   } catch (error) {
-    console.log('error on add applictaion to order ${cardUID} : :>> ', " error :", error);
+    console.log(
+      "error on add applictaion to order ${cardUID} : :>> ",
+      " error :",
+      error
+    );
   }
 
-
-  return res
+  return res;
 }
-export const avatarPLaceholder = require("../assets/avatarPlaceHolder.png")
+export const avatarPLaceholder = require("../assets/avatarPlaceHolder.png");
 export function getUserInfoPlaceHolder() {
   let info: userInfo = {
     name: "Nick Name",
     phoneNumber: "*** *******",
     photoURL: avatarPLaceholder,
-  }
-  return info
+  };
+  return info;
 }
 export async function getApplicationsToOrder(cardUID: string) {
-  const res = await query(collection(getFirestore(), "ordersApplications/" + cardUID + "/col"))
+  const res = await query(
+    collection(getFirestore(), "ordersApplications/" + cardUID + "/col")
+  );
   if (!!res) {
-    return res
+    return res;
   }
-  return []
+  return [];
 }
-export async function removeApplicationToOrder(info: ApplicationInfo, orderDoc: DocumentSnapshot<DocumentData>) {
-  const res = await updateDoc(orderDoc.ref,
-    { "applications": arrayRemove(info) })
-  return res
+export async function removeApplicationToOrder(
+  info: ApplicationInfo,
+  orderDoc: DocumentSnapshot<DocumentData>
+) {
+  const res = await updateDoc(orderDoc.ref, {
+    applications: arrayRemove(info),
+  });
+  return res;
 }
 
 export function is_user_applied_to_card(UserUID: string, order: orderProps) {
-  return !!order.applications.find((value) => { return value.byUser === UserUID })
+  return !!order.applications.find((value) => {
+    return value.byUser === UserUID;
+  });
 }
 
 export function intersection(a: Array<any>, b: Array<any>) {
   var filteredArray = a.filter(function (n) {
     return b.indexOf(n) !== -1;
   });
-  return filteredArray
+  return filteredArray;
 }
-export const hands_up = require("../assets/hands-up.png")
+export const hands_up = require("../assets/hands-up.png");

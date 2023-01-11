@@ -5,11 +5,11 @@ import { addDoc, collection, doc, DocumentData, DocumentReference, DocumentSnaps
 import { getAuth } from 'firebase/auth';
 import {  Redirect, useHistory, useParams } from 'react-router';
 import { TT } from '../../components/utlis/tt';
-import { db } from '../../App';
 import { attachOutline, chevronBack, imageOutline, locationOutline, sendOutline } from 'ionicons/icons';
 
 import "./chat.css"
 import Page from '../../components/Page';
+import { db } from '../../providers/firebaseMain';
 
 interface MessageProps{
   time:any ,

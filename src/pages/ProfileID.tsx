@@ -3,8 +3,8 @@ import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonButtons, IonLabe
 import { useGlobals } from '../providers/globalsProvider';
 import { collection, doc, DocumentData, DocumentSnapshot, getDoc, getFirestore, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import OrderCard from '../components/OrderCard';
-import { db } from '../App';
 import { useHistory, useParams } from 'react-router';
+import { getProfile } from '../providers/firebaseMain';
 
 
  const ProfileID: React.FC = (props) => {
@@ -16,7 +16,7 @@ import { useHistory, useParams } from 'react-router';
     const history =useHistory()
     const uid = id
     useEffect(()=>{
-      getDoc(doc(db,"users",id)).then((snap)=>{
+      getProfile(id).then((snap)=>{
         snap.exists()?setUserProfile(snap.data()):setUserProfile(undefined)
       })
   },[]);
@@ -65,7 +65,7 @@ import { useHistory, useParams } from 'react-router';
       
       {!!userProfile && content ==="deliver"&& 
           <IonContent>
-            <ProfileApplicationsList uid={uid}/>
+            {/* <ProfileApplicationsList uid={uid}/> */}
         </IonContent>}
       
     </IonPage>
@@ -116,48 +116,4 @@ const ProfileOrdersList:FC<props>=({uid}:props)=>{
 
 type props={
   uid:string
-}
-const ProfileApplicationsList:FC<props>=({uid}:props)=>{
-  const [list,setList]=useState<DocumentSnapshot<DocumentData>[]>([])
-  const [refreshing,setRefreshing] = useState(true)
-  const [isMounted, setIsMounted] = useState(true)
-  const {user,profile} = useGlobals()
-  useEffect(()=>{
-      const unsub = getData();
-      return()=>{unsub()}
-  },[])
-  useEffect(()=>{
-    setIsMounted(true)
-    return () => {
-      setIsMounted(false)
-    }
-  },[])
-
-   function getData() {
-    setRefreshing(true)
-    const ref = collection(db,"ordersApplications")
-    var finalQuery= query(ref,where("byUser","==",uid))
-    
-    return onSnapshot(finalQuery,(snap)=>{
-      if(snap.empty){return};
-
-      let newList:DocumentSnapshot<DocumentData>[]=[]
-
-      snap.forEach((doc)=>{
-         newList.push(doc)
-        })
-        if(isMounted){
-         setList(newList)
-         setRefreshing(false)    
-        }
-    })
-  } 
-  
-  return<IonList>
-    {refreshing && <IonSpinner></IonSpinner>}
-      {/* {!!list && list.map((value,index:any) => {
-        return <ApplicationCard docsnap={value} key={index}></ApplicationCard>
-          })
-        } */}
-  </IonList>
 }

@@ -6,7 +6,6 @@ import { useHistory, useParams } from 'react-router';
 import OrderList from '../components/OrderList';
 import OrderCard from '../components/OrderCard';
 import { collection, doc, DocumentSnapshot, onSnapshot, query, where } from 'firebase/firestore';
-import { db } from '../App';
 import { closeOutline } from 'ionicons/icons';
 
 const OrdersPage: React.FC = () => {
@@ -19,14 +18,14 @@ const OrdersPage: React.FC = () => {
   const history = useHistory()
   useEffect(() => {
     const unsub = loadOrder()
-    return()=>unsub()
+    // return()=>unsub()
   }, []);
   useEffect(() => {
     
   }, [currentOrder]);
 
   const loadOrder = () => {
-    const unsub1 = onSnapshot(doc(db, 'orders', id), (doc) => setCurrentOrder(doc))
+    // const unsub1 = subor(doc(db, 'orders', id), (doc) => setCurrentOrder(doc))
     // ApplicationProps ={
     //   byUser:string,
     //   forOrder:string,
@@ -37,11 +36,11 @@ const OrdersPage: React.FC = () => {
     //   timeDone:any,
     //   timeSend:any,
     // }
-    const unsub2 = onSnapshot(query(collection(db,'ordersApplications'),where("forOrder","==",id)),(snap)=>{
-      setApplications(snap.docs);
-      console.log(snap.docs)
-    })
-    return ()=>{unsub1();unsub2()}
+    // const unsub2 = onSnapshot(query(collection(db,'ordersApplications'),where("forOrder","==",id)),(snap)=>{
+    //   setApplications(snap.docs);
+    //   console.log(snap.docs)
+    // })
+    // return ()=>{unsub1();unsub2()}
   }
   if (id) {
     if (!currentOrder) {

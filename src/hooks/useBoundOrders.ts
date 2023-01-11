@@ -1,9 +1,8 @@
+import { LatLng } from '@capacitor/google-maps/dist/typings/definitions';
 import { getAuth } from 'firebase/auth';
-import { DocumentData, QuerySnapshot } from 'firebase/firestore';
 import * as React from 'react';
 import { useState } from 'react';
-import { getBoundeOrders, subscripeUserApplications, } from '../providers/firebaseMain';
-import { orderProps } from '../types';
+import { getBoundeOrders, } from '../providers/firebaseMain';
 
 
 
@@ -11,7 +10,7 @@ const useBoundOrders = () => {
     const [orders, setOrders] = React.useState<any>()
     const [loading, setLoading] = React.useState<boolean>(true)
     const [mounted, setMounted] = useState(true)
-    const [bounds, setBounds] = useState<any>()
+    const [bounds, setBounds] = useState<LatLng>()
 
     const uid = getAuth().currentUser?.uid!
 
@@ -23,9 +22,10 @@ const useBoundOrders = () => {
   
     const update =async () => {
         setLoading(true)
+        if(!bounds){return}
         try {
             const snap =await getBoundeOrders({
-                bounds:bounds
+                point:bounds,from:true,radius:50000
             })
             var list=[]
             snap.docs.forEach((doc)=>{

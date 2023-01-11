@@ -15,9 +15,9 @@ import {
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router";
-import { db, getLang } from "../App";
+
 import {
-    applyForCard, deleteOrder, getUserInfoPlaceHolder,
+    applyForCard, db, deleteOrder, getUserInfoPlaceHolder,
     is_user_applied_to_card, makeOrderFromDoc,
     removeApplicationToOrder, reportOrder,
 } from "../providers/firebaseMain";

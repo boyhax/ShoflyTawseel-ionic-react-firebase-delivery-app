@@ -3,7 +3,7 @@ import { getAuth, onAuthStateChanged, updateProfile, } from "firebase/auth";
 import { doc, DocumentSnapshot, getFirestore, onSnapshot, setDoc } from "firebase/firestore";
 import { Network } from '@capacitor/network';
 import CreateProfile from "../pages/CreatProfile";
-import { db, token } from "../App";
+import {  token } from "../App";
 import { createNewProfileForThisUser, UpdateProfileForThisUser, UserProfileFromDoc } from "./firebaseMain";
 import { UserProfile } from "../types";
 import { useIonAlert } from "@ionic/react";
@@ -76,9 +76,9 @@ const GlobalProvider:React.FC =(props)=>{
 
     function tokenUpdate() {
       if(user && profile && token){
-        setDoc(doc(db,"fcmTokens",getAuth().currentUser?.uid!),{token:token}).then((v)=>{
-          console.log(v)
-        })
+        // setDoc(doc(db,"fcmTokens",getAuth().currentUser?.uid!),{token:token}).then((v)=>{
+        //   console.log(v)
+        // })
       }
     }
   
