@@ -10,17 +10,13 @@
         <provider android:authorities="${applicationId}.fileprovider" android:exported="false" android:grantUriPermissions="true" android:name="androidx.core.content.FileProvider">
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
         </provider>
-        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyAcnXys49X1XN4tfOS6RdGNXBTj3r_es2I"/>
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyAcnXys49X1XN4tfOS6RdGNXBTj3r_es2I" />
         <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/ic_baseline_doorbell_24" />
     </application>
-
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- Geolocation API -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <!-- camera use API -->
-
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-feature android:name="android.hardware.location.gps" />
 </manifest>

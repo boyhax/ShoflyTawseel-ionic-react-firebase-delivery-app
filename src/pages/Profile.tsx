@@ -31,7 +31,8 @@ const Profile: React.FC = () => {
 
   return (
     <Page>
-      {!user && <Redirect to={'signin'}></Redirect>}
+      {/* {!user && <Redirect to={'signin'}></Redirect>} */}
+      <IonContent fullscreen>
       <IonGrid >
         <IonRow>
 
@@ -102,30 +103,12 @@ const Profile: React.FC = () => {
       </IonGrid>
 
 
-      {/* {content !== "editProfile" && <IonSegment value={content}>
-        <IonSegmentButton value="orders" onClick={() => setContent('orders')}>
-          <IonLabel>orders</IonLabel>
-        </IonSegmentButton>
-        <IonSegmentButton value="deliver" onClick={() => setContent('deliver')}>
-          <IonLabel>deliver</IonLabel>
-        </IonSegmentButton>
-      </IonSegment>} */}
-
-      {/* 
-      {content === "orders" &&
-        <IonContent>
-          <ProfileOrdersList />
-        </IonContent>}
-
-      {content === "deliver" &&
-        <IonContent>
-          <ProfileApplicationsList />
-        </IonContent>} */}
+      
       {content === "editProfile" &&
         <IonContent>
           <CreatProfile onSave={() => { setContent("deliver") }} />
         </IonContent>}
-
+        </IonContent>
     </Page>
   );
 };

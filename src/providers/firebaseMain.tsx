@@ -43,7 +43,7 @@ import {
 } from "@capacitor/google-maps/dist/typings/definitions";
 import { initializeApp } from "firebase/app";
 import { Config } from "../config";
-import { geoClass } from "./geofirestore";
+import geoFirestore from "./geofirestore";
 
 class firebaseClass{
   constructor(){
@@ -173,14 +173,15 @@ export async function getBoundeOrders(v: {
     radius: v.radius,
   }
 
-  // const querylast = await query.get();
-  var ides: String[] = [];
-  // querylast.forEach((doc: any) => {
-  //   ides.push(doc.id);
-  // });
-  const ordersSnap = getOrdersById(ides);
+  return geoFirestore.getGeoQuery(v.point,v.radius,collection)
 
-  return await ordersSnap;
+
+  // var ides: String[] = [];
+  // // querylast.forEach((doc: any) => {
+  // //   ides.push(doc.id);
+  // // });
+  // const ordersSnap = getOrdersById(ides);
+
 }
 async function getOrdersById(ides: String[]) {
   var qu = query(collection(db, "orders"), where(documentId(), "in", ides));

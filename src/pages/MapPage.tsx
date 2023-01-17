@@ -41,32 +41,45 @@ const MapPage: React.FC = () => {
     state.current = { ...state.current, ...obj };
   }
   const { orders, loading, setBounds, update } = useBoundOrders();
-  
+  useEffect(() => {
+    if(map){
+      console.log('orders :>> ', orders);
+      // map.addMarkers(orders.map((value, index, array) => {return {coordinate:value}}))
+
+    }
+  }, [orders]);
    function setup() {
     if (!map) {
       return;
     }
+    var b = map.getMapBounds().then((d)=>{
+      setBounds({
+        lat:d.center.lat,
+        lng:d.center.lng
+      })
+    })
+    
     map.setOnBoundsChangedListener((data) => {
       setState({ value: state.current.value + 1 });
       setBounds({lat:data.latitude,lng:data.longitude})
-      console.log("value+1 :>> ", state.current.value);
+
     });
     map.setOnMarkerClickListener((d) => {
       console.log("d ", d);
     });
-    map.setOnMapClickListener(async (d) => {
-      if(state.current.marker){
-        map.removeMarker(state.current.marker)
-      }
-      const newMarker = await map.addMarker({
-        coordinate: { lat: d.latitude, lng: d.longitude },
-      });
-      setState({marker: newMarker})
+    // map.setOnMapClickListener(async (d) => {
+    //   if(state.current.marker){
+    //     map.removeMarker(state.current.marker)
+    //   }
+    //   const newMarker = await map.addMarker({
+    //     coordinate: { lat: d.latitude, lng: d.longitude },
+    //   });
+    //   setState({marker: newMarker})
 
-      moveCameraTo({ lat: d.latitude, lng: d.longitude })
+    //   moveCameraTo({ lat: d.latitude, lng: d.longitude })
 
-      // geofirestoreinstance.addGeo("new asdsd", { lat: d.latitude, lng: d.longitude }, true);
-    });
+    //   // geofirestoreinstance.addGeo("new asdsd", { lat: d.latitude, lng: d.longitude }, true);
+    // });
   }
 
   function unSetup() {
@@ -96,19 +109,19 @@ const MapPage: React.FC = () => {
       <GMap
         onMap={setMap}
         controls={
-          <div className={" w-full h-full flex  "}>
+          <div className={" w-full h-full flex pointer-events-none  "}>
             <div
               className={`pointer-events-auto 
             relative justify-center flex flex-col self-center  `}
             >
               <IonButton onClick={selfLocate} shape="round" color="light">
-                <IonIcon color={"primary"} icon={location} />
+                <IonIcon slot={'icon-only'} color={"primary"} icon={location} />
                 {/* <IonLabel color={'primary'}>Locate</IonLabel> */}
               </IonButton>
             </div>
 
             {state.current.centerMarker && (
-              <div className={"absolute w-full h-full flex  "}>
+              <div className={"absolute w-full h-full flex pointer-events-none  "}>
                 <IonIcon
                   className={`pointer-events-noun m-auto
             text-5xl `}

@@ -53,24 +53,16 @@ const Home = () => {
   
 
   return (
-    <Page menubutton>
-      <IonContent fullscreen scrollX>
-        {/* <OrdersSegmentComponent></OrdersSegmentComponent> */}
-        <MapPage />
+    <Page>
+              <MapPage />
+
+      {/* <IonContent > */}
         
-      </IonContent>
+      {/* </IonContent> */}
 
 
 
-      {/* <div className={'sticky bottom-2 w-full flex justify-center'}>
-          <IonButton className={'mx-auto w-50'}
-
-            onClick={() => navigate.push('addorder')}
-            shape='round'>
-            <IonIcon  icon={add}></IonIcon>
-            {TT('Add New Order')}
-          </IonButton>
-        </div> */}
+      
     </Page>
   );
 };

@@ -12,7 +12,7 @@ const AuthRoute:React.FC= (props)=>{
         
 
     
-    {user && <Profile/>}
+    {user && props.children}
     {!user && <SignIn/>}
     
     </div>

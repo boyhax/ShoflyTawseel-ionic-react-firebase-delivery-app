@@ -1,98 +1,58 @@
-import React, { useEffect, useState } from 'react';
-import { IonContent, IonPage, IonTitle, IonToolbar, IonButtons, IonBackButton, IonCard, IonSpinner, IonLabel, IonItem, IonHeader, IonFabButton, IonFab, IonIcon, IonList } from '@ionic/react';
-import { useGlobals } from '../providers/globalsProvider';
-import { getAuth } from 'firebase/auth';
-import { useHistory, useParams } from 'react-router';
-import OrderList from '../components/OrderList';
-import OrderCard from '../components/OrderCard';
-import { collection, doc, DocumentSnapshot, onSnapshot, query, where } from 'firebase/firestore';
-import { closeOutline } from 'ionicons/icons';
+import React, { useEffect, useState } from "react";
+import {
+  IonContent,
+  IonCard,
+  IonList,
+  IonHeader,
+  IonSegment,
+  IonSegmentButton,
+  IonToolbar,
+} from "@ionic/react";
+import { useGlobals } from "../providers/globalsProvider";
+import { getAuth } from "firebase/auth";
+import { useHistory, useParams } from "react-router";
+import {
+  DocumentSnapshot,
+} from "firebase/firestore";
+import Page from "../components/Page";
+import OrdersSegmentComponent from "../components/OrdersSegmentComponent";
+import OrderList from "../components/OrderList";
 
 const OrdersPage: React.FC = () => {
-  const { user, profile, currentOrder, setCurrentOrder } = useGlobals()
-  const [loading, setLoading] = useState(true)
-  const [applications, setApplications] = useState<DocumentSnapshot[]>()
+  const { user, profile, currentOrder, setCurrentOrder } = useGlobals();
+  const [loading, setLoading] = useState(true);
+  const [applications, setApplications] = useState<DocumentSnapshot[]>();
+  const [segment,setSegmt] = useState<any>('all')
+  const auth = getAuth();
+  const { id, type }: any = useParams();
+  const history = useHistory();
+  useEffect(() => {}, []);
+  useEffect(() => {}, [currentOrder]);
 
-  const auth = getAuth()
-  const { id, type }: any = useParams()
-  const history = useHistory()
-  useEffect(() => {
-    const unsub = loadOrder()
-    // return()=>unsub()
-  }, []);
-  useEffect(() => {
-    
-  }, [currentOrder]);
-
-  const loadOrder = () => {
-    // const unsub1 = subor(doc(db, 'orders', id), (doc) => setCurrentOrder(doc))
-    // ApplicationProps ={
-    //   byUser:string,
-    //   forOrder:string,
-    //   forUser:string,
-    //   isAccepted:boolean,
-    //   isDone:boolean,
-    //   timeAccepted:any,
-    //   timeDone:any,
-    //   timeSend:any,
-    // }
-    // const unsub2 = onSnapshot(query(collection(db,'ordersApplications'),where("forOrder","==",id)),(snap)=>{
-    //   setApplications(snap.docs);
-    //   console.log(snap.docs)
-    // })
-    // return ()=>{unsub1();unsub2()}
-  }
-  if (id) {
-    if (!currentOrder) {
-      return <IonPage>
-        <IonItem>
-          <IonLabel>Loading...</IonLabel>
-          <IonSpinner name={'dots'} ></IonSpinner>
-        </IonItem>
-
-      </IonPage>
-    } else {
-      return <IonPage >
-        <IonFab>
-          <IonFabButton onClick={() => history.goBack()}>
-            <IonIcon icon={closeOutline}></IonIcon>
-          </IonFabButton>
-        </IonFab>
-        <IonContent style={{ marginTop: '50px' }}>
-          <OrderCard orderDocSnap={currentOrder}> </OrderCard>
-          {applications &&
-            <IonList>
-              {applications.map((value, index, array) => { 
-              return<IonCard>
-                {JSON.stringify(value.data())}
-              </IonCard>
-          })}
-            </IonList>
-          }
-        </IonContent>
-      </IonPage>
-    }
-
-  }
   return (
-    <IonPage >
-
-      <IonToolbar color="primary">
-        <IonButtons slot="start">
-          <IonBackButton defaultHref="/home" />
-        </IonButtons>
-        <IonTitle slot='end' >
-          the orders
-        </IonTitle>
-
-      </IonToolbar>
-      <IonContent>
-        <OrderList></OrderList>
+    <Page>
+      <IonContent fullscreen>
+      <IonHeader translucent mode={'ios'}>
+        <IonToolbar>
+          <IonSegment onIonChange={(e)=>setSegmt(e.detail.value)}  mode={'ios'} value="all">
+            <IonSegmentButton value="all">
+              All
+            </IonSegmentButton>
+            <IonSegmentButton value="myOrders">
+              My Orders
+            </IonSegmentButton>
+            <IonSegmentButton value="accepted">
+              Accepted Orders
+            </IonSegmentButton>
+          </IonSegment>
+        </IonToolbar>
+      </IonHeader>
+      {segment ==='all' && <OrderList></OrderList>}
+      {segment ==='accepted' && <OrderList></OrderList>}
+      {segment ==='myOrders' && <OrderList></OrderList>}
       </IonContent>
-    </IonPage>
+    </Page>
   );
 };
 
 export default OrdersPage;
-
-

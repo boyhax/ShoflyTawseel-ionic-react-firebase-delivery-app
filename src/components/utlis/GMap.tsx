@@ -39,6 +39,9 @@ class GMap extends React.Component<MyMapProps, MyMapState> {
   componentDidMount() {
     this.createMap()
   }
+  componentWillUnmount(): void {
+    this.state.map?.destroy()
+  }
 
   async createMap() {
 

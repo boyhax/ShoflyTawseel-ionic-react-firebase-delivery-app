@@ -6,17 +6,18 @@ import { GeoPoint } from "firebase/firestore";
 import * as geofirestore from "geofirestore";
 import { Config } from "../config";
 
-export class geoClass {
+ class geoClass {
   geocollection;
+  GeoFirestore;
   constructor() {
     firebase.initializeApp(Config());
     const firestore = firebase.firestore();
 
     // Create a GeoFirestore reference
-    const GeoFirestore = geofirestore.initializeApp(firestore);
+    this.GeoFirestore = geofirestore.initializeApp(firestore);
 
     // Create a GeoCollection reference
-    this.geocollection = GeoFirestore.collection("ordersGeo");
+    this.geocollection = this.GeoFirestore.collection("ordersGeo");
     // Add a GeoDocument to a GeoCollection
     
 
@@ -24,10 +25,13 @@ export class geoClass {
     
 
   }
-  async getGeoQuery(location:LatLng){
-    const query = this.geocollection.near({
+
+  async getGeoQuery(location:LatLng,radius:number,collection:string){
+    const col = this.GeoFirestore.collection(collection);
+
+    const query = col.near({
       center: new firebase.firestore.GeoPoint(location.lat,location.lng),
-      radius: 1000,
+      radius: radius,
     });
 
     // Get query (as Promise)
@@ -45,5 +49,5 @@ export class geoClass {
 }
 }
 
-const geofirestoreinstance = new geoClass()
-export default geofirestoreinstance
+const geoFirestore = new geoClass()
+export default geoFirestore

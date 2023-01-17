@@ -61,10 +61,9 @@ const Demo: React.FC = () => {
 return(
     <Page >
 
-      {/* <IonContent >
+      <IonContent fullscreen>
 
         
-      </IonContent> */}
       <GooglePlacesAutocomplete selectProps={{
           value,
           onChange: newValue,
@@ -74,11 +73,12 @@ return(
 
       {/* <div className={' block h-full w-full'}> */}
 
-        <GMap onMap={setMap}>
+        {/* <GMap onMap={setMap}>
 
-        </GMap>
+        </GMap> */}
 
       {/* </div> */}
+      </IonContent>
 
     </ Page>
   );
