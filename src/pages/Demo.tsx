@@ -8,6 +8,7 @@ import { Cities } from '../components/utlis/citiesUtlis';
 import GMap from '../components/utlis/GMap';
 import Page from '../components/Page';
 import { GoogleMap } from '@capacitor/google-maps';
+import { LeafLetMap } from '../components/utlis/LeafLetMap';
 
 
 const ci = Cities('en')
@@ -71,13 +72,13 @@ return(
         }} apiKey={Config().mapApiKey} />
 
 
-      {/* <div className={' block h-full w-full'}> */}
-
-        {/* <GMap onMap={setMap}>
-
-        </GMap> */}
-
-      {/* </div> */}
+      
+       
+       <LeafLetMap onMap={(map)=>{
+          map.addEventListener('dragstart',(e)=>{
+            console.log('leaflet dragge start :>> ', e);
+          })
+        }}></LeafLetMap>
       </IonContent>
 
     </ Page>

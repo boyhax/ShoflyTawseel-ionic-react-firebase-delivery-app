@@ -161,28 +161,6 @@ export async function getOrders(
 
 
 
-export async function getBoundeOrders(v: {
-  point: LatLng;
-  from: boolean;
-  radius: number;
-}) {
-    const collection = v.from ? "ordersFromGeo" : "ordersToGeo"
-  
-  const query = {
-    center: new GeoPoint(v.point.lat, v.point.lng),
-    radius: v.radius,
-  }
-
-  return geoFirestore.getGeoQuery(v.point,v.radius,collection)
-
-
-  // var ides: String[] = [];
-  // // querylast.forEach((doc: any) => {
-  // //   ides.push(doc.id);
-  // // });
-  // const ordersSnap = getOrdersById(ides);
-
-}
 async function getOrdersById(ides: String[]) {
   var qu = query(collection(db, "orders"), where(documentId(), "in", ides));
 

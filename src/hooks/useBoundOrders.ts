@@ -3,7 +3,8 @@ import { getAuth } from 'firebase/auth';
 import { Store } from 'pullstate';
 import * as React from 'react';
 import { useState } from 'react';
-import { getBoundeOrders, } from '../providers/firebaseMain';
+import { LatLngBounds } from 'leaflet';
+import geoFirestore from '../providers/geofirestore';
 
 const boundStore = new Store({
     orders:[],
@@ -15,7 +16,7 @@ const useBoundOrders = () => {
     const [orders, setOrders] = React.useState<any[]>()
     const [loading, setLoading] = React.useState<boolean>(true)
     const [mounted, setMounted] = useState(true)
-    const [bounds, setBounds] = useState<LatLng>()
+    const [bounds, setBounds] = useState<LatLngBounds>()
 
     const uid = getAuth().currentUser?.uid!
 
@@ -29,11 +30,13 @@ const useBoundOrders = () => {
         setLoading(true)
         if(!bounds){return}
         try {
-            const snap =await getBoundeOrders({
-                point:bounds,from:true,radius:500000
-            })
+            const snap =await geoFirestore.getGeoQuery(
+                bounds.getCenter(),
+                (bounds.getNorthEast().distanceTo(bounds.getCenter())/1000),
+                true,
+            )
             var list:any[]=[]
-            snap.docs.forEach((doc)=>{
+            snap.forEach((doc)=>{
                 list.push({id:doc.id,...doc.data()})
             })
 

@@ -9,7 +9,8 @@ import {
   IonSpinner,
   IonTextarea,
   IonTitle,
-  useIonAlert
+  useIonAlert,
+  useIonToast
 } from '@ionic/react';
 import { useGlobals } from '../../providers/globalsProvider';
 import * as L from 'leaflet';
@@ -54,7 +55,7 @@ const AddOrderPage: any = (props: any) => {
   }, [profile]);
 
 
-  const [presentAlert] = useIonAlert()
+  const [present] = useIonToast()
 
 
 
@@ -82,13 +83,15 @@ const AddOrderPage: any = (props: any) => {
       await uploadNewOrder(orderProps)
       // setFinish(true)
       setLoading(false)
+      present({ message: 'Order submitted seccessfully ',duration:1000 })
 
       navigate.push('/')
+
 
     } catch (error) {
       setLoading(false)
 
-      presentAlert({ message: 'Sorry some issue happen.. please try Again' })
+      present({ message: 'Sorry some issue happen.. please try Again' })
     }
   }
 

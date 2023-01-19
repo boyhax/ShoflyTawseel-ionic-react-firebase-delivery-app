@@ -17,6 +17,8 @@ import {
 import Page from "../components/Page";
 import OrdersSegmentComponent from "../components/OrdersSegmentComponent";
 import OrderList from "../components/OrderList";
+import UserOrdersList from "../components/UserOrdersList";
+import UserApplicationsList from "../components/UserApplicationsList";
 
 const OrdersPage: React.FC = () => {
   const { user, profile, currentOrder, setCurrentOrder } = useGlobals();
@@ -34,7 +36,7 @@ const OrdersPage: React.FC = () => {
       <IonContent fullscreen>
       <IonHeader translucent mode={'ios'}>
         <IonToolbar>
-          <IonSegment onIonChange={(e)=>setSegmt(e.detail.value)}  mode={'ios'} value="all">
+          <IonSegment onIonChange={(e)=>setSegmt(e.detail.value)}  mode={'ios'} value={segment}>
             <IonSegmentButton value="all">
               All
             </IonSegmentButton>
@@ -42,14 +44,14 @@ const OrdersPage: React.FC = () => {
               My Orders
             </IonSegmentButton>
             <IonSegmentButton value="accepted">
-              Accepted Orders
+              Accepted
             </IonSegmentButton>
           </IonSegment>
         </IonToolbar>
       </IonHeader>
-      {segment ==='all' && <OrderList></OrderList>}
-      {segment ==='accepted' && <OrderList></OrderList>}
-      {segment ==='myOrders' && <OrderList></OrderList>}
+      {segment ==='all' && <OrderList/>}
+      {segment ==='accepted' && <UserApplicationsList/>}
+      {segment ==='myOrders' && <UserOrdersList/>}
       </IonContent>
     </Page>
   );

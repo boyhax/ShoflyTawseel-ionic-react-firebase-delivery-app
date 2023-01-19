@@ -27,8 +27,10 @@
     "@types/react-router": "^5.1.18",
     "@types/react-router-dom": "^5.3.3",
     "firebase": "^9.8.1",
+    "firebase-tools": "^11.20.0",
     "firebaseui": "^6.0.1",
     "geofirestore": "^5.2.0",
+    "global": "^4.4.0",
     "ionicons": "^5.5.4",
     "leaflet": "^1.9.2",
     "leaflet-geosearch": "^3.7.0",
@@ -52,7 +54,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test --transformIgnorePatterns 'node_modules/(?!(@ionic/react|@ionic/react-router|@ionic/core|@stencil/core|ionicons)/)'",
     "build android": "ionic cap build android",
-    "run android ": "ionic capacitor run android -l --external"
+    "run android ": "ionic capacitor run android -l --external",
+    "rules update":"firebase deploy --only firestore:rules"
   },
   "eslintConfig": {
     "extends": "react-app"

@@ -1,28 +1,27 @@
-import React, { ReactChild } from 'react';
-import { GoogleMap } from '@capacitor/google-maps';
-import { Geolocation } from '@capacitor/geolocation';
-import './map.css'
-import { IonIcon } from '@ionic/react';
-import { location } from 'ionicons/icons';
+import React, { ReactChild } from "react";
+import { GoogleMap } from "@capacitor/google-maps";
+import { Geolocation } from "@capacitor/geolocation";
+import "./map.css";
+import { IonContent, IonIcon } from "@ionic/react";
+import { location } from "ionicons/icons";
 
 interface MyMapProps {
-  onMap: (map: GoogleMap) => void,
-  controls?: ReactChild,
-  header?: ReactChild,
-  footer?: ReactChild,
-
+  onMap: (map: GoogleMap) => void;
+  controls?: ReactChild;
+  header?: ReactChild;
+  footer?: ReactChild;
 }
 
 interface MyMapState {
-  mapElement: any,
-  centerMarker: any,
-  centerlocation: any,
-  map: GoogleMap | undefined,
-  props: MyMapProps
+  mapElement: any;
+  centerMarker: any;
+  centerlocation: any;
+  map: GoogleMap | undefined;
+  props: MyMapProps;
 }
 
 class GMap extends React.Component<MyMapProps, MyMapState> {
-  myRef: any
+  myRef: any;
 
   constructor(props: MyMapProps) {
     super(props);
@@ -31,89 +30,79 @@ class GMap extends React.Component<MyMapProps, MyMapState> {
       centerMarker: null,
       centerlocation: null,
       map: undefined,
-      props: props
+      props: props,
     };
     this.myRef = React.createRef();
-
-  };
+  }
   componentDidMount() {
-    this.createMap()
+    this.createMap();
   }
   componentWillUnmount(): void {
-    this.state.map?.destroy()
+    this.state.map?.destroy();
   }
 
   async createMap() {
-
     const map = await GoogleMap.create({
-      id: 'my-cool-map',
+      id: "my-cool-map",
       element: this.myRef.current,
       apiKey: process.env.REACT_APP_map_api_key!,
       config: {
-
+        gestureHandling: '',
         androidLiteMode: true,
         disableDefaultUI: true,
         center: {
-          lat: 33.6,
-          lng: -117.9
+          lat: 23.614328,
+          lng: 58.545284,
         },
         zoom: 8,
       },
-
-    })
-    this.setState({ map: map })
-    this.props.onMap(map)
-
-
+    });
+    this.setState({ map: map });
+    this.props.onMap(map);
   }
   async markMyLocation() {
-    const pos = await Geolocation.getCurrentPosition()
-    var map = this.state.map
+    const pos = await Geolocation.getCurrentPosition();
+    var map = this.state.map;
 
     if (map) {
       map.setCamera({
         coordinate: { lat: pos.coords.latitude, lng: pos.coords.longitude },
         zoom: 10,
         animate: true,
-
-      })
-
+      });
     }
   }
 
   render() {
-    return (<div className={'mapMainContainer '}>
-      <div>
-        {this.props.header && this.props.header}
-      </div>
+    return (
+      <div className={"mapMainContainer "}>
+        <div>{this.props.header && this.props.header}</div>
 
-      <div className={`map-control 
+        <div className={`map-control 
       pointer-events-none w-full h-full
        `}>
         {this.props.controls && this.props.controls}
       </div>
-      {/* <div className={`map-control left-[50%] top-[50%] m-auto `}>
+        {/* <div className={`map-control left-[50%] top-[50%] m-auto `}>
         {true &&  <div  className={'text-5xl'} >
           <IonIcon color={'primary'}   icon={location}/>
         </div>}
       </div> */}
 
-      <div className={'mapContainer'}>
-      
-        <capacitor-google-map options={{ streetViewControl: false }}
-          ref={this.myRef}
-          id={'my-cool-map'}
-          className={'map'}
-        >
+        <div className={"mapContainer"}>
+          <capacitor-google-map
+            options={{
+              streetViewControl: false,
+            }}
+            ref={this.myRef}
+            id={"my-cool-map"}
+            className={"map"}
+          ></capacitor-google-map>
+        </div>
 
-        </capacitor-google-map>
+        <div>{this.props.footer && this.props.footer}</div>
       </div>
-
-      <div>
-        {this.props.footer && this.props.footer}
-      </div>
-
-    </div>);
+    );
   }
 }
 
