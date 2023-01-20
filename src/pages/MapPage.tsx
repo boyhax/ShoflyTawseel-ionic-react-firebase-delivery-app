@@ -1,6 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { IonButton, IonButtons, IonFabButton, IonIcon } from "@ionic/react";
-import { locateOutline, locateSharp } from "ionicons/icons";
+import {
+  IonButton,
+  IonButtons,
+  IonFab,
+  IonFabButton,
+  IonIcon,
+} from "@ionic/react";
+import { addCircle, locateOutline, locateSharp } from "ionicons/icons";
 import { Geolocation } from "@capacitor/geolocation";
 import { LatLng } from "@capacitor/google-maps/dist/typings/definitions";
 import useBoundOrders from "../hooks/useBoundOrders";
@@ -8,6 +14,7 @@ import { greenIcon, LeafLetMap } from "../components/utlis/LeafLetMap";
 import { Map, marker } from "leaflet";
 import geoFirestore from "../providers/geofirestore";
 import { Store } from "pullstate";
+import { useHistory } from "react-router";
 
 interface _state {
   value: any;
@@ -29,6 +36,7 @@ const MapPage: React.FC = () => {
     marker: "",
     oldMarkers: [],
   });
+  const history = useHistory()
   const state = useRef(_state);
   useEffect(() => {
     map && setup();
@@ -131,15 +139,7 @@ const MapPage: React.FC = () => {
       map.flyTo(pos);
     }
   }
-  async function selfLocate() {
-    const pos = await Geolocation.getCurrentPosition();
-    if (map) {
-      moveCameraTo({
-        lat: pos.coords.latitude,
-        lng: pos.coords.longitude,
-      });
-    }
-  }
+  
   return (
     <div className={"w-full h h-full"}>
       <LeafLetMap
@@ -147,16 +147,18 @@ const MapPage: React.FC = () => {
           setMap(map);
         }}
       >
-        <div className={"flex flex-col items-center divide-y-4 justify-center "}>
-          <IonFabButton
-            
-            className={"pointer-events-auto   "}
-            onClick={selfLocate}
-          >
-            <IonIcon  icon={locateSharp} />
-          </IonFabButton
->
+        <div className={"flex flex-col  "}>
           
+          <IonFab vertical={'bottom'} horizontal='center'
+          >
+            <IonButton
+              className={"pointer-events-auto   "}
+              onClick={()=>history.push('addorder')}
+            >
+              <IonIcon icon={addCircle} />
+              MAke order
+            </IonButton>
+          </IonFab>
         </div>
       </LeafLetMap>
 

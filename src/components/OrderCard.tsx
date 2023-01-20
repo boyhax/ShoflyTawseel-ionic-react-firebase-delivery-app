@@ -198,7 +198,7 @@ const OrderCard = ({
         </p>
       )}
       <div
-        className={`flex mx-1 my-1 rounded-lg ${owner?'mt-3':''}
+        className={`flex mx-1 my-1 rounded-lg ${owner ? "mt-3" : ""}
         flex-col justify-center items-center shadow-md   max-w-[450px]`}
       >
         <div className="flex w-full items-center justify-between">
@@ -221,13 +221,13 @@ const OrderCard = ({
         </div>
 
         <div className="flex w-full items-center justify-around flex-row-reverse">
-          <IonChip color="secondary">{  from}</IonChip>
+          <IonChip color="secondary">{from}</IonChip>
           <IonIcon
             color={"primary"}
             size={"large"}
             icon={arrowBackOutline}
           ></IonIcon>
-          <IonChip color="secondary">{ to}</IonChip>
+          <IonChip color="secondary">{to}</IonChip>
           {/* top header date time */}
         </div>
         <div className={"flex w-full justify-evenly"}>
@@ -253,114 +253,98 @@ const OrderCard = ({
 
         <div className={"flex w-full justify-between "}>
           <div>
-          {!owner && (
-            <IonButton
-            className={'self-end'}
-              onClick={() => {
-                _applyToOrder();
-              }}
-            >
-              {userApplied !== undefined && (
-                <IonIcon
-                slot={'icon-only'}
-                  icon={userApplied ? thumbsDownOutline : thumbsUpOutline}
-                ></IonIcon>
-              )}
-              {userApplied === undefined && <IonSpinner></IonSpinner>}
-              {userApplied !== undefined
-                ? userApplied
-                  ? "un accept"
-                  : "accept"
-                : ""}
-            </IonButton>
-          )}
+            {!owner && (
+              <IonButton
+                className={"self-end"}
+                onClick={() => {
+                  _applyToOrder();
+                }}
+              >
+                {userApplied !== undefined && (
+                  <IonIcon
+                    slot={"icon-only"}
+                    icon={userApplied ? thumbsDownOutline : thumbsUpOutline}
+                  ></IonIcon>
+                )}
+                {userApplied === undefined && <IonSpinner></IonSpinner>}
+                {userApplied !== undefined
+                  ? userApplied
+                    ? "un accept"
+                    : "accept"
+                  : ""}
+              </IonButton>
+            )}
           </div>
           <div>
-          {owner && (
-            <IonButton
-              fill="clear"
-              onClick={() => {
-                deleteOrder(orderDocSnap);
-                if (typeof onDeleted == "function") {
-                  onDeleted();
-                }
-              }}
-              color="light"
-              shape="round"
-            >
-              <IonIcon
-                size="large"
-                color="success"
-                icon={trashOutline}
-              ></IonIcon>
-            </IonButton>
-          )}
-          {!owner && (
-            <IonButton
-              fill="clear"
-              onClick={() => setReporting(!reporting)}
-              color="dark"
-              shape="round"
-            >
-              <IonIcon
-                size="large"
-                color="success"
-                icon={alertCircleOutline}
-              ></IonIcon>
-              {/* إبلاغ */}
-            </IonButton>
-          )}
-          {!owner && (
-            <IonButton
-              fill="clear"
-              id={`massegeTrigegr ${id}`}
-              color="dark"
-              shape="round"
-            >
-              <IonIcon
-                size="large"
-                color="success"
-                icon={chatboxOutline}
-              ></IonIcon>
-              {/* chat */}
-              <IonPopover trigger={`massegeTrigegr ${id}`}>
-                <IonButtons>
-                  {!owner && (
-                    <IonButton
-                      fill="clear"
-                      onClick={() => history.push("/chats/" + data.uid)}
-                      color="dark"
-                      shape="round"
-                    >
-                      <IonIcon
-                        size="large"
-                        color="success"
-                        icon={chatboxEllipses}
-                      ></IonIcon>
-                      chat
-                    </IonButton>
-                  )}
-                  {!owner && !!userInfo.phoneNumber && (
-                    <IonButton
-                      onClick={() => OpenWhatsapp(userInfo.phoneNumber)}
-                      color="light"
-                      shape="round"
-                      fill="clear"
-                      size="small"
-                    >
-                      <IonIcon
-                        size="large"
-                        color="success"
-                        icon={logoWhatsapp}
-                      ></IonIcon>
-                    </IonButton>
-                  )}
-                </IonButtons>
-              </IonPopover>
-            </IonButton>
-          )}
+            {owner && (
+              <IonButton
+                fill="clear"
+                onClick={() => {
+                  deleteOrder(orderDocSnap);
+                  if (typeof onDeleted == "function") {
+                    onDeleted();
+                  }
+                }}
+                color="light"
+                shape="round"
+              >
+                <IonIcon
+                  size="large"
+                  color="success"
+                  icon={trashOutline}
+                ></IonIcon>
+              </IonButton>
+            )}
+            {!owner && (
+              <IonButton
+                fill="clear"
+                onClick={() => setReporting(!reporting)}
+                color="dark"
+                shape="round"
+              >
+                <IonIcon
+                  size="large"
+                  color="success"
+                  icon={alertCircleOutline}
+                ></IonIcon>
+                {/* إبلاغ */}
+              </IonButton>
+            )}
+            {!owner && (
+              <IonButtons>
+                {!owner && (
+                  <IonButton
+                    fill="clear"
+                    onClick={() => history.push("/chat/" + data.uid)}
+                    color="dark"
+                    shape="round"
+                  >
+                    <IonIcon
+                      size="large"
+                      color="success"
+                      icon={chatboxEllipses}
+                    ></IonIcon>
+                    chat
+                  </IonButton>
+                )}
+                {!owner && !!userInfo.phoneNumber && (
+                  <IonButton
+                    onClick={() => OpenWhatsapp(userInfo.phoneNumber)}
+                    color="light"
+                    shape="round"
+                    fill="clear"
+                    size="small"
+                  >
+                    <IonIcon
+                      size="large"
+                      color="success"
+                      icon={logoWhatsapp}
+                    ></IonIcon>
+                  </IonButton>
+                )}
+              </IonButtons>
+            )}
           </div>
-         
         </div>
       </div>
 

@@ -56,12 +56,6 @@ const Home = () => {
     <Page>
               <MapPage />
 
-      {/* <IonContent > */}
-        
-      {/* </IonContent> */}
-
-
-
       
     </Page>
   );

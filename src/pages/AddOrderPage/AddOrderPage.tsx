@@ -2,26 +2,19 @@ import * as React from 'react';
 
 import { useEffect, useState } from 'react';
 import {
-  IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCheckbox, IonCol, IonContent, IonFab, IonFabButton,
-  IonFooter,
-  IonGrid,
-  IonIcon, IonImg, IonInput, IonItem, IonLabel, IonList, IonLoading, IonPage,
-  IonSpinner,
-  IonTextarea,
-  IonTitle,
-  useIonAlert,
+  IonFab, IonFabButton,
+  IonIcon, IonLoading, IonPage,
   useIonToast
 } from '@ionic/react';
 import { useGlobals } from '../../providers/globalsProvider';
-import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { getUserInfoPlaceHolder, uploadNewOrder } from '../../providers/firebaseMain';
 import Step1 from './Step1';
 import Step2 from './Step2';
-import { useNewOrder } from '.';
-import { newOrderProps } from '../../types';
-import { Redirect, useHistory } from 'react-router';
+import { useHistory } from 'react-router';
 import { returnUpBackOutline } from 'ionicons/icons';
+import Page from '../../components/Page';
+import { useNewOrder } from '.';
 
 
 
@@ -30,6 +23,7 @@ import { returnUpBackOutline } from 'ionicons/icons';
 const AddOrderPage: any = (props: any) => {
   const [finish, setFinish] = useState(false)
   const { user, profile } = useGlobals()
+  const {order} = useNewOrder()
   const [orderProps, setOrderProps] = useState<any>({
     from: { key: '', value: '' },
     to: { key: '', value: '' },
@@ -43,8 +37,6 @@ const AddOrderPage: any = (props: any) => {
   const [step, setStep] = useState<1 | 2>(1)
   const navigate = useHistory()
 
-
-
   const [_profile, _setProfile] = useState<any>(profile ? profile
     : getUserInfoPlaceHolder())
 
@@ -56,16 +48,7 @@ const AddOrderPage: any = (props: any) => {
 
 
   const [present] = useIonToast()
-
-
-
-
-  // const MapLocationPicker = <IonPage>
-  //   <IonFab horizontal={'start'} vertical='top'>
-  //     <IonFabButton onClick={() => setOpenMap(false)}><IonIcon icon={close}></IonIcon></IonFabButton>
-  //   </IonFab>
-  //   <LeafLetMap onMap={(m) => { if (!map) { setMap(m) } }} onLocationChange={onLocationPick}></LeafLetMap>
-  // </IonPage>
+ 
 
   const hundlelocation = (v: any) => {
     setOrderProps({ ...orderProps, ...v })
@@ -78,7 +61,6 @@ const AddOrderPage: any = (props: any) => {
   }
   async function onSubmit() {
     setLoading(true)
-    console.log('props :>> ', orderProps);
     try {
       await uploadNewOrder(orderProps)
       // setFinish(true)
@@ -95,8 +77,7 @@ const AddOrderPage: any = (props: any) => {
     }
   }
 
-  return <IonPage>
-    {/* {finish && <Redirect to={'/'}/>} */}
+  return <IonPage >
     {step === 2 && <IonFab>
       <IonFabButton onClick={() => setStep(1)}>
         <IonIcon icon={returnUpBackOutline}></IonIcon></IonFabButton></IonFab>}

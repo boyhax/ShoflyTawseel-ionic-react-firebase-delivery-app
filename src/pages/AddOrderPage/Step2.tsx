@@ -17,7 +17,6 @@ const Step2: React.FC<{ onFinish: (v: any) => void }> = ({ onFinish }) => {
               <IonLabel
                 position={'floating'}>Pick up point</IonLabel>
               <IonTitle
-              // onClick={() => setLocationsConfirmed(false)}
               >
                  {orderProps.from.value}
               </IonTitle>
@@ -27,7 +26,6 @@ const Step2: React.FC<{ onFinish: (v: any) => void }> = ({ onFinish }) => {
             <div>
               <IonLabel position={'floating'}>Drop point</IonLabel>
               <IonTitle
-              // onClick={() => setLocationsConfirmed(false)}
               >
                  {orderProps.to.value}
               </IonTitle>

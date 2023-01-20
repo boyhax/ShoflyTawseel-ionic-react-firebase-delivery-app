@@ -1,6 +1,8 @@
 import { Geolocation } from "@capacitor/geolocation";
 import { eventMethod } from "@ionic/core/dist/types/utils/overlays";
-import L from "leaflet";
+import { IonFab, IonFabButton, IonIcon } from "@ionic/react";
+import { locateSharp } from "ionicons/icons";
+import L, { LatLng } from "leaflet";
 import * as React from "react";
 import { useState } from "react";
 
@@ -55,7 +57,20 @@ export const LeafLetMap: React.FC<props> = ({ onMap, children }) => {
     }
     
   });
-
+  function moveCameraTo(pos: Pick<LatLng,'lat'|'lng'>) {
+    if (map) {
+      map.flyTo(pos);
+    }
+  }
+  async function selfLocate() {
+    const pos = await Geolocation.getCurrentPosition();
+    if (map) {
+      moveCameraTo({
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude,
+      });
+    }
+  }
   return (
     <div
       id={`map`}
@@ -70,6 +85,14 @@ export const LeafLetMap: React.FC<props> = ({ onMap, children }) => {
     >
       <div className=' flex absolute w-full h-full pointer-events-none z-[1000]'>
       {children}
+      <IonFab horizontal={"start"} vertical={"bottom"}>
+            <IonFabButton
+              className={"pointer-events-auto   "}
+              onClick={selfLocate}
+            >
+              <IonIcon icon={locateSharp} />
+            </IonFabButton>
+          </IonFab>
       </div>
     </div>
   );

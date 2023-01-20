@@ -119,7 +119,7 @@ const App: React.FC = () => {
                   <Route exact path="/tab2">
                     <Home />
                   </Route>
-                  <Route exact path="/chat">
+                  <Route  path="/chat">
                     <Chats />
                   </Route>
                   <Route exact path="/demo">
