@@ -1860,10 +1860,10 @@
   resolved "https://registry.yarnpkg.com/@capacitor/camera/-/camera-4.1.4.tgz#5d019f88d1f3547b537270e35bcb96084eb48df6"
   integrity sha512-7f4n7PlnstYsdGyxc0Kc4hIyS6csFLOjXvffm7pJsuy9pSo+kfdOPdYgGg360QwbUAmA+Yv+J1ZW1eFIwgvWrQ==
 
-"@capacitor/cli@4.3.0":
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/@capacitor/cli/-/cli-4.3.0.tgz#e1515536f8e28b65df9e0ef45bd519fe62102cd9"
-  integrity sha512-+IBIJvxpHWSrtfb6XxPSh5m5h5ijLBqh0aGPxvj0nm7mXUwkT/fuQbeEUVCwIoImmYZCuUAFIkQFB0nWd74bEg==
+"@capacitor/cli@4.6.2":
+  version "4.6.2"
+  resolved "https://registry.yarnpkg.com/@capacitor/cli/-/cli-4.6.2.tgz#7f471dfddaebc665a6936751fb91b1c43df3bb60"
+  integrity sha512-035RIynwnmusv9Z/1jPDP+i7Z54ZY3qxNtf6cA69TxZlnozAqBkjPyHGuaAugxSn+4jzCobSLE3456VHhHMx1g==
   dependencies:
     "@ionic/cli-framework-output" "^2.2.5"
     "@ionic/utils-fs" "^3.1.6"
