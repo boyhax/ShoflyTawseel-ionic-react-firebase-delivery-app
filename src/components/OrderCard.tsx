@@ -10,17 +10,8 @@ import {
   IonSpinner,
   IonAvatar,
   IonImg,
-  IonRow,
-  IonGrid,
   useIonAlert,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardSubtitle,
-  IonCol,
-  IonCard,
-  IonContent,
   IonButtons,
-  IonToolbar,
 } from "@ionic/react";
 import { getAuth } from "firebase/auth";
 import {
@@ -31,14 +22,11 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import {
-  alertCircle,
   trashOutline,
   thumbsDownOutline,
   thumbsUpOutline,
   logoWhatsapp,
-  chatboxEllipses,
   arrowBackOutline,
-  watchOutline,
   timeOutline,
   chatboxOutline,
   alertCircleOutline,
@@ -58,7 +46,6 @@ import {
   reportOrder,
 } from "../providers/firebaseMain";
 import { useGlobals } from "../providers/globalsProvider";
-import { cardStyle } from "../styles";
 import { orderProps, userInfo } from "../types";
 import "./OrderCard.css";
 import { citienames } from "./utlis/citiesUtlis";
@@ -251,31 +238,28 @@ const OrderCard = ({
           </IonLabel>
         </div>
 
-        <div className={"flex w-full justify-between "}>
-          <div>
-            {!owner && (
-              <IonButton
-                className={"self-end"}
-                onClick={() => {
-                  _applyToOrder();
-                }}
-              >
-                {userApplied !== undefined && (
-                  <IonIcon
-                    slot={"icon-only"}
-                    icon={userApplied ? thumbsDownOutline : thumbsUpOutline}
-                  ></IonIcon>
-                )}
-                {userApplied === undefined && <IonSpinner></IonSpinner>}
-                {userApplied !== undefined
-                  ? userApplied
-                    ? "un accept"
-                    : "accept"
-                  : ""}
-              </IonButton>
-            )}
-          </div>
-          <div>
+        <div className={"flex w-full  justify-between "}>
+          {!owner && (
+            <IonButton
+              onClick={() => {
+                _applyToOrder();
+              }}
+            >
+              {userApplied !== undefined && (
+                <IonIcon
+                  slot={"icon-only"}
+                  icon={userApplied ? thumbsDownOutline : thumbsUpOutline}
+                ></IonIcon>
+              )}
+              {userApplied === undefined && <IonSpinner></IonSpinner>}
+              {userApplied !== undefined
+                ? userApplied
+                  ? "un accept"
+                  : "accept"
+                : ""}
+            </IonButton>
+          )}
+          <IonButtons className={"flex flex-end justify-end"}>
             {owner && (
               <IonButton
                 fill="clear"
@@ -285,12 +269,10 @@ const OrderCard = ({
                     onDeleted();
                   }
                 }}
-                color="light"
-                shape="round"
               >
                 <IonIcon
                   size="large"
-                  color="success"
+                  color="light"
                   icon={trashOutline}
                 ></IonIcon>
               </IonButton>
@@ -311,40 +293,35 @@ const OrderCard = ({
               </IonButton>
             )}
             {!owner && (
-              <IonButtons>
-                {!owner && (
-                  <IonButton
-                    fill="clear"
-                    onClick={() => history.push("/chat/" + data.uid)}
-                    color="dark"
-                    shape="round"
-                  >
-                    <IonIcon
-                      size="large"
-                      color="success"
-                      icon={chatboxEllipses}
-                    ></IonIcon>
-                    chat
-                  </IonButton>
-                )}
-                {!owner && !!userInfo.phoneNumber && (
-                  <IonButton
-                    onClick={() => OpenWhatsapp(userInfo.phoneNumber)}
-                    color="light"
-                    shape="round"
-                    fill="clear"
-                    size="small"
-                  >
-                    <IonIcon
-                      size="large"
-                      color="success"
-                      icon={logoWhatsapp}
-                    ></IonIcon>
-                  </IonButton>
-                )}
-              </IonButtons>
+              <IonButton
+                fill="clear"
+                onClick={() => history.push("/chat/" + data.uid)}
+                color="dark"
+                shape="round"
+              >
+                <IonIcon
+                  size="large"
+                  color="success"
+                  icon={chatboxOutline}
+                ></IonIcon>
+              </IonButton>
             )}
-          </div>
+            {!owner && !!userInfo.phoneNumber && (
+              <IonButton
+                onClick={() => OpenWhatsapp(userInfo.phoneNumber)}
+                color="light"
+                shape="round"
+                fill="clear"
+                size="small"
+              >
+                <IonIcon
+                  size="large"
+                  color="success"
+                  icon={logoWhatsapp}
+                ></IonIcon>
+              </IonButton>
+            )}
+          </IonButtons>
         </div>
       </div>
 

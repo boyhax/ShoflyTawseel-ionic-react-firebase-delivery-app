@@ -1,14 +1,8 @@
 import React, { useRef, useState } from "react";
 
 import { DocumentSnapshot } from "firebase/firestore";
-import { IonButton, IonContent, IonFab, IonFabButton, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonItem, IonLabel, IonList, IonModal, IonRefresher, IonRefresherContent } from "@ionic/react";
-import { filter as filterIcon } from "ionicons/icons";
-import { RefresherEventDetail } from '@ionic/core';
-import OrderCard from "./OrderCard";
-import useOrders from "../hooks/useOrders";
-import FilterUI from "./FilterUI";
+import { IonList, IonRefresher, IonRefresherContent } from "@ionic/react";
 import OrdersPlaceHolder from "./OrdersPLaceHolder";
-import useUserOrders from "../hooks/useUserOrders";
 import useUserApplications from "../hooks/useUserApplications";
 
 
@@ -49,8 +43,9 @@ export default function UserApplicationsList(props: any) {
         if (!v["exists"]) {
           return ''
         }
-        return <OrderCard orderDocSnap={v} key={i} report canApplyFor onRefresh={() => Refresh()} onDeleted={() => { delete list[i]; setList(list) }}>
-        </OrderCard>
+        return <div >
+          {JSON.stringify(v.data())}
+        </div>
       })
     }
     {orders.loading && !orders.userApplications && <OrdersPlaceHolder></OrdersPlaceHolder>}

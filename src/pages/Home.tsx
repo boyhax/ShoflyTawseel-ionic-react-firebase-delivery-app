@@ -1,27 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
-import {
-  IonBadge, IonButton, IonButtons, IonCard, IonContent, IonFab, IonFabButton,
-  IonFabList,
-  IonFooter,
-  IonHeader,
-  IonIcon, IonLabel, IonList, IonMenuButton, IonPage, IonSegment, IonSegmentButton, IonTitle, IonToolbar
-} from '@ionic/react';
-import { add, chatbox, menu, menuOutline, person, personCircle } from 'ionicons/icons';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from "react-router-dom";
 import { useGlobals } from '../providers/globalsProvider';
-import MainMenu from '../components/MainMenu';
 import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { getUserInfoPlaceHolder } from '../providers/firebaseMain';
-import { Geolocation } from '@capacitor/geolocation';
 import { Device } from '@capacitor/device';
-import OrderList from '../components/OrderList';
-import { greenIcon } from '../components/utlis/LeafLetMap';
-import { TT } from '../components/utlis/tt';
 import Page from '../components/Page';
-import OrdersSegmentComponent from '../components/OrdersSegmentComponent';
 import MapPage from './MapPage';
-
 
 
 var dInfo: any = ''
@@ -56,7 +41,6 @@ const Home = () => {
     <Page>
               <MapPage />
 
-      
     </Page>
   );
 };

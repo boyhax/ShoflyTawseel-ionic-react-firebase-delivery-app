@@ -1,84 +1,23 @@
 import React, { useState } from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
-import MainHeader from '../components/MainHeader';
-import GooglePlacesAutocomplete, { geocodeByAddress, geocodeByPlaceId } from 'react-google-places-autocomplete';
-import { OrderPlaceHolder } from '../components/OrdersPLaceHolder';
-import { Config } from '../config';
-import { Cities } from '../components/utlis/citiesUtlis';
-import GMap from '../components/utlis/GMap';
+import { IonContent } from '@ionic/react';
 import Page from '../components/Page';
 import { GoogleMap } from '@capacitor/google-maps';
-import { LeafLetMap } from '../components/utlis/LeafLetMap';
+import GoogleSearchAutoComplete from '../components/GoogleSearchAutoComplete';
 
 
-const ci = Cities('en')
 const Demo: React.FC = () => {
   const [value, setValue] = useState(null);
   const [map, setMap] = useState<GoogleMap>();
-
-  console.log('value :>> ', value);
-  var newList: any = []
-
-  async function newGeoocdetolist(v: any) {
-    const geocode = await geocodeByAddress(v.value);
-    console.log('geocode :>> ', geocode);
-    newList.push(geocode)
-  }
-  function saveToJson() {
-    const json = JSON.stringify(newList)
-    console.log('newlist :>> ', json);
-
-  }
-
-  function codebyadree() {
-
-    ci.forEach((v, i) => {
-      setTimeout(() => {
-        newGeoocdetolist(v)
-        if (i === ci.length - 1) {
-          saveToJson()
-        }
-      }, 5000)
-
-    })
-
-  }
-
-  // codebyadree()
-
-  function newValue(v: any) {
-    console.log('new value place :>> ', v);
+  
 
 
-    setValue(v)
-  }
-  function onSubmitLocation(){
-    map && console.log('map :>> ', map);
-    console.log(' place submit :>> ', map?.getMapBounds().then((v)=>
-    {
-      console.log('points :>> ', v);
-    }));
-  }
+ 
+  
 return(
     <Page >
 
       <IonContent fullscreen>
-
-        
-      <GooglePlacesAutocomplete selectProps={{
-          value,
-          onChange: newValue,
-
-        }} apiKey={Config().mapApiKey} />
-
-
-      
-       
-       <LeafLetMap onMap={(map)=>{
-          map.addEventListener('dragstart',(e)=>{
-            console.log('leaflet dragge start :>> ', e);
-          })
-        }}></LeafLetMap>
+       <GoogleSearchAutoComplete onValue={()=>{}}/>
       </IonContent>
 
     </ Page>

@@ -10,11 +10,12 @@ import { addCircle, locateOutline, locateSharp } from "ionicons/icons";
 import { Geolocation } from "@capacitor/geolocation";
 import { LatLng } from "@capacitor/google-maps/dist/typings/definitions";
 import useBoundOrders from "../hooks/useBoundOrders";
-import { greenIcon, LeafLetMap } from "../components/utlis/LeafLetMap";
+import {  LeafLetMap } from "../components/utlis/LeafLetMap";
 import { Map, marker } from "leaflet";
 import geoFirestore from "../providers/geofirestore";
 import { Store } from "pullstate";
 import { useHistory } from "react-router";
+import { greenIcon, OrderIcon } from "../components/utlis/leafletMapIcons";
 
 interface _state {
   value: any;
@@ -82,7 +83,7 @@ const MapPage: React.FC = () => {
           lat: v.coordinate.lat,
           lng: v.coordinate.lng,
         },
-        { icon: greenIcon, title: " click to pick order" }
+        { icon: OrderIcon, title: " click to pick order" }
       )
         .addTo(map)
         .addEventListener("click", (e) => {
@@ -141,53 +142,22 @@ const MapPage: React.FC = () => {
   }
   
   return (
-    <div className={"w-full h h-full"}>
-      <LeafLetMap
-        onMap={(map) => {
-          setMap(map);
-        }}
-      >
-        <div className={"flex flex-col  "}>
+    <div className={"w-full flex-col h-full"}>
+      <LeafLetMap onMap={setMap}>
+        <div className={"flex  w-full h-full  "}>
           
-          <IonFab vertical={'bottom'} horizontal='center'
-          >
+          <div className={'flex w-full justify-center self-end'}>
             <IonButton
               className={"pointer-events-auto   "}
               onClick={()=>history.push('addorder')}
             >
               <IonIcon icon={addCircle} />
-              MAke order
+              Make order
             </IonButton>
-          </IonFab>
+          </div>
         </div>
       </LeafLetMap>
 
-      {/* <GMap
-        onMap={setMap}
-        controls={
-          <div className={" w-full h-full flex pointer-events-none  "}>
-            <div
-              className={`pointer-events-auto 
-            relative justify-center flex flex-col self-center  `}
-            >
-              <IonButton onClick={selfLocate} shape="round" color="light">
-                <IonIcon slot={'icon-only'} color={"primary"} icon={location} />
-              </IonButton>
-            </div>
-
-            {state.current.centerMarker && (
-              <div className={"absolute w-full h-full flex pointer-events-none"}>
-                <IonIcon
-                  className={`pointer-events-noun m-auto
-            text-5xl `}
-                  color={"primary"}
-                  icon={location}
-                />
-              </div>
-            )}
-          </div>
-        }
-      ></GMap>  */}
     </div>
   );
 };
