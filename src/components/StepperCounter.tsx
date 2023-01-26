@@ -16,6 +16,7 @@ const StepperCounter = ({steps,currentStep,ifChange}: Props) => {
   return<div className={'flex bg-transparent items-center justify-evenly w-fit'}>
    {steps.map((value) => {
     return<IonFabButton 
+    key={value.title}
     onClick={()=>ifChange(value.number)}
     size={currentStep ===value.number?undefined:'small'}
     className={`mx-2  text-center align-middle 

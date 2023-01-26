@@ -1,112 +1,73 @@
 import * as React from "react";
 
-import { useEffect, useState } from "react";
 import {
-  IonContent,
-  IonFab,
-  IonFabButton,
-  IonIcon,
   IonLoading,
-  IonPage,
   useIonToast,
 } from "@ionic/react";
-import { useGlobals } from "../../providers/globalsProvider";
 import "leaflet/dist/leaflet.css";
 import {
-  getUserInfoPlaceHolder,
   uploadNewOrder,
 } from "../../providers/firebaseMain";
 import Step1 from "./Step1";
 import Step2 from "./Step2";
 import { useHistory } from "react-router";
-import { returnUpBackOutline } from "ionicons/icons";
 import Page from "../../components/Page";
-import { useNewOrder } from ".";
+import { newOrderStore } from ".";
 import StepperCounter from "../../components/StepperCounter";
+import StepTo from "./Step1.1";
+import { useEffect } from "react";
 
 const AddOrderPage: any = (props: any) => {
-  const [finish, setFinish] = useState(false);
-  const { user, profile } = useGlobals();
-  const { order } = useNewOrder();
-  const [orderProps, setOrderProps] = useState<any>({
-    from: { key: "", value: "" },
-    to: { key: "", value: "" },
-    comment: "",
-    geoLocation: { city: "", latlng: { lat: "", lng: "" } },
-    type: "SmallObjects",
-    urgent: false,
-  });
-  const [loading, setLoading] = React.useState(false);
-
-  const [step, setStep] = useState(1);
+  const { order ,loading,step } = newOrderStore.useState();
   const navigate = useHistory();
-
-  const [_profile, _setProfile] = useState<any>(
-    profile ? profile : getUserInfoPlaceHolder()
-  );
-
-  useEffect(() => {
-    if (!!profile) {
-      _setProfile(profile);
-    }
-  }, [profile]);
-
   const [present] = useIonToast();
+  useEffect(() => {
+    newOrderStore.update(s=>{s.submit = onSubmit})
+  }, []);
 
-  const hundlelocation = (v: any) => {
-    setOrderProps({ ...orderProps, ...v });
-    setStep(2);
-  };
-  const hundleInfo = (v: any) => {
-    setOrderProps({ ...orderProps, ...v });
-    onSubmit();
-  };
   async function onSubmit() {
-    setLoading(true);
+    newOrderStore.update(s=>{s.loading =true })
     try {
-      await uploadNewOrder(orderProps);
-      // setFinish(true)
-      setLoading(false);
+      await uploadNewOrder(order);
+      newOrderStore.update(s=>{s.loading =false;s.finish = true} )
       present({ message: "Order submitted seccessfully ", duration: 1000 });
-
+  
       navigate.push("/");
     } catch (error) {
-      setLoading(false);
-
+      newOrderStore.update(s=>{s.loading = false} )
+  
       present({ message: "Sorry some issue happen.. please try Again" });
     }
   }
-
+  
+  const stepsComponents = [
+    <Step1  />,
+    <StepTo  />,
+    <Step2  />,
+  ];
   return (
     <Page>
-      <div className={' absolute w-full h-12 mt-6 flex z-[1000] justify-center items-center'}>
-      <StepperCounter steps={[
-        {title:'pick up location',number:1},
-        {title:'pick up location address',number:2},
-        {title:'pick up location address',number:3},
-        {title:'pick up location address',number:4},
-
-
-
-      ]} currentStep={step} ifChange={setStep}/>
+      <div
+        className={`absolute w-full h-12 mt-6 
+         flex z-[1000] justify-center items-center`}>
+        <StepperCounter
+          steps={[
+            { title: "pick up location", number: 0 },
+            { title: "drop location ", number: 1 },
+            { title: "details ", number: 2 },
+          ]}
+          currentStep={step}
+          ifChange={(v)=>{
+            newOrderStore.update(s=>{ s.step = v} )
+          }}
+        />
       </div>
-      
-      {/* {step === 2 && (
-        <IonFab>
-          <IonFabButton onClick={() => setStep(1)}>
-            <IonIcon icon={returnUpBackOutline}></IonIcon>
-          </IonFabButton>
-        </IonFab>
-      )} */}
+
       <div className={" flex w-full h-full"}>
-      {step === 1 ? (
-          <Step1 onFinish={hundlelocation} />
-        ) : (
-          <Step2 onFinish={hundleInfo} />
-        )}
+        {stepsComponents[step]}
       </div>
 
-      <IonLoading isOpen={loading} message={"Submiting Order.."}></IonLoading>
+      <IonLoading isOpen={loading} message={"Making new order.."}></IonLoading>
     </Page>
   );
 };

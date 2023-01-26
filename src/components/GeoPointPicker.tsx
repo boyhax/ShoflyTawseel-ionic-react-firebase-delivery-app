@@ -26,7 +26,6 @@ const GeoPointPicker = ({ placeHolder, onValueSet }: Props) => {
       }).addTo(map)
       map.on('move',function(e){
         m.setLatLng(map.getCenter());
-        // map.;
       });
     }
   }, [map]);
@@ -41,17 +40,8 @@ const GeoPointPicker = ({ placeHolder, onValueSet }: Props) => {
       
       <LeafLetMap onMap={setMap}>
         <div className={"pointer-events-none flex  flex-col w-full h-full"}>
-        {/* <IonItem
-            className={`
-            pointer-events-auto z-[2000] w-full justify-between`}
-          >
-            <div className={'w-full'}>
-            <GoogleSearchAutoComplete onValue={(v) => {console.log('googel :>> ', v);  }} />
-            </div>
-
-          </IonItem> */}
-          
-
+        
+      
           <div className={`
             pointer-events-auto z-[2000] flex w-full justify-center items-center  mt-auto  place-self-end`}>
             <IonButton onClick={submit}>{'Deliver From Here'}</IonButton>

@@ -57,8 +57,8 @@ export const OrderCatagories: OrderType[] = [
     urgent:boolean,
     type:string,
     uid:string,
-    from:orderGeolocation,
-    to:orderGeolocation,
+    from:keyValue,
+    to:keyValue,
     time:any,
     comment:string|undefined|null,
     reports:OrderReportInfo[],
@@ -66,11 +66,12 @@ export const OrderCatagories: OrderType[] = [
   
   }
   export interface newOrderProps {
-    to:orderGeolocation,
-    from:orderGeolocation,
+    to:LatLng,
+    from:LatLng,
     urgent?:boolean,
     comment?:string,
-    type?:OrderCatagorie
+    type?:OrderCatagorie,
+    
   
   }
   export interface keyValue{

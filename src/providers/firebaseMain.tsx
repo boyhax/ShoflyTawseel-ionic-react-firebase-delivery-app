@@ -30,6 +30,7 @@ import { getDownloadURL, getStorage,ref, uploadBytes } from "firebase/storage";
 import {
   ApplicationInfo,
   ApplicationProps,
+  keyValue,
   newOrderProps,
   orderFilter,
   orderProps,
@@ -56,10 +57,12 @@ new firebaseClass()
 export const db = getFirestore()
 
 export async function uploadNewOrder(o: newOrderProps) {
+  const from:keyValue ={key:'',value:''}
+  const to:keyValue ={key:'',value:''}
   const newO: orderProps = {
     urgent: o.urgent || false,
-    from: o.from,
-    to: o.to,
+    from:from,
+    to: to,
     uid: getAuth().currentUser?.uid!,
     time: serverTimestamp(),
     type: o.type || "smallObjects",

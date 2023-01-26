@@ -6,7 +6,7 @@ import {
   IonFabButton,
   IonIcon,
 } from "@ionic/react";
-import { addCircle, locateOutline, locateSharp } from "ionicons/icons";
+import { addCircle, cube, locateOutline, locateSharp } from "ionicons/icons";
 import { Geolocation } from "@capacitor/geolocation";
 import { LatLng } from "@capacitor/google-maps/dist/typings/definitions";
 import useBoundOrders from "../hooks/useBoundOrders";
@@ -151,7 +151,7 @@ const MapPage: React.FC = () => {
               className={"pointer-events-auto   "}
               onClick={()=>history.push('addorder')}
             >
-              <IonIcon icon={addCircle} />
+              <IonIcon slot={'icon-only'} icon={cube} />
               Make order
             </IonButton>
           </div>

@@ -4,12 +4,12 @@ import { newOrderStore } from ".";
 import GeoPointPicker from "../../components/GeoPointPicker";
 import {geocodeByLatLng} from 'react-google-places-autocomplete';
 import { LatLng } from "leaflet";
-const Step1: React.FC = (props) => {
+const StepTo: React.FC = (props) => {
   const { order, loading, step } = newOrderStore.useState();
-  
-  function updatePoint(point:LatLng){
+
+   function updatePoint(point:LatLng){
     const order = {
-      from:point }
+      to:point }
     newOrderStore.update(s=>{s.order = {...order,...s.order}
     })
   }
@@ -18,9 +18,9 @@ const Step1: React.FC = (props) => {
        
       <GeoPointPicker 
       onValueSet={updatePoint} 
-      placeHolder='Choose Pick up Point' />
+      placeHolder='Choose drop Point' />
 
     </div>
   );
 };
-export default Step1;
+export default StepTo;
