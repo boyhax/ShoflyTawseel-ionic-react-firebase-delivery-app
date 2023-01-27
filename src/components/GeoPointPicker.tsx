@@ -44,7 +44,7 @@ const GeoPointPicker = ({ placeHolder, onValueSet }: Props) => {
       
           <div className={`
             pointer-events-auto z-[2000] flex w-full justify-center items-center  mt-auto  place-self-end`}>
-            <IonButton onClick={submit}>{'Deliver From Here'}</IonButton>
+            <IonButton onClick={submit}>{placeHolder}</IonButton>
           </div>
         </div>
       </LeafLetMap>

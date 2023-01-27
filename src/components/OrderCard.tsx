@@ -40,7 +40,6 @@ import {
   db,
   deleteOrder,
   getUserInfoPlaceHolder,
-  is_user_applied_to_card,
   makeOrderFromDoc,
   removeApplicationToOrder,
   reportOrder,
@@ -104,20 +103,18 @@ const OrderCard = ({
   const uid = getAuth().currentUser?.uid;
   const { user, profile, setCurrentOrder } = useGlobals();
   const [userApplied, setApplied] = useState<boolean | undefined>(
-    is_user_applied_to_card(uid!, data)
   );
   const history = useHistory();
   const owner = data!.uid === uid;
   const [userInfo, setUserInfo] = useState<userInfo>(getUserInfoPlaceHolder());
   const [showComment, setShowComment] = useState(false);
-  // const order = useOrder(id)
   const from = citienames[Number(data.from)];
   const to = citienames[Number(data.to)];
   useEffect(() => {
     const unsub = onSnapshot(doc(getFirestore(), "orders/" + id), (doc) => {
       let d = makeOrderFromDoc(doc);
       setData(d);
-      setApplied(is_user_applied_to_card(uid!, d));
+      // setApplied(is_user_applied_to_card(uid!, d));
     });
     var unsub2 = () => {};
     if (data.uid === uid && profile) {
@@ -149,24 +146,24 @@ const OrderCard = ({
   const [presentAlert] = useIonAlert();
 
   async function _applyToOrder() {
-    if (!user) {
-      presentAlert({ message: "يرجى تسجيل الدخول اولا" });
-      return;
-    }
-    if (!userApplied) {
-      applyForCard(uid!, id, data.uid!);
-      setApplied(undefined);
-    } else {
-      const info = data.applications.find((value) => {
-        return value.byUser === uid;
-      });
-      if (info) {
-        removeApplicationToOrder(info, orderDocSnap);
-        setApplied(undefined);
-      } else {
-        console.log("no application found on order ");
-      }
-    }
+    // if (!user) {
+    //   presentAlert({ message: "يرجى تسجيل الدخول اولا" });
+    //   return;
+    // }
+    // if (!userApplied) {
+    //   applyForCard(uid!, id, data.uid!);
+    //   setApplied(undefined);
+    // } else {
+      // const info = data.applications.find((value) => {
+      //   return value.byUser === uid;
+      // });
+    //   if (info) {
+    //     removeApplicationToOrder(info, orderDocSnap);
+    //     setApplied(undefined);
+    //   } else {
+    //     console.log("no application found on order ");
+    //   }
+    // }
   }
   function onReport() {
     reportOrder(orderDocSnap, reportWhy);
@@ -230,7 +227,7 @@ const OrderCard = ({
             }}
           >
             {"تم قبول الطلب: "}
-            {data.applications.length}
+            {/* {data.applications.length} */}
           </IonLabel>
 
           <IonLabel color="dark" onClick={() => toggleComment()}>

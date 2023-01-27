@@ -6,6 +6,7 @@ import { GeoPoint } from "firebase/firestore";
 import * as geofirestore from "geofirestore";
 import { idCard } from "ionicons/icons";
 import { Config } from "../config";
+import { orderMarker } from "../types";
 
  class geoClass {
   geocollection;
@@ -28,23 +29,20 @@ import { Config } from "../config";
     const query = this.geocollection.near({
       center: new firebase.firestore.GeoPoint(location.lat,location.lng),
       radius: radius,
+      limit:5
     });
     const q = await query.get()
-    var list:any[] = []
-    q.forEach((d)=>{
-      if(from){
-        if(d.data().from){list.push(d)}
-      }else{
-        if(!d.data().from){list.push(d)}
-      }
+    var list = [...q.docs]
+    list = list.filter((v)=>{
+      return from?v.data().from===true:false  
     })
-    // Get query (as Promise)
+    
     return list
   }
    async  addGeo(id: string, latlng: LatLng, from: boolean) {
      
-    this.geocollection.add({
-      name: id,
+    return this.geocollection.add({
+      id: id,
       from: from,
       // The coordinates field must be a GeoPoint!
       coordinates: new firebase.firestore.GeoPoint(latlng.lat,latlng.lng),

@@ -5,6 +5,8 @@ import * as React from 'react';
 import { useState } from 'react';
 import { LatLngBounds } from 'leaflet';
 import geoFirestore from '../providers/geofirestore';
+import { MarkerProps } from 'react-leaflet';
+import { orderMarker } from '../types';
 
 const boundStore = new Store({
     orders:[],
@@ -13,7 +15,7 @@ const boundStore = new Store({
 })
 
 const useBoundOrders = () => {
-    const [orders, setOrders] = React.useState<any[]>()
+    const [orders, setOrders] = React.useState<orderMarker[]>()
     const [loading, setLoading] = React.useState<boolean>(true)
     const [mounted, setMounted] = useState(true)
     const [bounds, setBounds] = useState<LatLngBounds>()
@@ -35,13 +37,16 @@ const useBoundOrders = () => {
                 (bounds.getNorthEast().distanceTo(bounds.getCenter())/1000),
                 true,
             )
-            var list:any[]=[]
-            snap.forEach((doc)=>{
-                list.push({id:doc.id,...doc.data()})
+            var list:orderMarker[]=[]
+            list = snap.map((d)=>{
+                return {
+                    coordinates:d.data().coordinates,
+                    from:d.data().from,
+                    id:d.data().id
+                  }
             })
 
             if(mounted){setLoading(false);setOrders(list) }
-            console.log('list :>> ', list);
 
         } catch (error) {
             if(mounted){setLoading(false) }

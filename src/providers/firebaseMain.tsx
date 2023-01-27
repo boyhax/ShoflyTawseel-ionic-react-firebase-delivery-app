@@ -22,15 +22,15 @@ import {
   startAfter,
   updateDoc,
   where,
-  
 } from "firebase/firestore";
-import 'firebase/compat/firestore';
+import { geocodeByLatLng } from "react-google-places-autocomplete";
+
+import "firebase/compat/firestore";
 import { getAuth } from "firebase/auth";
-import { getDownloadURL, getStorage,ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import {
   ApplicationInfo,
   ApplicationProps,
-  keyValue,
   newOrderProps,
   orderFilter,
   orderProps,
@@ -39,38 +39,46 @@ import {
   userInfo,
   UserProfile,
 } from "../types";
-import {
-  LatLng,
-} from "@capacitor/google-maps/dist/typings/definitions";
 import { initializeApp } from "firebase/app";
 import { Config } from "../config";
 import geoFirestore from "./geofirestore";
 
-class firebaseClass{
-  constructor(){
-    console.log('firebase Class')
-    initializeApp(Config())
-
+class firebaseClass {
+  db;
+  constructor() {
+    console.log("firebase Class");
+    initializeApp(Config());
+    this.db = getFirestore()
   }
 }
-new firebaseClass()
-export const db = getFirestore()
+const mydb = new firebaseClass();
 
+export const db = mydb.db
+export function geoToLatlng(geo:GeoPoint){
+return {
+  lat:geo.latitude,
+  lng:geo.longitude
+}
+}
 export async function uploadNewOrder(o: newOrderProps) {
-  const from:keyValue ={key:'',value:''}
-  const to:keyValue ={key:'',value:''}
+  console.log('to upload order :>> ', o);
+  
   const newO: orderProps = {
+    geo:o.geo,
     urgent: o.urgent || false,
-    from:from,
-    to: to,
+    from: '',
+    to: '',
     uid: getAuth().currentUser?.uid!,
     time: serverTimestamp(),
     type: o.type || "smallObjects",
     comment: o.comment || "no comment",
-    reports: [],
-    applications: [],
+    address:o.address
   };
-  return await addDoc(collection(db, "orders"), newO);
+   const doc = await addDoc(collection(db, "orders"), newO);
+   const from=geoFirestore.addGeo(doc.id,geoToLatlng(o.geo.from),true)
+   const to=geoFirestore.addGeo(doc.id,geoToLatlng(o.geo.to),false)
+
+  return Promise.all([to,from])
 }
 export async function setUserImage(
   photo: Blob,
@@ -161,29 +169,27 @@ export async function getOrders(
   return await getDocs(qu);
 }
 
+export async function getOrderById(id: String) {
+  var qu = doc(db,'orders/'+id);
 
-
-
-async function getOrdersById(ides: String[]) {
-  var qu = query(collection(db, "orders"), where(documentId(), "in", ides));
-
-  return getDocs(qu);
+  return getDoc(qu);
 }
 
 export function makeApplicationPropsFromDoc(
   doc: DocumentSnapshot
 ): ApplicationProps {
   let d = doc.exists() ? doc.data() : {};
-  return {
-    byUser: d.byUser,
-    forOrder: d.forOrder,
-    forUser: d.forUser,
-    isAccepted: d.isAccepted,
-    isDone: d.isDone,
-    timeAccepted: d.timeAccepted,
-    timeDone: d.timeDone,
-    timeSend: d.timeSend,
-  };
+  return JSON.parse(JSON.stringify(d)) 
+  // {
+  //   byUser: d.byUser,
+  //   forOrder: d.forOrder,
+  //   forUser: d.forUser,
+  //   isAccepted: d.isAccepted,
+  //   isDone: d.isDone,
+  //   timeAccepted: d.timeAccepted,
+  //   timeDone: d.timeDone,
+  //   timeSend: d.timeSend,
+  // };
 }
 export function makeUSerInfoFromDoc(s: DocumentSnapshot): userInfo {
   let d = s.exists() ? s.data() : {};
@@ -193,11 +199,24 @@ export function makeUSerInfoFromDoc(s: DocumentSnapshot): userInfo {
     photoURL: d.photoURL,
   };
 }
+export  function getGeoCode(geoPoint:GeoPoint){
+  return new Promise<google.maps.GeocoderResult|''>(async(resolve,reject)=>{
+    try {
+      const list = await geocodeByLatLng(geoToLatlng(geoPoint))
+     resolve(list ?list[0]:'')
+    } catch (error) {
+      reject(error)
+    }
+    
+  })
+}
 export function makeOrderFromDoc(
   orderDocSnap: DocumentSnapshot<DocumentData>
 ): orderProps {
   const o = orderDocSnap.exists() ? orderDocSnap.data() : {};
+ 
   return {
+    geo:o.geo,
     urgent: o.urgent,
     type: o.type,
     uid: o.uid,
@@ -205,8 +224,7 @@ export function makeOrderFromDoc(
     to: o.to,
     time: o.time,
     comment: o.comment,
-    reports: o.reports ? o.reports : [],
-    applications: o.applications ? o.applications : [],
+    address:o.address
   };
 }
 export function UserProfileFromDoc(doc: DocumentSnapshot): UserProfile {
@@ -223,7 +241,7 @@ export async function getProfile(
   uid: string,
   callback: (profile: any) => void = (c) => {}
 ) {
-  const res = await getDoc(doc(getFirestore(), "users/" + uid));
+  const res = await getDoc(doc(db, "users/" + uid));
   callback(res);
   return res;
 }
@@ -240,7 +258,6 @@ export async function createNewProfileForThisUser(
   photoURL: string
 ) {
   const uid = getAuth().currentUser?.uid;
-  const user = getAuth().currentUser;
   const profile: UserProfile = {
     name: name,
     phoneNumber: phoneNumber,
@@ -389,11 +406,7 @@ export async function removeApplicationToOrder(
   return res;
 }
 
-export function is_user_applied_to_card(UserUID: string, order: orderProps) {
-  return !!order.applications.find((value) => {
-    return value.byUser === UserUID;
-  });
-}
+
 
 export function intersection(a: Array<any>, b: Array<any>) {
   var filteredArray = a.filter(function (n) {

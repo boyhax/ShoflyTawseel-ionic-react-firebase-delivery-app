@@ -11,11 +11,13 @@ import { Geolocation } from "@capacitor/geolocation";
 import { LatLng } from "@capacitor/google-maps/dist/typings/definitions";
 import useBoundOrders from "../hooks/useBoundOrders";
 import {  LeafLetMap } from "../components/utlis/LeafLetMap";
-import { Map, marker } from "leaflet";
+import { LeafletMouseEvent, Map, marker } from "leaflet";
 import geoFirestore from "../providers/geofirestore";
 import { Store } from "pullstate";
 import { useHistory } from "react-router";
 import { greenIcon, OrderIcon } from "../components/utlis/leafletMapIcons";
+import { geoToLatlng } from "../providers/firebaseMain";
+import { orderMarker } from "../types";
 
 interface _state {
   value: any;
@@ -46,48 +48,39 @@ const MapPage: React.FC = () => {
   function setState(obj: Partial<_state>) {
     state.current = { ...state.current, ...obj };
   }
-  // useBoundOrders();
   const { orders, loading, setBounds, update } = useBoundOrders();
-  // const { orders, loading, setBounds, update } = useBoundOrdersStore.useState();
 
   useEffect(() => {
     if (map) {
       if (!orders) {
         return;
       }
-      refreshMarkers(
-        orders.map((value) => {
-          const coord = {
-            lat: value.coordinates._lat,
-            lng: value.coordinates._long,
-          };
-          return { coordinate: coord };
-        })
-      );
+      refreshMarkers( orders);
     }
   }, [orders]);
 
-  function refreshMarkers(markers: { coordinate: LatLng }[]) {
+  function onOrderMarkerClick(event:LeafletMouseEvent,marker:L.Marker<any>,order:orderMarker){
+    
+  }
+  function refreshMarkers(markers: orderMarker[]) {
     clearMarkers();
     setState({ oldMarkers: addMarkers(markers) });
   }
 
-  function addMarkers(markers: { coordinate: LatLng }[]) {
+  function addMarkers(markers: orderMarker[]) {
     var list: any[] = [];
     if (!map) {
       return;
     }
     markers.forEach((v) => {
       const m = marker(
-        {
-          lat: v.coordinate.lat,
-          lng: v.coordinate.lng,
-        },
-        { icon: OrderIcon, title: " click to pick order" }
+        geoToLatlng(v.coordinates),
+        { icon: OrderIcon, title: (" click to pick order"+v.id) },
+        
       )
         .addTo(map)
         .addEventListener("click", (e) => {
-          console.log("event marker click :>> ", e);
+          onOrderMarkerClick(e,m,v);
         });
       list.push(m);
     });

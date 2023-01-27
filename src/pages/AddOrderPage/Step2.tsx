@@ -9,37 +9,61 @@ import {
   IonTextarea,
   IonFooter,
   IonButton,
+  IonInput,
+  IonThumbnail,
+  IonContent,
 } from "@ionic/react";
-import { arrowForwardOutline } from "ionicons/icons";
 import * as React from "react";
-import { newOrderStore } from ".";
-import { OrderCatagories } from "../../types";
+import { newOrderStore, useNewOrder } from ".";
+import { newOrderProps, OrderCatagorie, OrderCatagories } from "../../types";
 
 const Step2: React.FC = (props) => {
-  const { order, submit } = newOrderStore.useState();
+  const { order,uploadOrder,setOrder  } = useNewOrder();
+  const [fromAddress, setFromAddress] = React.useState("");
+  const [toAddress, setToAddress] = React.useState("");
+  const [comment, setComment] = React.useState("");
+  const [urgent, setUrgent] = React.useState(false);
+  const [type, setType] = React.useState<OrderCatagorie>('SmallObjects');
 
+  function validateAndSubmit() {
+    const o:newOrderProps = {
+      address:{
+        from:fromAddress,
+        to:toAddress
+      },
+      comment:comment!,
+      urgent:urgent,
+      type:type!,
+      geo:order.geo!,
+      from:order.from!,
+      to:order.to!
+    }
+    setOrder(o)
+    uploadOrder(o)
+  }
+  
   return (
-    <div className={"w-full h-full"}>
+    <IonContent className={"w-full h-full"}>
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          submit()
+          validateAndSubmit()
         }}
       >
-        <IonCard
+        {/* <IonCard
           style={{
             display: "flex",
             justifyContent: "center",
             justifyItems: "space-between",
           }}
-        >
+        > */}
           {/* pick up point */}
-          <div>
+          {/* <div>
             <IonLabel position={"floating"}>Pick up point</IonLabel>
             <IonTitle>{order.from.value}</IonTitle>
-          </div>
+          </div> */}
           {/* drop point */}
-          <IonIcon
+          {/* <IonIcon
             style={{ verticalAlign: "middle", padding: "4px" }}
             size={"large"}
             icon={arrowForwardOutline}
@@ -48,7 +72,7 @@ const Step2: React.FC = (props) => {
             <IonLabel position={"floating"}>Drop point</IonLabel>
             <IonTitle>{order.to.value}</IonTitle>
           </div>
-        </IonCard>
+        </IonCard> */}
         <div
           style={{
             display: "flex",
@@ -61,26 +85,18 @@ const Step2: React.FC = (props) => {
             OrderCatagories.map((value, index, array) => {
               return (
                 <div
-                  onClick={() =>
-                    newOrderStore.update((s) => {
-                      s.order = { ...s.order, type: value.value };
-                    })
-                  }
+                onClick={() => setType(value.value)}
                   key={index}
-                  style={{
-                    margin: "5px",
-                    width: "60px",
-                    height: "auto",
-                    borderRadius: "10px",
-                    border: "5px",
-                    backgroundColor:
-                      order && order.type === value.value
-                        ? "var(--ion-color-primary)"
-                        : "var(--ion-color-light)",
-                  }}
+                  className={`flex flex-col h-28 text-clip m-4 rounded-xl 
+                  justify-self-stretch text-justify
+                  ${type === value.value &&"bg-blue-200 text-white" } `}
+                 
                 >
-                  <IonImg style={{ flex: 1 }} src={value.icon} />
-                  <IonLabel style={{ fontSize: "0.7em" }}>
+                  <IonThumbnail>
+                    <IonImg  src={value.icon} />
+                  </IonThumbnail>
+
+                  <IonLabel className={'text-sm text-center'}>
                     {value.name}
                   </IonLabel>
                 </div>
@@ -94,19 +110,30 @@ const Step2: React.FC = (props) => {
             <IonCheckbox
               placeholder={"Is Order Urgent?"}
               onIonChange={(v) => {
-                newOrderStore.update((s) => {
-                  s.order = { ...s.order, urgent: v.detail.value };
-                });
+                setUrgent(v.detail.value || false);
               }}
             ></IonCheckbox>
           </IonItem>
-
-          <IonCard>
-            <IonTextarea
-              // onIonChange={v => setComment(v.detail.value!)}
-              placeholder={"Please write any discreption.. "}
-            ></IonTextarea>
-          </IonCard>
+          <IonItem>
+            <IonLabel position={"stacked"}>pick up point address</IonLabel>
+            <IonInput
+              onIonChange={(v) => setFromAddress(v.detail.value || "")}
+              placeholder={"Write building, floor, street.."}
+            />
+          </IonItem>
+          <IonItem>
+            <IonLabel position={"stacked"}>drop point address</IonLabel>
+            <IonInput
+              onIonChange={(v) => setFromAddress(v.detail.value || "")}
+              placeholder={"Write building, floor, street.."}
+            />
+          </IonItem>
+          {/* <IonCard> */}
+          <IonTextarea
+            onIonChange={(v) => setComment(v.detail.value || "")}
+            placeholder={"Please write any discreption.. "}
+          ></IonTextarea>
+          {/* </IonCard> */}
         </div>
 
         <IonFooter style={{ display: "flex", justifyContent: "center" }}>
@@ -115,7 +142,7 @@ const Step2: React.FC = (props) => {
           </IonButton>
         </IonFooter>
       </form>
-    </div>
+    </IonContent>
   );
 };
 export default Step2;
