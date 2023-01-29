@@ -90,6 +90,9 @@ export default function Chats(props: any) {
         <IonToolbar color={'primary'}>
           <IonTitle className={'ion-padding'}>Chats</IonTitle>
         </IonToolbar>
+        {(!list || (list && !list.length)) && !refreshing &&<div className={'flex justify-center'}>
+          <IonLabel>No Chats</IonLabel>
+        </div>}
         {!!list && list.map((value, key: any) => {
           return <ChatItem onChatClicked={() => setCurrentChat(value)} chatDocSnap={value} key={key}>
 

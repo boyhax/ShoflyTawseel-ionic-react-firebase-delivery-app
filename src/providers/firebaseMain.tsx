@@ -26,7 +26,7 @@ import {
 import { geocodeByLatLng } from "react-google-places-autocomplete";
 
 import "firebase/compat/firestore";
-import { getAuth } from "firebase/auth";
+import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import {
   ApplicationInfo,
@@ -42,43 +42,125 @@ import {
 import { initializeApp } from "firebase/app";
 import { Config } from "../config";
 import geoFirestore from "./geofirestore";
+import { Store } from "pullstate";
+
+export const userOrdersStore = new Store([]);
+export const userApplicationsStore = new Store([]);
+export const userReportsStore = new Store([]);
+export const userStore = new Store<{
+  user: User | null;
+  profile: UserProfile | null;
+}>({
+  user: null,
+  profile: null,
+});
 
 class firebaseClass {
-  db;
   constructor() {
     console.log("firebase Class");
     initializeApp(Config());
-    this.db = getFirestore()
+
+    this.db = getFirestore();
+
+    onAuthStateChanged(getAuth(), (user) => {
+      this.user = user;
+      userStore.update((s) => {
+        s.user = user;
+      });
+      user && this.token && this.updateToken();
+    });
+    // getDocs(query(collection(this.db,'orders'))).then((snap)=>{
+    //   snap.forEach((doc)=>{
+    //     doc.data().geo || deleteDoc(doc.ref).then((d)=>console.log('doc deleted'+doc.id))
+    //   })
+    // })
+  }
+  db;
+  userOrders: DocumentSnapshot[] = [];
+  userApplications: DocumentSnapshot[] = [];
+  userReports: DocumentSnapshot[] = [];
+  user: User | null = null;
+  token: string | null = null;
+  SubscribeUserLists = false;
+
+  async removeApplicationToOrder(orderID: string) {
+    const application = mydb.userApplications.find(
+      (v) => v.exists() && v.data().forOrder === orderID
+    );
+    var res;
+    application &&
+      application.exists() &&
+      (res = await deleteDoc(application.ref));
+    return res;
+  }
+
+  updateToken() {
+    setDoc(doc(this.db, "fcmTokens" + this.user?.uid), {
+      token: this.token,
+    }).then((v) => {
+      console.log("token updated");
+    });
+  }
+  setUserToken(token: string) {
+    this.token = token;
+  }
+  unSubscripeUserList() {
+    this.SubscribeUserLists = false;
+  }
+  subscripeUserList(userId: string) {
+    this.SubscribeUserLists = true;
+    subscripeUserOrders(userId, (snap) => {
+      this.userOrders = snap.docs;
+      userOrdersStore.update((s) => this.userOrders);
+      console.log("this.userOrders :>> ", this.userOrders);
+      return !this.subscripeUserList;
+    });
+    subscripeUserApplications(userId, (snap) => {
+      this.userApplications = snap.docs;
+      return !this.subscripeUserList;
+    });
+    subscripeUserReports(userId, (snap) => {
+      this.userReports = snap.docs;
+      return !this.subscripeUserList;
+    });
+  }
+  is_user_applied_to_card(userid: string, orderid: string) {
+    const res = !!this.userApplications.find((v) => {
+      return v.exists() && v.data().forOrder === orderid;
+    });
+    return new Promise<boolean>((resolve, rej) => {
+      resolve(res);
+    });
   }
 }
-const mydb = new firebaseClass();
+export const mydb = new firebaseClass();
 
-export const db = mydb.db
-export function geoToLatlng(geo:GeoPoint){
-return {
-  lat:geo.latitude,
-  lng:geo.longitude
-}
+export const db = mydb.db;
+export function geoToLatlng(geo: GeoPoint) {
+  return {
+    lat: geo.latitude,
+    lng: geo.longitude,
+  };
 }
 export async function uploadNewOrder(o: newOrderProps) {
-  console.log('to upload order :>> ', o);
-  
-  const newO: orderProps = {
-    geo:o.geo,
+  console.log("to upload order :>> ", o);
+
+  const newO: Partial<orderProps> = {
+    geo: o.geo,
     urgent: o.urgent || false,
-    from: '',
-    to: '',
+    from: "",
+    to: "",
     uid: getAuth().currentUser?.uid!,
     time: serverTimestamp(),
     type: o.type || "smallObjects",
     comment: o.comment || "no comment",
-    address:o.address
+    address: o.address,
   };
-   const doc = await addDoc(collection(db, "orders"), newO);
-   const from=geoFirestore.addGeo(doc.id,geoToLatlng(o.geo.from),true)
-   const to=geoFirestore.addGeo(doc.id,geoToLatlng(o.geo.to),false)
+  const doc = await addDoc(collection(db, "orders"), newO);
+  const from = geoFirestore.addGeo(doc.id, geoToLatlng(o.geo.from), true);
+  const to = geoFirestore.addGeo(doc.id, geoToLatlng(o.geo.to), false);
 
-  return Promise.all([to,from])
+  return Promise.all([to, from]);
 }
 export async function setUserImage(
   photo: Blob,
@@ -90,7 +172,6 @@ export async function setUserImage(
 
   const url = await getDownloadURL(sref);
 
-  console.log("p.url :>> ", url);
 
   if (userid && url) {
     await updateUserProfile(userid, { photoURL: url });
@@ -170,7 +251,7 @@ export async function getOrders(
 }
 
 export async function getOrderById(id: String) {
-  var qu = doc(db,'orders/'+id);
+  var qu = doc(db, "orders/" + id);
 
   return getDoc(qu);
 }
@@ -179,7 +260,7 @@ export function makeApplicationPropsFromDoc(
   doc: DocumentSnapshot
 ): ApplicationProps {
   let d = doc.exists() ? doc.data() : {};
-  return JSON.parse(JSON.stringify(d)) 
+  return JSON.parse(JSON.stringify(d));
   // {
   //   byUser: d.byUser,
   //   forOrder: d.forOrder,
@@ -199,24 +280,27 @@ export function makeUSerInfoFromDoc(s: DocumentSnapshot): userInfo {
     photoURL: d.photoURL,
   };
 }
-export  function getGeoCode(geoPoint:GeoPoint){
-  return new Promise<google.maps.GeocoderResult|''>(async(resolve,reject)=>{
-    try {
-      const list = await geocodeByLatLng(geoToLatlng(geoPoint))
-     resolve(list ?list[0]:'')
-    } catch (error) {
-      reject(error)
+export function getGeoCode(geoPoint: GeoPoint) {
+  return new Promise<google.maps.GeocoderResult | "">(
+    async (resolve, reject) => {
+      try {
+        const list = await geocodeByLatLng(geoToLatlng(geoPoint));
+        console.log('get geocode :>> ', list);
+        resolve(list ? list[0] : "");
+      } catch (error) {
+        reject(error);
+      }
     }
-    
-  })
+  );
 }
 export function makeOrderFromDoc(
   orderDocSnap: DocumentSnapshot<DocumentData>
 ): orderProps {
   const o = orderDocSnap.exists() ? orderDocSnap.data() : {};
- 
+
   return {
-    geo:o.geo,
+    id:orderDocSnap.id,
+    geo: o.geo,
     urgent: o.urgent,
     type: o.type,
     uid: o.uid,
@@ -224,7 +308,7 @@ export function makeOrderFromDoc(
     to: o.to,
     time: o.time,
     comment: o.comment,
-    address:o.address
+    address: o.address,
   };
 }
 export function UserProfileFromDoc(doc: DocumentSnapshot): UserProfile {
@@ -282,38 +366,28 @@ export function UpdateProfileForThisUser(data: any) {
 
   return updateUserProfile(uid!, data);
 }
-export const reportOrder = async (
-  order: DocumentSnapshot<DocumentData>,
-  why: string = ""
-) => {
+export const reportOrder = async (order: string, why: string ) => {
   const uid = getAuth().currentUser?.uid;
-  var userReport = order?.data()!.reports.find((v: any) => {
-    return v.byUser === uid;
-  });
+  var userReport = mydb.userReports.find((v: any) => {
+      return v.byUser === uid;
+    })
+  
   if (!!userReport) {
     alert("already reported");
     return;
   } else {
     const report: OrderReportProps = {
       byUser: uid!,
-      time: new Date(),
+      time: serverTimestamp(),
       why: why,
-      OrderId: order.id!,
+      OrderId: order,
     };
-    const newDoc = await addDoc(collection(db, "ordersReports"), report);
-    const reportInfo: OrderReportInfo = {
-      byUser: uid!,
-      time: new Date(),
-      id: newDoc.id,
-      why: why,
-    };
-    return updateDoc(doc(db, "orders", order.id!), {
-      reports: arrayUnion(reportInfo),
-    });
+      await addDoc(collection(db, "ordersReports"), report);
+    
   }
 };
-export function deleteOrder(order: DocumentSnapshot) {
-  return deleteDoc(order.ref);
+export function deleteOrder(id:string) {
+  return deleteDoc(doc(db,'orders/'+id));
 }
 export async function deleteDoc_(path: string) {
   await deleteDoc(doc(getFirestore(), path));
@@ -357,26 +431,14 @@ export async function applyForCard(
     timeAccepted: timeNow,
     timeDone: timeNow,
   };
+  var res
   try {
-    let d = await addDoc(collection(db, "ordersApplications"), newApplication);
+    res =  addDoc(collection(db, "ordersApplications"), newApplication);
 
-    let info: ApplicationInfo = {
-      byUser: UserUID,
-      id: d.id,
-      time: timeNow,
-    };
-    var res = await updateDoc(doc(getFirestore(), "orders/" + cardUID), {
-      applications: arrayUnion(info),
-    });
   } catch (error) {
-    console.log(
-      "error on add applictaion to order ${cardUID} : :>> ",
-      " error :",
-      error
-    );
+    console.log("error on add applictaion to order ${cardUID} : :>> ",error);
   }
-
-  return res;
+  return  Promise.all([res]);
 }
 export const avatarPLaceholder = require("../assets/avatarPlaceHolder.png");
 export function getUserInfoPlaceHolder() {
@@ -396,17 +458,6 @@ export async function getApplicationsToOrder(cardUID: string) {
   }
   return [];
 }
-export async function removeApplicationToOrder(
-  info: ApplicationInfo,
-  orderDoc: DocumentSnapshot<DocumentData>
-) {
-  const res = await updateDoc(orderDoc.ref, {
-    applications: arrayRemove(info),
-  });
-  return res;
-}
-
-
 
 export function intersection(a: Array<any>, b: Array<any>) {
   var filteredArray = a.filter(function (n) {

@@ -1,28 +1,24 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import {
   doc,
   DocumentSnapshot,
   getFirestore,
   onSnapshot,
-  setDoc,
 } from "firebase/firestore";
-import { Network } from "@capacitor/network";
-import CreateProfile from "../pages/CreatProfile";
 import { token } from "../App";
 import {
   createNewProfileForThisUser,
-  UpdateProfileForThisUser,
+  mydb,
+  userApplicationsStore,
+  userOrdersStore,
   UserProfileFromDoc,
+  userReportsStore,
 } from "./firebaseMain";
 import { UserProfile } from "../types";
 import { useIonAlert } from "@ionic/react";
 import useOnline from "../hooks/useOnline";
-import { randomAvatarUrl } from "../components/Avatar";
 import useSignTools from "../hooks/useSignTools";
-import useUserApplications from "../hooks/useUserApplications";
-import useUserOrders from "../hooks/useUserOrders";
-import useUserReports from "../hooks/useUserReports";
 import useUserHooks from "../hooks/userHooks";
 
 interface Props {
@@ -54,21 +50,25 @@ const GlobalProvider: React.FC = (props) => {
   const [profile, setProfile] = useState<UserProfile>();
   const [currentOrder, setCurrentOrder] = useState<DocumentSnapshot>();
   const { isOnline } = useOnline();
-  const [profileLoadingComplete, setProfileLoadingComplete] =
-    useState<boolean>(false);
+  
 
-  const uid = getAuth().currentUser?.uid;
   const { getEmail, getPhone } = useSignTools();
-  const { userApplications, userOrders, userReports } = useUserHooks();
+  // const { userApplications, userOrders, userReports } = useUserHooks();
 
   const [presentAlert, dissmissAlert] = useIonAlert();
+  const userOrders = userOrdersStore.useState()
+  const userApplications = userApplicationsStore.useState()
+  const userReports = userReportsStore.useState()
 
+  
   useEffect(() => {
     return onAuthStateChanged(
       getAuth(),
       (user) => {
         console.log("user  :>> ", !!user);
         setUser(!!user);
+        user && mydb.subscripeUserList(user.uid)
+        !user && mydb.unSubscripeUserList()
       },
       (err) => {
         console.log(err, "error in user sign in check");
@@ -85,23 +85,12 @@ const GlobalProvider: React.FC = (props) => {
     }
   }, [user]);
 
-  useEffect(() => {
-    isProfileComplete();
-    tokenUpdate();
-  }, [profile]);
+ 
 
-  function tokenUpdate() {
-    if (user && profile && token) {
-      // setDoc(doc(db,"fcmTokens",getAuth().currentUser?.uid!),{token:token}).then((v)=>{
-      //   console.log(v)
-      // })
-    }
-  }
+ 
 
   function fetchProfile() {
-    setProfileLoadingComplete(false);
     const uid = getAuth().currentUser!.uid;
-    console.log("uid :>> ", uid);
     const ref = doc(getFirestore(), "users", uid);
 
     return onSnapshot(ref, (doc) => {
@@ -125,19 +114,10 @@ const GlobalProvider: React.FC = (props) => {
         );
         createNewProfileForThisUser(name, number, email, photo);
       }
-
       console.log("profile is complete :>> ", doc.exists());
-      setProfileLoadingComplete(true);
     });
   }
-  function isProfileComplete() {
-    let res =
-      !!profile &&
-      !!profile.name &&
-      profile.name.length >= 5 &&
-      !!profile.phoneNumber &&
-      profile.phoneNumber.length >= 8;
-  }
+  
   const toProvide: Props = {
     user,
     profile,

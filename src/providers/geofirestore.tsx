@@ -25,8 +25,8 @@ import { orderMarker } from "../types";
   }
 
   async getGeoQuery(location:LatLng,radius:number,from:boolean){
-
-    const query = this.geocollection.near({
+    const geocollection = this.GeoFirestore.collection(from?'ordersGeoFrom':'ordersGeoTo')
+    const query = geocollection.near({
       center: new firebase.firestore.GeoPoint(location.lat,location.lng),
       radius: radius,
       limit:5
@@ -40,8 +40,9 @@ import { orderMarker } from "../types";
     return list
   }
    async  addGeo(id: string, latlng: LatLng, from: boolean) {
-     
-    return this.geocollection.add({
+    const geocollection = this.GeoFirestore.collection(from?'ordersGeoFrom':'ordersGeoTo')
+
+    return geocollection.add({
       id: id,
       from: from,
       // The coordinates field must be a GeoPoint!
