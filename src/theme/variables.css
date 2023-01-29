@@ -26,7 +26,10 @@ ion-page{
   padding-top: 50px;
 }
 
+body{
+  direction: ltr;
 
+}
 /** Ionic CSS Variables **/
 :root {
   --ion-font-family:"baloo";

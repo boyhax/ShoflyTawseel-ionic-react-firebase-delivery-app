@@ -60,7 +60,10 @@ const GlobalProvider: React.FC = (props) => {
   const userApplications = userApplicationsStore.useState()
   const userReports = userReportsStore.useState()
 
-  
+  console.log("this.userOrders :>> ", userOrders);
+  console.log("this.userapplication :>> ", userApplications);
+  console.log("this.userReports :>> ", userReports);
+
   useEffect(() => {
     return onAuthStateChanged(
       getAuth(),
@@ -84,10 +87,6 @@ const GlobalProvider: React.FC = (props) => {
       };
     }
   }, [user]);
-
- 
-
- 
 
   function fetchProfile() {
     const uid = getAuth().currentUser!.uid;

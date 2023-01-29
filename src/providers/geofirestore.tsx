@@ -4,7 +4,9 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
 import { GeoPoint } from "firebase/firestore";
 import * as geofirestore from "geofirestore";
+import { Http2ServerRequest } from "http2";
 import { idCard } from "ionicons/icons";
+import { getLang } from "../App";
 import { Config } from "../config";
 import { orderMarker } from "../types";
 
@@ -38,6 +40,21 @@ import { orderMarker } from "../types";
     })
     
     return list
+  }
+  async getCity(point:GeoPoint,onResult:any=(d:any)=>{}){
+    const url =`https://api.bigdatacloud.net/data/
+    reverse-geocode-client?latitude=${point.latitude}
+    &longitude=${point.longitude}&localityLanguage=${getLang()}`
+
+    let t =  await (await fetch(url, {
+      method: 'GET',
+      headers: {
+        'X-RapidAPI-Key': '5db7bea325msh20d1ea444db0b53p123e53jsn3b35fd61bc13',
+        'X-RapidAPI-Host': 'trueway-places.p.rapidapi.com'
+      }
+    })).json()
+    onResult(t)
+    return t?t.city:''
   }
    async  addGeo(id: string, latlng: LatLng, from: boolean) {
     const geocollection = this.GeoFirestore.collection(from?'ordersGeoFrom':'ordersGeoTo')

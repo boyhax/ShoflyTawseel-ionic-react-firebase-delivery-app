@@ -7,7 +7,7 @@ import { orderFilter } from '../types';
 const initalFilter: orderFilter = {
     to: '',
     from: '',
-    userID: '',
+    userID: 'notself',
     urgent: false,
 }
 

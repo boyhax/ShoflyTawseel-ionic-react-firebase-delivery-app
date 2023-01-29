@@ -15,9 +15,11 @@ import {
 } from "@ionic/react";
 import { getAuth } from "firebase/auth";
 import {
+  deleteDoc,
   doc,
   DocumentData,
   DocumentSnapshot,
+  getDoc,
   getFirestore,
   onSnapshot,
 } from "firebase/firestore";
@@ -32,99 +34,99 @@ import {
   alertCircleOutline,
 } from "ionicons/icons";
 import moment from "moment";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useHistory } from "react-router";
 
 import {
   applyForCard,
   db,
   deleteOrder,
+  getGeoCode,
   getUserInfoPlaceHolder,
   makeOrderFromDoc,
-  removeApplicationToOrder,
+  mydb,
   reportOrder,
 } from "../providers/firebaseMain";
+import geoFirestore from "../providers/geofirestore";
 import { useGlobals } from "../providers/globalsProvider";
 import { orderProps, userInfo } from "../types";
 import "./OrderCard.css";
 import { citienames } from "./utlis/citiesUtlis";
 import { prettyDate } from "./utlis/prettyDate";
 
-const options: Object = {
-  weekday: "long",
-  year: "numeric",
-  month: "numeric",
-  day: "numeric",
-};
 
 interface props extends ComponentProps {
-  orderDocSnap: DocumentSnapshot<DocumentData>;
-  whatsapp?: any;
-  message?: any;
-  remove?: any;
-  report?: any;
-  canApplyFor?: any;
-  onDeleted?: () => void;
-  onRefresh?: () => void;
+  order: orderProps;
+
 }
 export var Currentplatform = "web";
 Device.getInfo().then((v) => {
   Currentplatform = v.platform;
 });
-const SendSMSMessage = (phoneNumber: String, message: String) => {
-  const separator = Currentplatform == "ios" ? "&" : "?";
-  const url = `sms:${phoneNumber}${separator}body=${message}`;
-  window.open(url);
-};
 const OpenWhatsapp = (number: any) => {
   window.open("http://wa.me/" + number);
 };
+moment.locale("ar");
+const OrderCard = ({order}: props) => {
 
-const OrderCard = ({
-  orderDocSnap,
-  whatsapp,
-  message,
-  remove,
-  report,
-  canApplyFor,
-  onDeleted,
-  onRefresh,
-}: props) => {
-  const [data, setData] = useState<orderProps>(makeOrderFromDoc(orderDocSnap));
-  const id = orderDocSnap.id;
-  moment.locale("ar");
-  var date = prettyDate(new Date(data.time.seconds * 1000));
+  
+  var date =order && prettyDate(new Date(order.time.seconds * 1000));
 
-  const comment =
-    typeof data.comment! == "string" ? data.comment : "no comment";
-  const popOver = useRef<any>(null);
-  const [reporting, setReporting] = useState(false);
-  const [reportWhy, setReportWhy] = useState<undefined | string>(undefined);
+
+  const [deleted, setDeleted] = useState(false);
+  const [reportWhy, setReportWhy] = useState<string>('');
   const uid = getAuth().currentUser?.uid;
-  const { user, profile, setCurrentOrder } = useGlobals();
-  const [userApplied, setApplied] = useState<boolean | undefined>(
-  );
+  const { user, profile,userApplications } = useGlobals();
   const history = useHistory();
-  const owner = data!.uid === uid;
+  const owner = order!.uid === uid;
   const [userInfo, setUserInfo] = useState<userInfo>(getUserInfoPlaceHolder());
   const [showComment, setShowComment] = useState(false);
-  const from = citienames[Number(data.from)];
-  const to = citienames[Number(data.to)];
+  const [to, setTo] = useState('');
+  const [from, setFrom] = useState('');
+
   useEffect(() => {
-    const unsub = onSnapshot(doc(getFirestore(), "orders/" + id), (doc) => {
-      let d = makeOrderFromDoc(doc);
-      setData(d);
-      // setApplied(is_user_applied_to_card(uid!, d));
-    });
-    var unsub2 = () => {};
-    if (data.uid === uid && profile) {
+    getFrom();getTo();
+    checkUserApplied();
+  }, []);
+  async function getFrom(){
+    // const p = await getGeoCode(order.geo.from);
+    // console.log('from=>',p)
+    geoFirestore.getCity(order.geo.from,(v:any)=>{
+      console.log(v)
+      setFrom(v)  
+    })
+    // setFrom(p?p.formatted_address:'')
+  }
+  async function getTo(){
+    // const p = await getGeoCode(order.geo.to);
+    // setTo(p?p.formatted_address:'')
+  }
+
+  const [userApplied,setUserApplied] = useState<boolean>()
+
+    async function checkUserApplied(){
+      setUserApplied(undefined)
+    if(mydb.user){
+      const app = await mydb.is_user_applied_to_card(mydb.user.uid,order.id)
+      setUserApplied(app)
+      return
+    }else{
+
+    }  
+    setUserApplied(false)
+
+  }
+
+  useEffect(() => {
+    
+    if (order.uid === uid && profile) {
       setUserInfo({
         name: profile.name,
         photoURL: profile.photoURL,
         phoneNumber: profile.phoneNumber,
       });
     } else {
-      unsub2 = onSnapshot(doc(db, "users", data.uid), (doc) => {
+        getDoc(doc(db, "users", order.uid)).then((doc) => {
         let d: userInfo = {
           name: doc.data()!.name,
           phoneNumber: doc.data()!.phoneNumber,
@@ -134,9 +136,8 @@ const OrderCard = ({
       });
     }
 
+
     return () => {
-      unsub();
-      unsub2();
     };
   }, []);
 
@@ -146,33 +147,23 @@ const OrderCard = ({
   const [presentAlert] = useIonAlert();
 
   async function _applyToOrder() {
-    // if (!user) {
-    //   presentAlert({ message: "يرجى تسجيل الدخول اولا" });
-    //   return;
-    // }
-    // if (!userApplied) {
-    //   applyForCard(uid!, id, data.uid!);
-    //   setApplied(undefined);
-    // } else {
-      // const info = data.applications.find((value) => {
-      //   return value.byUser === uid;
-      // });
-    //   if (info) {
-    //     removeApplicationToOrder(info, orderDocSnap);
-    //     setApplied(undefined);
-    //   } else {
-    //     console.log("no application found on order ");
-    //   }
-    // }
-  }
-  function onReport() {
-    reportOrder(orderDocSnap, reportWhy);
-    if (onRefresh) {
-      onRefresh();
-      console.log("message");
+    setUserApplied(undefined)
+    if (!userApplied) {
+      await applyForCard(uid!, order.id, order.uid!).then((d)=>{
+        setUserApplied(true)
+      });
+    } else {
+        await mydb.removeApplicationToOrder( order.id).then((d)=>{
+          setUserApplied(false)
+        });;
     }
   }
-
+  function Report(why:string) {
+    reportOrder(order.id, why);
+  }
+  if(deleted){
+    return<></>
+  }
   return (
     <div>
       {owner && (
@@ -188,7 +179,7 @@ const OrderCard = ({
         <div className="flex w-full items-center justify-between">
           <IonAvatar
             className="w-12 h-12"
-            onClick={() => history.push("/profile/" + data.uid)}
+            onClick={() => history.push("/profile/" + order.uid)}
           >
             <IonImg src={userInfo.photoURL}></IonImg>
           </IonAvatar>
@@ -196,7 +187,7 @@ const OrderCard = ({
             {userInfo.name}
           </IonLabel>
           <IonLabel
-            className={"ml-auto mb-auto font-thin text-sm"}
+            className={"flex-end mb-auto font-thin text-sm"}
             color="dark"
           >
             <IonIcon icon={timeOutline} />
@@ -205,39 +196,27 @@ const OrderCard = ({
         </div>
 
         <div className="flex w-full items-center justify-around flex-row-reverse">
-          <IonChip color="secondary">{from}</IonChip>
+          <IonChip color="secondary">{from||'..'}</IonChip>
           <IonIcon
             color={"primary"}
             size={"large"}
             icon={arrowBackOutline}
           ></IonIcon>
-          <IonChip color="secondary">{to}</IonChip>
+          <IonChip color="secondary">{to ||'..'}</IonChip>
           {/* top header date time */}
         </div>
         <div className={"flex w-full justify-evenly"}>
-          <IonLabel
-            color="dark"
-            onClick={() => {
-              if (owner) {
-                setCurrentOrder(orderDocSnap);
-                history.push(
-                  "/OrdersPage/" + orderDocSnap.id + "/applications"
-                );
-              }
-            }}
-          >
-            {"تم قبول الطلب: "}
-            {/* {data.applications.length} */}
-          </IonLabel>
+          
 
           <IonLabel color="dark" onClick={() => toggleComment()}>
-            {"الوصف: " + (showComment ? comment : comment.slice(0, 50) + "...")}
+            {"الوصف: " + (showComment ? order.comment : order.comment.slice(0, 50) + "...")}
           </IonLabel>
         </div>
 
         <div className={"flex w-full  justify-between "}>
           {!owner && (
             <IonButton
+            disabled={!user}
               onClick={() => {
                 _applyToOrder();
               }}
@@ -261,15 +240,13 @@ const OrderCard = ({
               <IonButton
                 fill="clear"
                 onClick={() => {
-                  deleteOrder(orderDocSnap);
-                  if (typeof onDeleted == "function") {
-                    onDeleted();
-                  }
+                  deleteOrder(order.id);
+                  setDeleted(true)
                 }}
               >
                 <IonIcon
-                  size="large"
-                  color="light"
+                  size="small"
+                  color="primary"
                   icon={trashOutline}
                 ></IonIcon>
               </IonButton>
@@ -277,12 +254,13 @@ const OrderCard = ({
             {!owner && (
               <IonButton
                 fill="clear"
-                onClick={() => setReporting(!reporting)}
+                // onClick={() => setReporting(!reporting)}
                 color="dark"
                 shape="round"
+                id={`reportButton ${order.id}`}
               >
                 <IonIcon
-                  size="large"
+                  size="small"
                   color="success"
                   icon={alertCircleOutline}
                 ></IonIcon>
@@ -292,12 +270,12 @@ const OrderCard = ({
             {!owner && (
               <IonButton
                 fill="clear"
-                onClick={() => history.push("/chat/" + data.uid)}
+                onClick={() => history.push("/chat/" + order.uid)}
                 color="dark"
                 shape="round"
               >
                 <IonIcon
-                  size="large"
+                  size="small"
                   color="success"
                   icon={chatboxOutline}
                 ></IonIcon>
@@ -312,7 +290,7 @@ const OrderCard = ({
                 size="small"
               >
                 <IonIcon
-                  size="large"
+                  size="small"
                   color="success"
                   icon={logoWhatsapp}
                 ></IonIcon>
@@ -324,23 +302,28 @@ const OrderCard = ({
 
       {/* //messengers popover */}
 
-      <IonPopover isOpen={reporting}>
-        <IonLabel slot="primary">اذكر السبب</IonLabel>
-
+      <IonPopover trigger={`reportButton ${order.id}`}>
+        <form onSubmit={() => {
+            Report(reportWhy);
+          }}
+          className='flex items-center flex-col'
+          >
         <IonTextarea
+        placeholder={'why...'}
+        required
           onIonChange={(e) => {
             setReportWhy(e.detail.value!);
           }}
         ></IonTextarea>
-
         <IonButton
-          onClick={(e) => {
-            setReporting(false);
-            onReport();
-          }}
-        >
-          submit
+        type={'submit'}>
+          Send
         </IonButton>
+        </form>
+
+       
+
+        
       </IonPopover>
     </div>
   );

@@ -61,12 +61,13 @@ class firebaseClass {
     initializeApp(Config());
 
     this.db = getFirestore();
-
     onAuthStateChanged(getAuth(), (user) => {
       this.user = user;
       userStore.update((s) => {
         s.user = user;
       });
+      console.log('user id :>> ', user && user.uid);
+
       user && this.token && this.updateToken();
     });
     // getDocs(query(collection(this.db,'orders'))).then((snap)=>{
@@ -112,7 +113,6 @@ class firebaseClass {
     subscripeUserOrders(userId, (snap) => {
       this.userOrders = snap.docs;
       userOrdersStore.update((s) => this.userOrders);
-      console.log("this.userOrders :>> ", this.userOrders);
       return !this.subscripeUserList;
     });
     subscripeUserApplications(userId, (snap) => {
@@ -235,7 +235,13 @@ export async function getOrders(
       qu = query(qu, where("to", "==", filter.to));
     }
     if (filter.userID) {
-      qu = query(qu, where("uid", "==", filter.userID));
+      if(filter.userID ==='notself'){
+        !!mydb.user&& (qu = query(qu, where("uid", "!=", mydb.user.uid)));
+
+      }else{
+        qu = query(qu, where("uid", "==", filter.userID));
+
+      }
     }
     if (filter?.limit) {
       qu = query(qu, limit(filter?.limit));

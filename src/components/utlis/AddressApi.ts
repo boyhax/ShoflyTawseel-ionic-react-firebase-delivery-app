@@ -40,10 +40,9 @@ export async function leafletSearch(text:string,onRes?:(d:any)=>void){
     const results = await provider.search({ query: text, });
     
     onRes && onRes(results)
-    console.log('results :>> ', results);
     return results
 }
-leafletSearch("صور")
+leafletSearch("صور",(d)=>{console.log('leaflet search result :>> ', d);})
 // bounds
 // : 
 // (2) [Array(2), Array(2)]
