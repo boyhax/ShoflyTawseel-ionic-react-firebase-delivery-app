@@ -61,6 +61,7 @@ import Profile from "./pages/Profile";
 import OrdersPage from "./pages/OrdersPage";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { mydb } from "./providers/firebaseMain";
+import { Store } from "pullstate";
 
 setupIonicReact({
   mode: "ios",
@@ -77,14 +78,25 @@ Device.getInfo().then((v) => {
     });
   }
 });
-const language: "en" | "ar" = "en";
+const languageStore = new Store<{lang:languages}>({lang:'ar'})
+type languages="en" | "ar"
+var language: languages = "ar";
+
+languageStore.subscribe(s=>s,(s)=>{
+  language = s.lang
+  const htmlel:any = document.getElementsByName('html')
+  htmlel.style.direction = s.lang==='en'?'ltr':'rtl'
+})
 export const getLang = () => {
   return language;
 };
 
 const App: React.FC = () => {
   const ionRouter = useIonRouter();
-
+  const {lang} = languageStore.useState()
+  document.body.style.direction = lang==='en'?'ltr':'rtl'
+  console.log('body direction :>> ',   document.body.style.direction
+  );
   const toggleMenu = () => {
     const menu: any = document.getElementById("mainMenu");
     menu.toggle();
@@ -101,11 +113,11 @@ const App: React.FC = () => {
   return (
     <React.StrictMode>
       <GlobalProvider>
-        <IonApp>
+        <IonApp className={`${lang==='en'?'ltr':'rtl'}`}>
           <IonReactRouter>
             <MainMenu></MainMenu>
 
-            <IonTabs>
+            <IonTabs >
               <IonRouterOutlet id="main-content">
                 <Switch>
                   <Route exact path="/orders">
