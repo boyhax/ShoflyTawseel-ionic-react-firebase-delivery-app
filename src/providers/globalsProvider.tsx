@@ -20,6 +20,7 @@ import { useIonAlert } from "@ionic/react";
 import useOnline from "../hooks/useOnline";
 import useSignTools from "../hooks/useSignTools";
 import useUserHooks from "../hooks/userHooks";
+import LoadingScreen from "../pages/LoadingScreen";
 
 interface Props {
   user: boolean | undefined;
@@ -50,15 +51,14 @@ const GlobalProvider: React.FC = (props) => {
   const [profile, setProfile] = useState<UserProfile>();
   const [currentOrder, setCurrentOrder] = useState<DocumentSnapshot>();
   const { isOnline } = useOnline();
-  
 
   const { getEmail, getPhone } = useSignTools();
   // const { userApplications, userOrders, userReports } = useUserHooks();
 
   const [presentAlert, dissmissAlert] = useIonAlert();
-  const userOrders = userOrdersStore.useState()
-  const userApplications = userApplicationsStore.useState()
-  const userReports = userReportsStore.useState()
+  const userOrders = userOrdersStore.useState();
+  const userApplications = userApplicationsStore.useState();
+  const userReports = userReportsStore.useState();
 
   console.log("this.userOrders :>> ", userOrders);
   console.log("this.userapplication :>> ", userApplications);
@@ -70,8 +70,8 @@ const GlobalProvider: React.FC = (props) => {
       (user) => {
         console.log("user  :>> ", !!user);
         setUser(!!user);
-        user && mydb.subscripeUserList(user.uid)
-        !user && mydb.unSubscripeUserList()
+        user && mydb.subscripeUserList(user.uid);
+        !user && mydb.unSubscripeUserList();
       },
       (err) => {
         console.log(err, "error in user sign in check");
@@ -116,7 +116,7 @@ const GlobalProvider: React.FC = (props) => {
       console.log("profile is complete :>> ", doc.exists());
     });
   }
-  
+
   const toProvide: Props = {
     user,
     profile,
@@ -132,10 +132,12 @@ const GlobalProvider: React.FC = (props) => {
   return (
     <globalsContext.Provider value={toProvide}>
       <div hidden={isOnline} className={"absolute z-50 w-full mx-auto "}>
-        <p className={"text-xl text-center text-slate-300  bg-red-700"}>Intenet connection required</p>
+        <p className={"text-xl text-center text-slate-300  bg-red-700"}>
+          Intenet connection required
+        </p>
       </div>
-
-      { props.children}
+      {user ===undefined? <LoadingScreen />:''}
+      <div className={`${user===undefined &&'hidden'}`}>{props.children}</div>
     </globalsContext.Provider>
   );
 };

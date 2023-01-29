@@ -1,30 +1,17 @@
 import React, { useState } from "react";
 import {
-  IonButton,
-  IonCard,
-  IonCardContent,
   IonCardTitle,
   IonContent,
-  IonIcon,
-  IonPage,
-  IonPopover,
-  IonTitle,
 } from "@ionic/react";
 import "./SignIn.css";
-import {
-  GoogleAuthProvider,
-  getAuth,
-  PhoneAuthProvider,
-} from "firebase/auth";
 import PhoneAuth from "./PhoneAuth";
 import EmailAuth from "./EmailAuth";
 import GoogleSignin from "./GoogleSignin";
 import "./styles.css";
 import { useGoogleAuth } from "../../hooks/useGoogleAuth";
 import useOnline from "../../hooks/useOnline";
-import { FirebaseAuth } from "react-firebaseui";
-import { phonePortraitSharp } from "ionicons/icons";
 import Page from "../../components/Page";
+import { TT } from "../../components/utlis/tt";
 
 const SignIn: React.FC = () => {
   const { isOnline } = useOnline();
@@ -46,7 +33,7 @@ const SignIn: React.FC = () => {
   return (
     <Page>
       <IonContent hidden={!isOnline} >
-          <IonCardTitle className={"ion-padding"}>Welcome</IonCardTitle>
+          <IonCardTitle className={"ion-padding"}>{TT('Welcome')}</IonCardTitle>
             {method === "phone" && <PhoneAuth></PhoneAuth>}
 
             {method === "email" && <EmailAuth></EmailAuth>}

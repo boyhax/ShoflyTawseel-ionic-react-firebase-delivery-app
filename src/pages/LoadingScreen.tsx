@@ -1,62 +1,35 @@
-import React from 'react';
-import { IonBackButton, IonButtons, IonHeader, IonPage, IonToolbar, IonTitle, IonContent, IonSpinner, IonList, IonCard, IonCardContent, IonCardTitle } from '@ionic/react';
-import { useParams } from 'react-router';
+import React from "react";
+import { IonPage, IonLoading, IonContent } from "@ionic/react";
+import { TT } from "../components/utlis/tt";
+import "./LoadingScreen.css";
+import Page from "../components/Page";
 interface Props {
-  onClose:()=>void,
+  onClose?: () => void;
 }
-const LoadingScreen: React.FC<Props> = ({onClose}) => {
-  
+const LoadingScreen: React.FC<Props> = ({ onClose }) => {
   return (
-    <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonButtons slot="start">
-            {/* <IonBackButton defaultHref="/tab2" /> */}
-          </IonButtons>
-          <IonTitle onClick={()=>onClose()}>ابدا</IonTitle>
-          {/* <IonTitle>Detail</IonTitle> */}
-        </IonToolbar>
-      </IonHeader>
-      <IonContent>
-        <IonList>
-          <IonCard>
-            <IonCardTitle>
-            تطبيق شوفلي توصيل يرحب بك
-            </IonCardTitle>
-            {/* <IonCardContent>
-            </IonCardContent> */}
-          </IonCard>
+    <div className={'w-screen h-screen'} >
+      <IonContent fullscreen>
+        <div className={"flex z-[1000] flex-col gap-6 justify-center items-center w-full h-full"}>
+          <div className={"cube "}>
+            <div />
+            <div />
+            <div />
+            <div />
+            <div />
+            <div />
+            
+          </div>
+          <div >
+          <p className={'text-xl  '}>{TT("Shofly Tawseel")}</p>
+          </div>
           
-          <IonCard>
-            <IonCardTitle>
-              معلومات عن تطبيق شوفلي توصيل
-            </IonCardTitle>
-            <IonCardContent>
-    تطبيق شوفلي توصيل يساعدك في الوصول السريع الى اي شخص يريد توصيل اي غرض 
-            </IonCardContent>
-          </IonCard>
-          <IonCard>
-            <IonCardTitle>
-        المرسل
-            </IonCardTitle>
-            <IonCardContent>
-  اضف معلومات طلبك للتوصيل عبر زر بلس في القائمة الرئيسية
-            </IonCardContent>
-          </IonCard>
-          <IonCard>
-            <IonCardTitle>
-        المرسل
-            </IonCardTitle>
-            <IonCardContent>
-  ابحث في الصفحة الرئيسية عن الطلبات التي تناسب وجهتك وموقع انطلاقك واختر التواصل بلواتساب او الرسائل النصية
-            </IonCardContent>
-          </IonCard>
-        </IonList>
 
-        {/* <IonTitle>Loading...</IonTitle>
-        <IonSpinner></IonSpinner> */}
+        </div>
       </IonContent>
-    </IonPage>
+
+      {/* <IonLoading isOpen={true} message={TT("Please Wait")}/> */}
+    </div>
   );
 };
 

@@ -50,6 +50,7 @@ import { StyledFirebaseAuth, FirebaseAuth } from "react-firebaseui";
 import { useHistory } from "react-router";
 import AuthHeader from "./AuthHeader";
 import { getLang } from "../../App";
+import { TT } from "../../components/utlis/tt";
 
 const PhoneAuth: React.FC = (props) => {
   const [phoneNumber, setPhoneNumber] = useState<any>(null);
@@ -117,7 +118,13 @@ const PhoneAuth: React.FC = (props) => {
     ).then(
       (v) => {
         setVerificationId(v.verificationId);
-        setVerifyError({ message: "تم ارسال الكود بنجاح" });
+        // setVerifyError({ message: "تم ارسال الكود بنجاح" });
+        present({
+          message: TT("the code has been send successfully "),
+          onDidDismiss: () => {},
+          duration: 1000,
+          position: "bottom",
+        });
         verificationCodeTextInput!.current!.focus();
         setVerifyInProgress(false);
         setStep(1);
@@ -211,7 +218,8 @@ const PhoneAuth: React.FC = (props) => {
 
       {/* otp  step */}
 
-      <div hidden={step !== 2} className={"flex flex-col gap-2 items-center justify-center"}>
+      <div hidden={step !== 2} 
+      className={"flex flex-col gap-2 items-center justify-center"}>
         <p className={"text-lg text-blue-500"}>one time Password</p>
 
           <IonInput
@@ -237,6 +245,10 @@ const PhoneAuth: React.FC = (props) => {
             <span style={{ fontSize: "2rem" }}>Submit</span>
           </IonButton>
         )}
+        <p onClick={()=>setStep(0)}
+         className={"text-base text-[var(--ion-color-primary)]"}>
+          {TT('Return')}</p>
+
         <IonNote>{confirmError?.message!}</IonNote>
       </div>
       <IonLoading isOpen={confirmInProgress}></IonLoading>
