@@ -58,10 +58,7 @@ import { getProfile } from '../providers/firebaseMain';
 
       
 
-      {!!userProfile && content ==="orders"&& 
-            <IonContent>
-              <ProfileOrdersList uid={uid}/>
-            </IonContent>}
+   
       
       {!!userProfile && content ==="deliver"&& 
           <IonContent>
@@ -73,47 +70,3 @@ import { getProfile } from '../providers/firebaseMain';
 };
 
 export default ProfileID
-
-const ProfileOrdersList:FC<props>=({uid}:props)=>{
-  const [list,setList]=useState<DocumentSnapshot<DocumentData>[]>([])
-  const [refreshing,setRefreshing] = useState(true)
-  const [isMounted, setIsMounted] = useState(true)
-  useEffect(()=>{
-    const unsub = getData();
-    return()=>{unsub()}
-  },[])
-  
-
-   function getData() {
-    setRefreshing(true)
-    const ref = collection(getFirestore(),"orders")
-    var firstQuery = query(ref,orderBy("time","desc"))
-    var finalQuery= query(firstQuery,where("uid","==",uid))
-    
-    return onSnapshot(finalQuery,(snap)=>{
-
-        let newDocs:DocumentSnapshot[]=[]
-
-        snap.forEach((doc)=>{newDocs.push(doc)})
-
-        if(isMounted){
-         setList(newDocs)
-         setRefreshing(false)    
-        }
-      })
-  } 
-  
-  return<IonList>
-    {refreshing && <IonSpinner></IonSpinner>}
-      {!!list && list.map((value, index, array) => {
-        
-        return <OrderCard orderDocSnap={value} key={index} ></OrderCard>
-        })}
-        {!list && !refreshing && <IonButton onClick={()=>getData()}>refresh</IonButton>}
-  </IonList>
-}
-
-
-type props={
-  uid:string
-}
