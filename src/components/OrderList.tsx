@@ -8,6 +8,7 @@ import OrderCard from "./OrderCard";
 import useOrders from "../hooks/useOrders";
 import FilterUI from "./FilterUI";
 import OrdersPlaceHolder from "./OrdersPLaceHolder";
+import { makeOrderFromDoc } from "../providers/firebaseMain";
 
 
 export default function OrderList(props: any) {
@@ -64,8 +65,7 @@ export default function OrderList(props: any) {
         if (!v["exists"]) {
           return ''
         }
-        return <OrderCard orderDocSnap={v} key={i} report canApplyFor onRefresh={() => Refresh()} onDeleted={() => { delete list[i]; setList(list) }}>
-        </OrderCard>
+        return <OrderCard order={makeOrderFromDoc(v)} key={i}  />
       })
     }
     {orders.loading && !orders.orders && <OrdersPlaceHolder></OrdersPlaceHolder>}

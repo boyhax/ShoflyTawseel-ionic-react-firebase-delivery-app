@@ -59,9 +59,11 @@ import { App as cApp } from "@capacitor/app";
 import MainMenu from "./components/MainMenu";
 import Profile from "./pages/Profile";
 import OrdersPage from "./pages/OrdersPage";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { mydb } from "./providers/firebaseMain";
 
 setupIonicReact({
-  mode: "md",
+  mode: "ios",
 });
 
 export var token: string = "";
@@ -71,6 +73,7 @@ Device.getInfo().then((v) => {
   if (["android", "ios"].includes(v.platform)) {
     FCM.getToken().then((t) => {
       token = t.token;
+      mydb.setUserToken(t.token);
     });
   }
 });
@@ -80,7 +83,6 @@ export const getLang = () => {
 };
 
 const App: React.FC = () => {
-  const { profile } = userStore.useState();
   const ionRouter = useIonRouter();
 
   const toggleMenu = () => {
@@ -119,15 +121,22 @@ const App: React.FC = () => {
                   <Route exact path="/tab2">
                     <Home />
                   </Route>
-                  <Route  path="/chat">
-                    <Chats />
+                  <Route path="/chat">
+                    <AuthRoute>
+                      <Chats />
+                    </AuthRoute>
                   </Route>
+                  <Route path="/chat/:id">
+                    <AuthRoute>
+                      <Chats />
+                    </AuthRoute>
+                    </Route>
                   <Route exact path="/demo">
                     <Demo />
                   </Route>
                   <Route exact path="/addorder">
                     <AuthRoute>
-                    <AddOrderPage />
+                      <AddOrderPage />
                     </AuthRoute>
                   </Route>
                   <Route exact path="/">
@@ -152,7 +161,7 @@ const App: React.FC = () => {
                   <IonIcon icon={homeOutline} />
                   <IonLabel>Home</IonLabel>
                 </IonTabButton>
-                <IonTabButton tab="chat" href="/chat">
+                <IonTabButton tab="chat" href="/chat/">
                   <IonIcon icon={chatboxOutline} />
                   <IonLabel>Chat</IonLabel>
                 </IonTabButton>

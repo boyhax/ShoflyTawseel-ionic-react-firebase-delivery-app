@@ -24,13 +24,14 @@ import { useGoogleAuth } from "../../hooks/useGoogleAuth";
 import useOnline from "../../hooks/useOnline";
 import { FirebaseAuth } from "react-firebaseui";
 import { phonePortraitSharp } from "ionicons/icons";
+import Page from "../../components/Page";
 
 const SignIn: React.FC = () => {
   const { isOnline } = useOnline();
   const googleAuth = useGoogleAuth();
   const [phoneSignin, setPhoneSignin] = useState(false);
   const [method, setMethod] = useState<"email" | "phone" | "google" | "main">(
-    "email"
+    "phone"
   );
 
   const hundleAuth = (b: "email" | "phone" | "google" | "main") => {
@@ -43,17 +44,14 @@ const SignIn: React.FC = () => {
   };
 
   return (
-    <IonPage style={{ display: "block" }}>
-      <IonContent hidden={!isOnline} className="md:w-[450]">
-        <IonCard>
+    <Page>
+      <IonContent hidden={!isOnline} >
           <IonCardTitle className={"ion-padding"}>Welcome</IonCardTitle>
-          <IonCardContent>
             {method === "phone" && <PhoneAuth></PhoneAuth>}
 
             {method === "email" && <EmailAuth></EmailAuth>}
             {method === "google" && <GoogleSignin></GoogleSignin>}
-          </IonCardContent>
-          <div
+          {/* <div
             className={
               "ion-flex flex-column ion-justify-content-center ion-align-items-center"
             }
@@ -70,37 +68,7 @@ const SignIn: React.FC = () => {
               <IonIcon icon={phonePortraitSharp}></IonIcon>
             </IonButton>
 
-            {/* <IonButton
-              shape={"round"}
-              color={"danger"}
-              onClick={() => hundleAuth("google")}
-            >
-              <IonIcon icon={logoGoogle}></IonIcon>
-            </IonButton>  */}
-            {/* <FirebaseAuth
-              uiConfig={{
-                // Popup signin flow rather than redirect flow.
-                signInFlow: "popup",
-                
-                // Redirect to /signedIn after sign in is successful. Alternatively you can provide a callbacks.signInSuccess function.
-                // signInSuccessUrl: "/signedIn",
-                // We will display Google and Facebook as auth providers.
-                signInOptions:[
-                //   {provider:PhoneAuthProvider.PROVIDER_ID,
-                //   defaultCountry:'OM',
-                // recaptchaParameters:{
-                //   type: 'image', // 'audio'
-                //   size: 'invisible', // 'invisible' or 'compact'
-                //   badge: 'bottomleft', //' bottomright' or 'inline' applies to invisible.
-                
-                // }},
-                  GoogleAuthProvider.PROVIDER_ID,
-                  
-                ],
-                
-              }}
-              firebaseAuth={getAuth()}
-            /> */}
+            
           </div>
         </IonCard>
       </IonContent>
@@ -111,8 +79,10 @@ const SignIn: React.FC = () => {
         onDidDismiss={() => setPhoneSignin(false)}
       >
         <PhoneAuth></PhoneAuth>
-      </IonPopover>
-    </IonPage>
+      </IonPopover> */}
+
+      </IonContent>
+    </Page>
   );
 };
 

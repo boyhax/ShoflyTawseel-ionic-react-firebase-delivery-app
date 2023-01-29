@@ -9,6 +9,7 @@ import OrderCard from "./OrderCard";
 import OrdersPlaceHolder from "./OrdersPLaceHolder";
 import useUserOrders from "../hooks/useUserOrders";
 import { useHistory } from "react-router";
+import { makeOrderFromDoc } from "../providers/firebaseMain";
 
 
 export default function UserOrdersList(props: any) {
@@ -61,8 +62,7 @@ export default function UserOrdersList(props: any) {
         if (!v["exists"]) {
           return ''
         }
-        return <OrderCard orderDocSnap={v} key={i} report canApplyFor onRefresh={() => Refresh()} onDeleted={() => { delete list[i]; setList(list) }}>
-        </OrderCard>
+        return <OrderCard order={makeOrderFromDoc(v)} key={v.id} />
       })
     }
     {orders.loading && !orders.orders && <OrdersPlaceHolder></OrdersPlaceHolder>}

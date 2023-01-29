@@ -94,7 +94,7 @@ export interface OrderReportInfo {
 }
 export interface OrderReportProps {
   byUser: string;
-  time: Date;
+  time: any;
   why: string;
   OrderId: string;
 }
@@ -104,6 +104,7 @@ export interface orderMarker{
   from:boolean
 }
 export interface orderProps {
+  id:string
   urgent: boolean;
   type: string;
   geo: { from: GeoPoint; to: GeoPoint };
