@@ -1,0 +1,22 @@
+{
+    "logout": {
+        "en": "logout",
+        "ar": "خروج"
+    },
+    "edit": {
+        "en": "edit",
+        "ar": "تعديل"
+    },
+    "Welcome": {
+        "en": "Welcome",
+        "ar": "مرحبا بك"
+    },
+    "logOut": {
+        "en": "logOut",
+        "ar": "تسجيل الخروج"
+    },
+    "Return": {
+        "en": "Return",
+        "ar": "رجوع"
+    }
+}
