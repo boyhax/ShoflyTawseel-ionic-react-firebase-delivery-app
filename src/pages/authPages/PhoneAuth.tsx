@@ -85,8 +85,6 @@ const PhoneAuth: React.FC = (props) => {
 
   const auth = getAuth();
   auth.languageCode = getLang();
-  const { user, presentAlert } = useGlobals();
-  const history = useHistory();
 
   useEffect(() => {
     setVerificationId(null);
@@ -102,8 +100,6 @@ const PhoneAuth: React.FC = (props) => {
     setVerifyInProgress(true);
     setVerificationId("");
     setRecaptchaVerified(false);
-    // document.getElementById("recaptcha-container")!.innerHTML = "";
-    setStep(1);
     signin();
   }
   const onRecaptchaSolved = (v: any) => {
@@ -118,7 +114,6 @@ const PhoneAuth: React.FC = (props) => {
     ).then(
       (v) => {
         setVerificationId(v.verificationId);
-        // setVerifyError({ message: "تم ارسال الكود بنجاح" });
         present({
           message: TT("the code has been send successfully "),
           onDidDismiss: () => {},
