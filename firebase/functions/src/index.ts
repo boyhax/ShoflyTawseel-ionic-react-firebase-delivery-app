@@ -37,11 +37,18 @@ exports.onOrderReported = functions.firestore
 exports.onOrderCreated = functions.firestore
     .document("orders/{docId}")
     .onCreate((snap, context) => {
-      functions.logger.log("new order added: ", context.params.docId);
-      const orderOwner = snap.data().uid;
-      const orderId = snap.id;
-      admin.firestore().doc("users/"+orderOwner).update({
-        ordersDone: admin.firestore.FieldValue.arrayUnion(orderId),
+      // functions.logger.log("new order added: ", context.params.docId);
+      // const orderOwner = snap.data().uid;
+      // const orderId = snap.id;
+      // admin.firestore().doc("users/"+orderOwner).update({
+      //   ordersDone: admin.firestore.FieldValue.arrayUnion(orderId),
+      // });
+      const newFrom = getCity(snap.data().geo.from);
+      const newTo=getCity(snap.data().geo.from);
+      Promise.all([newFrom, newTo]).then(([from, to])=>{
+        snap.ref.update({
+          from: from.city||"",
+          to: to.city ||""});
       });
     });
 exports.onNewUser = functions.auth.user().onCreate((user) => {
@@ -85,3 +92,16 @@ exports.onDeleteUser = functions.auth.user().onDelete((user) => {
 
   admin.firestore().collection("users").doc(user.uid).delete;
 });
+
+async function getCity(point:any, onResult:(coty:string)=>void=(d:string)=>"") {
+  const url =`https://api.bigdatacloud.net/data/
+  reverse-geocode-client?latitude=${point.latitude}
+  &longitude=${point.longitude}&localityLanguage=${"en"}`;
+
+  const t = await (await fetch(url, {
+    method: "GET",
+    headers: {},
+  })).json();
+  onResult(t?t.city:"");
+  return t?t.city:"";
+}
