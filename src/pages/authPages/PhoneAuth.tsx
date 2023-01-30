@@ -101,6 +101,8 @@ const PhoneAuth: React.FC = (props) => {
     setVerificationId("");
     setRecaptchaVerified(false);
     signin();
+    setStep(1);
+
   }
   const onRecaptchaSolved = (v: any) => {
     setRecaptchaVerified(true);
@@ -122,7 +124,7 @@ const PhoneAuth: React.FC = (props) => {
         });
         verificationCodeTextInput!.current!.focus();
         setVerifyInProgress(false);
-        setStep(1);
+        // setStep(2);
       },
       (err) => {
         setVerifyError(err);
