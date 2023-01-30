@@ -131,7 +131,7 @@ const GlobalProvider: React.FC = (props) => {
 
   return (
     <globalsContext.Provider value={toProvide}>
-      <div hidden={isOnline} className={"absolute z-50 w-full mx-auto "}>
+      <div hidden={isOnline ||user === undefined} className={"absolute z-50 w-full mx-auto "}>
         <p className={"text-xl text-center text-slate-300  bg-red-700"}>
           Intenet connection required
         </p>
