@@ -57,7 +57,7 @@ export default function UserOrdersList(props: any) {
     </IonRefresher>
     {orders.orders &&
 
-      orders.orders.docs.map((v: DocumentSnapshot, i: any) => {
+      orders.orders.map((v: DocumentSnapshot, i: any) => {
 
         if (!v["exists"]) {
           return ''
