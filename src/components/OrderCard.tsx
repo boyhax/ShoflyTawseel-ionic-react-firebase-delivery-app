@@ -71,6 +71,7 @@ const OrderCard = ({order}: props) => {
 
   
   var date =order && prettyDate(new Date(order.time.seconds * 1000));
+  const [mounted, setMounted] = useState(true);
 
 
   const [deleted, setDeleted] = useState(false);
@@ -85,13 +86,14 @@ const OrderCard = ({order}: props) => {
   const [from, setFrom] = useState('');
 
   useEffect(() => {
-    getFrom();getTo();
+    // getFrom();getTo();
     checkUserApplied();
+    return()=>{setMounted(false)}
   }, []);
   async function getFrom(){
     // const p = await getGeoCode(order.geo.from);
     // console.log('from=>',p)
-    geoFirestore.getCity(order.geo.from,(v:any)=>{
+    geoFirestore.getCity(order.geo.from,(v)=>{
       console.log(v)
       setFrom(v)  
     })
@@ -108,19 +110,19 @@ const OrderCard = ({order}: props) => {
       setUserApplied(undefined)
     if(mydb.user){
       const app = await mydb.is_user_applied_to_card(mydb.user.uid,order.id)
-      setUserApplied(app)
+      mounted && setUserApplied(app)
       return
     }else{
 
     }  
-    setUserApplied(false)
+    mounted && setUserApplied(false)
 
   }
 
   useEffect(() => {
     
     if (order.uid === uid && profile) {
-      setUserInfo({
+      mounted && setUserInfo({
         name: profile.name,
         photoURL: profile.photoURL,
         phoneNumber: profile.phoneNumber,
@@ -132,7 +134,7 @@ const OrderCard = ({order}: props) => {
           phoneNumber: doc.data()!.phoneNumber,
           photoURL: doc.data()!.photoURL!,
         };
-        setUserInfo(d);
+        mounted && setUserInfo(d);
       });
     }
 
@@ -150,11 +152,11 @@ const OrderCard = ({order}: props) => {
     setUserApplied(undefined)
     if (!userApplied) {
       await applyForCard(uid!, order.id, order.uid!).then((d)=>{
-        setUserApplied(true)
+        mounted && setUserApplied(true)
       });
     } else {
         await mydb.removeApplicationToOrder( order.id).then((d)=>{
-          setUserApplied(false)
+          mounted && setUserApplied(false)
         });;
     }
   }
@@ -187,22 +189,20 @@ const OrderCard = ({order}: props) => {
             {userInfo.name}
           </IonLabel>
           <IonLabel
-            className={"flex-end mb-auto font-thin text-sm"}
             color="dark"
           >
-            <IonIcon icon={timeOutline} />
             {date}
           </IonLabel>
         </div>
 
         <div className="flex w-full items-center justify-around flex-row-reverse">
-          <IonChip color="secondary">{from||'..'}</IonChip>
+          <IonChip color="secondary">{order.from}</IonChip>
           <IonIcon
             color={"primary"}
             size={"large"}
             icon={arrowBackOutline}
           ></IonIcon>
-          <IonChip color="secondary">{to ||'..'}</IonChip>
+          <IonChip color="secondary">{order.to}</IonChip>
           {/* top header date time */}
         </div>
         <div className={"flex w-full justify-evenly"}>
