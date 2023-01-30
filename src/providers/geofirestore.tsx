@@ -41,19 +41,16 @@ import { orderMarker } from "../types";
     
     return list
   }
-  async getCity(point:GeoPoint,onResult:any=(d:any)=>{}){
+  async getCity(point:GeoPoint,onResult:(coty:string)=>void=(d:string)=>{}){
     const url =`https://api.bigdatacloud.net/data/
     reverse-geocode-client?latitude=${point.latitude}
     &longitude=${point.longitude}&localityLanguage=${getLang()}`
 
     let t =  await (await fetch(url, {
       method: 'GET',
-      headers: {
-        'X-RapidAPI-Key': '5db7bea325msh20d1ea444db0b53p123e53jsn3b35fd61bc13',
-        'X-RapidAPI-Host': 'trueway-places.p.rapidapi.com'
-      }
+      headers: {}
     })).json()
-    onResult(t)
+    onResult(t?t.city:'')
     return t?t.city:''
   }
    async  addGeo(id: string, latlng: LatLng, from: boolean) {
