@@ -18,5 +18,12 @@
     "Return": {
         "en": "Return",
         "ar": "رجوع"
+    },
+    "the code has been send successfully ": {
+        "en": "the code has been send successfully "
+    },
+    "Shofly Tawseel": {
+        "en": "Shofly Tawseel",
+        "ar": "شوفلي توصيل"
     }
 }
