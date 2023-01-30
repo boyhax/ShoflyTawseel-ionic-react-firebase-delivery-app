@@ -72,6 +72,7 @@ export interface userInfo {
 }
 
 export interface ApplicationProps {
+  id:string,
   byUser: string;
   forOrder: string;
   forUser: string;
