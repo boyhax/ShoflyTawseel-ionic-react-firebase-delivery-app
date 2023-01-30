@@ -44,9 +44,9 @@ import { Config } from "../config";
 import geoFirestore from "./geofirestore";
 import { Store } from "pullstate";
 
-export const userOrdersStore = new Store([]);
-export const userApplicationsStore = new Store([]);
-export const userReportsStore = new Store([]);
+export const userOrdersStore = new Store<any[]>([]);
+export const userApplicationsStore = new Store<any[]>([]);
+export const userReportsStore = new Store<any[]>([]);
 export const userStore = new Store<{
   user: User | null;
   profile: UserProfile | null;
@@ -83,7 +83,9 @@ class firebaseClass {
   user: User | null = null;
   token: string | null = null;
   SubscribeUserLists = false;
-
+async getUserInfo(uid:string){
+  return getDoc(doc(this.db,'users/'+uid))
+}
   async removeApplicationToOrder(orderID: string) {
     const application = mydb.userApplications.find(
       (v) => v.exists() && v.data().forOrder === orderID
@@ -117,10 +119,12 @@ class firebaseClass {
     });
     subscripeUserApplications(userId, (snap) => {
       this.userApplications = snap.docs;
+      userApplicationsStore.update((s) => this.userApplications);
       return !this.subscripeUserList;
     });
     subscripeUserReports(userId, (snap) => {
       this.userReports = snap.docs;
+      userReportsStore.update((s) => this.userReports);
       return !this.subscripeUserList;
     });
   }
@@ -228,21 +232,22 @@ export async function getOrders(
 ) {
   var qu = query(collection(db, "orders/"));
   if (filter) {
+    if (filter.userID) {
+      if(filter.userID ==='notself'){
+        !!mydb.user&& (qu = query(qu,orderBy('uid'), where("uid", "!=", mydb.user.uid)));
+
+      }else{
+        qu = query(qu,orderBy('uid'), where("uid", "==", filter.userID));
+
+      }
+    }
     if (filter.from) {
       qu = query(qu, where("from", "==", filter.from));
     }
     if (filter.to) {
       qu = query(qu, where("to", "==", filter.to));
     }
-    if (filter.userID) {
-      if(filter.userID ==='notself'){
-        !!mydb.user&& (qu = query(qu, where("uid", "!=", mydb.user.uid)));
-
-      }else{
-        qu = query(qu, where("uid", "==", filter.userID));
-
-      }
-    }
+    
     if (filter?.limit) {
       qu = query(qu, limit(filter?.limit));
     }
@@ -427,7 +432,7 @@ export async function applyForCard(
   orderOwner: string
 ) {
   let timeNow = new Date();
-  const newApplication: ApplicationProps = {
+  const newApplication: Partial<ApplicationProps> = {
     timeSend: timeNow,
     forOrder: cardUID,
     forUser: orderOwner,
