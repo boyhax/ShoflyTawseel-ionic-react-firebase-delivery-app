@@ -33,7 +33,6 @@ import {
   chatboxOutline,
   alertCircleOutline,
 } from "ionicons/icons";
-import moment from "moment";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useHistory } from "react-router";
 
@@ -66,7 +65,6 @@ Device.getInfo().then((v) => {
 const OpenWhatsapp = (number: any) => {
   window.open("http://wa.me/" + number);
 };
-moment.locale("ar");
 const OrderCard = ({order}: props) => {
 
   
