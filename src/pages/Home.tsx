@@ -38,7 +38,7 @@ const Home = () => {
   
 
   return (
-    <Page>
+    <Page menubutton>
               <MapPage />
 
     </Page>

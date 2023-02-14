@@ -215,7 +215,12 @@ const PhoneAuth: React.FC = (props) => {
 
       {/* otp  step */}
 
-      <div hidden={step !== 2} 
+      <form hidden={step !== 2} 
+        onSubmit={(e)=>{
+          e.preventDefault()
+          VerifyOTBNumber();
+
+        }}
       className={"flex flex-col gap-2 items-center justify-center"}>
         <p className={"text-lg text-blue-500"}>one time Password</p>
 
@@ -234,9 +239,9 @@ const PhoneAuth: React.FC = (props) => {
           <IonButton
             fill={"clear"}
             type="submit"
-            onClick={() => {
-              VerifyOTBNumber();
-            }}
+            // onClick={() => {
+            //   VerifyOTBNumber();
+            // }}
             disabled={String(verificationCode).length < 3}
           >
             <span style={{ fontSize: "2rem" }}>Submit</span>
@@ -247,7 +252,7 @@ const PhoneAuth: React.FC = (props) => {
           {TT('Return')}</p>
 
         <IonNote>{confirmError?.message!}</IonNote>
-      </div>
+      </form>
       <IonLoading isOpen={confirmInProgress}></IonLoading>
     </div>
   );

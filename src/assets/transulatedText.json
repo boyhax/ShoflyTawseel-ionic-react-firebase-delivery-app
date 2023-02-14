@@ -20,10 +20,70 @@
         "ar": "رجوع"
     },
     "the code has been send successfully ": {
-        "en": "the code has been send successfully "
+        "en": "the code has been send successfully ",
+        "ar": "تم ارسال الكود بنجاح"
     },
     "Shofly Tawseel": {
         "en": "Shofly Tawseel",
         "ar": "شوفلي توصيل"
+    },
+    "Register As Driver": {
+        "en": "Register As Driver",
+        "ar": " تسجيل كسائق"
+    },
+    "identiy number": {
+        "en": "identiy number",
+        "ar": "identiy number"
+    },
+    "carNumber": {
+        "en": "carNumber",
+        "ar": "carNumber"
+    },
+    "carType": {
+        "en": "carType",
+        "ar": "carType"
+    },
+    "carModel": {
+        "en": "carModel",
+        "ar": "carModel"
+    },
+    "email": {
+        "en": "email",
+        "ar": "email"
+    },
+    "name": {
+        "en": "name",
+        "ar": "الاسم"
+    },
+    "submit": {
+        "en": "submit",
+        "ar": "submit"
+    },
+    "carYear": {
+        "en": "carYear",
+        "ar": "carYear"
+    },
+    "driver application form": {
+        "en": "driver application form",
+        "ar": "driver application form"
+    },
+    "please fill all ": {
+        "en": "please fill all ",
+        "ar": "please fill all "
+    },
+    "please fill  ": {
+        "en": "please fill  ",
+        "ar": "please fill  "
+    },
+    "car image": {
+        "en": "car image"
+    },
+    "edit driver information": {
+        "en": "edit driver information",
+        "ar": "edit driver information"
+    },
+    "inactive": {
+        "en": "inactive",
+        "ar": "inactive"
     }
 }

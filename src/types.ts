@@ -57,13 +57,26 @@ export const OrderCatagories: OrderType[] = [
     value: "BigObjects",
   },
 ];
+export interface driverData {
+  carType: string;
+  carNumber: string;
+  carYear: string;
+  email:string,
+  identity:string,
+}
+  
 
 export interface UserProfile {
+  id:string,
+  driverData: driverData;
   name: string;
   phoneNumber: string;
   photoURL: string;
   email?: string;
-  devloper?: boolean;
+  role:'user'|'driver'|'admin',
+  status:'active'|'inactive'|'banned'|'pending',
+  time: any;
+
 }
 export interface userInfo {
   name: string;

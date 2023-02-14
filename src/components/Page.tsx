@@ -50,12 +50,12 @@ const Page: React.FC<Props> = (props) => {
                     <IonIcon icon={closeSharp}></IonIcon>
                 </IonFabButton>
             }
-            {/* {props.menubutton &&
+            {props.menubutton &&
                 <IonFabButton >
-                    <IonMenuButton></IonMenuButton> */}
-                    {/* <IonIcon icon={menuSharp}></IonIcon> */}
-                {/* </IonFabButton>
-            } */}
+                    <IonMenuButton></IonMenuButton> 
+                     {/* <IonIcon icon={menuSharp}></IonIcon> */}
+                </IonFabButton>
+            }
         </IonFab>
 
 

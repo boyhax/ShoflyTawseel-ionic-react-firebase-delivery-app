@@ -1,3 +1,4 @@
+import { Geolocation } from "@capacitor/geolocation";
 import {
   IonButton,
   IonIcon,
@@ -24,6 +25,16 @@ const GeoPointPicker = ({ placeHolder, onValueSet }: Props) => {
       const m :any= marker(map.getCenter(),{
         icon:PenIcon
       }).addTo(map)
+     
+      let flytoPoint=(point:{lat:number,lng:number})=>{
+        map.flyTo(point,10)
+
+      }
+      Geolocation.getCurrentPosition().then(s=>{
+        flytoPoint({lat:s.coords.latitude,lng:s.coords.longitude})
+      }
+        )
+
       map.on('move',function(e){
         m.setLatLng(map.getCenter());
       });

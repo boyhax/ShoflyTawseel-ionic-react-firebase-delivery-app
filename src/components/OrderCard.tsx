@@ -166,10 +166,10 @@ const OrderCard = ({order}: props) => {
   }
   return (
     <div>
-      {owner && (
+      {order.urgent && (
         <p className="relative z-10 bg-sky-500 w-fit bottom-0 px-4 py-1 text-sm font-bold text-white rounded-tl-lg rounded-br-xl">
           {" "}
-          My order
+          Urgent
         </p>
       )}
       <div

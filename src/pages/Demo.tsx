@@ -4,6 +4,7 @@ import Page from "../components/Page";
 import { GoogleMap } from "@capacitor/google-maps";
 import GoogleSearchAutoComplete from "../components/GoogleSearchAutoComplete";
 import { attach, send } from "ionicons/icons";
+import LoadingScreen from "./LoadingScreen";
 
 const Demo: React.FC = () => {
   const [value, setValue] = useState(null);
@@ -12,64 +13,65 @@ const Demo: React.FC = () => {
   return (
     <Page>        
   
-      
-
-      {/* <!-- Component Start --> */}
-      <div className="flex flex-col flex-grow w-full max-w-xl bg-white shadow-xl rounded-lg overflow-hidden">
-        <div className="flex flex-col flex-grow h-0 p-4 overflow-auto">
-          <div className="flex w-full mt-2 space-x-3 max-w-xs">
-            <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300"></div>
-            <div>
-              <div className="bg-gray-300 p-3 rounded-r-lg rounded-bl-lg">
-                <p className="text-sm">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                </p>
-              </div>
-              <span className="text-xs text-gray-500 leading-none">
-                2 min ago
-              </span>
-            </div>
-          </div>
-          <div className="flex w-full mt-2 space-x-3 max-w-xs ml-auto justify-end">
-            <div>
-              <div className="bg-blue-600 text-white p-3 rounded-l-lg rounded-br-lg">
-                <p className="text-sm">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod.
-                </p>
-              </div>
-              <span className="text-xs text-gray-500 leading-none">
-                2 min ago
-              </span>
-            </div>
-            <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300"></div>
-          </div>
-          .
-        </div>
-
-        <div className="bg-gray-300 px-2 py-2 flex flex-row justify-between">
-          
-
-          <button className="flex-shrink-0 flex items-center justify-center  px-2 rounded-full bg-gray-300">
-          <IonIcon size={'large'} icon={attach}/>
-          </button>
-          <input
-            className="flex items-center h-10 w-full rounded px-3 text-sm"
-            type="text"
-            placeholder="Type your message…"
-          />
-      <button className="flex-shrink-0 items-center justify-center px-2 rounded-full bg-gray-300">
-            <IonIcon size={'large'} icon={send}/>
-          </button>
-        </div>
-      </div>
+      <LoadingScreen/>
     </Page>
   );
 };
 
 export default Demo;
+//chat demo 
 
-{
+
+      {/* <!-- Component Start --> */}
+//       <div className="flex flex-col flex-grow w-full max-w-xl bg-white shadow-xl rounded-lg overflow-hidden">
+//         <div className="flex flex-col flex-grow h-0 p-4 overflow-auto">
+//           <div className="flex w-full mt-2 space-x-3 max-w-xs">
+//             <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300"></div>
+//             <div>
+//               <div className="bg-gray-300 p-3 rounded-r-lg rounded-bl-lg">
+//                 <p className="text-sm">
+//                   Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+//                 </p>
+//               </div>
+//               <span className="text-xs text-gray-500 leading-none">
+//                 2 min ago
+//               </span>
+//             </div>
+//           </div>
+//           <div className="flex w-full mt-2 space-x-3 max-w-xs ml-auto justify-end">
+//             <div>
+//               <div className="bg-blue-600 text-white p-3 rounded-l-lg rounded-br-lg">
+//                 <p className="text-sm">
+//                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+//                   do eiusmod.
+//                 </p>
+//               </div>
+//               <span className="text-xs text-gray-500 leading-none">
+//                 2 min ago
+//               </span>
+//             </div>
+//             <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300"></div>
+//           </div>
+//           .
+//         </div>
+
+//         <div className="bg-gray-300 px-2 py-2 flex flex-row justify-between">
+          
+
+//           <button className="flex-shrink-0 flex items-center justify-center  px-2 rounded-full bg-gray-300">
+//           <IonIcon size={'large'} icon={attach}/>
+//           </button>
+//           <input
+//             className="flex items-center h-10 w-full rounded px-3 text-sm"
+//             type="text"
+//             placeholder="Type your message…"
+//           />
+//       <button className="flex-shrink-0 items-center justify-center px-2 rounded-full bg-gray-300">
+//             <IonIcon size={'large'} icon={send}/>
+//           </button>
+//         </div>
+//       </div>
+// {
   /*    <a href="#" classNameName="w-[30rem] border-2 border-b-4 border-gray-200 rounded-xl hover:bg-gray-50">
 
           // <!-- Badge --> 
@@ -103,9 +105,9 @@ export default Demo;
           </div>
 
         </a>*/
-}
 
-{
+
+
   /* <div classNameNameName='flex items-center justify-center min-h-screen from-red-100 via-red-300 to-blue-500 bg-gradient-to-br'>
           <div classNameNameName="p-4 items-center justify-center w-[680px] rounded-xl group sm:flex space-x-6 bg-white bg-opacity-50 shadow-xl hover:rounded-2xl">
             <img classNameNameName="mx-auto w-full block w-4/12 h-40 rounded-lg" alt="art cover" loading="lazy" src='https://picsum.photos/seed/2/2000/1000' />
@@ -154,4 +156,4 @@ export default Demo;
             </div>
           </div>
         </div> */
-}
+

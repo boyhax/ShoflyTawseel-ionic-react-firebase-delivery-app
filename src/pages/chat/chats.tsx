@@ -1,58 +1,86 @@
 import React, { useEffect, useState } from 'react';
 import { IonContent, IonTitle, IonToolbar, IonLabel, IonItem, IonAvatar, IonImg, IonSkeletonText, IonCardSubtitle, IonGrid } from '@ionic/react';
 import { useGlobals } from '../../providers/globalsProvider';
-import { addDoc, collection, doc, DocumentData, getFirestore, onSnapshot, query, QueryDocumentSnapshot, where } from 'firebase/firestore';
+import { addDoc, collection, CollectionReference, doc, DocumentData, DocumentSnapshot, getDoc, getFirestore, onSnapshot, query, QueryDocumentSnapshot, setDoc, where } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { useHistory, useParams } from 'react-router';
 import Chat from './chat';
 import Page from '../../components/Page';
-import { db } from '../../providers/firebaseMain';
+import { db, mydb } from '../../providers/firebaseMain';
 
+function getAcendingString(arry:string[]){
+  let s ='';
+   arry.sort((one:string, two:string) => (one > two ? -1 : 1)).forEach((v)=>{
+    s+=v
+  });
+  return s
+}
 export default function Chats(props: any) {
   const { user, profile } = useGlobals()
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState<any>(undefined)
   const [refreshing, setRefreshing] = useState(true)
   const [isMounted, setIsMounted] = useState(true)
-  const [currentChat, setCurrentChat] = useState<any | QueryDocumentSnapshot<DocumentData>>("")
+  const [currentChat, setCurrentChat] = useState<any | DocumentSnapshot<DocumentData>>("")
   const [makingChat, setMakingChat] = useState(false)
   const [list, setList] = useState<null | QueryDocumentSnapshot<DocumentData>[]>(null)
   const uid = getAuth().currentUser?.uid
   const params: any = useParams()
   const history = useHistory()
 
+  
   useEffect(() => {
-    if (!user) {
-      return
+    getData()
+    console.log('params.id :>> ', params.id);
+    if(params.id){
+      getDoc(doc(mydb.db,'users/'+params.id)).then((d)=>{
+        if(d.exists()){
+          //user exixt
+          
+          getDoc(doc(mydb.db,'chats/'+getAcendingString([params.id,mydb.user?.uid])))
+          .then((d)=>{
+            if(d.exists()){
+              //chat exist
+              findCurrentChat()
+            }else{
+              console.log('no chat exist')
+
+              //no chat
+              makeChat(params.id).then((d)=>{
+                findCurrentChat()
+                console.log('new chat made')
+              })
+            }
+          })
+        }else{
+          console.log('user not exist')
+          //no user
+        }
+      })
+
+      
+    }else{
+      setCurrentChat('')
     }
-    const unsub = getData();
-    return () => { unsub() }
-  }, [user])
-  useEffect(() => {
     setIsMounted(true)
     return () => {
       setIsMounted(false)
     }
   }, [])
-  useEffect(() => {
-    if (!!params.id && !!list) {
-      console.log('list on effect :>> ', list);
-      const chat = list.find((value, index, array) => {
-        return value.data().chaters.includes(params.id, 0)
-      })
-      console.log('chat :>> ', chat);
-      if (!!chat) {
-        setCurrentChat(chat)
-      } else {
-        if (!makingChat) {
-          setMakingChat(true)
-          addDoc(collection(db, "chats"), { chaters: [uid, params.id] }).finally(() => {
-            setMakingChat(false)
-          })
-        }
-      }
-    }
-  }, [list])
+  function findCurrentChat(){
+    const chat = list && list.find((value) => {
+      return value.data().chaters.includes(params.id, 0)
+    })
+    chat && setCurrentChat(chat)
+  }
+  function makeChat(id:string){
+    let chatid:string = getAcendingString([id,mydb.user!.uid])
+    
+     return setDoc(doc(mydb.db,('chats/'+chatid)),{
+      chaters:[id,mydb.user?.uid],
+      
+    })
+  }
 
   function getData() {
     setRefreshing(true)

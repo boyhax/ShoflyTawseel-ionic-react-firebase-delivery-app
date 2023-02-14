@@ -43,6 +43,7 @@ import { initializeApp } from "firebase/app";
 import { Config } from "../config";
 import geoFirestore from "./geofirestore";
 import { Store } from "pullstate";
+import { b64toBlob } from "../hooks/usePhoto";
 
 export const userOrdersStore = new Store<any[]>([]);
 export const userApplicationsStore = new Store<any[]>([]);
@@ -66,15 +67,10 @@ class firebaseClass {
       userStore.update((s) => {
         s.user = user;
       });
-      console.log('user id :>> ', user && user.uid);
+      console.log("user id :>> ", user && user.uid);
 
       user && this.token && this.updateToken();
     });
-    // getDocs(query(collection(this.db,'orders'))).then((snap)=>{
-    //   snap.forEach((doc)=>{
-    //     doc.data().geo || deleteDoc(doc.ref).then((d)=>console.log('doc deleted'+doc.id))
-    //   })
-    // })
   }
   db;
   userOrders: DocumentSnapshot[] = [];
@@ -83,9 +79,9 @@ class firebaseClass {
   user: User | null = null;
   token: string | null = null;
   SubscribeUserLists = false;
-async getUserInfo(uid:string){
-  return getDoc(doc(this.db,'users/'+uid))
-}
+  async getUserInfo(uid: string) {
+    return getDoc(doc(this.db, "users/" + uid));
+  }
   async removeApplicationToOrder(orderID: string) {
     const application = mydb.userApplications.find(
       (v) => v.exists() && v.data().forOrder === orderID
@@ -136,6 +132,52 @@ async getUserInfo(uid:string){
       resolve(res);
     });
   }
+  async uploadPhoto(base64photo: string, name: string) {
+    const blob = b64toBlob(base64photo, `image/${name}`, 512);
+    const sref = ref(getStorage(), name);
+    const p = await uploadBytes(sref, blob);
+    const url = await getDownloadURL(sref);
+    return url;
+  }
+  async uploadFile(file: File) {
+    const sref = ref(getStorage(), `avatar/${file.name}`);
+    const p = await uploadBytes(sref, file);
+    const url = await getDownloadURL(sref);
+    return url;
+  }
+  updateProfile(profile: Partial<UserProfile>) {
+    return updateDoc(doc(this.db, "users/" + this.user?.uid), profile);
+  }
+  async submitDriverApplication(values: any) {
+    const res = await updateDoc(doc(this.db, "users/" + this.user?.uid), {
+      driverData: values,
+      role: "driver",
+      status: "pending",
+    });
+    return res;
+  }
+  async getDrivers(values: {from:any,status?:'pending'|'active'|'inactive'}
+  ,onlastDoc?:any) {
+    var q = query(collection(this.db, 
+      "users" ),where( "role", "==", "driver" ))
+      q = query(q,where( "status", "==", values.status || "active" )) 
+
+    // q = query(q,orderBy("time", "desc"))
+    values.from && (q = query(q,startAfter(values.from)))
+    const res = await getDocs(q);
+    !res.empty  && onlastDoc(res.docs[res.docs.length-1])
+    return res.docs.map((v) => UserProfileFromDoc(v));
+  }
+  async ApproveDriver(id:string){
+    console.log('driver approved =>',id)
+    return updateDoc(doc(this.db, "users/" + id), {
+      status: "active",
+    });
+  }
+  async getDriverData(){
+    const res = await getDoc(doc(this.db, "users/" + this.user?.uid));
+    return res.data()?.driverData;
+  }
 }
 export const mydb = new firebaseClass();
 
@@ -176,13 +218,13 @@ export async function setUserImage(
 
   const url = await getDownloadURL(sref);
 
-
   if (userid && url) {
     await updateUserProfile(userid, { photoURL: url });
   } else {
     await updateUserProfile(getAuth().currentUser?.uid, { photoURL: url });
   }
 }
+
 export function getUserReports(id: String) {
   return getDocs(
     query(collection(db, "ordersReports"), where("from", "==", id))
@@ -233,12 +275,11 @@ export async function getOrders(
   var qu = query(collection(db, "orders/"));
   if (filter) {
     if (filter.userID) {
-      if(filter.userID ==='notself'){
-        !!mydb.user&& (qu = query(qu,orderBy('uid'), where("uid", "!=", mydb.user.uid)));
-
-      }else{
-        qu = query(qu,orderBy('uid'), where("uid", "==", filter.userID));
-
+      if (filter.userID === "notself") {
+        !!mydb.user &&
+          (qu = query(qu, orderBy("uid"), where("uid", "!=", mydb.user.uid)));
+      } else {
+        qu = query(qu, orderBy("uid"), where("uid", "==", filter.userID));
       }
     }
     if (filter.from) {
@@ -247,7 +288,7 @@ export async function getOrders(
     if (filter.to) {
       qu = query(qu, where("to", "==", filter.to));
     }
-    
+
     if (filter?.limit) {
       qu = query(qu, limit(filter?.limit));
     }
@@ -296,7 +337,7 @@ export function getGeoCode(geoPoint: GeoPoint) {
     async (resolve, reject) => {
       try {
         const list = await geocodeByLatLng(geoToLatlng(geoPoint));
-        console.log('get geocode :>> ', list);
+        console.log("get geocode :>> ", list);
         resolve(list ? list[0] : "");
       } catch (error) {
         reject(error);
@@ -310,7 +351,7 @@ export function makeOrderFromDoc(
   const o = orderDocSnap.exists() ? orderDocSnap.data() : {};
 
   return {
-    id:orderDocSnap.id,
+    id: orderDocSnap.id,
     geo: o.geo,
     urgent: o.urgent,
     type: o.type,
@@ -323,13 +364,8 @@ export function makeOrderFromDoc(
   };
 }
 export function UserProfileFromDoc(doc: DocumentSnapshot): UserProfile {
-  const d = doc.data();
-  return {
-    name: d?.name,
-    phoneNumber: d?.phoneNumber,
-    photoURL: d?.photoURL,
-    devloper: !!d?.devloper,
-  };
+  const d: UserProfile = {...(doc.data() as UserProfile),id:doc.id,};
+  return d;
 }
 
 export async function getProfile(
@@ -353,12 +389,14 @@ export async function createNewProfileForThisUser(
   photoURL: string
 ) {
   const uid = getAuth().currentUser?.uid;
-  const profile: UserProfile = {
+  const profile: Partial<UserProfile> = {
     name: name,
     phoneNumber: phoneNumber,
     email: email,
     photoURL: photoURL,
-    devloper: false,
+    role: "user",
+    time: serverTimestamp(),
+    status: "active" ,
   };
   const dref = doc(getFirestore(), "users", uid!);
   const d = setDoc(dref, profile).then(
@@ -377,12 +415,12 @@ export function UpdateProfileForThisUser(data: any) {
 
   return updateUserProfile(uid!, data);
 }
-export const reportOrder = async (order: string, why: string ) => {
+export const reportOrder = async (order: string, why: string) => {
   const uid = getAuth().currentUser?.uid;
   var userReport = mydb.userReports.find((v: any) => {
-      return v.byUser === uid;
-    })
-  
+    return v.byUser === uid;
+  });
+
   if (!!userReport) {
     alert("already reported");
     return;
@@ -393,12 +431,11 @@ export const reportOrder = async (order: string, why: string ) => {
       why: why,
       OrderId: order,
     };
-      await addDoc(collection(db, "ordersReports"), report);
-    
+    await addDoc(collection(db, "ordersReports"), report);
   }
 };
-export function deleteOrder(id:string) {
-  return deleteDoc(doc(db,'orders/'+id));
+export function deleteOrder(id: string) {
+  return deleteDoc(doc(db, "orders/" + id));
 }
 export async function deleteDoc_(path: string) {
   await deleteDoc(doc(getFirestore(), path));
@@ -442,21 +479,21 @@ export async function applyForCard(
     timeAccepted: timeNow,
     timeDone: timeNow,
   };
-  var res
+  var res;
   try {
-    res =  addDoc(collection(db, "ordersApplications"), newApplication);
-
+    res = addDoc(collection(db, "ordersApplications"), newApplication);
   } catch (error) {
-    console.log("error on add applictaion to order ${cardUID} : :>> ",error);
+    console.log("error on add applictaion to order ${cardUID} : :>> ", error);
   }
-  return  Promise.all([res]);
+  return Promise.all([res]);
 }
-export const avatarPLaceholder = require("../assets/avatarPlaceHolder.png");
+
+export const avatarPLaceholder=(name:string) => "https://ui-avatars.com/api/?name=" + name + "&background=0D8ABC&color=fff";
 export function getUserInfoPlaceHolder() {
   let info: userInfo = {
     name: "Nick Name",
     phoneNumber: "*** *******",
-    photoURL: avatarPLaceholder,
+    photoURL: avatarPLaceholder('s t'),
   };
   return info;
 }

@@ -2,10 +2,8 @@ import React from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import {
   IonApp,
-  IonButton,
   IonIcon,
   IonLabel,
-  IonMenuToggle,
   IonRouterOutlet,
   IonTabBar,
   IonTabButton,
@@ -40,10 +38,7 @@ import GlobalProvider from "./providers/globalsProvider";
 import Chats from "./pages/chat/chats";
 import { Device } from "@capacitor/device";
 import { FCM } from "@capacitor-community/fcm";
-import { initializeApp } from "firebase/app";
 import { setupIonicReact } from "@ionic/react";
-import { Config } from "./config";
-import { getFirestore } from "firebase/firestore";
 import AddOrderPage from "./pages/AddOrderPage";
 import Demo from "./pages/Demo";
 import AuthRoute from "./routes/AuthRoute";
@@ -51,17 +46,18 @@ import {
   chatboxOutline,
   homeOutline,
   listOutline,
-  menuOutline,
   personOutline,
 } from "ionicons/icons";
-import { userStore } from "./Stores/userStore";
 import { App as cApp } from "@capacitor/app";
 import MainMenu from "./components/MainMenu";
 import Profile from "./pages/Profile";
 import OrdersPage from "./pages/OrdersPage";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { mydb } from "./providers/firebaseMain";
 import { Store } from "pullstate";
+import DriverApplication from "./pages/DriverApplication";
+import AdminRoute from "./routes/AdminRoute";
+import AdminPage from "./pages/Admin";
+import Account from "./pages/account";
 
 setupIonicReact({
   mode: "ios",
@@ -125,7 +121,12 @@ const App: React.FC = () => {
                       <OrdersPage />
                     </AuthRoute>
                   </Route>
-                  <Route exact path="/tab1">
+                  <Route exact path="/account">
+                    <AuthRoute>
+                      <Account />
+                    </AuthRoute>
+                  </Route>
+                  <Route exact path="/profile/:id">
                     <AuthRoute>
                       <Profile />
                     </AuthRoute>
@@ -133,18 +134,26 @@ const App: React.FC = () => {
                   <Route exact path="/tab2">
                     <Home />
                   </Route>
-                  <Route path="/chat">
+                  <Route exact path="/chat">
                     <AuthRoute>
                       <Chats />
                     </AuthRoute>
                   </Route>
-                  <Route path="/chat/:id">
+                  <Route exact path="/chat/:id">
                     <AuthRoute>
                       <Chats />
                     </AuthRoute>
                     </Route>
+                    <Route exact path="/admin">
+                    <AdminRoute>
+                      <AdminPage />
+                    </AdminRoute>
+                    </Route>
                   <Route exact path="/demo">
                     <Demo />
+                  </Route>
+                  <Route exact path="/driverapplication">
+                    <DriverApplication/>
                   </Route>
                   <Route exact path="/addorder">
                     <AuthRoute>

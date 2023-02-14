@@ -13,6 +13,7 @@ import {
   IonThumbnail,
   IonContent,
 } from "@ionic/react";
+import { arrowForwardOutline, locateSharp, locationSharp, pinSharp } from "ionicons/icons";
 import * as React from "react";
 import { newOrderStore, useNewOrder } from ".";
 import { newOrderProps, OrderCatagorie, OrderCatagories } from "../../types";
@@ -50,29 +51,19 @@ const Step2: React.FC = (props) => {
           validateAndSubmit()
         }}
       >
-        {/* <IonCard
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            justifyItems: "space-between",
-          }}
-        > */}
+        <IonCard className={'flex flex-col gap-2 divide-x-2  divide-red-300 justify-center'}>
           {/* pick up point */}
-          {/* <div>
-            <IonLabel position={"floating"}>Pick up point</IonLabel>
-            <IonTitle>{order.from.value}</IonTitle>
-          </div> */}
-          {/* drop point */}
-          {/* <IonIcon
-            style={{ verticalAlign: "middle", padding: "4px" }}
-            size={"large"}
-            icon={arrowForwardOutline}
-          ></IonIcon>
-          <div>
-            <IonLabel position={"floating"}>Drop point</IonLabel>
-            <IonTitle>{order.to.value}</IonTitle>
+          <div className={'flex justify-center'}>
+            <IonLabel>{order.from}</IonLabel>
+            <IonIcon icon={locationSharp}/>
           </div>
-        </IonCard> */}
+          {/* drop point */}
+          
+          <div className={'flex justify-center'}>
+            <IonTitle>{order.to}</IonTitle>
+            <IonIcon icon={pinSharp}/>
+          </div>
+        </IonCard>
         <div
           style={{
             display: "flex",
@@ -81,7 +72,7 @@ const Step2: React.FC = (props) => {
             alignItems: "space-evenly",
           }}
         >
-          {OrderCatagories &&
+          {/* {OrderCatagories &&
             OrderCatagories.map((value, index, array) => {
               return (
                 <div
@@ -101,7 +92,7 @@ const Step2: React.FC = (props) => {
                   </IonLabel>
                 </div>
               );
-            })}
+            })} */}
         </div>
 
         <div>

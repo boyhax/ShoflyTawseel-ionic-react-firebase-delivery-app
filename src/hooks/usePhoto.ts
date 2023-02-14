@@ -78,7 +78,7 @@ export async function base64FromPath(path: string): Promise<string> {
     reader.readAsDataURL(blob);
   });
 }
-function b64toBlob(b64Data:string, contentType:any, sliceSize:number) {
+export function b64toBlob(b64Data:string, contentType:any, sliceSize:number) {
     contentType = contentType || '';
     sliceSize = sliceSize || 512;
 

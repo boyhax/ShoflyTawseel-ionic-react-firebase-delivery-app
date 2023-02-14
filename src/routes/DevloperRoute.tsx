@@ -8,7 +8,7 @@ const DevloperRoute:React.FC=(props)=>{
 
     return<>
     <IonLoading isOpen={user===undefined}></IonLoading> 
-    {profile?profile.devloper ?props.children
+    {profile?profile.role==='admin' ?props.children
     :<h2>not dev</h2>
     :<></>}
     </>
