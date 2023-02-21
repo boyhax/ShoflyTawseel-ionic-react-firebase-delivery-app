@@ -22,6 +22,20 @@ const Config_release={
     measurementId: process.env.REACT_APP_measurementId,
     mapApiKey:process.env.REACT_APP_map_api_key
 };
+// export let Config=()=>{
+//     return process.env.NODE_ENV==="production"?Config_release:Config_test
+// };
+
 export let Config=()=>{
-    return process.env.NODE_ENV==="production"?Config_release:Config_test
+    return { 
+        apiKey : process.env.REACT_APP_apiKey,
+        authDomain: process.env.REACT_APP_authDomain,
+        databaseURL:process.env.REACT_APP_databaseURL,
+        projectId: process.env.REACT_APP_projectId,
+        storageBucket: process.env.REACT_APP_storageBucket,
+        messagingSenderId: process.env.REACT_APP_messagingSenderId,
+        appId: process.env.REACT_APP_appId,
+        measurementId: process.env.REACT_APP_measurementId,
+        mapApiKey:process.env.REACT_APP_map_api_key
+    };
 };

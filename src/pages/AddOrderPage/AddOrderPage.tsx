@@ -12,6 +12,7 @@ import StepperCounter from "../../components/StepperCounter";
 import StepTo from "./Step1.1";
 import { useEffect } from "react";
 import { newOrderProps } from "../../types";
+import OrdersSteps from "./OrderSteps";
 
 const AddOrderPage: any = (props: any) => {
   const { order, loading, step,reset } = useNewOrder();
@@ -28,25 +29,11 @@ const AddOrderPage: any = (props: any) => {
   ];
   return (
     <Page>
-      <div
-        className={`absolute w-full h-12 mt-6 
-         flex z-[1000] justify-center items-center`}
-      >
-        <StepperCounter
-          steps={[
-            { title: "pick up location", number: 0 },
-            { title: "drop location ", number: 1 },
-            { title: "details ", number: 2 },
-          ]}
-          currentStep={step}
-          ifChange={(v) => {
-            // newOrderStore.update(s=>{ s.step = v} )
-          }}
-          onGoBack={(v) => {
-            newOrderStore.update(s=>{ s.step = v} )
-          }}
+      
+        <OrdersSteps
+          step={step}
+          onStepClick={(step) => newOrderStore.update(s=>{s.step = step} )}
         />
-      </div>
 
       <div className={" flex w-full h-full"}>{stepsComponents[step]}</div>
 

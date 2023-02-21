@@ -6,8 +6,7 @@ import { OpenStreetMapProvider,GoogleProvider, GeoSearchControl } from "leaflet-
 import { ProviderParams } from "leaflet-geosearch/dist/providers/provider";
 import * as React from "react";
 import { useState } from "react";
-import { Config } from "../../config";
-import '../../../node_modules/leaflet-geosearch/dist/geosearch.css'
+import { Config } from "../config";
 
 type props = {
   onMap: (map: L.Map) => void;
@@ -50,16 +49,16 @@ export const LeafLetMap: React.FC<props> = ({ onMap, children }) => {
       apiKey:Config().mapApiKey!
     });
 
-    const searchControl = GeoSearchControl({
-      provider: provider,
-      showMarker: false, // optional: true|false  - default true
-      searchLabel: 'search address', // optional: string      - default 'Enter address'
+    // const searchControl = GeoSearchControl({
+    //   provider: provider,
+    //   showMarker: false, // optional: true|false  - default true
+    //   searchLabel: 'search address', // optional: string      - default 'Enter address'
 
-    });
-    map.addControl(searchControl);
-    map.on('geosearch/showlocation', (e)=>{
-      console.log('geoSearch',e)
-    });
+    // });
+    // map.addControl(searchControl);
+    // map.on('geosearch/showlocation', (e)=>{
+    //   console.log('geoSearch',e)
+    // });
 
   }, []);
   React.useEffect(() => {

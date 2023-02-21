@@ -7,6 +7,7 @@ import {
   IonInput,
   IonItem,
   IonLabel,
+  IonLoading,
   IonNote,
   IonPage,
   IonTitle,
@@ -17,6 +18,7 @@ import { TT } from "../components/utlis/tt";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { mydb } from "../providers/firebaseMain";
+import { useDriver } from "../Stores/userStore";
 export default function DriverApplication(props: any) {
   const { profile } = useGlobals();
   const initalData = {
@@ -40,16 +42,19 @@ export default function DriverApplication(props: any) {
       identity: yup.string().min(8).required(),
   });
   const [data, setData] = useState(initalData);
+  const [loading, setloading] = useState(false);
 
   const history = useHistory();
-
+  const driver = useDriver();
   function hundleSubmit(values: typeof initalData) {
     console.log('values', values);
     setData(values);
-    mydb.submitDriverApplication(values);
+    setloading(true)
+    mydb.submitDriverApplication(values).then(() => {history.push("/account")});
   }
   return (
     <IonPage>
+      <IonLoading isOpen={loading} message={TT('Sending Application')}></IonLoading>
       <div
         className={
           " text-white h-20 bg-[var(--ion-color-primary)] rounded-bl-full drop-shadow-lg flex justify-center flex-col items-center"
@@ -125,7 +130,12 @@ export default function DriverApplication(props: any) {
                 ></IonInput>
                 <IonNote color={'danger'}>{errors.identity}</IonNote>
               </IonItem>
-              
+              <IonItem>
+                <IonLabel>
+                  {TT("i agree to the ")}
+                  <IonButton fill={'clear'}>{TT('terms and conditions')}</IonButton>
+                </IonLabel>
+              </IonItem>
               <IonButton type={"submit"}>{TT("submit")}</IonButton>
             </form>
           )}

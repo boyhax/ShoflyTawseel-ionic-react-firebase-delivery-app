@@ -1,16 +1,16 @@
 import { IonAvatar, IonBackButton, IonButton, IonButtons, IonContent, IonFab, IonFabButton, IonFooter, IonHeader, IonIcon, IonImg, IonLabel, IonMenuButton, IonMenuToggle, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import { match } from 'assert';
-import { closeSharp, menuSharp, personCircle, returnUpBackSharp } from 'ionicons/icons';
+import { closeSharp, homeSharp, menuSharp, personCircle, returnUpBackSharp } from 'ionicons/icons';
 import * as React from 'react';
 import { useHistory } from 'react-router';
 import MainMenu from './MainMenu';
 interface Props {
     children: any,
     backbutton?: any,
-    closebutton?: any
-    menubutton?: any
-
-
+    closebutton?: any,
+    menubutton?: any,
+    homeButton?: any,
+    onClose? : any,
 }
 const Page: React.FC<Props> = (props) => {
     const history = useHistory()
@@ -41,12 +41,12 @@ const Page: React.FC<Props> = (props) => {
         <IonFab slot={'fixed'} horizontal={'start'} vertical={'top'} >
 
             {props.backbutton &&
-                <IonFabButton size={'small'}>
+                <IonFabButton onClick={()=>history.goBack()} size={'small'}>
                     <IonIcon icon={returnUpBackSharp}></IonIcon>
                 </IonFabButton>
             }
             {props.closebutton &&
-                <IonFabButton size={'small'}>
+                <IonFabButton onClick={()=>props.onClose &&props.onClose()} size={'small'}>
                     <IonIcon icon={closeSharp}></IonIcon>
                 </IonFabButton>
             }
@@ -54,6 +54,11 @@ const Page: React.FC<Props> = (props) => {
                 <IonFabButton >
                     <IonMenuButton></IonMenuButton> 
                      {/* <IonIcon icon={menuSharp}></IonIcon> */}
+                </IonFabButton>
+            }
+              {props.homeButton &&
+                <IonFabButton  onClick={()=>history.push('/')}>
+                     <IonIcon icon={homeSharp}></IonIcon>
                 </IonFabButton>
             }
         </IonFab>

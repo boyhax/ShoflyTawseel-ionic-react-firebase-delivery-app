@@ -8,7 +8,7 @@ import { location as locationIcon } from "ionicons/icons";
 import { LatLng, Map,marker } from "leaflet";
 import React, { useEffect, useState } from "react";
 import GoogleSearchAutoComplete from "./GoogleSearchAutoComplete";
-import { LeafLetMap } from "./utlis/LeafLetMap";
+import { LeafLetMap } from "./LeafLetMap";
 import { PenIcon } from "./utlis/leafletMapIcons";
 
 interface Props extends React.ThHTMLAttributes<Element> {
@@ -30,10 +30,7 @@ const GeoPointPicker = ({ placeHolder, onValueSet }: Props) => {
         map.flyTo(point,10)
 
       }
-      Geolocation.getCurrentPosition().then(s=>{
-        flytoPoint({lat:s.coords.latitude,lng:s.coords.longitude})
-      }
-        )
+      
 
       map.on('move',function(e){
         m.setLatLng(map.getCenter());

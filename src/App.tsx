@@ -34,6 +34,8 @@ import "./theme/variables.css";
 import "./theme/tailwind.css";
 /* Global CSS */
 import "./global.css";
+import '../node_modules/leaflet-geosearch/dist/geosearch.css'
+
 import GlobalProvider from "./providers/globalsProvider";
 import Chats from "./pages/chat/chats";
 import { Device } from "@capacitor/device";
@@ -58,6 +60,7 @@ import DriverApplication from "./pages/DriverApplication";
 import AdminRoute from "./routes/AdminRoute";
 import AdminPage from "./pages/Admin";
 import Account from "./pages/account";
+import MyOrders from "./pages/MyOrders";
 
 setupIonicReact({
   mode: "ios",
@@ -133,6 +136,11 @@ const App: React.FC = () => {
                   </Route>
                   <Route exact path="/tab2">
                     <Home />
+                  </Route>
+                  <Route exact path="/myorders">
+                    <AuthRoute>
+                      <MyOrders />
+                    </AuthRoute>
                   </Route>
                   <Route exact path="/chat">
                     <AuthRoute>

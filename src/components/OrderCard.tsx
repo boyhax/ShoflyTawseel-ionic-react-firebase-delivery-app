@@ -12,6 +12,7 @@ import {
   IonImg,
   useIonAlert,
   IonButtons,
+  IonNote,
 } from "@ionic/react";
 import { getAuth } from "firebase/auth";
 import {
@@ -177,20 +178,20 @@ const OrderCard = ({order}: props) => {
         flex-col justify-center items-center shadow-md   max-w-[450px]`}
       >
         <div className="flex w-full items-center justify-between">
-          <IonAvatar
+          {/* <IonAvatar
             className="w-12 h-12"
             onClick={() => history.push("/profile/" + order.uid)}
           >
             <IonImg src={userInfo.photoURL}></IonImg>
-          </IonAvatar>
+          </IonAvatar> */}
           <IonLabel color="dark" className={" mx-2 text-center"}>
             {userInfo.name}
           </IonLabel>
-          <IonLabel
-            color="dark"
+          <p
+          className={'text-sm'}
           >
             {date}
-          </IonLabel>
+          </p>
         </div>
 
         <div className="flex w-full items-center justify-around flex-row-reverse">

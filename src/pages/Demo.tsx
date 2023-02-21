@@ -1,28 +1,34 @@
 import React, { useState } from "react";
-import { IonContent, IonIcon } from "@ionic/react";
+import { IonCard, IonContent, IonIcon } from "@ionic/react";
 import Page from "../components/Page";
 import { GoogleMap } from "@capacitor/google-maps";
 import GoogleSearchAutoComplete from "../components/GoogleSearchAutoComplete";
 import { attach, send } from "ionicons/icons";
 import LoadingScreen from "./LoadingScreen";
+import TwoPointMap from "../components/TwoPointMap";
+import L from "leaflet";
 
 const Demo: React.FC = () => {
   const [value, setValue] = useState(null);
   const [map, setMap] = useState<GoogleMap>();
-
+  var point1,point2;
+  point1 = L.latLng(23.5880, 58.3829 );
+  point2 = L.latLng(22.4428, 58.8003);
   return (
-    <Page>        
-  
-      <LoadingScreen/>
+    <Page>
+      <IonCard class={'w-full h-52'}>
+        <TwoPointMap onMap={()=>{}} point1={point1} point2={point2} />
+      </IonCard>
     </Page>
   );
 };
 
 export default Demo;
-//chat demo 
+//chat demo
 
-
-      {/* <!-- Component Start --> */}
+{
+  /* <!-- Component Start --> */
+}
 //       <div className="flex flex-col flex-grow w-full max-w-xl bg-white shadow-xl rounded-lg overflow-hidden">
 //         <div className="flex flex-col flex-grow h-0 p-4 overflow-auto">
 //           <div className="flex w-full mt-2 space-x-3 max-w-xs">
@@ -56,7 +62,6 @@ export default Demo;
 //         </div>
 
 //         <div className="bg-gray-300 px-2 py-2 flex flex-row justify-between">
-          
 
 //           <button className="flex-shrink-0 flex items-center justify-center  px-2 rounded-full bg-gray-300">
 //           <IonIcon size={'large'} icon={attach}/>
@@ -72,7 +77,7 @@ export default Demo;
 //         </div>
 //       </div>
 // {
-  /*    <a href="#" classNameName="w-[30rem] border-2 border-b-4 border-gray-200 rounded-xl hover:bg-gray-50">
+/*    <a href="#" classNameName="w-[30rem] border-2 border-b-4 border-gray-200 rounded-xl hover:bg-gray-50">
 
           // <!-- Badge --> 
           <p classNameName="bg-sky-500 w-fit px-4 py-1 text-sm font-bold text-white rounded-tl-lg rounded-br-xl"> FEATURED </p>
@@ -106,9 +111,7 @@ export default Demo;
 
         </a>*/
 
-
-
-  /* <div classNameNameName='flex items-center justify-center min-h-screen from-red-100 via-red-300 to-blue-500 bg-gradient-to-br'>
+/* <div classNameNameName='flex items-center justify-center min-h-screen from-red-100 via-red-300 to-blue-500 bg-gradient-to-br'>
           <div classNameNameName="p-4 items-center justify-center w-[680px] rounded-xl group sm:flex space-x-6 bg-white bg-opacity-50 shadow-xl hover:rounded-2xl">
             <img classNameNameName="mx-auto w-full block w-4/12 h-40 rounded-lg" alt="art cover" loading="lazy" src='https://picsum.photos/seed/2/2000/1000' />
             <div classNameNameName="sm:w-8/12 pl-0 p-5">
@@ -156,4 +159,3 @@ export default Demo;
             </div>
           </div>
         </div> */
-

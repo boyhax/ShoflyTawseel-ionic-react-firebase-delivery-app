@@ -50,7 +50,7 @@ const Account: React.FC = () => {
   driver.toggleStatus()
   }
   return (
-    <Page closebutton>
+    <Page homeButton>
 
       <IonContent fullscreen>
     <IonToolbar className={'flex h-28 items-end'}>

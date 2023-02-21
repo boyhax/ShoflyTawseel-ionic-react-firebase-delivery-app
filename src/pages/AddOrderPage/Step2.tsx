@@ -13,57 +13,75 @@ import {
   IonThumbnail,
   IonContent,
 } from "@ionic/react";
-import { arrowForwardOutline, locateSharp, locationSharp, pinSharp } from "ionicons/icons";
+import {
+  arrowForwardOutline,
+  locateSharp,
+  locationSharp,
+  pinSharp,
+} from "ionicons/icons";
+import { Map } from "leaflet";
 import * as React from "react";
 import { newOrderStore, useNewOrder } from ".";
+import TwoPointMap from "../../components/TwoPointMap";
+import { geoToLatlng } from "../../providers/firebaseMain";
 import { newOrderProps, OrderCatagorie, OrderCatagories } from "../../types";
 
 const Step2: React.FC = (props) => {
-  const { order,uploadOrder,setOrder  } = useNewOrder();
+  const { order, uploadOrder, setOrder } = useNewOrder();
   const [fromAddress, setFromAddress] = React.useState("");
   const [toAddress, setToAddress] = React.useState("");
   const [comment, setComment] = React.useState("");
   const [urgent, setUrgent] = React.useState(false);
-  const [type, setType] = React.useState<OrderCatagorie>('SmallObjects');
-
+  const [type, setType] = React.useState<OrderCatagorie>("SmallObjects");
+  const from =geoToLatlng(order.geo!.from!)
+  const to  = geoToLatlng(order.geo!.to!)
   function validateAndSubmit() {
-    const o:newOrderProps = {
-      address:{
-        from:fromAddress,
-        to:toAddress
+    const o: newOrderProps = {
+      address: {
+        from: fromAddress,
+        to: toAddress,
       },
-      comment:comment!,
-      urgent:urgent,
-      type:type!,
-      geo:order.geo!,
-      from:order.from!,
-      to:order.to!
-    }
-    setOrder(o)
-    uploadOrder(o)
+      comment: comment!,
+      urgent: urgent,
+      type: type!,
+      geo: order.geo!,
+      from: order.from!,
+      to: order.to!,
+    };
+    setOrder(o);
+    uploadOrder(o);
   }
-  
+
   return (
     <IonContent className={"w-full h-full"}>
+      
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          validateAndSubmit()
+          validateAndSubmit();
         }}
       >
-        <IonCard className={'flex flex-col gap-2 divide-x-2  divide-red-300 justify-center'}>
+        <IonCard
+          className={
+            "flex flex-col ml-24 gap-2 divide-x-2  divide-red-300 justify-center"
+          }
+        >
           {/* pick up point */}
-          <div className={'flex justify-center'}>
+          <IonItem className={"flex justify-center"}>
             <IonLabel>{order.from}</IonLabel>
-            <IonIcon icon={locationSharp}/>
-          </div>
+            <IonIcon color={"primary"} icon={locationSharp} />
+          </IonItem>
           {/* drop point */}
-          
-          <div className={'flex justify-center'}>
-            <IonTitle>{order.to}</IonTitle>
-            <IonIcon icon={pinSharp}/>
-          </div>
+
+          <IonItem className={"flex justify-center"}>
+            <IonLabel>{order.to}</IonLabel>
+            <IonIcon color={"danger"} icon={pinSharp} />
+          </IonItem>
         </IonCard>
+        <IonCard className={'w-full h-full'}>
+          <TwoPointMap  onMap={()=>{}} point1={from} point2={to}></TwoPointMap>
+        </IonCard>
+
         <div
           style={{
             display: "flex",

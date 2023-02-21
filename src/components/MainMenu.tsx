@@ -16,7 +16,7 @@ import {
   IonImg,
 } from "@ionic/react";
 import { getAuth } from "firebase/auth";
-import { bookOutline, bookSharp, callOutline, closeOutline, informationCircleOutline, informationSharp, locationOutline, locationSharp, walletOutline, walletSharp } from "ionicons/icons";
+import { bookOutline, bookSharp, callOutline, chatboxOutline, closeOutline, informationCircleOutline, informationSharp, locationOutline, locationSharp, walletOutline, walletSharp } from "ionicons/icons";
 import React, { useEffect } from "react";
 import { useHistory } from "react-router";
 import { avatarPLaceholder } from "../providers/firebaseMain";
@@ -83,6 +83,10 @@ const MainMenu = (Props: props) => {
           <IonItem onClick={() => history.push("myorders")}>
             <IonIcon icon={bookOutline} />
             <IonLabel>{TT("My orders")}</IonLabel>
+          </IonItem>
+          <IonItem onClick={() => history.push("chat")}>
+            <IonIcon icon={chatboxOutline} />
+            <IonLabel>{TT("Chat")}</IonLabel>
           </IonItem>
           <IonItem className="item" onClick={() => history.push("Details")}>
             <IonIcon icon={informationCircleOutline} />

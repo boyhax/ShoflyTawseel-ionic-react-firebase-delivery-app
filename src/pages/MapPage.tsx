@@ -10,7 +10,7 @@ import { addCircle, cube, locateOutline, locateSharp } from "ionicons/icons";
 import { Geolocation } from "@capacitor/geolocation";
 import { LatLng } from "@capacitor/google-maps/dist/typings/definitions";
 import useBoundOrders from "../hooks/useBoundOrders";
-import {  LeafLetMap } from "../components/utlis/LeafLetMap";
+import {  LeafLetMap } from "../components/LeafLetMap";
 import { LeafletMouseEvent, Map, marker } from "leaflet";
 import geoFirestore from "../providers/geofirestore";
 import { Store } from "pullstate";

@@ -85,5 +85,47 @@
     "inactive": {
         "en": "inactive",
         "ar": "inactive"
+    },
+    "Wallet": {
+        "en": "Wallet",
+        "ar": "Wallet"
+    },
+    "Saved places": {
+        "en": "Saved places",
+        "ar": "Saved places"
+    },
+    "My orders": {
+        "en": "My orders",
+        "ar": "My orders"
+    },
+    "Info": {
+        "en": "Info",
+        "ar": "Info"
+    },
+    "Get in Touch": {
+        "en": "Get in Touch",
+        "ar": "Get in Touch"
+    },
+    "Save": {
+        "en": "Save",
+        "ar": "Save"
+    },
+    "Admin Page": {
+        "en": "Admin Page",
+        "ar": "Admin Page"
+    },
+    "": {
+        "en": "",
+        "ar": ""
+    },
+    "status": {
+        "en": "status",
+        "ar": "status"
+    },
+    "identity number": {
+        "en": "identity number"
+    },
+    "Chat": {
+        "en": "Chat"
     }
 }

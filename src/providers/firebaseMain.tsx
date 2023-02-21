@@ -44,6 +44,7 @@ import { Config } from "../config";
 import geoFirestore from "./geofirestore";
 import { Store } from "pullstate";
 import { b64toBlob } from "../hooks/usePhoto";
+import L, { LatLng } from "leaflet";
 
 export const userOrdersStore = new Store<any[]>([]);
 export const userApplicationsStore = new Store<any[]>([]);
@@ -149,12 +150,12 @@ class firebaseClass {
     return updateDoc(doc(this.db, "users/" + this.user?.uid), profile);
   }
   async submitDriverApplication(values: any) {
-    const res = await updateDoc(doc(this.db, "users/" + this.user?.uid), {
-      driverData: values,
-      role: "driver",
+    
+    const driver = await setDoc(doc(this.db, "drivers/" + this.user?.uid), {
+       ...values,
       status: "pending",
     });
-    return res;
+    return driver;
   }
   async getDrivers(values: {from:any,status?:'pending'|'active'|'inactive'}
   ,onlastDoc?:any) {
@@ -182,11 +183,8 @@ class firebaseClass {
 export const mydb = new firebaseClass();
 
 export const db = mydb.db;
-export function geoToLatlng(geo: GeoPoint) {
-  return {
-    lat: geo.latitude,
-    lng: geo.longitude,
-  };
+export function geoToLatlng(geo: GeoPoint):LatLng {
+  return L.latLng(geo.latitude, geo.longitude)
 }
 export async function uploadNewOrder(o: newOrderProps) {
   console.log("to upload order :>> ", o);
