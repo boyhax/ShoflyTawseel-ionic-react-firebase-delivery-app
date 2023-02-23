@@ -7,6 +7,8 @@ import { LatLngBounds } from 'leaflet';
 import geoFirestore from '../providers/geofirestore';
 import { MarkerProps } from 'react-leaflet';
 import { orderMarker } from '../types';
+import { useIonViewDidEnter } from '@ionic/react';
+import useMounted from './useMounted';
 
 const boundStore = new Store({
     orders:[],
@@ -17,16 +19,15 @@ const boundStore = new Store({
 const useBoundOrders = () => {
     const [orders, setOrders] = React.useState<orderMarker[]>()
     const [loading, setLoading] = React.useState<boolean>(true)
-    const [mounted, setMounted] = useState(true)
     const [bounds, setBounds] = useState<LatLngBounds>()
 
     const uid = getAuth().currentUser?.uid!
 
     React.useEffect(() => {
-        uid && update()
-        return () => setMounted(false)
+         update()
     }, [])
-
+    const {mounted} = useMounted()
+    
   
     const update =async () => {
         setLoading(true)
@@ -45,7 +46,6 @@ const useBoundOrders = () => {
                     id:d.data().id
                   }
             })
-
             if(mounted){setLoading(false);setOrders(list) }
 
         } catch (error) {

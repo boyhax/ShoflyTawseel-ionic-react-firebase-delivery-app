@@ -3,9 +3,10 @@ import { Store } from 'pullstate';
 import { mydb } from '../providers/firebaseMain';
 import { driverData, UserProfile } from '../types';
 import {Geolocation} from'@capacitor/geolocation'
+import { User } from 'firebase/auth';
 
 interface Props{
-    user:boolean,
+    user:User|null,
     profile:UserProfile|undefined,
     address:{
         geo:LatLng,
@@ -14,7 +15,7 @@ interface Props{
     driverData:driverData|null,
 }
 const initialProps:Props={
-    user:false,
+    user:null,
     profile:undefined,
     address:null,
     driverData:null,

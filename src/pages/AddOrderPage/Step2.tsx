@@ -21,7 +21,9 @@ import {
 } from "ionicons/icons";
 import { Map } from "leaflet";
 import * as React from "react";
+import { useMemo } from "react";
 import { newOrderStore, useNewOrder } from ".";
+import OrderPointsCard from "../../components/OrderPointsCard";
 import TwoPointMap from "../../components/TwoPointMap";
 import { geoToLatlng } from "../../providers/firebaseMain";
 import { newOrderProps, OrderCatagorie, OrderCatagories } from "../../types";
@@ -33,8 +35,13 @@ const Step2: React.FC = (props) => {
   const [comment, setComment] = React.useState("");
   const [urgent, setUrgent] = React.useState(false);
   const [type, setType] = React.useState<OrderCatagorie>("SmallObjects");
-  const from =geoToLatlng(order.geo!.from!)
-  const to  = geoToLatlng(order.geo!.to!)
+  const {fromPoint,toPoint} =useMemo(()=>{
+    console.log('geo in step 2',order.geo)
+    let fromPoint = geoToLatlng(order.geo?.from!),
+    toPoint = geoToLatlng(order.geo?.to!);
+    return {fromPoint,toPoint}
+  },[order])
+  
   function validateAndSubmit() {
     const o: newOrderProps = {
       address: {
@@ -53,7 +60,7 @@ const Step2: React.FC = (props) => {
   }
 
   return (
-    <IonContent className={"w-full h-full"}>
+    <IonContent fullscreen>
       
       <form
         onSubmit={(e) => {
@@ -61,25 +68,11 @@ const Step2: React.FC = (props) => {
           validateAndSubmit();
         }}
       >
-        <IonCard
-          className={
-            "flex flex-col ml-24 gap-2 divide-x-2  divide-red-300 justify-center"
-          }
-        >
-          {/* pick up point */}
-          <IonItem className={"flex justify-center"}>
-            <IonLabel>{order.from}</IonLabel>
-            <IonIcon color={"primary"} icon={locationSharp} />
-          </IonItem>
-          {/* drop point */}
-
-          <IonItem className={"flex justify-center"}>
-            <IonLabel>{order.to}</IonLabel>
-            <IonIcon color={"danger"} icon={pinSharp} />
-          </IonItem>
-        </IonCard>
-        <IonCard className={'w-full h-full'}>
-          <TwoPointMap  onMap={()=>{}} point1={from} point2={to}></TwoPointMap>
+        <OrderPointsCard point1={order.from} point2={order.to}/>
+        <IonCard className={'w-full h-[150px]'}>
+          {order.geo &&<TwoPointMap  onMap={()=>{}} 
+          point1={fromPoint} 
+          point2={toPoint}></TwoPointMap>}
         </IonCard>
 
         <div
@@ -147,7 +140,7 @@ const Step2: React.FC = (props) => {
 
         <IonFooter style={{ display: "flex", justifyContent: "center" }}>
           <IonButton shape={"round"} type="submit">
-            Submit Order 👍
+            Submit Order 
           </IonButton>
         </IonFooter>
       </form>

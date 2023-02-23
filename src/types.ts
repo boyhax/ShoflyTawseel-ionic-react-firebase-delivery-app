@@ -117,6 +117,14 @@ export interface orderMarker{
   id:string,
   from:boolean
 }
+export enum OrderStatus {
+  Placed = "Placed",
+  DriverAsigned = "DriverAsigned",
+  DriverOnWayToCollect = "DriverOnWayToCollect",
+  DriverOnWayToDeliver = "DriverOnWayToDeliver",
+  Done = "Done",
+  Canceled = "Canceled",
+}
 export interface orderProps {
   id:string
   urgent: boolean;
@@ -127,6 +135,8 @@ export interface orderProps {
   to: google.maps.GeocoderResult|any;
   time: any;
   comment: string | "";
+  driver:string,
+  status:OrderStatus,
   address: {
     from: string;
     to: string;

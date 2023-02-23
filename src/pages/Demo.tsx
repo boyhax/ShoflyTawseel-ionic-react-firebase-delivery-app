@@ -10,15 +10,21 @@ import L from "leaflet";
 
 const Demo: React.FC = () => {
   const [value, setValue] = useState(null);
-  const [map, setMap] = useState<GoogleMap>();
-  var point1,point2;
-  point1 = L.latLng(23.5880, 58.3829 );
-  point2 = L.latLng(22.4428, 58.8003);
+  
+  const  point1 =()=> L.latLng(Math.random()*23.5880,Math.random()* 58.3829 ),
+  point2 = ()=>L.latLng(Math.random()*22.4428, Math.random()*58.8003);
   return (
     <Page>
-      <IonCard class={'w-full h-52'}>
-        <TwoPointMap onMap={()=>{}} point1={point1} point2={point2} />
+      <IonContent>
+        {[1,2,3,4,5].map((v,i)=>{
+          return <IonCard key={i} class={'w-full mx-auto h-24'}>
+        <TwoPointMap id={String(i)} onMap={()=>{}} point1={point1()} point2={point2()} />
       </IonCard>
+        })}
+      
+      
+      </IonContent>
+      
     </Page>
   );
 };

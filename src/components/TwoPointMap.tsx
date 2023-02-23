@@ -1,6 +1,9 @@
+import { useIonViewDidEnter, useIonViewWillLeave } from "@ionic/react";
+import { clear } from "console";
 import L, { LatLng, marker } from "leaflet";
 import * as React from "react";
 import { useState } from "react";
+import { LeafLetMap } from "./LeafLetMap";
 import { markerAIcon, markerBIcon, OrderIcon } from "./utlis/leafletMapIcons";
 
 type props = {
@@ -8,26 +11,27 @@ type props = {
   children?:any,
   point1:LatLng,
   point2:LatLng,
+  id?:string,
 };
- export default function TwoPointMap({ onMap, children,point1,point2 }:props) {
+ export default function TwoPointMap({id,  children,point1,point2 }:props) {
   
 
   const [map, setMap] = useState<L.Map>();
-
-  React.useEffect(() => {
+ useIonViewWillLeave(()=>{
+  map && map.remove()
+ })
+  
+  
+  function hundleMap(map: L.Map) {
+    map.scrollWheelZoom.disable();
+    map.dragging.disable();
+    map.touchZoom.disable();
+    map.doubleClickZoom.disable();
+    map.boxZoom.disable();
+    map.keyboard.disable();
+    // map.zoomControl.remove();
     
-    var bounds1 = L.latLngBounds([point1,point2]);
-    const map = L.map(`map-${point1.lat+point2.lat}`, {
-      // maxBounds: bounds,
-      zoom: 16,
-      center:[23.5880, 58.3829],
-      zoomControl: false,
-      touchZoom: false,
-      scrollWheelZoom:false,
-      doubleClickZoom: false,
-    });
     setMap(map);
-    onMap(map);
     const m = marker(
       point1,
       { icon: markerAIcon },
@@ -40,48 +44,12 @@ type props = {
     ).addTo(map);
     const bounds = L.featureGroup([m,m2]).getBounds();
 
-    map.fitBounds(bounds);
+    map.fitBounds(bounds,{padding:L.point(5,50)});
     map.on('resize', function(e) {
       map.fitBounds(bounds);
     });
-    
-    
-    const tailLayer = L.tileLayer(
-      "http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}",
-      {
-        maxZoom: 20,
-        subdomains: ["mt0", "mt1", "mt2", "mt3"],
-      }
-    ).addTo(map);
-    
-    // map.setView(new L.LatLng(center_lat, center_long), center_zoom);
-    // // map.fitBounds(new L.LatLngBounds(points));
-    
-
-  }, []);
-  React.useEffect(() => {
-    if (map) {
-      map.invalidateSize(true);
-    }
-  });
-  
+  }
   return (
-    <div
-      id={`map-${point1.lat+point2.lat}`}
-      style={{
-        display: "inline-block",
-        overflow: "hidden",
-        background: "#ddd",
-        outlineOffset: "1px",
-        minHeight:'50px',
-        minWidth:'70px',
-        width: "100%",
-        height: "100%",
-      }}
-    >
-      <div className=" flex absolute w-full h-full pointer-events-none z-[1000]">
-        
-      </div>
-    </div>
+    <LeafLetMap id={id} onMap={hundleMap} ></LeafLetMap>
   );
 };

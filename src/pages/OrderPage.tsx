@@ -1,11 +1,9 @@
-import React, { FC, useEffect, useState } from 'react';
-import { IonContent, IonPage, IonTitle, IonToolbar,IonButton,IonIcon,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton, IonSlides, IonSlide, IonItemDivider } from '@ionic/react';
-import { exitSharp, } from 'ionicons/icons';
+import React, { useEffect, useState } from 'react';
+import { IonContent, IonTitle, IonToolbar,IonButtons, IonLabel, IonItem, IonSpinner, IonBackButton } from '@ionic/react';
 import { useGlobals } from '../providers/globalsProvider';
-import { collection, doc, getDocs, getFirestore, onSnapshot, orderBy, query, where } from 'firebase/firestore';
+import { doc, getFirestore, onSnapshot } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
-import OrderCard from '../components/OrderCard';
-import { Redirect, useHistory, useParams } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import { orderProps } from '../types';
 
 const OrderPage: React.FC = () => {
@@ -32,8 +30,7 @@ const OrderPage: React.FC = () => {
     }
      })
    }
-    console.log('id :>> ', id.id);
-    console.log('data :>> ', data);
+    
     
     return (
     <div >

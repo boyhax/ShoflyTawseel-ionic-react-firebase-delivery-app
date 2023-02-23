@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 
 import { DocumentSnapshot } from "firebase/firestore";
 import { IonFab, IonFabButton, IonIcon, IonList, 
@@ -6,16 +6,13 @@ import { IonFab, IonFabButton, IonIcon, IonList,
 import { addOutline } from "ionicons/icons";
 import { RefresherEventDetail } from '@ionic/core';
 import OrderCard from "./OrderCard";
-import OrdersPlaceHolder from "./OrdersPLaceHolder";
-import useUserOrders from "../hooks/useUserOrders";
 import { useHistory } from "react-router";
-import { makeOrderFromDoc } from "../providers/firebaseMain";
+import { makeOrderFromDoc, userOrdersStore } from "../providers/firebaseMain";
 
 
 export default function UserOrdersList(props: any) {
-  const [list, setList] = useState<DocumentSnapshot<any>[]>([])
   const IonRefresherElement = useRef<HTMLIonRefresherElement | any>()
-  const orders = useUserOrders()
+  const orders = userOrdersStore.useState(s=>s)
   const history = useHistory()
 
   function doRefresh(event: CustomEvent<RefresherEventDetail>) {
@@ -55,9 +52,9 @@ export default function UserOrdersList(props: any) {
       <IonRefresherContent
         refreshingText="refreshing..."></IonRefresherContent>
     </IonRefresher>
-    {orders.orders &&
+    {orders &&
 
-      orders.orders.map((v: DocumentSnapshot, i: any) => {
+      orders.map((v: DocumentSnapshot, i: any) => {
 
         if (!v["exists"]) {
           return ''
@@ -65,7 +62,7 @@ export default function UserOrdersList(props: any) {
         return <OrderCard order={makeOrderFromDoc(v)} key={v.id} />
       })
     }
-    {orders.loading && !orders.orders && <OrdersPlaceHolder></OrdersPlaceHolder>}
+    {/* {orders.loading && !orders.orders && <OrdersPlaceHolder></OrdersPlaceHolder>} */}
 
    
     </IonList>

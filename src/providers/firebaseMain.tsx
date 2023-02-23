@@ -36,6 +36,7 @@ import {
   orderProps,
   OrderReportInfo,
   OrderReportProps,
+  OrderStatus,
   userInfo,
   UserProfile,
 } from "../types";
@@ -45,17 +46,13 @@ import geoFirestore from "./geofirestore";
 import { Store } from "pullstate";
 import { b64toBlob } from "../hooks/usePhoto";
 import L, { LatLng } from "leaflet";
+import { userStore } from "../Stores/userStore";
+import { clear } from "console";
 
 export const userOrdersStore = new Store<any[]>([]);
 export const userApplicationsStore = new Store<any[]>([]);
 export const userReportsStore = new Store<any[]>([]);
-export const userStore = new Store<{
-  user: User | null;
-  profile: UserProfile | null;
-}>({
-  user: null,
-  profile: null,
-});
+
 
 class firebaseClass {
   constructor() {
@@ -69,7 +66,9 @@ class firebaseClass {
         s.user = user;
       });
       console.log("user id :>> ", user && user.uid);
-
+      if (!user) {
+        this.unSubscripeUserList();
+      }
       user && this.token && this.updateToken();
     });
   }
@@ -83,14 +82,43 @@ class firebaseClass {
   async getUserInfo(uid: string) {
     return getDoc(doc(this.db, "users/" + uid));
   }
-  async removeApplicationToOrder(orderID: string) {
+  subscribeProfile() {
+    const uid = this.user?.uid;
+    const ref = doc(this.db, "users/" + uid);
+
+    const unsub = onSnapshot(ref, (doc) => {
+      if(!this.subscripeUserList){ unsub()}
+      if (doc.exists()) {
+        const profile: UserProfile = UserProfileFromDoc(doc);
+        userStore.update((s) => {
+          s.profile = profile;
+        });
+      } else {
+        this.hundleNoProfileCreatedYet();
+      }
+    });
+  }
+  async hundleNoProfileCreatedYet() {
+    const user = this.user!;
+    const name = user.displayName || "User" + user.uid.slice(0, 5);
+    const number: string = user.phoneNumber || "";
+    const email: string = (user.emailVerified && user.email) || "";
+    const photo = "https://ui-avatars.com/api/?name=NAME".replace("NAME", name);
+    createNewProfileForThisUser(name, number, email, photo);
+  }
+
+  async removeApplicationToOrder(order: orderProps) {
     const application = mydb.userApplications.find(
-      (v) => v.exists() && v.data().forOrder === orderID
+      (v) => v.exists() && v.data().forOrder === order.id
     );
     var res;
     application &&
       application.exists() &&
       (res = await deleteDoc(application.ref));
+    this.userApplications = this.userApplications.filter(
+      (v) => v.id !== application?.id
+    );
+    userApplicationsStore.update((s) => this.userApplications);
     return res;
   }
 
@@ -109,6 +137,7 @@ class firebaseClass {
   }
   subscripeUserList(userId: string) {
     this.SubscribeUserLists = true;
+    this.subscribeProfile()
     subscripeUserOrders(userId, (snap) => {
       this.userOrders = snap.docs;
       userOrdersStore.update((s) => this.userOrders);
@@ -125,14 +154,7 @@ class firebaseClass {
       return !this.subscripeUserList;
     });
   }
-  is_user_applied_to_card(userid: string, orderid: string) {
-    const res = !!this.userApplications.find((v) => {
-      return v.exists() && v.data().forOrder === orderid;
-    });
-    return new Promise<boolean>((resolve, rej) => {
-      resolve(res);
-    });
-  }
+
   async uploadPhoto(base64photo: string, name: string) {
     const blob = b64toBlob(base64photo, `image/${name}`, 512);
     const sref = ref(getStorage(), name);
@@ -150,41 +172,79 @@ class firebaseClass {
     return updateDoc(doc(this.db, "users/" + this.user?.uid), profile);
   }
   async submitDriverApplication(values: any) {
-    
     const driver = await setDoc(doc(this.db, "drivers/" + this.user?.uid), {
-       ...values,
+      ...values,
       status: "pending",
     });
     return driver;
   }
-  async getDrivers(values: {from:any,status?:'pending'|'active'|'inactive'}
-  ,onlastDoc?:any) {
-    var q = query(collection(this.db, 
-      "users" ),where( "role", "==", "driver" ))
-      q = query(q,where( "status", "==", values.status || "active" )) 
+  async getDrivers(
+    values: { from: any; status?: "pending" | "active" | "inactive" },
+    onlastDoc?: any
+  ) {
+    var q = query(collection(this.db, "users"), where("role", "==", "driver"));
+    q = query(q, where("status", "==", values.status || "active"));
 
     // q = query(q,orderBy("time", "desc"))
-    values.from && (q = query(q,startAfter(values.from)))
+    values.from && (q = query(q, startAfter(values.from)));
     const res = await getDocs(q);
-    !res.empty  && onlastDoc(res.docs[res.docs.length-1])
+    !res.empty && onlastDoc(res.docs[res.docs.length - 1]);
     return res.docs.map((v) => UserProfileFromDoc(v));
   }
-  async ApproveDriver(id:string){
-    console.log('driver approved =>',id)
+  async ApproveDriver(id: string) {
+    console.log("driver approved =>", id);
     return updateDoc(doc(this.db, "users/" + id), {
       status: "active",
     });
   }
-  async getDriverData(){
+  async getDriverData() {
     const res = await getDoc(doc(this.db, "users/" + this.user?.uid));
     return res.data()?.driverData;
   }
+  async applyForCard(order: orderProps) {
+    const a =  updateDoc(doc(this.db, "orders/"+order.id), {
+      status: OrderStatus.DriverAsigned,
+      driver: this.user?.uid,
+    });
+    const b= getDocs(query(collection(this.db, "ordersGeoFrom"), where("id", "==", order.id))).then((v) => {
+      v.forEach((doc) => {
+        updateDoc(doc.ref,{status:OrderStatus.DriverAsigned});
+      });
+    });
+
+    return Promise.all([a,b]);
+  }
+  async deleteOrder(order: orderProps) {
+    this.userOrders = this.userOrders.filter((v) => v.id !== order.id);
+    userOrdersStore.update((s) => this.userOrders);
+    this.deleteGeos(order);
+    return deleteDoc(doc(this.db, `orders/${order.id}`)).then((v) => {
+      console.log("order deleted ", order.id);
+    });
+  }
+  async deleteGeos(order: orderProps) {
+    getDocs(
+      query(collection(this.db, "ordersGeoFrom"), where("id", "==", order.id))
+    ).then((v) => {
+      v.forEach((doc) => {
+        deleteDoc(doc.ref);
+      });
+    });
+    getDocs(
+      query(collection(this.db, "ordersGeoTo"), where("id", "==", order.id))
+    ).then((v) => {
+      v.forEach((doc) => {
+        deleteDoc(doc.ref);
+      });
+    });
+  }
 }
 export const mydb = new firebaseClass();
+export default mydb;
 
 export const db = mydb.db;
-export function geoToLatlng(geo: GeoPoint):LatLng {
-  return L.latLng(geo.latitude, geo.longitude)
+export function geoToLatlng(geo: GeoPoint): LatLng {
+  return L.latLng(geo.latitude, geo.longitude);
 }
 export async function uploadNewOrder(o: newOrderProps) {
   console.log("to upload order :>> ", o);
@@ -192,19 +252,23 @@ export async function uploadNewOrder(o: newOrderProps) {
   const newO: Partial<orderProps> = {
     geo: o.geo,
     urgent: o.urgent || false,
-    from: "",
-    to: "",
+    from: o.from,
+    to: o.to,
     uid: getAuth().currentUser?.uid!,
     time: serverTimestamp(),
     type: o.type || "smallObjects",
     comment: o.comment || "no comment",
     address: o.address,
+    driver: "",
+    status:OrderStatus.Placed,
+    id:await addDoc(collection(db, "orders"),{}).then(v=>v.id)
   };
-  const doc = await addDoc(collection(db, "orders"), newO);
-  const from = geoFirestore.addGeo(doc.id, geoToLatlng(o.geo.from), true);
-  const to = geoFirestore.addGeo(doc.id, geoToLatlng(o.geo.to), false);
+  console.log('new order :>> ', newO);
+  const docref = setDoc(doc(db, "orders"), newO);
+  const from = geoFirestore.addGeo(newO.id!, geoToLatlng(o.geo.from), true);
+  const to = geoFirestore.addGeo(newO.id!, geoToLatlng(o.geo.to), false);
 
-  return Promise.all([to, from]);
+  return Promise.all([to, from,docref]);
 }
 export async function setUserImage(
   photo: Blob,
@@ -245,7 +309,7 @@ export function subscripeUserApplications(
   result: (snap: QuerySnapshot<DocumentData>) => boolean
 ) {
   const unsubHere = onSnapshot(
-    query(collection(db, "ordersApplications"), where("byUser", "==", id)),
+    query(collection(db, "orders"), where("driver", "==", id)),
     (snap) => {
       let unsub = result(snap);
       unsub && unsubHere();
@@ -306,22 +370,7 @@ export async function getOrderById(id: String) {
   return getDoc(qu);
 }
 
-export function makeApplicationPropsFromDoc(
-  doc: DocumentSnapshot
-): ApplicationProps {
-  let d = doc.exists() ? doc.data() : {};
-  return JSON.parse(JSON.stringify(d));
-  // {
-  //   byUser: d.byUser,
-  //   forOrder: d.forOrder,
-  //   forUser: d.forUser,
-  //   isAccepted: d.isAccepted,
-  //   isDone: d.isDone,
-  //   timeAccepted: d.timeAccepted,
-  //   timeDone: d.timeDone,
-  //   timeSend: d.timeSend,
-  // };
-}
+
 export function makeUSerInfoFromDoc(s: DocumentSnapshot): userInfo {
   let d = s.exists() ? s.data() : {};
   return {
@@ -346,23 +395,10 @@ export function getGeoCode(geoPoint: GeoPoint) {
 export function makeOrderFromDoc(
   orderDocSnap: DocumentSnapshot<DocumentData>
 ): orderProps {
-  const o = orderDocSnap.exists() ? orderDocSnap.data() : {};
-
-  return {
-    id: orderDocSnap.id,
-    geo: o.geo,
-    urgent: o.urgent,
-    type: o.type,
-    uid: o.uid,
-    from: o.from,
-    to: o.to,
-    time: o.time,
-    comment: o.comment,
-    address: o.address,
-  };
+  return { id: orderDocSnap.id, ...orderDocSnap.data() } as orderProps;
 }
 export function UserProfileFromDoc(doc: DocumentSnapshot): UserProfile {
-  const d: UserProfile = {...(doc.data() as UserProfile),id:doc.id,};
+  const d: UserProfile = { ...(doc.data() as UserProfile), id: doc.id };
   return d;
 }
 
@@ -394,7 +430,7 @@ export async function createNewProfileForThisUser(
     photoURL: photoURL,
     role: "user",
     time: serverTimestamp(),
-    status: "active" ,
+    status: "active",
   };
   const dref = doc(getFirestore(), "users", uid!);
   const d = setDoc(dref, profile).then(
@@ -486,12 +522,13 @@ export async function applyForCard(
   return Promise.all([res]);
 }
 
-export const avatarPLaceholder=(name:string) => "https://ui-avatars.com/api/?name=" + name + "&background=0D8ABC&color=fff";
+export const avatarPLaceholder = (name: string) =>
+  "https://ui-avatars.com/api/?name=" + name + "&background=0D8ABC&color=fff";
 export function getUserInfoPlaceHolder() {
   let info: userInfo = {
     name: "Nick Name",
     phoneNumber: "*** *******",
-    photoURL: avatarPLaceholder('s t'),
+    photoURL: avatarPLaceholder("s t"),
   };
   return info;
 }

@@ -26,7 +26,7 @@ const OrdersSteps: React.FC<{
         
         <IonIcon onClick={()=>onStepClick(0)} color={step===0?`light`:`secondary`}  icon={locationSharp} />
         <IonIcon onClick={()=>onStepClick(1)} color={step===1?`danger`:`secondary`} icon={pinSharp} />
-        <IonIcon onClick={()=>onStepClick(2)} color={step===2?`light`:`secondary`} icon={readerSharp} />
+        <IonIcon onClick={()=>{}} color={step===2?`light`:`secondary`} icon={readerSharp} />
       </div>
     </div>
   );

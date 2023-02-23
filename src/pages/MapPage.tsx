@@ -2,28 +2,34 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   IonButton,
   IonButtons,
-  IonFab,
-  IonFabButton,
+  IonCard,
+  IonContent,
   IonIcon,
+  IonToolbar,
+  useIonModal,
+  useIonViewDidEnter,
 } from "@ionic/react";
-import { addCircle, cube, locateOutline, locateSharp } from "ionicons/icons";
-import { Geolocation } from "@capacitor/geolocation";
+import { cube } from "ionicons/icons";
 import { LatLng } from "@capacitor/google-maps/dist/typings/definitions";
 import useBoundOrders from "../hooks/useBoundOrders";
 import {  LeafLetMap } from "../components/LeafLetMap";
 import { LeafletMouseEvent, Map, marker } from "leaflet";
-import geoFirestore from "../providers/geofirestore";
 import { Store } from "pullstate";
 import { useHistory } from "react-router";
-import { greenIcon, OrderIcon } from "../components/utlis/leafletMapIcons";
-import { geoToLatlng } from "../providers/firebaseMain";
-import { orderMarker } from "../types";
+import { OrderIcon } from "../components/utlis/leafletMapIcons";
+import { geoToLatlng, getOrderById } from "../providers/firebaseMain";
+import { orderMarker, orderProps } from "../types";
+import TwoPointMap from "../components/TwoPointMap";
+import OrderPointsCard from "../components/OrderPointsCard";
+import OrderCard from "../components/OrderCard";
 
 interface _state {
   value: any;
   centerMarker: boolean;
   marker: any;
   oldMarkers: any[];
+  orderId:string;
+  map:L.Map|null
 }
 const useBoundOrdersStore = new Store({
   orders: [],
@@ -32,119 +38,126 @@ const useBoundOrdersStore = new Store({
   update: () => {},
 });
 const MapPage: React.FC = () => {
-  const [map, setMap] = useState<Map>();
   const [_state, _setState] = useState<_state>({
     value: 1,
     centerMarker: false,
     marker: "",
     oldMarkers: [],
+    orderId:'',
+    map:null
   });
   const history = useHistory()
   const state = useRef(_state);
+  const modalComponent = (props:any)=><IonContent>
+  <IonToolbar>
+    <IonButtons slot="start">
+      <IonButton onClick={()=>dissmis()}>close</IonButton>
+    </IonButtons>
+  </IonToolbar>
+  {<RenderOrder id={props.orderId} />}
+</IonContent>
+  const [present,dissmis] = useIonModal(modalComponent,{orderId:state.current.orderId})
   useEffect(() => {
-    map && setup();
     return () => unSetup();
-  }, [map]);
-  function setState(obj: Partial<_state>) {
-    state.current = { ...state.current, ...obj };
-  }
+  }, []);
+ 
   const { orders, loading, setBounds, update } = useBoundOrders();
 
   useEffect(() => {
-    if (map) {
+    if (state.current.map) {
       if (!orders) {
         return;
       }
-      refreshMarkers( orders);
+      refreshMarkers(orders);
     }
   }, [orders]);
 
   function onOrderMarkerClick(event:LeafletMouseEvent,marker:L.Marker<any>,order:orderMarker){
-    
+    state.current.orderId = order.id;
+    present();
   }
   function refreshMarkers(markers: orderMarker[]) {
     clearMarkers();
-    setState({ oldMarkers: addMarkers(markers) });
+    state.current.oldMarkers =  addMarkers(markers)! ;
   }
 
   function addMarkers(markers: orderMarker[]) {
     var list: any[] = [];
-    if (!map) {
+    if (!state.current.map) {
       return;
+    }else{
+      markers.forEach((v) => {
+        const m = marker(
+          geoToLatlng(v.coordinates),
+          { icon: OrderIcon, title: (" click to pick order") },
+          
+        ).addTo(state.current.map!)
+          .addEventListener("click", (e) => {
+            onOrderMarkerClick(e,m,v);
+          });
+        list.push(m);
+      });
     }
-    markers.forEach((v) => {
-      const m = marker(
-        geoToLatlng(v.coordinates),
-        { icon: OrderIcon, title: (" click to pick order"+v.id) },
-        
-      )
-        .addTo(map)
-        .addEventListener("click", (e) => {
-          onOrderMarkerClick(e,m,v);
-        });
-      list.push(m);
-    });
+   
     return list;
   }
 
   function clearMarkers() {
     state.current.oldMarkers.forEach((v) => {
-      map?.removeLayer(v);
+      state.current.map!.removeLayer(v);
     });
   }
-  function setup() {
-    if (!map) {
-      return;
-    }
-    updateBounds();
+  function setup(map:L.Map) {
+    state.current.map = map;
+    setTimeout(() => {
+      updateBounds(map);
+
+    }, 100);
+    
     map.addEventListener(
       "dragend",
       (data) => {
-        updateBounds();
+        console.log('dragend :>> ', data);
+        updateBounds(map);
       },
       {}
     );
 
-    map.addEventListener(
-      "click",
-      (d) => {
-        console.log("map click ", d.latlng);
-        // geoFirestore.addGeo("asdsdssd", d.latlng, true).then((d) => {
-        //   console.log("geo point added  :>> ", d);
-        // });
-      },
-      {}
-    );
+    // map.addEventListener(
+    //   "click",
+    //   (d) => {
+    //     console.log("map click ", d.latlng);
+    //     // geoFirestore.addGeo("asdsdssd", d.latlng, true).then((d) => {
+    //     //   console.log("geo point added  :>> ", d);
+    //     // });
+    //   },
+    //   {}
+    // );
   }
-  function updateBounds() {
-    if (!map) {
-      return;
-    }
+  function updateBounds(map:L.Map) {
+    
     var b = map.getBounds();
     setBounds(b);
     console.log("bounds updated :>> ");
   }
 
   function unSetup() {
-    map && map.remove();
+    state.current.map! && state.current.map!.remove();
   }
-  function moveCameraTo(pos: LatLng) {
-    if (map) {
-      map.flyTo(pos);
-    }
-  }
+  
   
   return (
     <div className={"w-full flex-col h-full"}>
-      <LeafLetMap onMap={setMap}>
+      <LeafLetMap id={'mainMap'} onMap={setup} layerButton  locateButton>
         <div className={"flex  w-full h-full  "}>
           
-          <div className={'flex w-full justify-center self-end'}>
+          <div className={'flex w-full justify-center self-end bg-gradient-to-t from-white via-white to-transparent'}>
             <IonButton
-              className={"pointer-events-auto   "}
+            color={'primary'}
+              className={"pointer-events-auto  w-10/12 "}
               onClick={()=>history.push('addorder')}
             >
-              <IonIcon slot={'icon-only'} icon={cube} />
+              <IonIcon color={'light'} slot={'icon-only'} icon={cube} />
               Make order
             </IonButton>
           </div>
@@ -156,3 +169,16 @@ const MapPage: React.FC = () => {
 };
 
 export default MapPage;
+function RenderOrder({id}:{id:string}):JSX.Element{
+  const [data,setData]=useState<any>()
+  useEffect(()=>{
+     getOrderById(id).then((d)=>{
+      console.log('d :>> ', d);
+      d.exists() && setData({id:d.id,...d.data()}as orderProps);
+    })
+  },[])
+
+  return( <IonCard>{ data &&
+    <OrderCard order={data}/>}
+    </IonCard>)
+}

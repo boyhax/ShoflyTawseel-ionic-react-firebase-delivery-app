@@ -1,10 +1,11 @@
 import { useIonToast } from "@ionic/react";
+import { LatLng } from "leaflet";
 import { Store } from "pullstate";
-import * as React from "react";
+import { geocodeByLatLng } from "react-google-places-autocomplete";
 import { useHistory } from "react-router";
 
 import { uploadNewOrder } from "../../providers/firebaseMain";
-import { newOrderProps, orderProps } from "../../types";
+import { newOrderProps } from "../../types";
 import AddOrderPage from "./AddOrderPage";
 interface Props {
   step: number;
@@ -17,7 +18,18 @@ const initialProps: Props = {
   order: {  },
 };
 export const newOrderStore = new Store(initialProps);
-
+export function updateGeo(data:any){
+  newOrderStore.update(s=>{s.order.geo = {...s.order.geo,...data}})
+}
+export async function updateFromTo(from:boolean,point:LatLng){
+  var codeResult = await geocodeByLatLng(point)
+  var data = codeResult? codeResult[0].formatted_address:''
+  newOrderStore.update(s=>{
+    from?s.order.from = data:s.order.to = data})
+}
+export function updateStep(to:number){
+  newOrderStore.update(s=>{s.step = to})
+}
 export function useNewOrder(){
 
   const navigate = useHistory();

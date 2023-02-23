@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 import {
   doc,
   DocumentSnapshot,
@@ -21,9 +21,11 @@ import useOnline from "../hooks/useOnline";
 import useSignTools from "../hooks/useSignTools";
 import useUserHooks from "../hooks/userHooks";
 import LoadingScreen from "../pages/LoadingScreen";
+import useMounted from "../hooks/useMounted";
+import { userStore } from "../Stores/userStore";
 
 interface Props {
-  user: boolean | undefined;
+  user: User | null;
   profile: UserProfile | undefined;
   currentOrder: DocumentSnapshot | undefined;
   setCurrentOrder: (doc: DocumentSnapshot) => void | undefined;
@@ -34,7 +36,7 @@ interface Props {
   userReports: any;
 }
 const initialProps: Props = {
-  user: false,
+  user: null,
   profile: undefined,
   currentOrder: undefined,
   setCurrentOrder: (v: any) => undefined,
@@ -47,75 +49,39 @@ const initialProps: Props = {
 const globalsContext = createContext<Props>(initialProps);
 
 const GlobalProvider: React.FC = (props) => {
-  const [user, setUser] = useState<boolean | undefined>(undefined);
-  const [profile, setProfile] = useState<UserProfile>();
   const [currentOrder, setCurrentOrder] = useState<DocumentSnapshot>();
   const { isOnline } = useOnline();
 
-  const { getEmail, getPhone } = useSignTools();
-  // const { userApplications, userOrders, userReports } = useUserHooks();
 
   const [presentAlert, dissmissAlert] = useIonAlert();
   const userOrders = userOrdersStore.useState();
   const userApplications = userApplicationsStore.useState();
   const userReports = userReportsStore.useState();
-
+  const {user,profile} = userStore.useState(s=>s)
   console.log("this.userOrders :>> ", userOrders);
   console.log("this.userapplication :>> ", userApplications);
   console.log("this.userReports :>> ", userReports);
-
+  const {mounted}=useMounted()
   useEffect(() => {
-    return onAuthStateChanged(
-      getAuth(),
-      (user) => {
-        console.log("user  :>> ", !!user);
-        setUser(!!user);
-        user && mydb.subscripeUserList(user.uid);
-        !user && mydb.unSubscripeUserList();
-      },
-      (err) => {
-        console.log(err, "error in user sign in check");
-      }
-    );
+    // return onAuthStateChanged(
+    //   getAuth(),
+    //   (user) => {
+    //     console.log("user  :>> ", !!user);
+    //     mounted && setUser(!!user);
+    //     user && mydb.subscripeUserList(user.uid);
+    //     !user && mydb.unSubscripeUserList();
+    //   },
+    //   (err) => {
+    //     console.log(err, "error in user sign in check");
+    //   }
+    // );
   }, []);
 
   useEffect(() => {
-    if (user) {
-      const unsub = fetchProfile();
-      return () => {
-        unsub();
-      };
-    }
+    
   }, [user]);
 
-  function fetchProfile() {
-    const uid = getAuth().currentUser!.uid;
-    const ref = doc(getFirestore(), "users", uid);
-
-    return onSnapshot(ref, (doc) => {
-      if (doc.exists()) {
-        const p: any = UserProfileFromDoc(doc);
-        setProfile(p);
-
-        console.log("profile :>> ", p);
-      } else {
-        hundleNoProfileCreatedYet();
-      }
-      async function hundleNoProfileCreatedYet() {
-        const user = getAuth().currentUser!;
-        const name = user.displayName || "User" + user.uid.slice(0, 5);
-        const number: string = user.phoneNumber || (await getPhone()) || "";
-        const email: string =
-          (user.emailVerified && user.email) || (await getEmail()) || "";
-        const photo = "https://ui-avatars.com/api/?name=NAME".replace(
-          "NAME",
-          name
-        );
-        createNewProfileForThisUser(name, number, email, photo);
-      }
-      console.log("profile is complete :>> ", doc.exists());
-    });
-  }
+  
 
   const toProvide: Props = {
     user,

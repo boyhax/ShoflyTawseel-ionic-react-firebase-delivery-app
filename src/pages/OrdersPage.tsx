@@ -24,7 +24,7 @@ const OrdersPage: React.FC = () => {
   const { user, profile, currentOrder, setCurrentOrder } = useGlobals();
   const [loading, setLoading] = useState(true);
   const [applications, setApplications] = useState<DocumentSnapshot[]>();
-  const [segment,setSegmt] = useState<any>('all')
+  const [segment,setSegmt] = useState<any>('myOrders')
   const auth = getAuth();
   const { id, type }: any = useParams();
   const history = useHistory();
@@ -37,9 +37,9 @@ const OrdersPage: React.FC = () => {
       <IonHeader translucent mode={'ios'}>
         <IonToolbar>
           <IonSegment onIonChange={(e)=>setSegmt(e.detail.value)}  mode={'ios'} value={segment}>
-            <IonSegmentButton value="all">
+            {/* <IonSegmentButton value="all">
               All
-            </IonSegmentButton>
+            </IonSegmentButton> */}
             <IonSegmentButton value="myOrders">
               My Orders
             </IonSegmentButton>
@@ -49,7 +49,7 @@ const OrdersPage: React.FC = () => {
           </IonSegment>
         </IonToolbar>
       </IonHeader>
-      {segment ==='all' && <OrderList/>}
+      {/* {segment ==='all' && <OrderList/>} */}
       {segment ==='accepted' && <UserApplicationsList/>}
       {segment ==='myOrders' && <UserOrdersList/>}
       </IonContent>

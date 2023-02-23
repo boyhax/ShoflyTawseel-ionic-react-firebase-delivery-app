@@ -126,6 +126,31 @@
         "en": "identity number"
     },
     "Chat": {
-        "en": "Chat"
+        "en": "Chat",
+        "ar": "Chat"
+    },
+    "description": {
+        "en": "description",
+        "ar": "الوصف"
+    },
+    "drop here": {
+        "en": "drop here",
+        "ar": "drop here"
+    },
+    "Choose Pick up Point": {
+        "en": "Choose Pick up Point",
+        "ar": "Choose Pick up Point"
+    },
+    "Set": {
+        "en": "Set",
+        "ar": "Set"
+    },
+    "SetPickUpPoint": {
+        "en": "SetPickUpPoint",
+        "ar": "حدد موقع الاسلام"
+    },
+    "DropHere": {
+        "en": "DropHere",
+        "ar":" حدد موقع الأيصال"
     }
 }

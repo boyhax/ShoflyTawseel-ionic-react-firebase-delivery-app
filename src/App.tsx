@@ -4,7 +4,9 @@ import {
   IonApp,
   IonIcon,
   IonLabel,
+  IonPage,
   IonRouterOutlet,
+  IonSplitPane,
   IonTabBar,
   IonTabButton,
   IonTabs,
@@ -113,9 +115,11 @@ const App: React.FC = () => {
     <React.StrictMode>
       <GlobalProvider>
         <IonApp className={`${lang==='en'?'ltr':'rtl'}`}>
-          <IonReactRouter>
-            <MainMenu></MainMenu>
+          
 
+          <IonReactRouter>
+          <MainMenu/>
+        
             <IonTabs >
               <IonRouterOutlet id="main-content">
                 <Switch>
@@ -134,7 +138,7 @@ const App: React.FC = () => {
                       <Profile />
                     </AuthRoute>
                   </Route>
-                  <Route exact path="/tab2">
+                  <Route exact path="/home">
                     <Home />
                   </Route>
                   <Route exact path="/myorders">
@@ -169,7 +173,7 @@ const App: React.FC = () => {
                     </AuthRoute>
                   </Route>
                   <Route exact path="/">
-                    <Redirect to="/tab2" />
+                    <Redirect to="/home" />
                   </Route>
                 </Switch>
               </IonRouterOutlet>
@@ -182,11 +186,11 @@ const App: React.FC = () => {
                   <IonIcon icon={listOutline} />
                   <IonLabel>Orders</IonLabel>
                 </IonTabButton>
-                <IonTabButton tab="tab1" href="/tab1">
+                <IonTabButton tab="account" href="/account">
                   <IonIcon icon={personOutline} />
                   <IonLabel>Profile</IonLabel>
                 </IonTabButton>
-                <IonTabButton tab="tab2" href="/tab2">
+                <IonTabButton tab="home" href="/home">
                   <IonIcon icon={homeOutline} />
                   <IonLabel>Home</IonLabel>
                 </IonTabButton>
@@ -201,6 +205,8 @@ const App: React.FC = () => {
               </IonTabBar>
             </IonTabs>
           </IonReactRouter>
+          
+
         </IonApp>
       </GlobalProvider>
     </React.StrictMode>

@@ -1,11 +1,7 @@
 import { Geolocation } from "@capacitor/geolocation";
-import {
-  IonButton,
-  IonIcon,
-  IonItem,
-} from "@ionic/react";
-import { location as locationIcon } from "ionicons/icons";
-import { LatLng, Map,marker } from "leaflet";
+import { IonButton, IonIcon, IonItem } from "@ionic/react";
+import { cube, location as locationIcon } from "ionicons/icons";
+import { LatLng, Map, marker } from "leaflet";
 import React, { useEffect, useState } from "react";
 import GoogleSearchAutoComplete from "./GoogleSearchAutoComplete";
 import { LeafLetMap } from "./LeafLetMap";
@@ -21,18 +17,16 @@ const GeoPointPicker = ({ placeHolder, onValueSet }: Props) => {
 
   const [map, setMap] = useState<Map>();
   useEffect(() => {
-    if(map){
-      const m :any= marker(map.getCenter(),{
-        icon:PenIcon
-      }).addTo(map)
-     
-      let flytoPoint=(point:{lat:number,lng:number})=>{
-        map.flyTo(point,10)
+    if (map) {
+      const m: any = marker(map.getCenter(), {
+        icon: PenIcon,
+      }).addTo(map);
 
-      }
-      
+      let flytoPoint = (point: { lat: number; lng: number }) => {
+        map.flyTo(point, 10);
+      };
 
-      map.on('move',function(e){
+      map.on("move", function (e) {
         m.setLatLng(map.getCenter());
       });
     }
@@ -45,14 +39,22 @@ const GeoPointPicker = ({ placeHolder, onValueSet }: Props) => {
 
   return (
     <div className={"w-full h-full "}>
-      
-      <LeafLetMap onMap={setMap}>
+      <LeafLetMap onMap={setMap} locateButton centerPin>
         <div className={"pointer-events-none flex  flex-col w-full h-full"}>
-        
-      
-          <div className={`
-            pointer-events-auto z-[2000] flex w-full justify-center items-center  mt-auto  place-self-end`}>
-            <IonButton onClick={submit}>{placeHolder}</IonButton>
+          <div className={"flex  w-full h-full  "}>
+            <div
+              className={
+                "flex w-full justify-center self-end bg-gradient-to-t from-white via-white to-transparent"
+              }
+            >
+              <IonButton
+                color={"primary"}
+                className={"pointer-events-auto  w-10/12 "}
+                onClick={submit}
+              >
+                {placeHolder}
+              </IonButton>
+            </div>
           </div>
         </div>
       </LeafLetMap>

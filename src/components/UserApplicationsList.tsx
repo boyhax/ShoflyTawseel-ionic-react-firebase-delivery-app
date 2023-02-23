@@ -1,11 +1,11 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 
 import { DocumentSnapshot } from "firebase/firestore";
-import { IonChip, IonItem, IonItemOption, IonItemOptions, IonList, IonRefresher, IonRefresherContent } from "@ionic/react";
+import { IonRefresher, IonRefresherContent } from "@ionic/react";
 import OrdersPlaceHolder from "./OrdersPLaceHolder";
 import useUserApplications from "../hooks/useUserApplications";
-import ApplicationCard from "./ApplicationCard";
-import { ApplicationProps } from "../types";
+import OrderCard from "./OrderCard";
+import { orderProps } from "../types";
 
 export default function UserApplicationsList(props: any) {
   const IonRefresherElement = useRef<HTMLIonRefresherElement | any>();
@@ -31,8 +31,7 @@ export default function UserApplicationsList(props: any) {
             if (!v.exists() ) {
               return "";
             }
-            const data :ApplicationProps|any= {id:v.id,...v.data()}
-            return <ApplicationCard key={v.id} data={data}/>
+            return <OrderCard key={v.id} order={{id:v.id,...v.data()}as orderProps}/>
           })}
         {orders.loading && !orders.userApplications && (
           <OrdersPlaceHolder></OrdersPlaceHolder>

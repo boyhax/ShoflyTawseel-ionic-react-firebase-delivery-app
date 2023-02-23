@@ -8,7 +8,7 @@ import { Http2ServerRequest } from "http2";
 import { idCard } from "ionicons/icons";
 import { getLang } from "../App";
 import { Config } from "../config";
-import { orderMarker } from "../types";
+import { orderMarker, OrderStatus } from "../types";
 
  class geoClass {
   geocollection;
@@ -59,6 +59,7 @@ import { orderMarker } from "../types";
     return geocollection.add({
       id: id,
       from: from,
+      status:OrderStatus.Placed,
       // The coordinates field must be a GeoPoint!
       coordinates: new firebase.firestore.GeoPoint(latlng.lat,latlng.lng),
     });

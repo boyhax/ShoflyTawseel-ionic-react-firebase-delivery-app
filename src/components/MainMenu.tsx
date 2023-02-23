@@ -14,6 +14,7 @@ import {
   IonLabel,
   IonAvatar,
   IonImg,
+  IonMenuToggle,
 } from "@ionic/react";
 import { getAuth } from "firebase/auth";
 import { bookOutline, bookSharp, callOutline, chatboxOutline, closeOutline, informationCircleOutline, informationSharp, locationOutline, locationSharp, walletOutline, walletSharp } from "ionicons/icons";
@@ -29,12 +30,7 @@ interface props extends ComponentProps {
 
 const MainMenu = (Props: props) => {
   const { user, profile } = useGlobals();
-  function close() {
-    Props.menuRef.current.close();
-  }
-  useEffect(() => {
-    //  menu.current!.toggle()
-  });
+ 
   const history = useHistory();
   const SignInButton = (
     <IonButton onClick={() => history.push("SignIn")}>Sign In</IonButton>
@@ -52,11 +48,14 @@ const MainMenu = (Props: props) => {
           color={"primary"}
           className={"flex h-32 items-center shadow-xl rounded-br-2xl"}
         >
-          <IonAvatar slot={"primary"} onClick={()=>history.push('account')}>
+          <IonMenuToggle>
+          <IonAvatar slot={"primary"} onClick={()=>history.push('/account')}>
             <IonImg
               src={profile?.photoURL || avatarPLaceholder(" s t")}
             ></IonImg>
           </IonAvatar>
+          </IonMenuToggle>
+          
           <IonLabel>
             {user
               ? profile
@@ -70,37 +69,51 @@ const MainMenu = (Props: props) => {
       </IonHeader>
       <IonContent class="ion-padding">
         <IonList>
-          <IonItem onClick={() => history.push("Wallet")}>
+          {/* <IonItem onClick={() => history.push("Wallet")}>
             <IonIcon icon={walletOutline} />
 
             <IonLabel>{TT("Wallet")}</IonLabel>
             <IonLabel slot={"end"}>{"0 OMR"}</IonLabel>
-          </IonItem>
-          <IonItem onClick={() => history.push("places")}>
+          </IonItem> */}
+          {/* <IonItem onClick={() => history.push("places")}>
             <IonIcon icon={locationOutline} />
             <IonLabel>{TT("Saved places")}</IonLabel>
-          </IonItem>
+          </IonItem> */}
+          <IonMenuToggle>
           <IonItem onClick={() => history.push("myorders")}>
             <IonIcon icon={bookOutline} />
             <IonLabel>{TT("My orders")}</IonLabel>
           </IonItem>
+          </IonMenuToggle>
+          <IonMenuToggle>
           <IonItem onClick={() => history.push("chat")}>
             <IonIcon icon={chatboxOutline} />
             <IonLabel>{TT("Chat")}</IonLabel>
           </IonItem>
+          </IonMenuToggle>
+          <IonMenuToggle>
           <IonItem className="item" onClick={() => history.push("Details")}>
             <IonIcon icon={informationCircleOutline} />
             <IonLabel>{TT("Info")}</IonLabel>
           </IonItem>
+          </IonMenuToggle>
+          <IonMenuToggle>
           <IonItem className="item" onClick={() => history.push("contactus")}>
             <IonIcon icon={callOutline} />
             <IonLabel>{TT("Get in Touch")}</IonLabel>
           </IonItem>
+          </IonMenuToggle>
+        
+          
+         
+         
 
           {profile?.role === "admin" && (
-            <IonItem className="item" onClick={() => history.push("Demo")}>
-              Dev Page
-            </IonItem>
+             <IonMenuToggle>
+             <IonItem className="item" onClick={() => history.push("Demo")}>
+                 Dev Page
+               </IonItem>
+             </IonMenuToggle>
           )}
           <IonButtons slot={"end"} className="flex-end">
             {user ? SignOutButton : SignInButton}
