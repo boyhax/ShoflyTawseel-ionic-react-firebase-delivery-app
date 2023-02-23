@@ -1,6 +1,6 @@
 import { Geolocation } from "@capacitor/geolocation";
 import { IonFab, IonFabButton, IonIcon, useIonViewDidEnter, useIonViewWillLeave } from "@ionic/react";
-import { locateSharp, mapSharp } from "ionicons/icons";
+import { locate, locateSharp, mapSharp } from "ionicons/icons";
 import L, { LatLng } from "leaflet";
 import {
   OpenStreetMapProvider,

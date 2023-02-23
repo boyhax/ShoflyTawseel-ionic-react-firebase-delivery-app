@@ -12,13 +12,13 @@ interface Props{
         geo:LatLng,
         name:string
     }|null,
-    driverData:driverData|null,
+    driver:driverData|null,
 }
 const initialProps:Props={
     user:null,
     profile:undefined,
     address:null,
-    driverData:null,
+    driver:null,
 }
 
 export const userStore = new Store(initialProps)

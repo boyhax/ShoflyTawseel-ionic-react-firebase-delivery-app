@@ -15,8 +15,10 @@ import {
   IonToolbar,
   IonToggle,
   IonLabel,
+  IonNote,
 } from "@ionic/react";
 import {
+  golfOutline,
   logOutOutline,
   mailOutline,
   personCircleOutline,
@@ -25,29 +27,28 @@ import {
 import { useGlobals } from "../providers/globalsProvider";
 import { getAuth } from "firebase/auth";
 import { avatarPLaceholder, mydb, updateUserProfile } from "../providers/firebaseMain";
-import { TT } from "../components/utlis/tt";
+import { TT} from "../components/utlis/tt";
 import CreatProfile from "./CreatProfile";
 import AvatarPicker from "../components/AvatarPicker";
 import { useHistory } from "react-router";
 import { usePhoto } from "../hooks/usePhoto";
 import Page from "../components/Page";
 import ProfileAvatar from "../components/ProfileAvatar";
-import { useDriver, useProfile } from "../Stores/userStore";
+import { useDriver, useProfile, userStore } from "../Stores/userStore";
+import { DriverStatus } from "../types";
 
 
 const Account: React.FC = () => {
-  const { user, profile } = useGlobals();
+  const { user, profile,driver } = userStore.useState(s=>s);
   const [content, setContent] = useState<"orders" | "deliver" | "editProfile">(
     "orders"
   );
-  const driver = useDriver();
-  const [pickAvatar, setPickAvatar] = useState(false);
+
 
   const photo = usePhoto();
   const history = useHistory();
-  const uid = getAuth().currentUser?.uid;
   const hundleActiveState = () => {
-  driver.toggleStatus()
+  driver &&mydb.updateDriver({status:driver.status==="active"?DriverStatus.inactive:DriverStatus.active})
   }
   return (
     <Page homeButton>
@@ -65,20 +66,20 @@ const Account: React.FC = () => {
         </IonButtons>
     </IonToolbar>
           
-          
-       
-          {profile?.role !== 'driver' && <IonButton  onClick={() => history.push("/driverapplication")}>
-            {TT("Register As Driver")}
-          </IonButton>}
         <div>
-          {profile?.role === "driver" && (
-            <div>
-              <IonButton onClick={() => history.push("/driverapplication")}>
+          {driver && (
+            <IonItem>
+              <IonButton fill={'clear'} onClick={() => history.push("/driverapplication")}>
                 {TT("edit driver information")}
               </IonButton>
-              <IonButton onClick={hundleActiveState}>{
-              profile.status ==='active'?TT("active"):TT("inactive")}</IonButton>
-            </div>
+              </IonItem>
+          )}
+          {!driver && (
+            <IonItem>
+              <IonButton fill={'clear'} onClick={() => history.push("/driverapplication")}>
+                {TT("Register As Driver")}
+              </IonButton>
+              </IonItem>
           )}
           {profile?.role === "admin" && (
             <div>
@@ -90,15 +91,21 @@ const Account: React.FC = () => {
           )}
         </div>
         <IonList>
-        <IonItem>
-            <IonIcon icon={personCircleOutline} />
+          {driver && driver.status==="pending" &&<IonNote color={'success'}>{TT('Your Application under review thank you for your patiency.🎕')}</IonNote>}
+          {driver && driver.status==="banned" &&<IonLabel color={'danger'} >{TT('OOBS you are banned sorry.contact us if you want to know more.🙁')}</IonLabel>}
+
+       {driver && <IonItem>
+            <IonIcon icon={golfOutline} />
             <IonLabel>{TT('status')}</IonLabel>
+            <IonNote slot={'end'}>{TT(DriverStatus[driver.status])}</IonNote>
+
             <IonToggle
+            disabled={["pending","banned"].includes(driver.status)?true:false}
             slot={"end"}
-              checked={profile?.status==="active"?true:false??false}
+              checked={driver.status==="active"?true:false}
               onIonChange={hundleActiveState}
             ></IonToggle>
-          </IonItem>
+          </IonItem>}
           <IonItem>
             <IonIcon icon={personCircleOutline} />
             <IonInput

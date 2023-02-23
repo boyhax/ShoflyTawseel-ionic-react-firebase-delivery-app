@@ -76,39 +76,39 @@
         "ar": "please fill  "
     },
     "car image": {
-        "en": "car image"
-    },
+        "en": "car image",
+        "ar": "صورة المركبة"    },
     "edit driver information": {
         "en": "edit driver information",
-        "ar": "edit driver information"
+        "ar": "تعديل معلومات السائق"
     },
     "inactive": {
         "en": "inactive",
-        "ar": "inactive"
+        "ar": "غير نشط"
     },
     "Wallet": {
         "en": "Wallet",
-        "ar": "Wallet"
+        "ar": "المحفظة"
     },
     "Saved places": {
         "en": "Saved places",
-        "ar": "Saved places"
+        "ar": "العناوين "
     },
     "My orders": {
         "en": "My orders",
-        "ar": "My orders"
+        "ar": "طلباتي"
     },
     "Info": {
         "en": "Info",
-        "ar": "Info"
+        "ar": "المعلومات"
     },
     "Get in Touch": {
         "en": "Get in Touch",
-        "ar": "Get in Touch"
+        "ar": "تواصل معنا"
     },
     "Save": {
         "en": "Save",
-        "ar": "Save"
+        "ar": "حفظ"
     },
     "Admin Page": {
         "en": "Admin Page",
@@ -120,14 +120,15 @@
     },
     "status": {
         "en": "status",
-        "ar": "status"
+        "ar": "الحالة"
     },
     "identity number": {
-        "en": "identity number"
+        "en": "identity number",
+        "ar": "رقم الهوية"
     },
     "Chat": {
         "en": "Chat",
-        "ar": "Chat"
+        "ar": "شات"
     },
     "description": {
         "en": "description",
@@ -135,11 +136,11 @@
     },
     "drop here": {
         "en": "drop here",
-        "ar": "drop here"
+        "ar": "أنزل هنا"
     },
     "Choose Pick up Point": {
         "en": "Choose Pick up Point",
-        "ar": "Choose Pick up Point"
+        "ar": "حدد موقع الاستلام"
     },
     "Set": {
         "en": "Set",
@@ -147,10 +148,35 @@
     },
     "SetPickUpPoint": {
         "en": "SetPickUpPoint",
-        "ar": "حدد موقع الاسلام"
+        "ar": "حدد موقع الاستلام"
     },
     "DropHere": {
         "en": "DropHere",
-        "ar":" حدد موقع الأيصال"
+        "ar": "حدد موقع التوصيل"
+    },
+    "Sending Application": {
+        "en": "Sending Application",
+        "ar": "أرسال الطلب"
+    },
+    "i agree to the ": {
+        "en": "i agree to the ",
+        "ar": " اوافق على"
+    },
+    "terms and conditions": {
+        "en": "terms and conditions",
+        "ar": "الشروط والاحكام"
+    },
+    "pending": {
+        "en": "pending",
+        "ar": "انتظار الموافقة"
+    },
+    "Yout": {
+        "en": "Yout",
+        "ar": "Yout"
+    },
+    
+    "Your Application under review thank you for your patiency.🎕": {
+        "en": "Your Application under review thank you for your patiency.🎕",
+        "ar": "طلبك قيد المراجعة شكرا على ألانتظار.🎕"
     }
 }

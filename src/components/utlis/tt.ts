@@ -20,7 +20,7 @@ export function TT(text: string, language?: string) {
     }
   } else {
     let newdata = ttData;
-    newdata[text] =  {en:text} ;
+    newdata[text] =  {en:text,ar:text} ;
     newdata = JSON.stringify(newdata);
     update(newdata);
   }

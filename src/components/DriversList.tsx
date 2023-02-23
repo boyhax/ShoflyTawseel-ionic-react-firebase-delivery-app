@@ -32,11 +32,11 @@ import OrdersPlaceHolder from "./OrdersPLaceHolder";
 import useUserOrders from "../hooks/useUserOrders";
 import { useHistory } from "react-router";
 import { makeOrderFromDoc, mydb } from "../providers/firebaseMain";
-import { UserProfile } from "../types";
+import { driverData, UserProfile } from "../types";
 import useMounted from "../hooks/useMounted";
 
 export default function DriversList(props: any) {
-  const [list, setList] = useState<UserProfile[]>([]);
+  const [list, setList] = useState<driverData[]>([]);
   const IonRefresherElement = useRef<HTMLIonRefresherElement | any>();
   const history = useHistory();
   const [lastDoc, setLastDoc] = useState<any>(null);
@@ -82,12 +82,11 @@ export default function DriversList(props: any) {
   useEffect(() => {
     console.log("drivers list :>> ", list);
   }, [list]);
-  function hundleApprove(v: any) {
+  function hundleApprove(id: string) {
     
       console.log('approving driver')
-      mydb.ApproveDriver(v.id).then((v: any) => {
-        delete list[v];
-        mounted && setList(list);
+      mydb.ApproveDriver(id).then((v: any) => {
+        mounted && setList(list.filter((v: any) => v.id !== id));
       });
     
   }
@@ -108,20 +107,20 @@ export default function DriversList(props: any) {
         </IonRefresher>
 
         {list &&
-          list.map((v: UserProfile, i: any) => {
+          list.map((v: driverData, i: any) => {
             return (
-              <IonCard>
-                <IonAvatar>
-                  <IonImg src={v.photoURL}></IonImg>
-                </IonAvatar>
-                <IonLabel>{v.name}</IonLabel>
-                <IonChip>{v.driverData.carNumber}</IonChip>
-                <IonChip>{v.driverData.carType}</IonChip>
+              <IonCard key={v.id}>
+                {/* <IonAvatar>
+                  <IonImg src={}></IonImg>
+                </IonAvatar> */}
+                <IonLabel>{}</IonLabel>
+                <IonChip>carNumber {v.carNumber}</IonChip>
+                <IonChip>carType {v.carType}</IonChip>
 
-                <IonChip>{v.driverData.carYear}</IonChip>
-                <IonChip>{v.driverData.identity}</IonChip>
-                <IonNote>{v.status}</IonNote>
-                <IonButton onClick={()=>hundleApprove(v)}>
+                <IonChip> carYear{v.carYear}</IonChip>
+                <IonChip>identity {v.identity}</IonChip>
+                <IonNote>status {v.status}</IonNote>
+                <IonButton onClick={()=>{v.id && hundleApprove(v.id)}}>
                   <IonIcon icon={thumbsUp} />
                 </IonButton>
               </IonCard>

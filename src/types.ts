@@ -57,12 +57,20 @@ export const OrderCatagories: OrderType[] = [
     value: "BigObjects",
   },
 ];
+export enum DriverStatus {
+  active="active",
+  inactive="inactive",
+  banned="banned",
+  pending="pending",
+}
 export interface driverData {
   carType: string;
   carNumber: string;
   carYear: string;
   email:string,
   identity:string,
+  status:DriverStatus,
+  id?:string
 }
   
 

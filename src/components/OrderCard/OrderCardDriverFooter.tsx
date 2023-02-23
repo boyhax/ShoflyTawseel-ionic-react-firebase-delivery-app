@@ -44,7 +44,7 @@ export default function OrderCardDriverFooter({
 }: props): React.ReactElement {
   const [deleted, setDeleted] = useState(false);
   const uid = getAuth().currentUser?.uid;
-  const { user, driverData } = userStore.useState((s) => s);
+  const { user, driver } = userStore.useState((s) => s);
   const history = useHistory();
   const owner = order!.uid === uid;
   const [userInfo,setUserInfo] = useState(getUserInfoPlaceHolder())
@@ -76,9 +76,8 @@ export default function OrderCardDriverFooter({
     return <></>;
   }
   return (
-    <div>
       <div className={"flex w-full  justify-between "}>
-        {!owner && (
+        
           <IonButton disabled={!user} onClick={hundleApply}>
             {userApplied !== undefined && (
               <IonIcon
@@ -93,9 +92,9 @@ export default function OrderCardDriverFooter({
                 : "accept"
               : ""}
           </IonButton>
-        )}
+        
         <IonButtons className={"flex flex-end justify-end"}>
-          {owner && (
+          
             <IonButton
               fill="clear"
               onClick={() => {
@@ -110,8 +109,8 @@ export default function OrderCardDriverFooter({
                 icon={trashOutline}
               ></IonIcon>
             </IonButton>
-          )}
-          {!owner && (
+          
+          
             <IonButton
               fill="clear"
               // onClick={() => setReporting(!reporting)}
@@ -126,8 +125,8 @@ export default function OrderCardDriverFooter({
               ></IonIcon>
               {/* إبلاغ */}
             </IonButton>
-          )}
-          {!owner && (
+          
+          
             <IonButton
               fill="clear"
               onClick={() => history.push("/chat/" + order.uid)}
@@ -140,8 +139,8 @@ export default function OrderCardDriverFooter({
                 icon={chatboxOutline}
               ></IonIcon>
             </IonButton>
-          )}
-          {!owner && !!userInfo.phoneNumber && (
+          
+           !!userInfo.phoneNumber && (
             <IonButton
               onClick={() => OpenWhatsapp(userInfo.phoneNumber)}
               color="light"
@@ -155,9 +154,8 @@ export default function OrderCardDriverFooter({
                 icon={logoWhatsapp}
               ></IonIcon>
             </IonButton>
-          )}
+          
         </IonButtons>
       </div>
-    </div>
   );
 }

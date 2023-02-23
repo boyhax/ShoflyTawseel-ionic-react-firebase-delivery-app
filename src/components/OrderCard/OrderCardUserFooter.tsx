@@ -27,7 +27,7 @@ import {
   reportOrder,
 } from "../../providers/firebaseMain";
 import { userStore } from "../../Stores/userStore";
-import { orderProps, OrderStatus, userInfo } from "../../types";
+import { DriverStatus, orderProps, OrderStatus, userInfo } from "../../types";
 import "./OrderCard.css";
 
 interface props extends ComponentProps {
@@ -45,7 +45,7 @@ export default function OrderCardDriverFooter({
 }: props): React.ReactElement {
   const [deleted, setDeleted] = useState(false);
   const uid = getAuth().currentUser?.uid;
-  const { user, driverData } = userStore.useState((s) => s);
+  const { user, driver } = userStore.useState((s) => s);
   const history = useHistory();
   const owner = order!.uid === uid;
   const [userInfo,setUserInfo] = useState(getUserInfoPlaceHolder())
@@ -77,11 +77,9 @@ export default function OrderCardDriverFooter({
     return <></>;
   }
   return (
-    <div>
-      <div className={"flex w-full  justify-between "}>
-          
-        {order.status ===OrderStatus.Placed && (
-          <IonButton disabled={!user} onClick={hundleApply}>
+    <div className={"flex w-full  justify-between "}>
+        
+         {driver && driver.status ===DriverStatus.active && <IonButton disabled={!user} onClick={hundleApply}>
             {userApplied !== undefined && (
               <IonIcon
                 slot={"icon-only"}
@@ -94,42 +92,13 @@ export default function OrderCardDriverFooter({
                 ? "un accept"
                 : "accept"
               : ""}
-          </IonButton>
-        )}
+          </IonButton>}
+        
         <IonButtons className={"flex flex-end justify-end"}>
-          {owner && (
-            <IonButton
-              fill="clear"
-              onClick={() => {
-                mydb.deleteOrder(order);
-                console.log("order :>> ", order);
-                setDeleted(true);
-              }}
-            >
-              <IonIcon
-                size="small"
-                color="primary"
-                icon={trashOutline}
-              ></IonIcon>
-            </IonButton>
-          )}
-          {!owner && (
-            <IonButton
-              fill="clear"
-              // onClick={() => setReporting(!reporting)}
-              color="dark"
-              shape="round"
-              id={`reportButton ${order.id}`}
-            >
-              <IonIcon
-                size="small"
-                color="success"
-                icon={alertCircleOutline}
-              ></IonIcon>
-              {/* إبلاغ */}
-            </IonButton>
-          )}
-          {!owner && (
+          
+            
+          
+          
             <IonButton
               fill="clear"
               onClick={() => history.push("/chat/" + order.uid)}
@@ -142,8 +111,8 @@ export default function OrderCardDriverFooter({
                 icon={chatboxOutline}
               ></IonIcon>
             </IonButton>
-          )}
-          {!owner && !!userInfo.phoneNumber && (
+          
+           {!!userInfo.phoneNumber && 
             <IonButton
               onClick={() => OpenWhatsapp(userInfo.phoneNumber)}
               color="light"
@@ -156,10 +125,9 @@ export default function OrderCardDriverFooter({
                 color="success"
                 icon={logoWhatsapp}
               ></IonIcon>
-            </IonButton>
-          )}
+            </IonButton>}
+          
         </IonButtons>
       </div>
-    </div>
   );
 }

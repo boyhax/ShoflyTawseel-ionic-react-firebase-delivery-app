@@ -1,10 +1,9 @@
 import * as React from "react";
 import "react-select-search/style.css";
-import { newOrderStore, updateFromTo, updateGeo, updateStep } from ".";
+import { updateFromTo, updateGeo, updateStep } from ".";
 import GeoPointPicker from "../../components/GeoPointPicker";
 import { LatLng } from "leaflet";
 import { GeoPoint } from "firebase/firestore";
-import { geocodeByLatLng } from "react-google-places-autocomplete";
 import { TT } from "../../components/utlis/tt";
 
 const Step1: React.FC = (props) => {

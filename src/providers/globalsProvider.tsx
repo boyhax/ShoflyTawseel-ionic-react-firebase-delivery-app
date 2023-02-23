@@ -1,25 +1,16 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { getAuth, onAuthStateChanged, User } from "firebase/auth";
+import { User } from "firebase/auth";
 import {
-  doc,
   DocumentSnapshot,
-  getFirestore,
-  onSnapshot,
 } from "firebase/firestore";
-import { token } from "../App";
 import {
-  createNewProfileForThisUser,
-  mydb,
   userApplicationsStore,
   userOrdersStore,
-  UserProfileFromDoc,
   userReportsStore,
 } from "./firebaseMain";
 import { UserProfile } from "../types";
 import { useIonAlert } from "@ionic/react";
 import useOnline from "../hooks/useOnline";
-import useSignTools from "../hooks/useSignTools";
-import useUserHooks from "../hooks/userHooks";
 import LoadingScreen from "../pages/LoadingScreen";
 import useMounted from "../hooks/useMounted";
 import { userStore } from "../Stores/userStore";
@@ -59,29 +50,11 @@ const GlobalProvider: React.FC = (props) => {
   const userReports = userReportsStore.useState();
   const {user,profile} = userStore.useState(s=>s)
   console.log("this.userOrders :>> ", userOrders);
-  console.log("this.userapplication :>> ", userApplications);
+  console.log("this.userApplication :>> ", userApplications);
   console.log("this.userReports :>> ", userReports);
-  const {mounted}=useMounted()
-  useEffect(() => {
-    // return onAuthStateChanged(
-    //   getAuth(),
-    //   (user) => {
-    //     console.log("user  :>> ", !!user);
-    //     mounted && setUser(!!user);
-    //     user && mydb.subscripeUserList(user.uid);
-    //     !user && mydb.unSubscripeUserList();
-    //   },
-    //   (err) => {
-    //     console.log(err, "error in user sign in check");
-    //   }
-    // );
-  }, []);
-
-  useEffect(() => {
-    
-  }, [user]);
-
+  // const {mounted}=useMounted()
   
+
 
   const toProvide: Props = {
     user,
