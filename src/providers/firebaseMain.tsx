@@ -3,6 +3,7 @@ import {
   arrayRemove,
   arrayUnion,
   collection,
+  CollectionReference,
   deleteDoc,
   doc,
   DocumentData,
@@ -50,6 +51,9 @@ import { b64toBlob } from "../hooks/usePhoto";
 import L, { LatLng } from "leaflet";
 import { userStore } from "../Stores/userStore";
 import { clear } from "console";
+import chatStore, { ChatProps, MessageProps } from "../Stores/chatStore";
+import { getAcendingString } from "../components/utlis/AcendingString";
+import { TT } from "../components/utlis/tt";
 
 export const userOrdersStore = new Store<any[]>([]);
 export const userApplicationsStore = new Store<any[]>([]);
@@ -188,9 +192,85 @@ class firebaseClass {
       userReportsStore.update((s) => this.userReports);
       return !this.subscripeUserList;
     });
+    this.subscripeUserChats();
     this.unSubList.push(unsub1, unsub2, unsub3);
   }
+  async subscripeUserChats() {
+    var ref = collection(this.db, "chats");
+    var que = query(ref, where("chaters", "array-contains", this.user?.uid));
+    let unsub = onSnapshot(que, (snap) => {
+      var chats: any[] = [];
+      !snap.empty &&
+        (chats = snap.docs.map((v) => {
+          return { ...v.data(), id: v.id };
+        }));
+      chatStore.update((s) => {
+        s.chats = chats;
+      });
+      console.log("chats :>> ", chats);
+    });
+    this.unSubList.push(unsub);
+  }
+  async sendMessage(
+    chatId: string,
+    data: Pick<MessageProps, "text" | "data" | "type">
+  ) {
+    if (!this.user) {
+      return;
+    }
+    let message: MessageProps = {
+      iconURL:
+        this.user?.photoURL ||
+        avatarPLaceholder(this.user?.displayName ?? " s t"),
+      name: this.user?.displayName || "@@",
+      from: this.user!.uid,
+      isRead: false,
+      time: new Date(),
+      ...data,
+    };
+    addDoc(collection(this.db, "chats/" + chatId + "/messages"), message);
+  }
+  async makeChatIfUserExist(id: string) {
+    console.log("making new chat 0");
+    if (!this.user) {
+      return;
+    }
+    console.log("making new chat 1");
 
+    getDoc(doc(this.db, "users/" + id)).then((_doc) => {
+      if (_doc.exists()) {
+        console.log("making new chat user exist");
+
+        setDoc(
+          doc(this.db, "chats/" + getAcendingString([this.user!.uid, id])),
+          {
+            chaters: [this.user?.uid, id],
+          }
+        );
+        let message: MessageProps = {
+          iconURL:
+            this.user?.photoURL ||
+            avatarPLaceholder(this.user?.displayName ?? " s t"),
+          name: this.user?.displayName || "@@",
+          data: "",
+          from: this.user!.uid,
+          text: TT("Hello"),
+          type: "text",
+          isRead: false,
+          time: new Date(),
+        };
+        addDoc(
+          collection(
+            this.db,
+            "chats/" + getAcendingString([this.user!.uid, id]) + "/messages"
+          ),
+          message
+        );
+      } else {
+        console.log("User not found");
+      }
+    });
+  }
   async uploadPhoto(base64photo: string, name: string) {
     const blob = b64toBlob(base64photo, `image/${name}`, 512);
     const sref = ref(getStorage(), name);
@@ -225,7 +305,9 @@ class firebaseClass {
     values.from && (q = query(q, startAfter(values.from)));
     const res = await getDocs(q);
     !res.empty && onlastDoc(res.docs[res.docs.length - 1]);
-    return res.docs.map(doc=>{return {...doc.data(),id:doc.id} as driverData});
+    return res.docs.map((doc) => {
+      return { ...doc.data(), id: doc.id } as driverData;
+    });
   }
   async ApproveDriver(id: string) {
     console.log("driver approved =>", id);
@@ -288,8 +370,7 @@ export function geoToLatlng(geo: GeoPoint): LatLng {
   return L.latLng(geo.latitude, geo.longitude);
 }
 export async function uploadNewOrder(o: newOrderProps) {
-  var docref,
-  from,to,id
+  var docref, from, to, id;
   try {
     var id: any = await addDoc(collection(db, "orders"), {});
     id = id.id;
@@ -307,9 +388,9 @@ export async function uploadNewOrder(o: newOrderProps) {
       status: OrderStatus.Placed,
       id: id,
     };
-     docref = setDoc(doc(db, "orders/" + id), newO);
-     from = geoFirestore.addGeo(id, geoToLatlng(o.geo.from), true);
-     to = geoFirestore.addGeo(id, geoToLatlng(o.geo.to), false);
+    docref = setDoc(doc(db, "orders/" + id), newO);
+    from = geoFirestore.addGeo(id, geoToLatlng(o.geo.from), true);
+    to = geoFirestore.addGeo(id, geoToLatlng(o.geo.to), false);
   } catch (error) {
     console.log("new order creation error :>> ", error);
   }

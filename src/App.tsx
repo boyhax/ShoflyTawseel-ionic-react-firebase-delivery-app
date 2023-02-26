@@ -81,7 +81,7 @@ Device.getInfo().then((v) => {
 });
 const languageStore = new Store<{lang:languages}>({lang:'ar'})
 type languages="en" | "ar"
-var language: languages = "ar";
+var language: languages = "en";
 
 languageStore.subscribe(s=>s,(s)=>{
   language = s.lang

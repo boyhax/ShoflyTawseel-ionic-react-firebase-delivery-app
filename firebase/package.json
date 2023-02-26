@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "firebase-functions": "^3.23.0",
-    "random-avatar-generator": "^2.0.0"
-  }
-}

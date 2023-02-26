@@ -1,30 +1,24 @@
 import React, { useState } from "react";
-import { IonCard, IonContent, IonIcon } from "@ionic/react";
 import Page from "../components/Page";
-import { GoogleMap } from "@capacitor/google-maps";
-import GoogleSearchAutoComplete from "../components/GoogleSearchAutoComplete";
-import { attach, send } from "ionicons/icons";
-import LoadingScreen from "./LoadingScreen";
-import TwoPointMap from "../components/TwoPointMap";
 import L from "leaflet";
 
 const Demo: React.FC = () => {
   const [value, setValue] = useState(null);
-  
-  const  point1 =()=> L.latLng(Math.random()*23.5880,Math.random()* 58.3829 ),
-  point2 = ()=>L.latLng(Math.random()*22.4428, Math.random()*58.8003);
+
+  const point1 = () =>
+      L.latLng(Math.random() * 23.588, Math.random() * 58.3829),
+    point2 = () => L.latLng(Math.random() * 22.4428, Math.random() * 58.8003);
   return (
     <Page>
-      <IonContent>
-        {[1,2,3,4,5].map((v,i)=>{
-          return <IonCard key={i} class={'w-full mx-auto h-24'}>
-        <TwoPointMap id={String(i)} onMap={()=>{}} point1={point1()} point2={point2()} />
-      </IonCard>
-        })}
-      
-      
-      </IonContent>
-      
+      <div className="collapse">
+        <input type="checkbox" className="peer" />
+        <div className="collapse-title bg-primary text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content">
+          Click me to show/hide content
+        </div>
+        <div className="collapse-content bg-primary text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content">
+          <p>hello</p>
+        </div>
+      </div>
     </Page>
   );
 };

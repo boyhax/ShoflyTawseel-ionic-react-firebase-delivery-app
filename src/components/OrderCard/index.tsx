@@ -33,6 +33,7 @@ import OrderCardOwnerFooter from "./OrderCardOwnerFooter";
 import TwoPointMap from "../TwoPointMap";
 import { prettyDate } from "../utlis/prettyDate";
 import { TT } from "../utlis/tt";
+import OrderCardUserFooter from "./OrderCardUserFooter";
 
 interface props extends ComponentProps {
   order: orderProps;
@@ -143,7 +144,7 @@ const OrderCard = ({ order }: props) => {
 
       {role==='owner' && <OrderCardOwnerFooter order={order}/>}
       {role==='driver' && <OrderCardDriverFooter order={order}/>}
-      {role==='user' && <OrderCardOwnerFooter order={order}/>}
+      {role==='user' && <OrderCardUserFooter order={order}/>}
       {/* //messengers popover */}
 
       <IonPopover trigger={`reportButton ${order.id}`}>
