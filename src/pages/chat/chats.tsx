@@ -12,7 +12,7 @@ export default function Chats(props: any) {
   
   const [currentChat, setCurrentChat] = useState<ChatProps>()
   
-  const {chats} = chatStore.useState(s=>s)
+  const {chats} = chatStore.useState()
   const {id}:any = useParams()
 
 useEffect(() => {

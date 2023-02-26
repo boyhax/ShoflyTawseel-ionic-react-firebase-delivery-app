@@ -49,9 +49,7 @@ export default function OrderCardDriverFooter({
   const history = useHistory();
   const owner = order!.uid === uid;
   const [userInfo,setUserInfo] = useState(getUserInfoPlaceHolder())
-  useCallback(()=> {
-    mydb.getUserInfo(order.uid).then(doc=> {setUserInfo( doc.data() as userInfo)})},[order.uid]);
-
+  
   const { mounted } = useMounted();
 
   const userApplied = useMemo(
@@ -59,8 +57,9 @@ export default function OrderCardDriverFooter({
     [order.driver]
   );
 
-  useEffect(() => {}, []);
-
+  useEffect(() => {
+    mydb.getUserInfo(order.uid).then(data=>setUserInfo(data))
+  }, []);
   const [presentAlert] = useIonAlert();
 
   async function hundleApply() {

@@ -44,21 +44,16 @@ export default function OrderCardDriverFooter({
 }: props): React.ReactElement {
   const [deleted, setDeleted] = useState(false);
   const uid = getAuth().currentUser?.uid;
-  const { user, driver } = userStore.useState((s) => s);
+  const { user, } = userStore.useState((s) => s);
   const history = useHistory();
-  const owner = order!.uid === uid;
-  const [userInfo,setUserInfo] = useState(getUserInfoPlaceHolder())
-  useCallback(()=> {
-    mydb.getUserInfo(order.uid).then(doc=> {setUserInfo( doc.data() as userInfo)})},[order.uid]);
-
-  const { mounted } = useMounted();
+  
 
   const userApplied = useMemo(
     () => mydb.user && order.driver === mydb.user.uid,
     [order.driver]
   );
 
-  useEffect(() => {}, []);
+  
 
   const [presentAlert] = useIonAlert();
 
@@ -95,25 +90,11 @@ export default function OrderCardDriverFooter({
         
         <IonButtons className={"flex flex-end justify-end"}>
           
-            <IonButton
-              fill="clear"
-              onClick={() => {
-                mydb.deleteOrder(order);
-                console.log("order :>> ", order);
-                setDeleted(true);
-              }}
-            >
-              <IonIcon
-                size="small"
-                color="primary"
-                icon={trashOutline}
-              ></IonIcon>
-            </IonButton>
+            
           
           
             <IonButton
               fill="clear"
-              // onClick={() => setReporting(!reporting)}
               color="dark"
               shape="round"
               id={`reportButton ${order.id}`}
@@ -140,9 +121,9 @@ export default function OrderCardDriverFooter({
               ></IonIcon>
             </IonButton>
           
-           !!userInfo.phoneNumber && (
+           {order.phoneNumber && (
             <IonButton
-              onClick={() => OpenWhatsapp(userInfo.phoneNumber)}
+              onClick={() => { OpenWhatsapp(order.phoneNumber)}}
               color="light"
               shape="round"
               fill="clear"
@@ -153,7 +134,7 @@ export default function OrderCardDriverFooter({
                 color="success"
                 icon={logoWhatsapp}
               ></IonIcon>
-            </IonButton>
+            </IonButton>)}
           
         </IonButtons>
       </div>

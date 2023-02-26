@@ -90,7 +90,7 @@ class firebaseClass {
   SubscribeUserLists = false;
   unSubList: any[] = [];
   async getUserInfo(uid: string) {
-    return getDoc(doc(this.db, "users/" + uid));
+    return getDoc(doc(this.db, "usersInfo/" + uid)).then((doc) => doc.data() as userInfo);
   }
   subscribeProfile() {
     const uid = this.user?.uid;
@@ -213,7 +213,7 @@ class firebaseClass {
   }
   async sendMessage(
     chatId: string,
-    data: Pick<MessageProps, "text" | "data" | "type">
+    data: Pick<MessageProps, "text" | "data">
   ) {
     if (!this.user) {
       return;
@@ -255,7 +255,6 @@ class firebaseClass {
           data: "",
           from: this.user!.uid,
           text: TT("Hello"),
-          type: "text",
           isRead: false,
           time: new Date(),
         };
@@ -385,6 +384,7 @@ export async function uploadNewOrder(o: newOrderProps) {
       comment: o.comment || "no comment",
       address: o.address,
       driver: "",
+      phoneNumber:mydb.user?.phoneNumber!??"",
       status: OrderStatus.Placed,
       id: id,
     };
@@ -653,8 +653,8 @@ export const avatarPLaceholder = (name: string) =>
   "https://ui-avatars.com/api/?name=" + name + "&background=0D8ABC&color=fff";
 export function getUserInfoPlaceHolder() {
   let info: userInfo = {
-    name: "Nick Name",
-    phoneNumber: "*** *******",
+    name: "",
+    phoneNumber: "",
     photoURL: avatarPLaceholder("s t"),
   };
   return info;

@@ -6,7 +6,6 @@ export interface MessageProps {
     name:string
     time: any;
     text: string;
-    type: string;
     data: any;
     from: string;
     isRead?: boolean;

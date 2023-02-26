@@ -89,7 +89,7 @@ export interface UserProfile {
 export interface userInfo {
   name: string;
   photoURL: string;
-  phoneNumber: string | "";
+  phoneNumber: string ;
 }
 
 export interface ApplicationProps {
@@ -142,6 +142,7 @@ export interface orderProps {
   from: google.maps.GeocoderResult|any;
   to: google.maps.GeocoderResult|any;
   time: any;
+  phoneNumber?:string,
   comment: string | "";
   driver:string,
   status:OrderStatus,

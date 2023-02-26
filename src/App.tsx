@@ -63,6 +63,7 @@ import AdminRoute from "./routes/AdminRoute";
 import AdminPage from "./pages/Admin";
 import Account from "./pages/account";
 import MyOrders from "./pages/MyOrders";
+import { TT } from "./components/utlis/tt";
 
 setupIonicReact({
   mode: "ios",
@@ -81,7 +82,7 @@ Device.getInfo().then((v) => {
 });
 const languageStore = new Store<{lang:languages}>({lang:'ar'})
 type languages="en" | "ar"
-var language: languages = "en";
+var language: languages = "ar";
 
 languageStore.subscribe(s=>s,(s)=>{
   language = s.lang
@@ -95,7 +96,7 @@ export const getLang = () => {
 const App: React.FC = () => {
   const ionRouter = useIonRouter();
   const {lang} = languageStore.useState()
-  document.body.style.direction = lang==='en'?'ltr':'rtl'
+  document.body.style.direction = TT('dir',lang)
   console.log('body direction :>> ',   document.body.style.direction
   );
   const toggleMenu = () => {
@@ -114,7 +115,9 @@ const App: React.FC = () => {
   return (
     <React.StrictMode>
       <GlobalProvider>
-        <IonApp className={`${lang==='en'?'ltr':'rtl'}`}>
+        <IonApp 
+        // className={`${TT('dir')}`}
+        >
           
 
           <IonReactRouter>
