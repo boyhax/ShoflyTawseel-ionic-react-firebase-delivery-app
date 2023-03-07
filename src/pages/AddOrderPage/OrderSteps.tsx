@@ -15,17 +15,17 @@ const OrdersSteps: React.FC<{
   return (
     <div
       className={
-        " absolute z-[1000] w-26 bg-[var(--ion-color-primary)] bg-white rounded-tr-3xl rounded-br-3xl py-6 top-9 left-0 flex flex-col  px-1 bg-transparent items-center justify-evenly w-fit"
+        " absolute z-[1000] w-26 bg-[var(--ion-color-primary)] bg-white rounded-br-3xl rounded-bl-3xl px-6 top-0 left-22 flex flex-row ltr   items-center justify-evenly w-fit"
       }
     >
       <div
         className={
-          "flex flex-col text-4xl gap-y-8 bg-inherit bg-white gab-6"
+          "flex flex-row text-4xl gap-x-8 ltr bg-inherit bg-white gab-6"
         }
       >
         
-        <IonIcon onClick={()=>onStepClick(0)} color={step===0?`light`:`secondary`}  icon={locationSharp} />
-        <IonIcon onClick={()=>onStepClick(1)} color={step===1?`danger`:`secondary`} icon={pinSharp} />
+        <IonIcon className={''} onClick={()=>onStepClick(0)} color={step===0?`light`:`secondary`}  icon={locationSharp} />
+        <IonIcon onClick={()=>onStepClick(1)} color={step===1?`light`:`secondary`} icon={pinSharp} />
         <IonIcon onClick={()=>{}} color={step===2?`light`:`secondary`} icon={readerSharp} />
       </div>
     </div>

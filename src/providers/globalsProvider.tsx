@@ -1,8 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { User } from "firebase/auth";
-import {
-  DocumentSnapshot,
-} from "firebase/firestore";
+import { DocumentSnapshot } from "firebase/firestore";
 import {
   userApplicationsStore,
   userOrdersStore,
@@ -14,6 +12,9 @@ import useOnline from "../hooks/useOnline";
 import LoadingScreen from "../pages/LoadingScreen";
 import useMounted from "../hooks/useMounted";
 import { userStore } from "../Stores/userStore";
+import useNotifications from "../hooks/useNotifications";
+import useDriverUserMode from "../hooks/useDriverUserMode";
+import { Preferences } from "@capacitor/preferences";
 
 interface Props {
   user: User | null;
@@ -25,6 +26,9 @@ interface Props {
   userApplications: any;
   userOrders: any;
   userReports: any;
+  token: any;
+  notifications: any;
+  register: any;
 }
 const initialProps: Props = {
   user: null,
@@ -36,6 +40,9 @@ const initialProps: Props = {
   userApplications: {},
   userOrders: {},
   userReports: {},
+  token: "",
+  notifications: [],
+  register: () => {},
 };
 const globalsContext = createContext<Props>(initialProps);
 
@@ -43,18 +50,17 @@ const GlobalProvider: React.FC = (props) => {
   const [currentOrder, setCurrentOrder] = useState<DocumentSnapshot>();
   const { isOnline } = useOnline();
 
-
   const [presentAlert, dissmissAlert] = useIonAlert();
   const userOrders = userOrdersStore.useState();
   const userApplications = userApplicationsStore.useState();
   const userReports = userReportsStore.useState();
-  const {user,profile} = userStore.useState(s=>s)
+  const { user, profile } = userStore.useState((s) => s);
   console.log("this.userOrders :>> ", userOrders);
   console.log("this.userApplication :>> ", userApplications);
   console.log("this.userReports :>> ", userReports);
   // const {mounted}=useMounted()
   
-
+  const { token, notifications, register } = useNotifications();
 
   const toProvide: Props = {
     user,
@@ -66,17 +72,25 @@ const GlobalProvider: React.FC = (props) => {
     userApplications,
     userOrders,
     userReports,
+    token,
+    notifications,
+    register,
   };
 
   return (
     <globalsContext.Provider value={toProvide}>
-      <div hidden={isOnline ||user === undefined} className={"absolute z-50 w-full mx-auto "}>
+      <div
+        hidden={isOnline || user === undefined}
+        className={"absolute z-50 w-full mx-auto "}
+      >
         <p className={"text-xl text-center text-slate-300  bg-red-700"}>
           Intenet connection required
         </p>
       </div>
-      {user ===undefined? <LoadingScreen />:''}
-      <div className={`${user===undefined &&'hidden'}`}>{props.children}</div>
+      {user === undefined ? <LoadingScreen /> : ""}
+      <div className={`${user === undefined && "hidden"}`}>
+        {props.children}
+      </div>
     </globalsContext.Provider>
   );
 };

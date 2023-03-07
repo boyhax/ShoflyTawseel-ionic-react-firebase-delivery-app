@@ -18,7 +18,7 @@ import { TT } from "../components/utlis/tt";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { mydb } from "../providers/firebaseMain";
-import { useDriver } from "../Stores/userStore";
+import { useDriver } from "../hooks/useDriver";
 export default function DriverApplication(props: any) {
   const { profile } = useGlobals();
   const initalData = {

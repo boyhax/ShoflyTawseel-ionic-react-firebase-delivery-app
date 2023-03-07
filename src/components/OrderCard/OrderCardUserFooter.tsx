@@ -28,6 +28,7 @@ import {
 } from "../../providers/firebaseMain";
 import { userStore } from "../../Stores/userStore";
 import { DriverStatus, orderProps, OrderStatus, userInfo } from "../../types";
+import { TT } from "../utlis/tt";
 import "./OrderCard.css";
 
 interface props extends ComponentProps {
@@ -88,8 +89,8 @@ export default function OrderCardDriverFooter({
             {userApplied === undefined && <IonSpinner></IonSpinner>}
             {userApplied !== undefined
               ? userApplied
-                ? "un accept"
-                : "accept"
+                ? TT("un accept")
+                : TT("accept")
               : ""}
           </IonButton>}
         
@@ -111,9 +112,9 @@ export default function OrderCardDriverFooter({
               ></IonIcon>
             </IonButton>
           
-           {!!userInfo.phoneNumber && 
+           {order["phoneNumber"] && 
             <IonButton
-              onClick={() => OpenWhatsapp(userInfo.phoneNumber)}
+              onClick={() => OpenWhatsapp(order["phoneNumber"])}
               color="light"
               shape="round"
               fill="clear"

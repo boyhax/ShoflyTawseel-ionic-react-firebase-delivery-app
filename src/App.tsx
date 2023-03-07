@@ -1,5 +1,5 @@
 import React from "react";
-import { Redirect, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import {
   IonApp,
   IonIcon,
@@ -36,7 +36,7 @@ import "./theme/variables.css";
 import "./theme/tailwind.css";
 /* Global CSS */
 import "./global.css";
-import '../node_modules/leaflet-geosearch/dist/geosearch.css'
+import "../node_modules/leaflet-geosearch/dist/geosearch.css";
 
 import GlobalProvider from "./providers/globalsProvider";
 import Chats from "./pages/chat/chats";
@@ -64,45 +64,49 @@ import AdminPage from "./pages/Admin";
 import Account from "./pages/account";
 import MyOrders from "./pages/MyOrders";
 import { TT } from "./components/utlis/tt";
+import  pushFCM from "./providers/pushFCM";
+
 
 setupIonicReact({
   mode: "ios",
 });
 
 export var token: string = "";
-
+const DeviceStore = new Store({
+  device:"web"
+})
 Device.getInfo().then((v) => {
   console.log("platform :>> ", v.platform);
+  DeviceStore.update(s=>{s.device=v.platform})
+
   if (["android", "ios"].includes(v.platform)) {
-    FCM.getToken().then((t) => {
-      token = t.token;
-      mydb.setUserToken(t.token);
-    });
+    // FCM.getToken().then((t) => {
+    //   token = t.token;
+    //   mydb.setUserToken(t.token);
+    // });
   }
 });
-const languageStore = new Store<{lang:languages}>({lang:'ar'})
-type languages="en" | "ar"
+const languageStore = new Store<{ lang: languages }>({ lang: "ar" });
+type languages = "en" | "ar";
 var language: languages = "ar";
 
-languageStore.subscribe(s=>s,(s)=>{
-  language = s.lang
-  const htmlel:any = document.getElementsByName('html')
-  htmlel.style.direction = s.lang==='en'?'ltr':'rtl'
-})
+languageStore.subscribe(
+  (s) => s,
+  (s) => {
+    language = s.lang;
+    const htmlel: any = document.getElementsByName("html");
+    htmlel.style.direction = s.lang === "en" ? "ltr" : "rtl";
+  }
+);
 export const getLang = () => {
   return language;
 };
 
 const App: React.FC = () => {
   const ionRouter = useIonRouter();
-  const {lang} = languageStore.useState()
-  document.body.style.direction = TT('dir',lang)
-  console.log('body direction :>> ',   document.body.style.direction
-  );
-  const toggleMenu = () => {
-    const menu: any = document.getElementById("mainMenu");
-    menu.toggle();
-  };
+  const { lang } = languageStore.useState();
+  document.body.style.direction = TT("dir", lang);
+ 
 
   document.addEventListener("ionBackButton", (ev: any) => {
     ev.detail.register(-1, () => {
@@ -111,21 +115,26 @@ const App: React.FC = () => {
       }
     });
   });
-
+  const {device} = DeviceStore.useState()
+  // if(device!=='web'){
+  //   pushFCM.addListeners()
+  //   pushFCM.registerNotifications()
+  //   pushFCM.getDeliveredNotifications()
+  // }
+  
   return (
     <React.StrictMode>
       <GlobalProvider>
-        <IonApp 
-        // className={`${TT('dir')}`}
-        >
-          
+        <IonReactRouter>
+        <Switch>
 
-          <IonReactRouter>
-          <MainMenu/>
-        
-            <IonTabs >
+          <IonApp
+          // className={`${TT('dir')}`}
+          >
+            <MainMenu />
+
+            {/* <IonTabs> */}
               <IonRouterOutlet id="main-content">
-                <Switch>
                   <Route exact path="/orders">
                     <AuthRoute>
                       <OrdersPage />
@@ -158,17 +167,17 @@ const App: React.FC = () => {
                     <AuthRoute>
                       <Chats />
                     </AuthRoute>
-                    </Route>
-                    <Route exact path="/admin">
+                  </Route>
+                  <Route exact path="/admin">
                     <AdminRoute>
                       <AdminPage />
                     </AdminRoute>
-                    </Route>
+                  </Route>
                   <Route exact path="/demo">
                     <Demo />
                   </Route>
                   <Route exact path="/driverapplication">
-                    <DriverApplication/>
+                    <DriverApplication />
                   </Route>
                   <Route exact path="/addorder">
                     <AuthRoute>
@@ -178,39 +187,41 @@ const App: React.FC = () => {
                   <Route exact path="/">
                     <Redirect to="/home" />
                   </Route>
-                </Switch>
               </IonRouterOutlet>
-              <IonTabBar slot="bottom">
+              {/* <IonTabBar slot="bottom"> */}
                 {/* <IonTabButton tab="menu" onClick={toggleMenu} >
                   <IonIcon icon={menuOutline} />
                   <IonLabel>Menu</IonLabel>
                 </IonTabButton> */}
+
+                {/* <IonTabButton tab="account" href="/account">
+                  <IonIcon icon={personOutline} />
+                  <IonLabel>{TT("Account")}</IonLabel>
+                </IonTabButton>
                 <IonTabButton tab="orders" href="/orders">
                   <IonIcon icon={listOutline} />
-                  <IonLabel>Orders</IonLabel>
-                </IonTabButton>
-                <IonTabButton tab="account" href="/account">
-                  <IonIcon icon={personOutline} />
-                  <IonLabel>Profile</IonLabel>
+                  <IonLabel>{TT('Orders')}</IonLabel>
                 </IonTabButton>
                 <IonTabButton tab="home" href="/home">
                   <IonIcon icon={homeOutline} />
-                  <IonLabel>Home</IonLabel>
+                  <IonLabel>{TT("Home")}</IonLabel>
                 </IonTabButton>
                 <IonTabButton tab="chat" href="/chat/">
                   <IonIcon icon={chatboxOutline} />
-                  <IonLabel>Chat</IonLabel>
+                  <IonLabel>{TT("Chat")}</IonLabel>
                 </IonTabButton>
-                <IonTabButton tab="demo" href="/demo">
-                  <IonIcon icon={chatboxOutline} />
-                  <IonLabel>Demo</IonLabel>
-                </IonTabButton>
-              </IonTabBar>
-            </IonTabs>
-          </IonReactRouter>
-          
+                {process.env.NODE_ENV === "development" && (
+                  <IonTabButton tab="demo" href="/demo">
+                    <IonIcon icon={chatboxOutline} />
+                    <IonLabel>Demo</IonLabel>
+                  </IonTabButton>
+                )}
+              </IonTabBar> */}
+            {/* </IonTabs> */}
+          </IonApp>
+          </Switch>
 
-        </IonApp>
+        </IonReactRouter>
       </GlobalProvider>
     </React.StrictMode>
   );

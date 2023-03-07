@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { IonContent, IonTitle, IonToolbar, IonLabel, IonItem, IonAvatar, IonSkeletonText, IonCardSubtitle, IonGrid } from '@ionic/react';
+import { IonContent, IonTitle, IonToolbar, IonLabel, IonItem, IonAvatar, IonSkeletonText, IonCardSubtitle, IonGrid, useIonViewDidEnter, IonBackButton, IonHeader } from '@ionic/react';
 import { useParams } from 'react-router';
 import Chat from './chat';
 import Page from '../../components/Page';
@@ -14,14 +14,17 @@ export default function Chats(props: any) {
   
   const {chats} = chatStore.useState()
   const {id}:any = useParams()
-
+  
 useEffect(() => {
   if(id){
-    let chat = chats.find((v)=>v.id===id)
+    let chat = chats.find((v)=>v.chaters.includes(id)||v.id===id)
     chat && setCurrentChat(chat)
     !chat && mydb.makeChatIfUserExist(id)
+  }else{
+    setCurrentChat(undefined)
   }
-}, [chats])
+}, [chats,id])
+
       
   
 
@@ -30,11 +33,15 @@ useEffect(() => {
   }
 
   return (
-    <Page>
+    <Page backbutton>
       <IonContent fullscreen={true}>
-        <IonToolbar color={'primary'}>
-          <IonTitle className={'ion-padding'}>Chats</IonTitle>
+        <IonHeader >
+        <IonToolbar className={'h-16'} >
+          {/* <IonBackButton  defaultHref={'/'}/> */}
+          <IonTitle slot={'secondary'}>Chats</IonTitle>
         </IonToolbar>
+        </IonHeader>
+        
         {!chats.length &&<div className={'flex justify-center'}>
           <IonLabel>No Chats</IonLabel>
         </div>}

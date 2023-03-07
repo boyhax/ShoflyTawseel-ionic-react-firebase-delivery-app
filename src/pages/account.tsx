@@ -16,6 +16,9 @@ import {
   IonToggle,
   IonLabel,
   IonNote,
+  IonSegment,
+  IonSegmentButton,
+  IonFooter,
 } from "@ionic/react";
 import {
   golfOutline,
@@ -34,8 +37,9 @@ import { useHistory } from "react-router";
 import { usePhoto } from "../hooks/usePhoto";
 import Page from "../components/Page";
 import ProfileAvatar from "../components/ProfileAvatar";
-import { useDriver, useProfile, userStore } from "../Stores/userStore";
+import {  useProfile, userStore } from "../Stores/userStore";
 import { DriverStatus } from "../types";
+import useDriverUserMode from "../hooks/useDriverUserMode";
 
 
 const Account: React.FC = () => {
@@ -43,7 +47,7 @@ const Account: React.FC = () => {
   const [content, setContent] = useState<"orders" | "deliver" | "editProfile">(
     "orders"
   );
-
+    const{driverMode,toggleMode} = useDriverUserMode()
 
   const photo = usePhoto();
   const history = useHistory();
@@ -60,9 +64,9 @@ const Account: React.FC = () => {
             onClick={() => {}}
           />
             <IonButtons slot={'end'}>
-          <IonButton>
+          {/* <IonButton>
             {TT("Save")}
-          </IonButton>
+          </IonButton> */}
         </IonButtons>
     </IonToolbar>
           
@@ -94,7 +98,7 @@ const Account: React.FC = () => {
           {driver && driver.status==="pending" &&<IonNote color={'success'}>{TT('Your Application under review thank you for your patiency.🎕')}</IonNote>}
           {driver && driver.status==="banned" &&<IonLabel color={'danger'} >{TT('OOBS you are banned sorry.contact us if you want to know more.🙁')}</IonLabel>}
 
-       {driver && <IonItem>
+       {/* {driver && <IonItem>
             <IonIcon icon={golfOutline} />
             <IonLabel>{TT('status')}</IonLabel>
             <IonNote slot={'end'}>{TT(DriverStatus[driver.status])}</IonNote>
@@ -105,7 +109,7 @@ const Account: React.FC = () => {
               checked={driver.status==="active"?true:false}
               onIonChange={hundleActiveState}
             ></IonToggle>
-          </IonItem>}
+          </IonItem>} */}
           <IonItem>
             <IonIcon icon={personCircleOutline} />
             <IonInput
@@ -163,7 +167,10 @@ const Account: React.FC = () => {
                 {TT("logOut")}
                 <IonIcon icon={logOutOutline}></IonIcon>
               </IonButton>
+              
+              
       </IonContent>
+      
     </Page>
   );
 };

@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 
 import { DocumentSnapshot } from "firebase/firestore";
 import { IonFab, IonFabButton, IonIcon, IonList, 
-  IonRefresher, IonRefresherContent } from "@ionic/react";
+  IonRefresher, IonRefresherContent, IonSkeletonText } from "@ionic/react";
 import { addOutline } from "ionicons/icons";
 import { RefresherEventDetail } from '@ionic/core';
 import OrderCard from "./OrderCard";
@@ -56,8 +56,8 @@ export default function UserOrdersList(props: any) {
 
       orders.map((v: DocumentSnapshot, i: any) => {
 
-        if (!v["exists"]) {
-          return ''
+        if (!v.exists()) {
+          return <div><IonSkeletonText></IonSkeletonText></div>
         }
         return <OrderCard order={makeOrderFromDoc(v)} key={v.id} />
       })

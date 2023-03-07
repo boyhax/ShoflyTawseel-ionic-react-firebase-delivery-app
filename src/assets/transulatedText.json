@@ -77,7 +77,8 @@
     },
     "car image": {
         "en": "car image",
-        "ar": "صورة المركبة"    },
+        "ar": "صورة المركبة"
+    },
     "edit driver information": {
         "en": "edit driver information",
         "ar": "تعديل معلومات السائق"
@@ -174,14 +175,32 @@
         "en": "Yout",
         "ar": "Yout"
     },
-    "dir":{
-        "en":"ltr",
-        "ar":"rtl"
+    "dir": {
+        "en": "ltr",
+        "ar": "rtl"
     },
-    
-    
     "Your Application under review thank you for your patiency.🎕": {
         "en": "Your Application under review thank you for your patiency.🎕",
         "ar": "طلبك قيد المراجعة شكرا على ألانتظار.🎕"
+    },
+    "active": {
+        "en": "active",
+        "ar": "active"
+    },
+    "Account": {
+        "en": "Account",
+        "ar": "Account"
+    },
+    "Orders": {
+        "en": "Orders",
+        "ar": "Orders"
+    },
+    "Home": {
+        "en": "Home",
+        "ar": "Home"
+    },
+    "accept": {
+        "en": "accept",
+        "ar": "accept"
     }
 }

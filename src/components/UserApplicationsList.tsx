@@ -1,12 +1,13 @@
 import React, { useRef } from "react";
 
 import { DocumentSnapshot } from "firebase/firestore";
-import { IonRefresher, IonRefresherContent } from "@ionic/react";
+import { IonContent, IonItem, IonLabel, IonList, IonRefresher, IonRefresherContent, IonTitle, IonToolbar } from "@ionic/react";
 import OrdersPlaceHolder from "./OrdersPLaceHolder";
 import useUserApplications from "../hooks/useUserApplications";
 import OrderCard from "./OrderCard";
 import { orderProps } from "../types";
 import { userApplicationsStore } from "../providers/firebaseMain";
+import { TT } from "./utlis/tt";
 
 export default function UserApplicationsList(props: any) {
   const IonRefresherElement = useRef<HTMLIonRefresherElement | any>();
@@ -16,8 +17,7 @@ export default function UserApplicationsList(props: any) {
   
 
   return (
-    <div className={'overflow-hidden'}>
-      <div className={'overflow-auto gap-2 divide-y-2 flex flex-col'}>
+      <IonList>
         {/* <IonRefresher
           ref={IonRefresherElement}
           slot="fixed"
@@ -32,8 +32,13 @@ export default function UserApplicationsList(props: any) {
             }
             return <OrderCard key={v.id} order={{id:v.id,...v.data()}as orderProps}/>
           })}
+          {!orders.length&&
+          <IonToolbar className={'flex justify-center '}>
+            <IonTitle >{TT('NoJobsYet')}</IonTitle>
+
+          </IonToolbar>
+          }
         
-      </div>
-    </div>
+      </IonList>
   );
 }

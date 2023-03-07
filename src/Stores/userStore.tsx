@@ -39,22 +39,3 @@ export function useProfile(){
     }
     return{setStatus}
 }
-export function useDriver(){
-    const {profile}=userStore.useState()
-
-    async function setStatus(state:any){
-        await mydb.updateProfile({status:state})
-        userStore.update(s=>{s.profile!.status=state})
-    }
-    const driver = profile?.driverData
-     mydb.getDriverData()
-    function toggleStatus(){
-        setStatus(profile?.status==="active" ? "inactive":"active")
-  
-    }
-    
-    function updateDriverData(data:object){
-        mydb.updateProfile({driverData:{...driver!, ...data}})
-    }
-    return{driver ,toggleStatus,setStatus,updateDriverData}
-}

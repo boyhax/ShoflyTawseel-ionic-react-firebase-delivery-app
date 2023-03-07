@@ -54,6 +54,10 @@ import { clear } from "console";
 import chatStore, { ChatProps, MessageProps } from "../Stores/chatStore";
 import { getAcendingString } from "../components/utlis/AcendingString";
 import { TT } from "../components/utlis/tt";
+import { getFunctions, HttpsCallable, httpsCallable } from "firebase/functions";
+import { FCM, FCMPlugin } from "@capacitor-community/fcm";
+import { TokenStore } from "./pushFCM";
+import { PushNotificationSchema } from "@capacitor/push-notifications";
 
 export const userOrdersStore = new Store<any[]>([]);
 export const userApplicationsStore = new Store<any[]>([]);
@@ -70,14 +74,16 @@ class firebaseClass {
       userStore.update((s) => {
         s.user = user;
       });
+      user && this.updateToken()
       console.log("user id :>> ", user && user.uid);
       if (!user) {
         this.unSubscripeUserList();
       } else {
         this.subscripeUserList();
       }
-      user && this.token && this.updateToken();
+      // user && this.token && this.updateToken();
     });
+    // this.sendPush = httpsCallable(getFunctions(), "sendMessage");
   }
   db;
   userOrders: DocumentSnapshot[] = [];
@@ -89,8 +95,16 @@ class firebaseClass {
   token: string | null = null;
   SubscribeUserLists = false;
   unSubList: any[] = [];
+  sendPush: any = async (message: any) => {
+    addDoc(collection(this.db, "push"), message)
+      .then((s) => console.log("push sent :>> ", s))
+      .catch((s) => console.log("push error :>> ", s));
+  };
+
   async getUserInfo(uid: string) {
-    return getDoc(doc(this.db, "usersInfo/" + uid)).then((doc) => doc.data() as userInfo);
+    return getDoc(doc(this.db, "usersInfo/" + uid)).then(
+      (doc) => doc.data() as userInfo
+    );
   }
   subscribeProfile() {
     const uid = this.user?.uid;
@@ -159,11 +173,20 @@ class firebaseClass {
   }
 
   updateToken() {
-    setDoc(doc(this.db, "fcmTokens" + this.user?.uid), {
-      token: this.token,
-    }).then((v) => {
-      console.log("token updated");
-    });
+    FCM.getToken().then((token) => {
+      this.token = token.token;
+      TokenStore.update((s) => {
+        s.token = token.token;
+      });
+
+      setDoc(doc(this.db, "fcmTokens/" + this.user?.uid), {
+        token: token,
+      })
+        .then((v) => {
+          console.log("token updated");
+        })
+        .catch((s) => console.log("token update error :>> ", s));
+    }).catch((s)=>console.log("token error :>> ", s));
   }
   setUserToken(token: string) {
     this.token = token;
@@ -211,10 +234,7 @@ class firebaseClass {
     });
     this.unSubList.push(unsub);
   }
-  async sendMessage(
-    chatId: string,
-    data: Pick<MessageProps, "text" | "data">
-  ) {
+  async sendMessage(chatId: string, data: Pick<MessageProps, "text" | "data">) {
     if (!this.user) {
       return;
     }
@@ -286,12 +306,14 @@ class firebaseClass {
   updateProfile(profile: Partial<UserProfile>) {
     return updateDoc(doc(this.db, "users/" + this.user?.uid), profile);
   }
+
   async submitDriverApplication(values: any) {
-    const driver = await setDoc(doc(this.db, "drivers/" + this.user?.uid), {
+    return setDoc(doc(this.db, "drivers/" + this.user?.uid), {
       ...values,
       status: "pending",
-    });
-    return driver;
+    })
+      .then((s) => true)
+      .catch((e) => false);
   }
   async getDrivers(
     values: { from: any; status?: "pending" | "active" | "inactive" },
@@ -358,7 +380,9 @@ class firebaseClass {
     });
   }
   async updateDriver(data: Partial<driverData>) {
-    return updateDoc(doc(this.db, `drivers/${this.user!.uid}`), data);
+    return updateDoc(doc(this.db, `drivers/${this.user!.uid}`), data)
+      .then((s) => true)
+      .catch((e) => false);
   }
 }
 export const mydb = new firebaseClass();
@@ -371,30 +395,28 @@ export function geoToLatlng(geo: GeoPoint): LatLng {
 export async function uploadNewOrder(o: newOrderProps) {
   var docref, from, to, id;
   try {
-    var id: any = await addDoc(collection(db, "orders"), {});
-    id = id.id;
-    const newO: Partial<orderProps> = {
+    const newO = {
       geo: o.geo,
       urgent: o.urgent || false,
-      from: o.from,
-      to: o.to,
+      from: o.from ?? "",
+      to: o.to ?? "",
       uid: getAuth().currentUser?.uid!,
       time: serverTimestamp(),
       type: o.type || "smallObjects",
       comment: o.comment || "no comment",
-      address: o.address,
+      address: o.address ?? { from: "", to: "" },
       driver: "",
-      phoneNumber:mydb.user?.phoneNumber!??"",
+      phoneNumber: mydb.user?.phoneNumber! ?? "",
       status: OrderStatus.Placed,
-      id: id,
+      id: "",
     };
-    docref = setDoc(doc(db, "orders/" + id), newO);
-    from = geoFirestore.addGeo(id, geoToLatlng(o.geo.from), true);
-    to = geoFirestore.addGeo(id, geoToLatlng(o.geo.to), false);
+    // docref = await setDoc(doc(db, "orders/" + id), newO);
+    docref = await geoFirestore.addOrder(newO);
+    updateDoc(doc(db, "orders/" + docref.id), { id: docref.id });
   } catch (error) {
     console.log("new order creation error :>> ", error);
   }
-  return Promise.all([to, from, docref]);
+  return docref;
 }
 export async function setUserImage(
   photo: Blob,

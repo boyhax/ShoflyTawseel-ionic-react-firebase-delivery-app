@@ -71,6 +71,7 @@ export interface driverData {
   identity:string,
   status:DriverStatus,
   id?:string
+  working:boolean,
 }
   
 
@@ -149,7 +150,12 @@ export interface orderProps {
   address: {
     from: string;
     to: string;
-  };
+  },
+  coordinates?:GeoPoint,
+  g?:{
+    geohash?:string,
+    geopoint?:GeoPoint
+  }
 }
 export type newOrderProps = Pick<
   orderProps,

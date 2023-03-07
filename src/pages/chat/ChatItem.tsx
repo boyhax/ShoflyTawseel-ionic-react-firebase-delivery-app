@@ -33,7 +33,7 @@ export default function ChatItem({id,chaters}:ChatProps) {
     return <IonItem><IonSkeletonText animated={false}></IonSkeletonText></IonItem>
   }
   if(!chat){
-    return<IonItem>sorry no</IonItem>
+    return<IonItem>?</IonItem>
   }
   return (<IonItem dir='ltr' onClick={() => { onChatClicked() }}>
     <IonAvatar><IonImg src={chat.iconURL} ></IonImg></IonAvatar>

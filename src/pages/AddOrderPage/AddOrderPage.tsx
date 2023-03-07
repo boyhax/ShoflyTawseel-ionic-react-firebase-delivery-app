@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { IonLoading, useIonToast } from "@ionic/react";
+import { IonHeader, IonLoading, useIonToast } from "@ionic/react";
 import "leaflet/dist/leaflet.css";
 import { uploadNewOrder } from "../../providers/firebaseMain";
 import Step1 from "./Step1";
@@ -28,7 +28,7 @@ const AddOrderPage: any = (props: any) => {
     </div>,
   ];
   return (
-    <Page>
+    <Page homeButton>
       
         <OrdersSteps
           step={step}

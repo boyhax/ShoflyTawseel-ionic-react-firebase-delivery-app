@@ -1916,10 +1916,25 @@
   resolved "https://registry.yarnpkg.com/@capacitor/network/-/network-4.1.0.tgz#0b64a6f53ab34a7525a54feb1538ba1194dfe9c9"
   integrity sha512-GMJ6LmxmrFA55rAaYxgm4tKSZyUmuLRreQz5Gdu0P09Ja8abSjmXa/DX16gOu1I1+wqHWm2rRI6nPkeUH55Ibw==
 
-"@capacitor/push-notifications@^4.1.0":
+"@capacitor/preferences@^4.0.2":
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@capacitor/preferences/-/preferences-4.0.2.tgz#83bee8cadb3456a4f2a89118b8351d488c20ec77"
+  integrity sha512-HgcRkMdVHSIV3TeQLZFmCaCeMWQ25wLyZZ7dA2f8Rw81Q1Nroxsi7HxTEGNqrWKSN9PNKBJD8vChr6eB2GNtZg==
+
+"@capacitor/push-notifications@^4.1.2":
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/@capacitor/push-notifications/-/push-notifications-4.1.2.tgz#0c3f139cbe501d537c1360eac0f05b696b02a0da"
   integrity sha512-ok6CGvedwK1azmf8VWhrNlg6jhi4PFz3HoyS0GNE2ew7+JGnxN77sgK5q1TVzdkge+vkqipO6uu5bD1xfj/pWQ==
+
+"@capacitor/storage@^1.2.5":
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/@capacitor/storage/-/storage-1.2.5.tgz#48206869cbbf1404fcdbb5c440a882140bd3abd8"
+  integrity sha512-pWhnw4U7wN/zFV4lA4BLMypSufTktCbk548Yk4whSb0KAq3R0mLfSubRIHkGdcPqQWCsM6g/zUuszurhz6ncWQ==
+
+"@capacitor/toast@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@capacitor/toast/-/toast-4.1.0.tgz#1710163aa128f8640d2237587cfb49ad4ee880c5"
+  integrity sha512-hU3GoA1dT+dsMuDOlEeiaU2mdd4VCLvIzgbp7Vk0Mqy9tbg++W4t7hcewlawzJGs6FxH59rIekf2lz7m4ir33w==
 
 "@csstools/normalize.css@*":
   version "12.0.0"
@@ -8674,6 +8689,11 @@ lodash.debounce@^4.0.8:
   resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
   integrity sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==
 
+lodash.flatmap@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.flatmap/-/lodash.flatmap-4.5.0.tgz#ef8cbf408f6e48268663345305c6acc0b778702e"
+  integrity sha512-/OcpcAGWlrZyoHGeHh3cAoa6nGdX6QYtmzNP84Jqol6UEQQ2gIaU3H+0eICcjcKGl0/XF8LWOujNn9lffsnaOg==
+
 lodash.memoize@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/lodash.memoize/-/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
@@ -11445,6 +11465,13 @@ symbol-tree@^3.2.4:
   version "3.2.4"
   resolved "https://registry.yarnpkg.com/symbol-tree/-/symbol-tree-3.2.4.tgz#430637d248ba77e078883951fb9aa0eed7c63fa2"
   integrity sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==
+
+tailwindcss-flip@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/tailwindcss-flip/-/tailwindcss-flip-1.0.0.tgz#60050c725e03113b4afab1593531c7c16209441d"
+  integrity sha512-7zGjiIgw11cKcVKp8zz1YJQZ6H/bbdaENRo1Y9oXffwilZh0HhJFOM1daXrKIhOXJbpPgIVJa5yQ2vrZA+D8TQ==
+  dependencies:
+    lodash.flatmap "^4.5.0"
 
 tailwindcss@^3:
   version "3.2.7"

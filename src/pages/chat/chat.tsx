@@ -37,6 +37,7 @@ import useMounted from "../../hooks/useMounted";
 import { ChatProps, MessageProps } from "../../Stores/chatStore";
 import useQuerySnapShot from "../../hooks/useQuerySnapShot";
 import MessageBubble from "./MessageBubble";
+import { TT } from "../../components/utlis/tt";
 
 export default function Chat({ id, chaters }: ChatProps): JSX.Element {
   const [chatInput, setChatInput] = useState<string>("");
@@ -45,7 +46,7 @@ export default function Chat({ id, chaters }: ChatProps): JSX.Element {
 
   
   const uid = getAuth().currentUser?.uid;
-  const [photo, setPhoto] = useState<Photo>();
+  const [photo, setPhoto] = useState<string>();
 
   const [Messages, setMessages] = useState<MessageProps[]>([]);
   const chatContainer: any = useRef();
@@ -74,14 +75,14 @@ export default function Chat({ id, chaters }: ChatProps): JSX.Element {
   async function onSendMessage() {
     setSending(true);
     const text = chatInput;
-    var photoUrl = "";
-    if (photo) {
-      // chatInputElement.current!.disabled = true;
-      photoUrl = await sendPhoto(photo);
-      // chatInputElement.current!.disabled = false;
-    }
+    // var photoUrl = "";
+    // if (photo) {
+    //   // chatInputElement.current!.disabled = true;
+    //   photoUrl = await sendPhoto(photo);
+    //   // chatInputElement.current!.disabled = false;
+    // }
     let data = {
-      data: photoUrl,
+      data: photo,
       text: text,
     };
     mydb.sendMessage(id, data);
@@ -90,12 +91,24 @@ export default function Chat({ id, chaters }: ChatProps): JSX.Element {
     setSending(false);
   }
   async function sendPhoto(photo: Photo) {
+    setSending(true);
+
     const from = getAuth().currentUser?.uid;
     let photourl = await mydb.uploadPhoto(
       photo.base64String ?? "",
       `${from}/${new Date()}.png`
     );
-    return photourl;
+    const text = chatInput;
+    
+    let data = {
+      data: photourl,
+      text: text,
+    };
+    mydb.sendMessage(id, data);
+    setChatInput("");
+    setPhoto(undefined);
+    setSending(false);
+
   }
   return (
     <Page>
@@ -114,11 +127,7 @@ export default function Chat({ id, chaters }: ChatProps): JSX.Element {
             );
           })}
       </IonContent>
-      {photo && (
-        <IonThumbnail>
-          <IonSkeletonText />
-        </IonThumbnail>
-      )}
+      
       <IonFooter>
         <form
           onSubmit={(e) => {
@@ -148,8 +157,8 @@ export default function Chat({ id, chaters }: ChatProps): JSX.Element {
                 await Camera.getPhoto({
                   resultType: CameraResultType.Base64,
                 }).then((photo) => {
-                  // sendPhoto(photo);
-                  setPhoto(photo);
+                  sendPhoto(photo);
+                  // setPhoto(photo);
                 });
               }}
             >
@@ -188,7 +197,7 @@ export default function Chat({ id, chaters }: ChatProps): JSX.Element {
               disabled={sending}
               onChange={(e) => setChatInput(String(e.currentTarget.value))}
               type="text"
-              value={chatInput}
+              value={sending?TT('Sending ...'):chatInput}
               placeholder="Message"
               className="block mx-3 w-full py-2 pl-4 mx-3 bg-gray-100 rounded-full outline-none focus:text-gray-700"
               name="message"

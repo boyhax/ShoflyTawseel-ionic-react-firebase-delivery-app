@@ -48,11 +48,9 @@ const OpenWhatsapp = (number: any) => {
 const OrderCard = ({ order }: props) => {
   var date = order && prettyDate(new Date(order.time.seconds * 1000));
 
-  const [deleted, setDeleted] = useState(false);
   const [reportWhy, setReportWhy] = useState<string>("");
   const uid = mydb.user? mydb.user.uid: "";
   const {  profile } = useGlobals();
-  const history = useHistory();
   const role = useMemo(()=>getRole(order),[order])
   const [userInfo, setUserInfo] = useState<userInfo>(getUserInfoPlaceHolder());
   const [showComment, setShowComment] = useState(false);
@@ -111,18 +109,16 @@ const OrderCard = ({ order }: props) => {
   function Report(why: string) {
     reportOrder(order.id, why);
   }
-  if (deleted) {
-    return <></>;
-  }
+  
   return (
     <IonCard mode={"md"}>
       <div className="h-32 w-full">
-        <TwoPointMap
+        {order.geo &&<TwoPointMap
           id={order.id}
           onMap={() => {}}
           point1={geoToLatlng(order.geo.from)}
           point2={geoToLatlng(order.geo.to)}
-        />
+        />}
       </div>
       <IonCardHeader className="flex w-full items-center justify-between">
         <IonCardTitle>{userInfo.name}</IonCardTitle>

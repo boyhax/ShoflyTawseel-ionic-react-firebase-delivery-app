@@ -7,14 +7,14 @@ module.exports = {
   variants: {
     extend: {},
   },
-  plugins: [require("daisyui")],
-  daisyui: {
-    styled: true,
-    themes: true,
-    base: true,
-    utils: true,
-    logs: true,
-    prefix: "",
-    darkTheme: "dark",
-  },
+  // plugins: [require("daisyui"),require("tailwindcss-flip")],
+  // daisyui: {
+  //   // styled: true,
+  //   // themes: true,
+  //   // base: true,
+  //   // utils: true,
+  //   // logs: true,
+  //   // prefix: "",
+  //   // darkTheme: "dark",
+  // },
 }

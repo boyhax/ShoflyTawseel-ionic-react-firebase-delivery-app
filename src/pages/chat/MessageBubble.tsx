@@ -13,9 +13,9 @@ export default function MessageBubble({ messageData, owner }: Props) {
     return (
       <div className="chat chat-start ">
         <div className="chat-image avatar">
-          <IonAvatar>
+          {/* <IonAvatar>
             <IonImg alt={"user avatar"} src={messageData.iconURL} />
-          </IonAvatar>
+          </IonAvatar> */}
         </div>
         <div className="chat-header">
           {messageData.name}
@@ -23,12 +23,12 @@ export default function MessageBubble({ messageData, owner }: Props) {
             {prettyDate(new Date(messageData.time.seconds * 1000))}
           </time>
         </div>
-        <div className="bg-green-600 p-3 rounded-xl rounded-tr-none ">
+        <div className="bg-green-800   max-w-[70%] p-3 rounded-xl rounded-tr-none ">
           <p className="text-sm text-white">{messageData.text}</p>
           {messageData.data && (
             <img
               alt={"ddd"}
-              className={"max-h-[300px]  max-w-[300px]"}
+              className={""}
               src={messageData.data}
             />
           )}
@@ -42,9 +42,9 @@ export default function MessageBubble({ messageData, owner }: Props) {
     return (
       <div className="chat chat-end ">
         <div className="chat-image avatar">
-          <IonAvatar>
+          {/* <IonAvatar>
             <IonImg alt={"user avatar"} src={messageData.iconURL} />
-          </IonAvatar>
+          </IonAvatar> */}
         </div>
         <div className="chat-header">
           {messageData.name}
@@ -52,12 +52,12 @@ export default function MessageBubble({ messageData, owner }: Props) {
             {prettyDate(new Date(messageData.time.seconds * 1000))}
           </time>
         </div>
-        <div className=" bg-gray-600 p-3 rounded-xl rounded-tl-none ">
+        <div className=" bg-gray-800  max-w-[70%] p-3 rounded-xl rounded-tl-none ">
           <p className="text-sm text-white">{messageData.text}</p>
           {messageData.data  && (
             <img
               alt={"ddd"}
-              className={"h-max-[100px] w-max-[100px]"}
+              className={"max-h-[70%] max-w-[70%]"}
               src={messageData.data}
             />
           )}

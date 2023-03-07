@@ -13,7 +13,10 @@
     "@capacitor/google-maps": "^4.2.1",
     "@capacitor/ios": "4.6.2",
     "@capacitor/network": "^4.0.1",
-    "@capacitor/push-notifications": "^4.1.0",
+    "@capacitor/preferences": "^4.0.2",
+    "@capacitor/push-notifications": "^4.1.2",
+    "@capacitor/storage": "^1.2.5",
+    "@capacitor/toast": "^4.1.0",
     "@ionic/pwa-elements": "^3.1.1",
     "@ionic/react": "6.5.0",
     "@ionic/react-router": "6.5.0",
@@ -55,8 +58,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --transformIgnorePatterns 'node_modules/(?!(@ionic/react|@ionic/react-router|@ionic/core|@stencil/core|ionicons)/)'",
-    "build android": "ionic cap build android",
-    "run android ": "ionic capacitor run android -l --external",
+    "build android": "ionic cap build android --watch",
+    "run android ": "ionic capacitor run android -livereload --watch",
     "rules update": "firebase deploy --only firestore:rules"
   },
   "eslintConfig": {
@@ -83,7 +86,8 @@
     "cordova-res": "0.15.4",
     "postcss": "^7",
     "react-scripts": "^5.0.1",
-    "tailwindcss": "^3.0.0"
+    "tailwindcss": "^3.0.0",
+    "tailwindcss-flip": "^1.0.0"
   },
   "description": "a delivery request app service."
 }

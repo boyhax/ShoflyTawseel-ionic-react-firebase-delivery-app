@@ -11,7 +11,7 @@
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
         </provider>
         <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyAcnXys49X1XN4tfOS6RdGNXBTj3r_es2I" />
-        <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/ic_baseline_doorbell_24" />
+        <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@mipmap/pushicon" />
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />

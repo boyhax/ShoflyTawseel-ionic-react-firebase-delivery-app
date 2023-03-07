@@ -47,6 +47,11 @@ export const LeafLetMap: React.FC<props> = ({
   var layerNow = "street";
   
   React.useEffect(() => {
+    var container = L.DomUtil.get(`map${id??''}`);
+
+    if (container != null) {
+    // container.id = '';
+    }
     const map = L.map(`map${id??''}`, {
       center: [center_lat, center_long],
       zoom: center_zoom,
@@ -140,7 +145,7 @@ export const LeafLetMap: React.FC<props> = ({
       <div className=" flex absolute w-full h-full pointer-events-none z-[1000]">
         {children}
         
-        <IonFab horizontal={"start"} vertical={"bottom"}>
+        <IonFab horizontal={"start"} vertical={"bottom"} className={'bottom-12'}>
           {layerButton&& <IonFabButton
             size={"small"}
             className={"pointer-events-auto my-2  "}

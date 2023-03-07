@@ -17,6 +17,8 @@ dependencies {
     implementation project(':capacitor-google-maps')
     implementation project(':capacitor-network')
     implementation project(':capacitor-push-notifications')
+    implementation project(':capacitor-storage')
+    implementation project(':capacitor-toast')
 
 }
 
