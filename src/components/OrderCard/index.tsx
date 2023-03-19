@@ -34,6 +34,7 @@ import TwoPointMap from "../TwoPointMap";
 import { prettyDate } from "../utlis/prettyDate";
 import { TT } from "../utlis/tt";
 import OrderCardUserFooter from "./OrderCardUserFooter";
+import { userStore } from "../../Stores/userStore";
 
 interface props extends ComponentProps {
   order: orderProps;
@@ -50,7 +51,7 @@ const OrderCard = ({ order }: props) => {
 
   const [reportWhy, setReportWhy] = useState<string>("");
   const uid = mydb.user? mydb.user.uid: "";
-  const {  profile } = useGlobals();
+  const {user,profile} = userStore.useState()
   const role = useMemo(()=>getRole(order),[order])
   const [userInfo, setUserInfo] = useState<userInfo>(getUserInfoPlaceHolder());
   const [showComment, setShowComment] = useState(false);

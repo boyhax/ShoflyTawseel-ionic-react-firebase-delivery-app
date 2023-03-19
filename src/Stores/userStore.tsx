@@ -6,8 +6,8 @@ import {Geolocation} from'@capacitor/geolocation'
 import { User } from 'firebase/auth';
 
 interface Props{
-    user:User|null,
-    profile:UserProfile|undefined,
+    user:User|null|undefined,
+    profile:UserProfile|undefined|null,
     address:{
         geo:LatLng,
         name:string
@@ -15,7 +15,7 @@ interface Props{
     driver:driverData|null,
 }
 const initialProps:Props={
-    user:null,
+    user:undefined,
     profile:undefined,
     address:null,
     driver:null,

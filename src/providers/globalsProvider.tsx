@@ -17,8 +17,7 @@ import useDriverUserMode from "../hooks/useDriverUserMode";
 import { Preferences } from "@capacitor/preferences";
 
 interface Props {
-  user: User | null;
-  profile: UserProfile | undefined;
+  
   currentOrder: DocumentSnapshot | undefined;
   setCurrentOrder: (doc: DocumentSnapshot) => void | undefined;
   presentAlert: any;
@@ -31,8 +30,7 @@ interface Props {
   register: any;
 }
 const initialProps: Props = {
-  user: null,
-  profile: undefined,
+  
   currentOrder: undefined,
   setCurrentOrder: (v: any) => undefined,
   presentAlert: "",
@@ -47,6 +45,7 @@ const initialProps: Props = {
 const globalsContext = createContext<Props>(initialProps);
 
 const GlobalProvider: React.FC = (props) => {
+
   const [currentOrder, setCurrentOrder] = useState<DocumentSnapshot>();
   const { isOnline } = useOnline();
 
@@ -54,17 +53,19 @@ const GlobalProvider: React.FC = (props) => {
   const userOrders = userOrdersStore.useState();
   const userApplications = userApplicationsStore.useState();
   const userReports = userReportsStore.useState();
-  const { user, profile } = userStore.useState((s) => s);
+  const { user, profile } = userStore.useState();
   console.log("this.userOrders :>> ", userOrders);
   console.log("this.userApplication :>> ", userApplications);
   console.log("this.userReports :>> ", userReports);
+  console.log("user :>> ", user);
+  console.log("profile :>> ", profile);
+
   // const {mounted}=useMounted()
-  
+
   const { token, notifications, register } = useNotifications();
 
   const toProvide: Props = {
-    user,
-    profile,
+    
     setCurrentOrder,
     currentOrder,
     presentAlert,
@@ -76,9 +77,8 @@ const GlobalProvider: React.FC = (props) => {
     notifications,
     register,
   };
-
-  return (
-    <globalsContext.Provider value={toProvide}>
+  if (!isOnline) {
+    return (
       <div
         hidden={isOnline || user === undefined}
         className={"absolute z-50 w-full mx-auto "}
@@ -87,7 +87,14 @@ const GlobalProvider: React.FC = (props) => {
           Intenet connection required
         </p>
       </div>
-      {user === undefined ? <LoadingScreen /> : ""}
+    );
+  }else{
+    if(user===undefined ||(user && profile===undefined)){
+      return <LoadingScreen/>
+    }
+  }
+  return (
+    <globalsContext.Provider value={toProvide}>
       <div className={`${user === undefined && "hidden"}`}>
         {props.children}
       </div>

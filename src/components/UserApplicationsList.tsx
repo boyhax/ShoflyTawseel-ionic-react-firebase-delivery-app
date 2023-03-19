@@ -33,10 +33,10 @@ export default function UserApplicationsList(props: any) {
             return <OrderCard key={v.id} order={{id:v.id,...v.data()}as orderProps}/>
           })}
           {!orders.length&&
-          <IonToolbar className={'flex justify-center '}>
-            <IonTitle >{TT('NoJobsYet')}</IonTitle>
+          <div className={'flex justify-center items-center '}>
+            <IonLabel >{TT('empty list \n')}</IonLabel>
 
-          </IonToolbar>
+          </div>
           }
         
       </IonList>

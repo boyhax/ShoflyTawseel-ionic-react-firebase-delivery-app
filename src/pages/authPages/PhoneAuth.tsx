@@ -1,59 +1,30 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  IonBackButton,
   IonButton,
-  IonButtons,
-  IonContent,
-  IonHeader,
   IonIcon,
   IonInput,
   IonItem,
   IonLabel,
   IonLoading,
-  IonModal,
   IonNote,
-  IonPage,
-  IonSpinner,
-  IonTab,
-  IonTabs,
-  IonTitle,
-  IonToast,
-  IonToolbar,
-  useIonAlert,
   useIonToast,
 } from "@ionic/react";
-import {
-  arrowBack,
-  arrowForwardCircle,
-  home,
-  returnUpBack,
-} from "ionicons/icons";
 import {
   getAuth,
   PhoneAuthProvider,
   signInWithCredential,
   RecaptchaVerifier,
   signInWithPhoneNumber,
-  initializeAuth,
-  browserSessionPersistence,
-  browserPopupRedirectResolver,
-  EmailAuthProvider,
-  onAuthStateChanged,
-  GoogleAuthProvider,
-  OAuthProvider,
 } from "firebase/auth";
 import "./SignIn.css";
-import * as firebaseui from "firebaseui";
-import { useGlobals } from "../../providers/globalsProvider";
-import { getProfile, profileExist } from "../../providers/firebaseMain";
-import { StyledFirebaseAuth, FirebaseAuth } from "react-firebaseui";
-import { useHistory } from "react-router";
-import AuthHeader from "./AuthHeader";
 import { getLang } from "../../App";
 import { TT } from "../../components/utlis/tt";
+import { useHistory } from "react-router";
+import { phonePortraitOutline, phonePortraitSharp } from "ionicons/icons";
+import PhoneInput from "react-phone-input-2";
 
 const PhoneAuth: React.FC = (props) => {
-  const [phoneNumber, setPhoneNumber] = useState<any>(null);
+  const [phoneNumber, setPhoneNumber] = useState("");
   const verificationCodeTextInput: any = useRef();
   const [verificationId, setVerificationId] = useState<any | String>("");
   const [verificationCode, setVerificationCode] = useState<any>();
@@ -62,11 +33,11 @@ const PhoneAuth: React.FC = (props) => {
   const [confirmError, setConfirmError] = useState<any | {}>();
   const [confirmInProgress, setConfirmInProgress] = useState(false);
   const [RecaptchaVerified, setRecaptchaVerified] = useState(false);
-  const [PhoneCode, setPhoneCode] = useState("+968");
+  const [PhoneCode, setPhoneCode] = useState("");
   const [step, setStep] = useState<0 | 1 | 2>(0);
   const [recaptchaVerifier, setRecaptchaVerifier] = useState<any>();
   const [present] = useIonToast();
-
+  const history = useHistory();
   useEffect(() => {
     const newRecaptchaVerifier = new RecaptchaVerifier(
       `recaptcha-container`,
@@ -102,7 +73,6 @@ const PhoneAuth: React.FC = (props) => {
     setRecaptchaVerified(false);
     signin();
     setStep(1);
-
   }
   const onRecaptchaSolved = (v: any) => {
     setRecaptchaVerified(true);
@@ -124,7 +94,6 @@ const PhoneAuth: React.FC = (props) => {
         });
         verificationCodeTextInput!.current!.focus();
         setVerifyInProgress(false);
-        // setStep(2);
       },
       (err) => {
         setVerifyError(err);
@@ -164,7 +133,7 @@ const PhoneAuth: React.FC = (props) => {
   }
 
   return (
-    <div>
+    <div className={"pt-[50%]"}>
       {/* number step */}
 
       <div hidden={step !== 0}>
@@ -172,32 +141,52 @@ const PhoneAuth: React.FC = (props) => {
           onSubmit={hundleSubmitNumber}
           className={"flex flex-col gap-2 items-center justify-center "}
         >
-          <p className={"text-lg text-blue-500"}>Phone Number</p>
+          <IonItem style={{ direction: "ltr" }}>
+            <IonIcon size={"large"} icon={phonePortraitSharp} />
 
-          <div >
             <IonInput
-            className={"rounded-full w-[200px] bg-blue-100 text-center"}
-              placeholder={"enter phone number..."}
-              minlength={8}
-              type="number"
+              placeholder={"+968 8888 8888"}
+              // minlength={}
+              type="tel"
               required
+              // prefix={"+"}
               value={phoneNumber}
               onIonChange={(e) => setPhoneNumber(e.detail.value!)}
             ></IonInput>
-          </div>
+          </IonItem>
+          <div
+            className={
+              "flex flex-row items-center ltr rounded-full w-[200px] outline-2 outline-blue-600 bg-[var(--ion-color-secondary)] text-center"
+            }
+          ></div>
+
           <IonButton
             fill={"clear"}
             type="submit"
+            shape={"round"}
             // onClick={() => { sendVerifyNumber() }}
-            disabled={String(phoneNumber).length < 8}
+            // disabled={phoneNumber.length < 8}
           >
             <span style={{ fontSize: "2rem" }}>
               Send
               {/* <IonIcon size='large' icon={arrowForwardCircle}></IonIcon> */}
             </span>
           </IonButton>
-          <IonNote>{verifyError?.message!}</IonNote>
+          <IonNote>{TT(verifyError?.message!||"")}</IonNote>
         </form>
+        <div className={" flex flex-col items-center justify-center"}>
+          <IonLabel className={"text-center font-sans"}>
+            {TT("by sign in you agree to the ")}
+
+            {/* <IonButton fill={"clear"}></IonButton> */}
+          </IonLabel>
+          <p
+            className={"text-xl whitespace-pre-line font-sans"}
+            onClick={() => history.push("/AppRulesAndPolicy")}
+          >
+            {TT("terms and conditions")}
+          </p>
+        </div>
       </div>
 
       {/* recaptcha step */}
@@ -215,18 +204,19 @@ const PhoneAuth: React.FC = (props) => {
 
       {/* otp  step */}
 
-      <form hidden={step !== 2} 
-        onSubmit={(e)=>{
-          e.preventDefault()
+      <form
+        hidden={step !== 2}
+        onSubmit={(e) => {
+          e.preventDefault();
           VerifyOTBNumber();
-
         }}
-      className={"flex flex-col gap-2 items-center justify-center"}>
+        className={"flex flex-col gap-2 items-center  justify-center"}
+      >
         <p className={"text-lg text-blue-500"}>one time Password</p>
-
+        <IonItem style={{direction:'ltr'}}>
           <IonInput
             required
-            className={"rounded-full w-[200px] bg-blue-100 text-center"}
+            
             placeholder={"enter here.."}
             ref={verificationCodeTextInput}
             maxlength={8}
@@ -235,24 +225,29 @@ const PhoneAuth: React.FC = (props) => {
             autocomplete="one-time-code"
             onIonChange={(e) => setVerificationCode(e.detail.value!)}
           ></IonInput>
-        {!confirmInProgress && (
+        </IonItem>
+
+        
           <IonButton
             fill={"clear"}
             type="submit"
-            // onClick={() => {
-            //   VerifyOTBNumber();
-            // }}
-            disabled={String(verificationCode).length < 3}
+            size={'large'}
+            shape={"round"}
+            disabled={String(verificationCode).length < 3 ||confirmInProgress}
           >
             <span style={{ fontSize: "2rem" }}>Submit</span>
           </IonButton>
-        )}
-        <p onClick={()=>setStep(0)}
-         className={"text-base text-[var(--ion-color-primary)]"}>
-          {TT('Return')}</p>
+        
+        <p
+          onClick={() => setStep(0)}
+          className={"text-base text-[var(--ion-color-primary)]"}
+        >
+          {TT("Return")}
+        </p>
 
-        <IonNote>{confirmError?.message!}</IonNote>
+        <IonNote>{TT(confirmError?.message!||"")}</IonNote>
       </form>
+
       <IonLoading isOpen={confirmInProgress}></IonLoading>
     </div>
   );

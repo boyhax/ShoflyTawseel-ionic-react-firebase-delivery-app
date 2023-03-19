@@ -7,9 +7,10 @@ import { useHistory } from "react-router";
 import { onSnapshot } from "firebase/firestore";
 import { TT } from "../components/utlis/tt";
 import { randomAvatarUrl } from "../components/Avatar";
+import { userStore } from "../Stores/userStore";
 
  const CreateProfile= (props:any)=>{
-    const {profile} = useGlobals()
+    const {user,profile} = userStore.useState()
 
      const [name,setName]= useState<any>(profile?profile.name!?profile.name:"":"")
      const [phone,setPhone]= useState<any>(profile?profile.phoneNumber!?profile.phoneNumber:"":"")

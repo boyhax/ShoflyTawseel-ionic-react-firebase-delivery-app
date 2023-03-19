@@ -32,8 +32,11 @@ const SignIn: React.FC = () => {
 
   return (
     <Page>
-      <IonContent hidden={!isOnline} >
-          <IonCardTitle className={"ion-padding"}>{TT('Welcome')}</IonCardTitle>
+      <IonContent >
+        <div className={'h-24 bg-[var(--ion-color-primary)] rounded-bl-3xl rounded-br-3xl '}>
+        <IonCardTitle className={" text-4xl ion-padding text-white text-center"}>{TT('Welcome')}</IonCardTitle>
+
+        </div>
             {method === "phone" && <PhoneAuth></PhoneAuth>}
 
             {method === "email" && <EmailAuth></EmailAuth>}

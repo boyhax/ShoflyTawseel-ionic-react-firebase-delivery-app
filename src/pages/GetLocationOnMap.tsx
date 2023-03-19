@@ -11,6 +11,7 @@ import { getUserInfoPlaceHolder } from '../providers/firebaseMain';
 import { Geolocation } from '@capacitor/geolocation';
 import { Device } from '@capacitor/device';
 import OrderList from '../components/OrderList';
+import { userStore } from '../Stores/userStore';
 
 var dInfo:any =''
 var state:any = process.env.NODE_ENV
@@ -20,7 +21,7 @@ Device.getInfo().then((info)=>{
 
 const Tab1= () => {
   
-  const {user,profile}= useGlobals()
+  const {user,profile} = userStore.useState()
   const navigate = useHistory()
   const [addOrder,setAddOrder] = useState(false)
   const [fcmToken,setFcmToken] = useState<any>(null)

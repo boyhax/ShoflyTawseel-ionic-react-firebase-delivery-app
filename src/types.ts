@@ -72,6 +72,7 @@ export interface driverData {
   status:DriverStatus,
   id?:string
   working:boolean,
+  name:string
 }
   
 

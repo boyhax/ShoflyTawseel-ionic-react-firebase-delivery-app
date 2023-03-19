@@ -8,6 +8,8 @@ import OrderCard from ".";
 import useGetDoc from "../../hooks/useGetDoc";
 import mydb, { db } from "../../providers/firebaseMain";
 import { orderProps } from "../../types";
+import NewOrderView from "./NewOrderModal";
+import NewOrderModal from "./NewOrderModal";
 
 import "./OrderCard.css";
 
@@ -25,7 +27,7 @@ export default function OrderCardWithOrder({
   return(
     <div>
 
-    {data && <OrderCard order={{...data!.data() as orderProps,id:data!.id}}/>}
+    {data && <NewOrderView order={{...data!.data() as orderProps,id:data!.id}}/>}
     </div>
 
   );

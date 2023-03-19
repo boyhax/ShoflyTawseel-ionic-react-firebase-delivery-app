@@ -15,7 +15,29 @@ opacity: 0.8;
 background-image: radial-gradient(#444cf7 0.5px, #e5e5f7 0.5px);
 background-size: 10px 10px;
 }
+.fade-in {
+  opacity: 1;
+  animation: fade-in 4s ease-in forwards,
+}
+.fade-out {
+  opacity: 0;
+  animation:  fade-out 4s 2s ease-out forwards;
+}
 
+@keyframes fade-in {
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
 
 
 /** Ionic CSS Variables **/

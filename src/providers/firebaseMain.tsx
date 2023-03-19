@@ -58,10 +58,12 @@ import { getFunctions, HttpsCallable, httpsCallable } from "firebase/functions";
 import { FCM, FCMPlugin } from "@capacitor-community/fcm";
 import { TokenStore } from "./pushFCM";
 import { PushNotificationSchema } from "@capacitor/push-notifications";
+import { AnyARecord } from "dns";
 
 export const userOrdersStore = new Store<any[]>([]);
 export const userApplicationsStore = new Store<any[]>([]);
 export const userReportsStore = new Store<any[]>([]);
+export const userNotificatonsStore = new Store<any[]>([]);
 
 class firebaseClass {
   constructor() {
@@ -74,7 +76,7 @@ class firebaseClass {
       userStore.update((s) => {
         s.user = user;
       });
-      user && this.updateToken()
+      user && this.updateToken();
       console.log("user id :>> ", user && user.uid);
       if (!user) {
         this.unSubscripeUserList();
@@ -89,6 +91,8 @@ class firebaseClass {
   userOrders: DocumentSnapshot[] = [];
   userApplications: DocumentSnapshot[] = [];
   userReports: DocumentSnapshot[] = [];
+  userNotifications: DocumentSnapshot[] = [];
+
   user: User | null = null;
   profile: UserProfile | undefined = undefined;
   driver: driverData | undefined = undefined;
@@ -109,20 +113,30 @@ class firebaseClass {
   subscribeProfile() {
     const uid = this.user?.uid;
     const ref = doc(this.db, "users/" + uid);
-
-    const unsub = onSnapshot(ref, (doc) => {
-      if (!this.subscripeUserList) {
-        unsub();
-      }
-      if (doc.exists()) {
-        const profile: UserProfile = UserProfileFromDoc(doc);
-        userStore.update((s) => {
-          s.profile = profile;
-        });
-      } else {
+    getDoc(ref).then((snap)=>{
+      if(!snap.exists()){
         this.hundleNoProfileCreatedYet();
+        userStore.update((s) => {
+          s.profile = null;
+        });
+      }else{
+        userStore.update((s) => {
+          s.profile = UserProfileFromDoc(snap);
+        });
       }
-      this.unSubList.push(unsub);
+    })
+    return onSnapshot(ref, (doc) => {
+      var profile: any = null;
+      if (doc.exists()) {
+        profile = UserProfileFromDoc(doc);
+      }else{
+        this.hundleNoProfileCreatedYet();
+        userStore.update((s) => {
+          s.profile = null;
+        });
+      }
+      
+  
     });
   }
   async hundleNoProfileCreatedYet() {
@@ -137,10 +151,7 @@ class firebaseClass {
     const uid = this.user?.uid;
     const ref = doc(this.db, "drivers/" + uid);
 
-    const unsub = onSnapshot(ref, (doc) => {
-      if (!this.subscripeUserList) {
-        unsub();
-      }
+    return onSnapshot(ref, (doc) => {
       if (doc.exists()) {
         const driver: driverData = doc.data() as driverData;
         this.driver = driver;
@@ -152,7 +163,6 @@ class firebaseClass {
         userStore.update((s) => {
           s.driver = null;
         });
-        this.unSubList.push(unsub);
       }
     });
   }
@@ -173,20 +183,22 @@ class firebaseClass {
   }
 
   updateToken() {
-    FCM.getToken().then((token) => {
-      this.token = token.token;
-      TokenStore.update((s) => {
-        s.token = token.token;
-      });
+    FCM.getToken()
+      .then((token) => {
+        this.token = token.token;
+        TokenStore.update((s) => {
+          s.token = token.token;
+        });
 
-      setDoc(doc(this.db, "fcmTokens/" + this.user?.uid), {
-        token: token,
-      })
-        .then((v) => {
-          console.log("token updated");
+        setDoc(doc(this.db, "fcmTokens/" + this.user?.uid), {
+          token: token,
         })
-        .catch((s) => console.log("token update error :>> ", s));
-    }).catch((s)=>console.log("token error :>> ", s));
+          .then((v) => {
+            console.log("token updated");
+          })
+          .catch((s) => console.log("token update error :>> ", s));
+      })
+      .catch((s) => console.log("token error :>> ", s));
   }
   setUserToken(token: string) {
     this.token = token;
@@ -198,13 +210,14 @@ class firebaseClass {
 
   subscripeUserList() {
     this.SubscribeUserLists = true;
-    this.subscribeProfile();
-    this.subscribeDriver();
+    var unsub0 = this.subscribeProfile();
+    var unsub00 = this.subscribeDriver();
     var unsub1 = subscripeUserOrders(this.user!.uid, (snap) => {
       this.userOrders = snap.docs;
       userOrdersStore.update((s) => this.userOrders);
       return !this.subscripeUserList;
     });
+
     var unsub2 = subscripeUserApplications((snap) => {
       this.userApplications = snap.docs;
       userApplicationsStore.update((s) => this.userApplications);
@@ -215,8 +228,13 @@ class firebaseClass {
       userReportsStore.update((s) => this.userReports);
       return !this.subscripeUserList;
     });
+    var unsub4 = subscripeUserNotifications(this.user!.uid, (snap) => {
+      this.userNotifications = snap.docs;
+      userNotificatonsStore.update((s) => this.userNotifications);
+      return !this.subscripeUserList;
+    });
     this.subscripeUserChats();
-    this.unSubList.push(unsub1, unsub2, unsub3);
+    this.unSubList.push(unsub0, unsub00, unsub1, unsub2, unsub3, unsub4);
   }
   async subscripeUserChats() {
     var ref = collection(this.db, "chats");
@@ -446,6 +464,19 @@ export function subscripeUserReports(
 ) {
   const unsubHere = onSnapshot(
     query(collection(db, "ordersReports"), where("from", "==", id)),
+    (snap) => {
+      let unsub = result(snap);
+      unsub && unsubHere();
+    }
+  );
+  return unsubHere;
+}
+export function subscripeUserNotifications(
+  id: String,
+  result: (snap: QuerySnapshot<DocumentData>) => boolean
+) {
+  const unsubHere = onSnapshot(
+    query(collection(db, "push/" + id), orderBy("time", "desc")),
     (snap) => {
       let unsub = result(snap);
       unsub && unsubHere();

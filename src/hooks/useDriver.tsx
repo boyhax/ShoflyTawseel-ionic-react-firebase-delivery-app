@@ -5,6 +5,7 @@ import useMounted from "./useMounted";
 export function useDriver() {
   const { driver } = userStore.useState();
   const { mounted } = useMounted();
+  
   async function setStatus(state: any) {
     await mydb.updateDriver({ working: state });
     userStore.update((s) => {

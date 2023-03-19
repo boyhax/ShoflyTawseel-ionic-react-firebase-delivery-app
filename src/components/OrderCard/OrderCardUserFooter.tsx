@@ -16,6 +16,7 @@ import {
   logoWhatsapp,
   chatboxOutline,
   alertCircleOutline,
+  checkmarkOutline,
 } from "ionicons/icons";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router";
@@ -82,16 +83,13 @@ export default function OrderCardDriverFooter({
          {driver && driver.status ===DriverStatus.active && <IonButton disabled={!user} onClick={hundleApply}>
             {userApplied !== undefined && (
               <IonIcon
+              color={'sucsess'}
                 slot={"icon-only"}
-                icon={userApplied ? thumbsDownOutline : thumbsUpOutline}
+                icon={checkmarkOutline}
               ></IonIcon>
             )}
             {userApplied === undefined && <IonSpinner></IonSpinner>}
-            {userApplied !== undefined
-              ? userApplied
-                ? TT("un accept")
-                : TT("accept")
-              : ""}
+            
           </IonButton>}
         
         <IonButtons className={"flex flex-end justify-end"}>

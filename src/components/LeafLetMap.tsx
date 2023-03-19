@@ -40,16 +40,18 @@ export const LeafLetMap: React.FC<props> = ({
   let center_long = current_long;
   let center_zoom = current_zoom;
   const [map, setMap] = useState<L.Map>();
-  const [state, setstate] = useState(0);
-  const stateref = React.useRef(state);
+  
+  const mapRef = React.useRef(map);
   const [tailLayer, setTailLayer] = useState<L.TileLayer>();
   const{mapsCount} = mapsStore.useState(s=>s)
   var layerNow = "street";
   
   React.useEffect(() => {
+    console.log('leaflet map effect :>> ');
     var container = L.DomUtil.get(`map${id??''}`);
 
-    if (container != null) {
+    if (mapRef.current) {
+      return
     // container.id = '';
     }
     const map = L.map(`map${id??''}`, {
@@ -100,7 +102,6 @@ export const LeafLetMap: React.FC<props> = ({
   React.useEffect(() => {
     if (map) {
       map.invalidateSize(true);
-      stateref.current += 1;
     }
   });
   function moveCameraTo(pos: Pick<LatLng, "lat" | "lng">) {

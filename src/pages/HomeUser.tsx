@@ -11,14 +11,15 @@ import OrderList from "../components/OrderList";
 import { IonContent, IonHeader, IonLabel, IonTitle, IonToolbar } from "@ionic/react";
 import UserOrdersList from "../components/UserOrdersList";
 import { TT } from "../components/utlis/tt";
+import { userStore } from "../Stores/userStore";
 
 export default function HomeUser() {
-  const { user, profile } = useGlobals();
+  const {user,profile} = userStore.useState()
 
   return (
     <Page menubutton>
-      <IonHeader className={`h-24 flex items-center justify-start`}>
-            <IonTitle >{TT('My Orders')}</IonTitle>
+      <IonHeader className={` flex flex-row items-center justify-start`}>
+            <IonTitle className={'text-center'} >{TT('My Orders')}</IonTitle>
         </IonHeader>
       <IonContent >
         

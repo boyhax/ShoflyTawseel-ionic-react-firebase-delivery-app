@@ -202,5 +202,30 @@
     "accept": {
         "en": "accept",
         "ar": "accept"
+    },
+    "My Orders": {
+        "en": "My Orders",
+        "ar": "My Orders"
+    },
+    "by sign in you agree to the ": {
+        "en": "by sign in you agree to the ",
+        "ar": "عبر تسجيل الدخول أنت توافق على"
+    },
+    "undefined": {},
+    "Firebase: Invalid format. (auth/invalid-phone-number).": {
+        "en": "Firebase: Invalid format. (auth/invalid-phone-number).",
+        "ar": " الرقم خاطئ"
+    },
+    "Firebase: TOO_LONG (auth/invalid-phone-number).": {
+        "en": "Firebase: TOO_LONG (auth/invalid-phone-number).",
+        "ar": "الرقم خاطئ"
+    },
+    "Firebase: Error (auth/invalid-verification-code).": {
+        "en": "Firebase: Error (auth/invalid-verification-code).",
+        "ar": "الرقم خاطئ"
+    },
+    "empty list \n": {
+        "en": "empty list \n",
+        "ar": "لا يوجد حاليا"
     }
 }

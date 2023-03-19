@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useMemo, useState } from "react";
 import {
   IonButton,
   IonCol,
@@ -19,16 +19,28 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import { mydb } from "../providers/firebaseMain";
 import { useDriver } from "../hooks/useDriver";
+import { userStore } from "../Stores/userStore";
+import Page from "../components/Page";
 export default function DriverApplication(props: any) {
-  const { profile } = useGlobals();
-  const initalData = {
+  const {user,profile} = userStore.useState()
+  const { driver } = useDriver();
+  const initalData = useMemo(() => {return driver?
+    {
+    name : driver.name,
+    carNumber : driver.carNumber,
+    identity : driver.identity,
+    email : driver.email,
+    carYear : new Date(driver.carYear),
+    carType : driver.carType,}
+    :{
     name: "",
     email: "",
     carNumber: "",
     carType: "",
     carYear: new Date(),
-    identity: "",
-  };
+    identity: "",}
+  },[driver]);
+  
   const schema = yup.object({
     name: yup.string().required(),
     email: yup.string().email().required(),
@@ -39,22 +51,27 @@ export default function DriverApplication(props: any) {
       .max(new Date(), "cant be newer than today")
       .min(new Date("1999-01-01"))
       .required(),
-      identity: yup.string().min(8).required(),
+    identity: yup.string().min(7).required(),
   });
   const [data, setData] = useState(initalData);
   const [loading, setloading] = useState(false);
 
   const history = useHistory();
-  const driver = useDriver();
   function hundleSubmit(values: typeof initalData) {
-    console.log('values', values);
+    console.log("values", values);
     setData(values);
-    setloading(true)
-    mydb.submitDriverApplication(values).then(() => {history.push("/account")});
+    setloading(true);
+    mydb.submitDriverApplication(values).then(() => {
+      history.push("/account");
+      setloading(false);
+    });
   }
   return (
-    <IonPage>
-      <IonLoading isOpen={loading} message={TT('Sending Application')}></IonLoading>
+    <Page backbutton>
+      <IonLoading
+        isOpen={loading}
+        message={driver?TT("updating"):TT("Sending Application")}
+      ></IonLoading>
       <div
         className={
           " text-white h-20 bg-[var(--ion-color-primary)] rounded-bl-full drop-shadow-lg flex justify-center flex-col items-center"
@@ -71,7 +88,14 @@ export default function DriverApplication(props: any) {
           onSubmit={hundleSubmit}
           validationSchema={schema}
         >
-          {({ values, handleChange, handleSubmit, errors, touched,setFieldValue }) => (
+          {({
+            values,
+            handleChange,
+            handleSubmit,
+            errors,
+            touched,
+            setFieldValue,
+          }) => (
             <form onSubmit={handleSubmit}>
               <IonItem>
                 <IonLabel position="stacked">{TT("name")}</IonLabel>
@@ -80,7 +104,9 @@ export default function DriverApplication(props: any) {
                   value={values.name}
                   onIonChange={handleChange}
                 ></IonInput>
-                <IonNote color={'danger'}>{errors.name}</IonNote>
+                <IonNote className={"text-sm"} color={"danger"}>
+                  {errors.name}
+                </IonNote>
               </IonItem>
               <IonItem>
                 <IonLabel position="stacked">{TT("email")}</IonLabel>
@@ -89,7 +115,9 @@ export default function DriverApplication(props: any) {
                   value={values.email}
                   onIonChange={handleChange}
                 ></IonInput>
-                <IonNote color={'danger'}>{errors.email}</IonNote>
+                <IonNote className={"text-sm"} color={"danger"}>
+                  {errors.email}
+                </IonNote>
               </IonItem>
 
               <IonItem>
@@ -99,7 +127,9 @@ export default function DriverApplication(props: any) {
                   value={values.carNumber}
                   onIonChange={handleChange}
                 ></IonInput>
-                <IonNote color={'danger'}>{errors.carNumber}</IonNote>
+                <IonNote className={"text-sm"} color={"danger"}>
+                  {errors.carNumber}
+                </IonNote>
               </IonItem>
               <IonItem>
                 <IonLabel position="stacked">{TT("carType")}</IonLabel>
@@ -108,7 +138,9 @@ export default function DriverApplication(props: any) {
                   value={values.carType}
                   onIonChange={handleChange}
                 ></IonInput>
-                <IonNote color={'danger'}>{errors.carType}</IonNote>
+                <IonNote className={"text-sm"} color={"danger"}>
+                  {errors.carType}
+                </IonNote>
               </IonItem>
               <IonItem>
                 <IonLabel position="stacked">{TT("carYear")}</IonLabel>
@@ -119,7 +151,9 @@ export default function DriverApplication(props: any) {
                   value={values.carYear.toString()}
                   onIonChange={handleChange}
                 ></IonInput>
-                <IonNote color={'danger'}>{errors.carYear}</IonNote>
+                <IonNote className={"text-sm"} color={"danger"}>
+                  {errors.carYear}
+                </IonNote>
               </IonItem>
               <IonItem>
                 <IonLabel position="stacked">{TT("identity number")}</IonLabel>
@@ -128,19 +162,25 @@ export default function DriverApplication(props: any) {
                   value={values.identity}
                   onIonChange={handleChange}
                 ></IonInput>
-                <IonNote color={'danger'}>{errors.identity}</IonNote>
+                <IonNote className={"text-sm"} color={"danger"}>
+                  {errors.identity}
+                </IonNote>
               </IonItem>
-              <IonItem>
+              {/* <IonItem>
                 <IonLabel>
                   {TT("i agree to the ")}
-                  <IonButton fill={'clear'}>{TT('terms and conditions')}</IonButton>
+                  <IonButton fill={"clear"}>
+                    {TT("terms and conditions")}
+                  </IonButton>
                 </IonLabel>
-              </IonItem>
-              <IonButton type={"submit"}>{TT("submit")}</IonButton>
+              </IonItem> */}
+              <IonButton color={"primary"} className={"w-full"} type={"submit"}>
+                {TT("submit")}
+              </IonButton>
             </form>
           )}
         </Formik>
       </IonContent>
-    </IonPage>
+    </Page>
   );
 }

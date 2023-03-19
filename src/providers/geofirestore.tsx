@@ -9,6 +9,7 @@ import { idCard } from "ionicons/icons";
 import { getLang } from "../App";
 import { Config } from "../config";
 import { newOrderProps, orderMarker, orderProps, OrderStatus } from "../types";
+import mydb from "./firebaseMain";
 
 class geoClass {
   geocollection;
@@ -50,9 +51,9 @@ class geoClass {
       coordinates: order.geo.from,
     });
   }
-  async getNearOrder(point:LatLng,radius:number=20) {
+  async getNearOrder(point: LatLng, radius: number = 20) {
     const geocollection = this.GeoFirestore.collection("orders");
-
+    const uid = mydb.user?.uid ?? "";
     const query = geocollection
       .near({
         center: new firebase.firestore.GeoPoint(point.lat, point.lng),
@@ -60,10 +61,16 @@ class geoClass {
         limit: 5,
       })
       .where("status", "==", OrderStatus.Placed);
-    const list: orderProps[] = await query.get().then((d) => d.docs.map((d)=>{return {id:d.id,...d.data()} as orderProps}));
-    
+    const list: orderProps[] = await query.get().then((d) =>
+      d.docs
+        .filter((v) => v.data().uid !== uid && !v.data().driver  )
+        .map((d) => {
+          return { id: d.id, ...d.data() } as orderProps;
+        })
+    );
+
     console.log("qeo query list :>> ", list);
-    return list ;
+    return list;
   }
 
   async addGeo(id: string, latlng: LatLng, from: boolean) {

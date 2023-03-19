@@ -9,12 +9,13 @@ import { Toast } from "@capacitor/toast";
 import { useGlobals } from "../providers/globalsProvider";
 import mydb, { db } from "../providers/firebaseMain";
 import { doc, setDoc } from "firebase/firestore";
+import { userStore } from "../Stores/userStore";
 
 export default function useNotifications() {
   const nullEntry: any[] = [];
   const [notifications, setnotifications] = React.useState(nullEntry);
   const [token, setToken] = React.useState("");
-  const { user } = useGlobals();
+  const {user,profile} = userStore.useState()
   React.useEffect(() => {
     if (user) {
       setDoc(doc(db, "fcmTokens/", user.uid), { token })

@@ -35,6 +35,7 @@ import React, { useEffect } from "react";
 import { useHistory } from "react-router";
 import { avatarPLaceholder } from "../providers/firebaseMain";
 import { useGlobals } from "../providers/globalsProvider";
+import { userStore } from "../Stores/userStore";
 import DriverUserToggleSegment from "./DriverUserToggleSegment";
 import { TT } from "./utlis/tt";
 
@@ -43,7 +44,7 @@ interface props extends ComponentProps {
 }
 
 const MainMenu = (Props: props) => {
-  const { user, profile } = useGlobals();
+  const { user, profile } = userStore.useState();
 
   const history = useHistory();
   const SignInButton = (
@@ -134,7 +135,7 @@ const MainMenu = (Props: props) => {
             </IonMenuToggle>
           )}
           <IonButtons slot={"end"} className="flex-end">
-            {user ? SignOutButton : SignInButton}
+            {user && SignOutButton }
           </IonButtons>
         </IonList>
       </IonContent>

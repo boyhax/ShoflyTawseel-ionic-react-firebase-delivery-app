@@ -20,9 +20,12 @@ import OrderList from "../components/OrderList";
 import UserOrdersList from "../components/UserOrdersList";
 import UserApplicationsList from "../components/UserApplicationsList";
 import DriversList from "../components/DriversList";
+import { userStore } from "../Stores/userStore";
 
-const AdminPage: React.FC = () => {
-  const { user, profile, currentOrder, setCurrentOrder } = useGlobals();
+const AdminPage: React.FC = () => {  
+  const {user,profile} = userStore.useState()
+
+  const {  currentOrder, setCurrentOrder } = useGlobals();
   const [loading, setLoading] = useState(true);
   const [applications, setApplications] = useState<DocumentSnapshot[]>();
   const [segment,setSegmt] = useState<any>('all')
@@ -33,7 +36,7 @@ const AdminPage: React.FC = () => {
   useEffect(() => {}, [currentOrder]);
 
   return (
-    <Page>
+    <Page homeButton>
       <IonContent fullscreen>
       <IonHeader translucent mode={'ios'}>
         <IonToolbar>

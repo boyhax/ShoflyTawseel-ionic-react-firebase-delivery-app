@@ -1,90 +1,42 @@
-import { Device } from "@capacitor/device";
-import { ComponentProps } from "@ionic/core";
 import {
   IonButton,
-  IonPopover,
-  IonTextarea,
   useIonAlert,
-  IonCardTitle,
-  IonCardHeader,
   IonCardSubtitle,
-  IonCard,
   IonBadge,
   IonCardContent,
   IonLabel,
-  IonModal,
-  IonHeader,
   IonToolbar,
+  IonButtons,
 } from "@ionic/react";
-import { doc, getDoc } from "firebase/firestore";
-import React, { useEffect, useMemo, useState } from "react";
-import { useHistory } from "react-router";
+import React, { useMemo, useState } from "react";
 import useMounted from "../../hooks/useMounted";
 
-import {
-  db,
-  geoToLatlng,
-  getUserInfoPlaceHolder,
-  mydb,
-  reportOrder,
-} from "../../providers/firebaseMain";
-import { useGlobals } from "../../providers/globalsProvider";
-import { orderProps, OrderStatus, userInfo } from "../../types";
+import { geoToLatlng, mydb } from "../../providers/firebaseMain";
+import { orderProps, OrderStatus } from "../../types";
 import "./OrderCard.css";
-import OrderCardDriverFooter from "./OrderCardDriverFooter";
-import OrderCardOwnerFooter from "./OrderCardOwnerFooter";
 import TwoPointMap from "../TwoPointMap";
 import { prettyDate } from "../utlis/prettyDate";
 import { TT } from "../utlis/tt";
-import OrderCardUserFooter from "./OrderCardUserFooter";
 
-export default function NewOrderModal({ order }: { order: orderProps }) {
+export default function NewOrderView({
+  order,
+  onCancel,
+  onAccept,
+}: {
+  order: orderProps;
+  onCancel?: () => void;
+  onAccept?: () => void;
+}) {
   var date = order && prettyDate(new Date(order.time.seconds * 1000));
 
-  const [reportWhy, setReportWhy] = useState<string>("");
-  const uid = mydb.user ? mydb.user.uid : "";
-  const { profile } = useGlobals();
-  const role = useMemo(() => getRole(order), [order]);
-  const [userInfo, setUserInfo] = useState<userInfo>(getUserInfoPlaceHolder());
   const [showComment, setShowComment] = useState(false);
 
   const { mounted } = useMounted();
-  function getRole(order: orderProps) {
-    let role = "user";
-    if (order.uid === uid) {
-      role = "owner";
-    }
-    if (order.driver === uid) {
-      role = "driver";
-    }
-    return role;
-  }
+
   const userApplied = useMemo(
     () => mydb.user && order.driver === mydb.user.uid,
     [order.driver]
   );
-
-  useEffect(() => {
-    if (order.uid === uid && profile) {
-      mounted &&
-        setUserInfo({
-          name: profile.name,
-          photoURL: profile.photoURL,
-          phoneNumber: profile.phoneNumber,
-        });
-    } else {
-      getDoc(doc(db, "users", order.uid)).then((doc) => {
-        let d: userInfo = {
-          name: doc.data()!.name,
-          phoneNumber: doc.data()!.phoneNumber,
-          photoURL: doc.data()!.photoURL!,
-        };
-        mounted && setUserInfo(d);
-      });
-    }
-
-    return () => {};
-  }, []);
 
   const toggleComment = () => {
     setShowComment(!showComment);
@@ -92,29 +44,30 @@ export default function NewOrderModal({ order }: { order: orderProps }) {
   const [presentAlert] = useIonAlert();
 
   async function hundleApply() {
-    if (!userApplied) {
-      await mydb.applyForCard(order);
-    } else {
-      await mydb.removeApplicationToOrder(order);
-    }
-  }
-  function Report(why: string) {
-    reportOrder(order.id, why);
+    return mydb.applyForCard(order);
   }
 
+  function _onCancel() {
+    onCancel && onCancel();
+  }
+  function _onAccept() {
+    hundleApply().then(() => {
+      onAccept && onAccept();
+      presentAlert(TT('orderAccepted'),[{text:TT('ok'),handler:()=>{}}])
+    });
+  }
   return (
-    <IonModal>
-      <IonHeader>
-        <IonToolbar>
-          <IonButton>
-            <IonLabel>Close</IonLabel>
-          </IonButton>
-          <IonButton>
-            <IonLabel>Accept</IonLabel>
-          </IonButton>
-        </IonToolbar>
-      </IonHeader>
-      <IonCard mode={"md"}>
+    <div className={"fade-in "}>
+      <IonToolbar>
+        <IonButtons slot="start">
+          <IonButton onClick={_onCancel}>cancel</IonButton>
+        </IonButtons>
+        <IonButtons slot="end">
+          <IonButton onClick={_onAccept}>Accept</IonButton>
+        </IonButtons>
+      </IonToolbar>
+
+      <div>
         <div className="h-32 w-full">
           {order.geo && (
             <TwoPointMap
@@ -125,44 +78,21 @@ export default function NewOrderModal({ order }: { order: orderProps }) {
             />
           )}
         </div>
-        <IonCardHeader className="flex w-full items-center justify-between">
-          <IonCardTitle>{userInfo.name}</IonCardTitle>
+        <div className="block m-1">
+          {/* <IonCardTitle>{userInfo.name}</IonCardTitle> */}
           <IonCardSubtitle> {date}</IonCardSubtitle>
-        </IonCardHeader>
+        </div>
         <IonCardContent onClick={() => toggleComment()}>
           {order.urgent && (
             <IonBadge className={" top-0 left-0"}>Urgent</IonBadge>
           )}
           {TT("description") +
             (showComment ? order.comment : order.comment.slice(0, 50) + "...")}
-          <div className={"w-full"}>
+          <div className={"justify-self-stretch"}>
             <IonLabel>{OrderStatus[order.status]}</IonLabel>
           </div>
         </IonCardContent>
-
-        {role === "owner" && <OrderCardOwnerFooter order={order} />}
-        {role === "driver" && <OrderCardDriverFooter order={order} />}
-        {role === "user" && <OrderCardUserFooter order={order} />}
-        {/* //messengers popover */}
-
-        <IonPopover trigger={`reportButton ${order.id}`}>
-          <form
-            onSubmit={() => {
-              Report(reportWhy);
-            }}
-            className="flex items-center flex-col"
-          >
-            <IonTextarea
-              placeholder={"why..."}
-              required
-              onIonChange={(e) => {
-                setReportWhy(e.detail.value!);
-              }}
-            ></IonTextarea>
-            <IonButton type={"submit"}>Send</IonButton>
-          </form>
-        </IonPopover>
-      </IonCard>
-    </IonModal>
+      </div>
+    </div>
   );
 }

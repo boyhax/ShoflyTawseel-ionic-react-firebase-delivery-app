@@ -4,9 +4,10 @@ import { Redirect, Route, useHistory } from "react-router";
 import SignIn from "../pages/authPages";
 import Profile from "../pages/Profile";
 import { useGlobals } from "../providers/globalsProvider";
+import { userStore } from "../Stores/userStore";
 
 const AdminRoute: React.FC = (props) => {
-  const { user, profile } = useGlobals();
+  const { user, profile } = userStore.useState();
 
   return (
     <div style={{ background: "red" }}>
