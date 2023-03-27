@@ -5,7 +5,7 @@ import Chat from './chat';
 import Page from '../../components/Page';
 import chatStore, { ChatProps } from '../../Stores/chatStore';
 import ChatItem from './ChatItem';
-import mydb from '../../providers/firebaseMain';
+import mydb from '../../api/firebaseMain';
 
 
 export default function Chats(props: any) {

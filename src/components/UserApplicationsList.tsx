@@ -1,16 +1,13 @@
 import React, { useRef } from "react";
 
 import { DocumentSnapshot } from "firebase/firestore";
-import { IonContent, IonItem, IonLabel, IonList, IonRefresher, IonRefresherContent, IonTitle, IonToolbar } from "@ionic/react";
-import OrdersPlaceHolder from "./OrdersPLaceHolder";
-import useUserApplications from "../hooks/useUserApplications";
+import { IonLabel, IonList } from "@ionic/react";
 import OrderCard from "./OrderCard";
 import { orderProps } from "../types";
-import { userApplicationsStore } from "../providers/firebaseMain";
+import { userApplicationsStore } from "../api/firebaseMain";
 import { TT } from "./utlis/tt";
 
 export default function UserApplicationsList(props: any) {
-  const IonRefresherElement = useRef<HTMLIonRefresherElement | any>();
 
   const orders = userApplicationsStore.useState(s=>s);
 

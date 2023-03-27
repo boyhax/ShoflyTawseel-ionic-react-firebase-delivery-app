@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import Page from "../components/Page";
-import mydb from "../providers/firebaseMain";
+import mydb from "../api/firebaseMain";
 import { IonButton, IonContent } from "@ionic/react";
-import  { TokenStore } from "../providers/pushFCM";
-import { PushNotificationSchema } from "@capacitor/push-notifications";
-import { useGlobals } from "../providers/globalsProvider";
+import  pushFCM, { TokenStore } from "../services/pushFCM";
+import { notificationsStore } from "../hooks/useNotifications";
 
 const Demo: React.FC = () => {
-  const {token,notifications,register}= useGlobals()
+  const {Notifications} = notificationsStore.useState()
+  const {token} = TokenStore.useState()
   async function sendPush() {
     
     const message:any = {
@@ -22,18 +22,16 @@ const Demo: React.FC = () => {
  
   return (
     <Page homeButton>
-      {/* <ul className="steps ">
-        <li className="step step-primary">Pickup Point</li>
-        <li className="step step-primary">Drop Point</li>
-        <li className="step">Details</li>
-      </ul> */}
+      
       <IonContent>
-        <IonButton onClick={register}>register</IonButton>
+        <IonButton onClick={()=>{
+          pushFCM.subscribeTo('all')
+        }}>register</IonButton>
         <IonButton onClick={sendPush}>send push</IonButton>
 
         <p>{token || " token"}</p>
         <p>token</p>
-        {notifications && notifications.map((notif: any) => <div key={notif.id}>
+        {Notifications && Notifications.map((notif: any) => <div key={notif.id}>
         <p>
           <p>
             <h3 className="notif-title">{notif.title}</h3>

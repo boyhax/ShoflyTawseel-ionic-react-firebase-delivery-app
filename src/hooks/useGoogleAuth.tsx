@@ -1,9 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
-import { Camera, CameraResultType, Photo } from '@capacitor/camera';
 
-import { getAuth, getRedirectResult, GoogleAuthProvider, signInWithPopup, signInWithRedirect } from "firebase/auth";
-import { setUserImage } from "../providers/firebaseMain";
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { getLang } from "../App";
 
 export function useGoogleAuth() {

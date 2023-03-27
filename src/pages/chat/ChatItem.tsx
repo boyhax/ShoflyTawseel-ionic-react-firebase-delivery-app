@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { IonTitle, IonItem, IonAvatar, IonImg, IonSkeletonText, IonCardSubtitle, IonGrid, IonText } from '@ionic/react';
 import { collection, limit, orderBy, query } from 'firebase/firestore';
 import { useHistory } from 'react-router';
-import { mydb } from '../../providers/firebaseMain';
+import { mydb } from '../../api/firebaseMain';
 import { ChatProps, MessageProps } from '../../Stores/chatStore';
 import useQuerySnapShot from '../../hooks/useQuerySnapShot';
 import { prettyDate } from '../../components/utlis/prettyDate';

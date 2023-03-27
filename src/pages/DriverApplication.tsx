@@ -17,7 +17,7 @@ import { useHistory } from "react-router";
 import { TT } from "../components/utlis/tt";
 import { Formik } from "formik";
 import * as yup from "yup";
-import { mydb } from "../providers/firebaseMain";
+import { mydb } from "../api/firebaseMain";
 import { useDriver } from "../hooks/useDriver";
 import { userStore } from "../Stores/userStore";
 import Page from "../components/Page";

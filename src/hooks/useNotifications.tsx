@@ -6,50 +6,50 @@ import {
 } from "@capacitor/push-notifications";
 import * as React from "react";
 import { Toast } from "@capacitor/toast";
-import { useGlobals } from "../providers/globalsProvider";
-import mydb, { db } from "../providers/firebaseMain";
-import { doc, setDoc } from "firebase/firestore";
 import { userStore } from "../Stores/userStore";
+import { TokenStore } from "../services/pushFCM";
+import { useEffect } from "react";
+import { Store } from "pullstate";
+
+export const notificationsStore = new Store<{ Notifications: any[] }>({
+  Notifications: [],
+});
 
 export default function useNotifications() {
   const nullEntry: any[] = [];
   const [notifications, setnotifications] = React.useState(nullEntry);
   const [token, setToken] = React.useState("");
-  const {user,profile} = userStore.useState()
-  React.useEffect(() => {
-    if (user) {
-      setDoc(doc(db, "fcmTokens/", user.uid), { token })
-        .then(() => console.log("token saved"))
-        .catch((e) => console.log("error saving token", e));
-    }
-  }, [user]);
-
-  React.useEffect(() => {
-    PushNotifications.checkPermissions().then((res) => {
-      if (res.receive !== "granted") {
-        PushNotifications.requestPermissions().then((res) => {
-          if (res.receive === "denied") {
-            showToast("Push Notification permission denied");
-          } else {
-            showToast("Push Notification permission granted");
-            register();
-          }
-        });
-      } else {
+  useEffect(() => {
+    checkPermission().then((res) => {
+      if (res === "granted") {
         register();
       }
     });
   }, []);
 
+  async function checkPermission() {
+    const permission = await PushNotifications.checkPermissions();
+    if (permission.receive !== "granted") {
+      const request = await PushNotifications.requestPermissions();
+      if (request.receive === "denied") {
+        showToast("Push Notification permission denied");
+        return "denied";
+      } else {
+        showToast("Push Notification permission granted");
+        return "granted";
+      }
+    } else {
+      return "granted";
+    }
+  }
   const register = () => {
     console.log("Initializing HomePage");
 
-    // Register with Apple / Google to receive push via APNS/FCM
-    PushNotifications.register();
-
     // On success, we should be able to receive notifications
     PushNotifications.addListener("registration", (token: Token) => {
-      setToken(token.value);
+      TokenStore.update((s) => {
+        s.token = token.value;
+      });
 
       showToast("Push registration success");
     });
@@ -72,6 +72,9 @@ export default function useNotifications() {
             type: "foreground",
           },
         ]);
+        notificationsStore.update((s) => {
+          s.Notifications = notifications;
+        });
       }
     );
 
@@ -88,8 +91,13 @@ export default function useNotifications() {
             type: "action",
           },
         ]);
+        notificationsStore.update((s) => {
+          s.Notifications = notifications;
+        });
       }
     );
+    // Register with Apple / Google to receive push via APNS/FCM
+    PushNotifications.register();
   };
 
   const showToast = async (msg: string) => {
@@ -97,6 +105,6 @@ export default function useNotifications() {
       text: msg,
     });
   };
-  
-  return {  token, notifications, register };
+
+  return { token, notifications, register };
 }

@@ -4,7 +4,7 @@ import { Store } from 'pullstate';
 import * as React from 'react';
 import { useState } from 'react';
 import { LatLngBounds } from 'leaflet';
-import geoFirestore from '../providers/geofirestore';
+import geoFirestore from '../api/geofirestore';
 import { MarkerProps } from 'react-leaflet';
 import { orderMarker, orderProps } from '../types';
 import { useIonViewDidEnter } from '@ionic/react';

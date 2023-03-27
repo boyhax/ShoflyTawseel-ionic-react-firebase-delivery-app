@@ -24,7 +24,7 @@ import {
   getUserInfoPlaceHolder,
   mydb,
   reportOrder,
-} from "../../providers/firebaseMain";
+} from "../../api/firebaseMain";
 import { useGlobals } from "../../providers/globalsProvider";
 import { orderProps, OrderStatus, userInfo } from "../../types";
 import "./OrderCard.css";
@@ -43,9 +43,7 @@ export var Currentplatform = "web";
 Device.getInfo().then((v) => {
   Currentplatform = v.platform;
 });
-const OpenWhatsapp = (number: any) => {
-  window.open("http://wa.me/" + number);
-};
+
 const OrderCard = ({ order }: props) => {
   var date = order && prettyDate(new Date(order.time.seconds * 1000));
 
@@ -68,10 +66,7 @@ const OrderCard = ({ order }: props) => {
     return role
 
   }
-  const userApplied = useMemo(
-    () => mydb.user && order.driver === mydb.user.uid,
-    [order.driver]
-  );
+  
 
   useEffect(() => {
     if (order.uid === uid && profile) {
@@ -100,13 +95,7 @@ const OrderCard = ({ order }: props) => {
   };
   const [presentAlert] = useIonAlert();
 
-  async function hundleApply() {
-    if (!userApplied) {
-      await mydb.applyForCard(order);
-    } else {
-      await mydb.removeApplicationToOrder(order);
-    }
-  }
+  
   function Report(why: string) {
     reportOrder(order.id, why);
   }

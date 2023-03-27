@@ -1,46 +1,34 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import { doc, DocumentSnapshot } from "firebase/firestore";
 import {
-  IonAvatar,
   IonButton,
   IonCard,
   IonChip,
-  IonFab,
-  IonFabButton,
   IonIcon,
-  IonImg,
-  IonItem,
-  IonItemOption,
-  IonItemOptions,
-  IonItemSliding,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent,
   IonLabel,
   IonList,
   IonNote,
   IonRefresher,
   IonRefresherContent,
-  IonRoute,
-  IonRow,
   IonSegment,
   IonSegmentButton,
-  IonTitle,
 } from "@ionic/react";
-import { addOutline, thumbsUp } from "ionicons/icons";
+import { thumbsUp } from "ionicons/icons";
 import { RefresherEventDetail } from "@ionic/core";
-import OrderCard from "./OrderCard";
 import OrdersPlaceHolder from "./OrdersPLaceHolder";
-import useUserOrders from "../hooks/useUserOrders";
 import { useHistory } from "react-router";
-import { makeOrderFromDoc, mydb } from "../providers/firebaseMain";
-import { driverData, UserProfile } from "../types";
+import { mydb } from "../api/firebaseMain";
+import { driverData } from "../types";
 import useMounted from "../hooks/useMounted";
+import { TT } from "./utlis/tt";
 
 export default function DriversList(props: any) {
   const [list, setList] = useState<driverData[]>([]);
   const IonRefresherElement = useRef<HTMLIonRefresherElement | any>();
   const history = useHistory();
   const [lastDoc, setLastDoc] = useState<any>(null);
-  const [statusType, setStatusType] = useState<any>("active");
   const [loading, setLoading] = useState<any>(true);
   const { mounted } = useMounted();
   const [segment, setSegmt] = useState<"pending" | "active" | "inactive" | any>(
@@ -62,16 +50,7 @@ export default function DriversList(props: any) {
     } catch (error) {}
     setLoading(false);
   }
-  function onEndRefresh(e: any) {
-    mydb
-      .getDrivers({ from: lastDoc, status: segment }, setLastDoc)
-      .then((v: any) => {
-        mounted && setList([...list, ...v]);
-      });
-    setTimeout(() => {
-      e.target.complete();
-    }, 2000);
-  }
+  
 
   useEffect(() => {
     Refresh();
@@ -79,9 +58,24 @@ export default function DriversList(props: any) {
   useEffect(() => {
     Refresh();
   }, [segment]);
+
   useEffect(() => {
     console.log("drivers list :>> ", list);
   }, [list]);
+  function onEndRefresh(e: any) {
+    setLoading(true);
+    try {
+      mydb
+        .getDrivers({ from: lastDoc, status: segment }, setLastDoc)
+        .then((v: any) => {
+          mounted && setList(v);
+        });
+    } catch (error) {}
+    setLoading(false);
+    setTimeout(() => {
+      e.target.complete()
+    }, 2000);
+  }
   function hundleApprove(id: string) {
     
       console.log('approving driver')
@@ -127,6 +121,15 @@ export default function DriversList(props: any) {
             );
           })}
         {loading && !list && <OrdersPlaceHolder></OrdersPlaceHolder>}
+        <IonInfiniteScroll
+      onIonInfinite={onEndRefresh}
+      threshold="100px"
+      disabled={loading}>
+      <IonInfiniteScrollContent
+        loadingSpinner="dots"
+        loadingText={TT('loading ..')}
+      ></IonInfiniteScrollContent>
+    </IonInfiniteScroll>
       </IonList>
     </div>
   );

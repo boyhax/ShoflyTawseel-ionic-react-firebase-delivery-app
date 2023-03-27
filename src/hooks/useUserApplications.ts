@@ -2,7 +2,7 @@ import { getAuth } from 'firebase/auth';
 import { DocumentData, QuerySnapshot } from 'firebase/firestore';
 import * as React from 'react';
 import { useState } from 'react';
-import { subscripeUserApplications, userApplicationsStore, } from '../providers/firebaseMain';
+import { subscripeUserApplications, userApplicationsStore, } from '../api/firebaseMain';
 
 
 

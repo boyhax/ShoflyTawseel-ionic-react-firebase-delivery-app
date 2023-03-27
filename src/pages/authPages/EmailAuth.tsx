@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { IonPage, IonContent, IonInput, IonButton, IonFooter, IonLabel, IonTitle, IonItem } from '@ionic/react';
-import { getAuth,signInWithEmailAndPassword } from 'firebase/auth';
+import { IonLabel, IonItem } from '@ionic/react';
 import EmailSignin from './EmailSignIn';
 import EmailSignup from './EmailSignup';
 

@@ -1,30 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
-import { useGlobals } from "../providers/globalsProvider";
-import * as L from "leaflet";
+import React, { useState } from "react";
 import "leaflet/dist/leaflet.css";
-import { getUserInfoPlaceHolder } from "../providers/firebaseMain";
-import { Device } from "@capacitor/device";
 import Page from "../components/Page";
 import MapPage from "./MapPage";
 import {
-  IonAccordion,
-  IonAccordionGroup,
   IonButton,
   IonContent,
   IonHeader,
-  IonIcon,
-  IonItem,
   IonLabel,
-  IonNote,
   IonSegment,
   IonSegmentButton,
-  IonToggle,
   IonToolbar,
 } from "@ionic/react";
-import { golfOutline } from "ionicons/icons";
 import { TT } from "../components/utlis/tt";
-import { DriverStatus } from "../types";
 import { useDriver } from "../hooks/useDriver";
 import UserApplicationsList from "../components/UserApplicationsList";
 

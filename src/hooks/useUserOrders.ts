@@ -10,7 +10,7 @@ import {
   getOrders,
   subscripeUserOrders,
   userOrdersStore,
-} from "../providers/firebaseMain";
+} from "../api/firebaseMain";
 
 const useUserOrders = () => {
   const [loading, setLoading] = React.useState<boolean>(true);

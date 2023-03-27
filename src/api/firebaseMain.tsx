@@ -1,13 +1,9 @@
 import {
   addDoc,
-  arrayRemove,
-  arrayUnion,
   collection,
-  CollectionReference,
   deleteDoc,
   doc,
   DocumentData,
-  documentId,
   DocumentSnapshot,
   GeoPoint,
   getDoc,
@@ -30,14 +26,12 @@ import "firebase/compat/firestore";
 import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import {
-  ApplicationInfo,
   ApplicationProps,
   driverData,
   DriverStatus,
   newOrderProps,
   orderFilter,
   orderProps,
-  OrderReportInfo,
   OrderReportProps,
   OrderStatus,
   userInfo,
@@ -50,15 +44,12 @@ import { Store } from "pullstate";
 import { b64toBlob } from "../hooks/usePhoto";
 import L, { LatLng } from "leaflet";
 import { userStore } from "../Stores/userStore";
-import { clear } from "console";
-import chatStore, { ChatProps, MessageProps } from "../Stores/chatStore";
+import chatStore, { MessageProps } from "../Stores/chatStore";
 import { getAcendingString } from "../components/utlis/AcendingString";
 import { TT } from "../components/utlis/tt";
-import { getFunctions, HttpsCallable, httpsCallable } from "firebase/functions";
-import { FCM, FCMPlugin } from "@capacitor-community/fcm";
-import { TokenStore } from "./pushFCM";
-import { PushNotificationSchema } from "@capacitor/push-notifications";
-import { AnyARecord } from "dns";
+import { FCM } from "@capacitor-community/fcm";
+import { TokenStore } from "../services/pushFCM";
+import { getFunctions, httpsCallable } from "firebase/functions";
 
 export const userOrdersStore = new Store<any[]>([]);
 export const userApplicationsStore = new Store<any[]>([]);
@@ -100,6 +91,8 @@ class firebaseClass {
   SubscribeUserLists = false;
   unSubList: any[] = [];
   sendPush: any = async (message: any) => {
+    const pushFunction = httpsCallable(getFunctions(), "sendMessage");
+    pushFunction(message).then((s) => console.log("push sent :>> ", s));
     addDoc(collection(this.db, "push"), message)
       .then((s) => console.log("push sent :>> ", s))
       .catch((s) => console.log("push error :>> ", s));
@@ -113,30 +106,28 @@ class firebaseClass {
   subscribeProfile() {
     const uid = this.user?.uid;
     const ref = doc(this.db, "users/" + uid);
-    getDoc(ref).then((snap)=>{
-      if(!snap.exists()){
+    getDoc(ref).then((snap) => {
+      if (!snap.exists()) {
         this.hundleNoProfileCreatedYet();
         userStore.update((s) => {
           s.profile = null;
         });
-      }else{
+      } else {
         userStore.update((s) => {
           s.profile = UserProfileFromDoc(snap);
         });
       }
-    })
+    });
     return onSnapshot(ref, (doc) => {
       var profile: any = null;
       if (doc.exists()) {
         profile = UserProfileFromDoc(doc);
-      }else{
+      } else {
         this.hundleNoProfileCreatedYet();
         userStore.update((s) => {
           s.profile = null;
         });
       }
-      
-  
     });
   }
   async hundleNoProfileCreatedYet() {
@@ -182,23 +173,38 @@ class firebaseClass {
     userApplicationsStore.update((s) => this.userApplications);
   }
 
-  updateToken() {
-    FCM.getToken()
-      .then((token) => {
-        this.token = token.token;
-        TokenStore.update((s) => {
-          s.token = token.token;
-        });
+  updateToken(token?: string) {
+    if (!token) {
+      FCM.getToken()
+        .then((token) => {
+          this.token = token.token;
+          TokenStore.update((s) => {
+            s.token = token.token;
+          });
 
-        setDoc(doc(this.db, "fcmTokens/" + this.user?.uid), {
-          token: token,
-        })
-          .then((v) => {
-            console.log("token updated");
+          setDoc(doc(this.db, "fcmTokens/" + this.user?.uid), {
+            token: this.token,
           })
-          .catch((s) => console.log("token update error :>> ", s));
+            .then((v) => {
+              console.log("token updated");
+            })
+            .catch((s) => console.log("token update error :>> ", s));
+        })
+        .catch((s) => console.log("token error :>> ", s));
+    } else {
+      this.token = token;
+      TokenStore.update((s) => {
+        s.token = token;
+      });
+
+      setDoc(doc(this.db, "fcmTokens/" + this.user?.uid), {
+        token: this.token,
       })
-      .catch((s) => console.log("token error :>> ", s));
+        .then((v) => {
+          console.log("token updated");
+        })
+        .catch((s) => console.log("token update error :>> ", s));
+    }
   }
   setUserToken(token: string) {
     this.token = token;

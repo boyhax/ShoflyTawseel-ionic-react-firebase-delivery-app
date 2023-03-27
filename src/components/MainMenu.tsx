@@ -1,7 +1,6 @@
 import { ComponentProps } from "@ionic/core";
 import {
   IonContent,
-  IonTitle,
   IonHeader,
   IonToolbar,
   IonList,
@@ -10,7 +9,6 @@ import {
   IonButtons,
   IonButton,
   IonIcon,
-  IonRippleEffect,
   IonLabel,
   IonAvatar,
   IonImg,
@@ -20,21 +18,13 @@ import {
 import { getAuth } from "firebase/auth";
 import {
   bookOutline,
-  bookSharp,
   callOutline,
   chatboxOutline,
-  closeOutline,
   informationCircleOutline,
-  informationSharp,
-  locationOutline,
-  locationSharp,
-  walletOutline,
-  walletSharp,
 } from "ionicons/icons";
-import React, { useEffect } from "react";
+import React from "react";
 import { useHistory } from "react-router";
-import { avatarPLaceholder } from "../providers/firebaseMain";
-import { useGlobals } from "../providers/globalsProvider";
+import { avatarPLaceholder } from "../api/firebaseMain";
 import { userStore } from "../Stores/userStore";
 import DriverUserToggleSegment from "./DriverUserToggleSegment";
 import { TT } from "./utlis/tt";
@@ -52,7 +42,7 @@ const MainMenu = (Props: props) => {
   );
   const SignOutButton = (
     <IonButton color="danger" onClick={() => getAuth().signOut()}>
-      Sign Out
+      {TT("Sign Out")}
     </IonButton>
   );
 
@@ -134,9 +124,14 @@ const MainMenu = (Props: props) => {
               </IonItem>
             </IonMenuToggle>
           )}
-          <IonButtons slot={"end"} className="flex-end">
+          <IonMenuToggle>
+            <IonItem>
+            <div  className="flex-end">
             {user && SignOutButton }
-          </IonButtons>
+          </div>
+            </IonItem>
+          </IonMenuToggle>
+          
         </IonList>
       </IonContent>
       <IonFooter>

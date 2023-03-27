@@ -1,41 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, {  } from "react";
 import {
   IonContent,
-  IonButton,
-  IonIcon,
-  IonButtons,
-  IonList,
-  IonRow,
-  IonAvatar,
-  IonImg,
-  IonInput,
-  IonPopover,
-  IonItem,
-  IonToolbar,
-  IonLabel,
   IonText,
 } from "@ionic/react";
-import {
-  logOutOutline,
-  mailOutline,
-  personCircleOutline,
-  phonePortraitOutline,
-} from "ionicons/icons";
-import { useGlobals } from "../providers/globalsProvider";
-import { getAuth } from "firebase/auth";
-import {
-  avatarPLaceholder,
-  mydb,
-  updateUserProfile,
-} from "../providers/firebaseMain";
-import { TT } from "../components/utlis/tt";
-import CreatProfile from "./CreatProfile";
-import AvatarPicker from "../components/AvatarPicker";
-import { useHistory } from "react-router";
-import { usePhoto } from "../hooks/usePhoto";
 import Page from "../components/Page";
-import ProfileAvatar from "../components/ProfileAvatar";
-import { useProfile } from "../Stores/userStore";
 
 export default function RulesAndPolicyPage(): JSX.Element {
   return (

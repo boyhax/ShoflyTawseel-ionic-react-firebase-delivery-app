@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { IonHeader, IonLoading, useIonToast } from "@ionic/react";
 import "leaflet/dist/leaflet.css";
-import { uploadNewOrder } from "../../providers/firebaseMain";
+import { uploadNewOrder } from "../../api/firebaseMain";
 import Step1 from "./Step1";
 import Step2 from "./Step2";
 import { useHistory } from "react-router";

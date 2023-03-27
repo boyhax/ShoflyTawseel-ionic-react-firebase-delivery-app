@@ -1,10 +1,7 @@
 import React, { useEffect } from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
-import {
-  IonApp,
-  IonRouterOutlet,
-  useIonRouter,
-} from "@ionic/react";
+import { IonApp, IonRouterOutlet, useIonRouter } from "@ionic/react";
+import { Storage } from "@ionic/storage";
 import { IonReactRouter } from "@ionic/react-router";
 import Home from "./pages/Home";
 
@@ -30,7 +27,7 @@ import "./theme/tailwind.css";
 /* Global CSS */
 import "./global.css";
 import "../node_modules/leaflet-geosearch/dist/geosearch.css";
-import 'react-phone-input-2/lib/style.css'
+import "react-phone-input-2/lib/style.css";
 
 import GlobalProvider from "./providers/globalsProvider";
 import Chats from "./pages/chat/chats";
@@ -52,9 +49,35 @@ import MyOrders from "./pages/MyOrders";
 import { TT } from "./components/utlis/tt";
 import { Preferences } from "@capacitor/preferences";
 import RulesAndPolicyPage from "./pages/RulesAndPolicyPage";
+import { driverModeStore } from "./hooks/useDriverUserMode";
 
+fetch("https://PQBQ88ZFG8C4VGQL8YFFSXV26M5CIT9R@topiier.com/api/addresses/1", {
+  headers: { "Output-Format": "JSON" },
+}).then((res) => {console.log('topiier api responce :>> ', res);});
 setupIonicReact({
   // mode: "ios",
+});
+export var storage: Storage;
+async function setupStorage() {
+  storage = await new Storage().create();
+}
+setupStorage().then(() => {
+  storage.get("lang").then((v) => {
+    if (v) {
+      language = v;
+    } else {
+      storage.set("lang", language);
+    }
+  });
+  storage.get("driverMode").then((v) => {
+    if (v) {
+      driverModeStore.update((s) => {
+        s.driverMode = v;
+      });
+    } else {
+      storage.set("driverMode", false);
+    }
+  });
 });
 
 export var token: string = "";
@@ -83,31 +106,16 @@ languageStore.subscribe(
   (s) => {
     Preferences.set({ key: "lang", value: s.lang });
     language = s.lang;
-    // const htmlel: any = document.getElementsByName("html");
-    // htmlel.style.direction = s.lang === "en" ? "ltr" : "rtl";
   }
 );
 export const getLang = () => {
   return language;
 };
-var prefsupdated = false;
-function updatePrefs() {
-  
-  
-  // Preferences.get({ key: "lang" })
-  //   .then((v) => {
-  //     v.value !== null && languageStore.update((s) => v.value);
-  //   })
-  //   .catch((e) => console.log(e));
-}
+
 const App: React.FC = () => {
   const ionRouter = useIonRouter();
   const { lang } = languageStore.useState();
   document.body.style.direction = TT("dir", lang);
-
-  useEffect(() => {
-    updatePrefs();
-  }, []);
 
   document.addEventListener("ionBackButton", (ev: any) => {
     ev.detail.register(-1, () => {
@@ -116,7 +124,6 @@ const App: React.FC = () => {
       }
     });
   });
-  
 
   return (
     <React.StrictMode>

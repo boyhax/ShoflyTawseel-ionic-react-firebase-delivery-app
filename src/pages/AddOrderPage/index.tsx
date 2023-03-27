@@ -4,7 +4,7 @@ import { Store } from "pullstate";
 import { geocodeByLatLng } from "react-google-places-autocomplete";
 import { useHistory } from "react-router";
 
-import { uploadNewOrder } from "../../providers/firebaseMain";
+import { uploadNewOrder } from "../../api/firebaseMain";
 import { newOrderProps } from "../../types";
 import AddOrderPage from "./AddOrderPage";
 interface Props {

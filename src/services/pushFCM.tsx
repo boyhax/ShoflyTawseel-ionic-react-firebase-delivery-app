@@ -7,21 +7,23 @@ import {
   PushNotifications,
   Token,
 } from "@capacitor/push-notifications";
-import mydb from "./firebaseMain";
+import mydb from "../api/firebaseMain";
 import { Store } from "pullstate";
 
 export const TokenStore = new Store({token:''})
 class pushFCM {
+   token:string=''
   constructor() {
-    // this.addListeners();
-    // this.subscribeTo("all");
+    this.addListeners();
+    this.subscribeTo("all");
   
   }
 
   addListeners = async () => {
     await PushNotifications.addListener("registration", (token) => {
       console.info("##########Registration token: ", token.value);
-      // mydb.updateToken(token.value);
+      this.token = token.value
+      mydb.updateToken(token.value);
     });
     await PushNotifications.addListener("registrationError", (err) => {
       console.error("##########Registration error: ", err.error);

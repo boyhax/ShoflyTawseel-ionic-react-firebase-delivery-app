@@ -2,38 +2,24 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   IonContent,
   IonButtons,
-  IonInput,
-  IonLabel,
-  IonItem,
   IonButton,
   IonIcon,
   IonFooter,
-  IonText,
   IonPopover,
-  IonToolbar,
-  IonThumbnail,
-  IonImg,
-  IonSkeletonText,
 } from "@ionic/react";
 import {
-  addDoc,
   collection,
-  DocumentData,
   limit,
-  onSnapshot,
   orderBy,
   query,
-  QueryDocumentSnapshot,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { useParams } from "react-router";
-import { imageOutline, sendOutline } from "ionicons/icons";
+import { imageOutline } from "ionicons/icons";
 
 import "./chat.css";
 import Page from "../../components/Page";
-import { db, mydb } from "../../providers/firebaseMain";
+import { mydb } from "../../api/firebaseMain";
 import { Camera, CameraResultType, Photo } from "@capacitor/camera";
-import useMounted from "../../hooks/useMounted";
 import { ChatProps, MessageProps } from "../../Stores/chatStore";
 import useQuerySnapShot from "../../hooks/useQuerySnapShot";
 import MessageBubble from "./MessageBubble";

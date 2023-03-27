@@ -227,5 +227,17 @@
     "empty list \n": {
         "en": "empty list \n",
         "ar": "لا يوجد حاليا"
+    },
+    "Do you Want To Register As Driver with us?": {
+        "en": "Do you Want To Register As Driver with us?",
+        "ar": "Do you Want To Register As Driver with us?"
+    },
+    "Yes": {
+        "en": "Yes",
+        "ar": "Yes"
+    },
+    "Sign Out": {
+        "en": "Sign Out",
+        "ar": "Sign Out"
     }
 }

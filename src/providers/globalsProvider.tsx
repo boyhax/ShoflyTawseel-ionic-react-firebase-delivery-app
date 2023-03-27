@@ -1,20 +1,14 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { User } from "firebase/auth";
+import React, { createContext, useContext, useState } from "react";
 import { DocumentSnapshot } from "firebase/firestore";
 import {
   userApplicationsStore,
   userOrdersStore,
   userReportsStore,
-} from "./firebaseMain";
-import { UserProfile } from "../types";
+} from "../api/firebaseMain";
 import { useIonAlert } from "@ionic/react";
 import useOnline from "../hooks/useOnline";
 import LoadingScreen from "../pages/LoadingScreen";
-import useMounted from "../hooks/useMounted";
 import { userStore } from "../Stores/userStore";
-import useNotifications from "../hooks/useNotifications";
-import useDriverUserMode from "../hooks/useDriverUserMode";
-import { Preferences } from "@capacitor/preferences";
 
 interface Props {
   
@@ -25,9 +19,7 @@ interface Props {
   userApplications: any;
   userOrders: any;
   userReports: any;
-  token: any;
-  notifications: any;
-  register: any;
+
 }
 const initialProps: Props = {
   
@@ -38,9 +30,7 @@ const initialProps: Props = {
   userApplications: {},
   userOrders: {},
   userReports: {},
-  token: "",
-  notifications: [],
-  register: () => {},
+ 
 };
 const globalsContext = createContext<Props>(initialProps);
 
@@ -62,7 +52,6 @@ const GlobalProvider: React.FC = (props) => {
 
   // const {mounted}=useMounted()
 
-  const { token, notifications, register } = useNotifications();
 
   const toProvide: Props = {
     
@@ -73,9 +62,6 @@ const GlobalProvider: React.FC = (props) => {
     userApplications,
     userOrders,
     userReports,
-    token,
-    notifications,
-    register,
   };
   if (!isOnline) {
     return (

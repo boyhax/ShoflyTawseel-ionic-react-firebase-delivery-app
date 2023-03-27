@@ -2,7 +2,7 @@ import { Camera, CameraResultType, CameraSource } from "@capacitor/camera";
 import { IonAvatar, IonImg } from "@ionic/react";
 import { getAuth } from "firebase/auth";
 import * as React from "react";
-import { mydb } from "../providers/firebaseMain";
+import { mydb } from "../api/firebaseMain";
 
 export const b64toBlob = (b64Data:any, contentType='', sliceSize=512) => {
   const byteCharacters = atob(b64Data);

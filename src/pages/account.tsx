@@ -1,43 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   IonContent,
   IonButton,
   IonIcon,
   IonButtons,
   IonList,
-  IonRow,
-  IonAvatar,
-  IonImg,
   IonInput,
-  IonPopover,
   IonItem,
-  IonHeader,
   IonToolbar,
-  IonToggle,
   IonLabel,
   IonNote,
-  IonSegment,
-  IonSegmentButton,
-  IonFooter,
 } from "@ionic/react";
 import {
-  golfOutline,
   logOutOutline,
   mailOutline,
   personCircleOutline,
   phonePortraitOutline,
 } from "ionicons/icons";
-import { useGlobals } from "../providers/globalsProvider";
 import { getAuth } from "firebase/auth";
-import { avatarPLaceholder, mydb, updateUserProfile } from "../providers/firebaseMain";
+import { avatarPLaceholder, mydb } from "../api/firebaseMain";
 import { TT} from "../components/utlis/tt";
 import CreatProfile from "./CreatProfile";
-import AvatarPicker from "../components/AvatarPicker";
 import { useHistory } from "react-router";
 import { usePhoto } from "../hooks/usePhoto";
 import Page from "../components/Page";
 import ProfileAvatar from "../components/ProfileAvatar";
-import {  useProfile, userStore } from "../Stores/userStore";
+import {  userStore } from "../Stores/userStore";
 import { DriverStatus } from "../types";
 import useDriverUserMode from "../hooks/useDriverUserMode";
 

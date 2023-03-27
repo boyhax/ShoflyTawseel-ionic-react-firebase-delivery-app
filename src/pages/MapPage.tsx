@@ -16,7 +16,7 @@ import { LeafletMouseEvent, marker } from "leaflet";
 import { Store } from "pullstate";
 import { useHistory } from "react-router";
 import { OrderIcon } from "../components/utlis/leafletMapIcons";
-import { geoToLatlng } from "../providers/firebaseMain";
+import { geoToLatlng } from "../api/firebaseMain";
 import { orderMarker, orderProps } from "../types";
 import OrderCardWithOrder from "../components/OrderCard/withOrder";
 import { GeoPoint } from "firebase/firestore";

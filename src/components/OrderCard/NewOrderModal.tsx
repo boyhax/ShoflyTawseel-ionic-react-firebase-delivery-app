@@ -11,7 +11,7 @@ import {
 import React, { useMemo, useState } from "react";
 import useMounted from "../../hooks/useMounted";
 
-import { geoToLatlng, mydb } from "../../providers/firebaseMain";
+import { geoToLatlng, mydb } from "../../api/firebaseMain";
 import { orderProps, OrderStatus } from "../../types";
 import "./OrderCard.css";
 import TwoPointMap from "../TwoPointMap";

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {  makeOrderFromDoc } from '../providers/firebaseMain';
+import {  makeOrderFromDoc } from '../api/firebaseMain';
 import { orderProps } from '../types';
 
 const useOrder =  (orderID:string)=>{

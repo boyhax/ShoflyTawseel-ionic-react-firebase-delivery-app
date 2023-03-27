@@ -58,7 +58,7 @@ export const LeafLetMap: React.FC<props> = ({
       center: [center_lat, center_long],
       zoom: center_zoom,
       zoomControl: false,
-    });
+    }).fitWorld();
     mapsStore.update(s=>{s.mapsCount+=1})
     setMap(map);
     onMap(map);
@@ -141,6 +141,7 @@ export const LeafLetMap: React.FC<props> = ({
         outlineOffset: "1px",
         width: "100%",
         height: "100%",
+        imageRendering: "pixelated",
       }}
     >
       <div className=" flex absolute w-full h-full pointer-events-none z-[1000]">

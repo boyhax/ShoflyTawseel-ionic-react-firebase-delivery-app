@@ -1,6 +1,6 @@
 import { LatLng } from 'leaflet';
 import { Store } from 'pullstate';
-import { mydb } from '../providers/firebaseMain';
+import { mydb } from "../api/firebaseMain";
 import { driverData, UserProfile } from '../types';
 import {Geolocation} from'@capacitor/geolocation'
 import { User } from 'firebase/auth';

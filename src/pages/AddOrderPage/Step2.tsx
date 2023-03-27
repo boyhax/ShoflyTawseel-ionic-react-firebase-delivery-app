@@ -25,7 +25,7 @@ import { useMemo } from "react";
 import { newOrderStore, useNewOrder } from ".";
 import OrderPointsCard from "../../components/OrderPointsCard";
 import TwoPointMap from "../../components/TwoPointMap";
-import { geoToLatlng } from "../../providers/firebaseMain";
+import { geoToLatlng } from "../../api/firebaseMain";
 import { newOrderProps, OrderCatagorie, OrderCatagories } from "../../types";
 
 const Step2: React.FC = (props) => {

@@ -1,6 +1,5 @@
 import { Network } from "@capacitor/network";
 import { Store } from "pullstate";
-import { useEffect, useState } from "react";
 
 const networkStore = new Store({
   isOnline:false,

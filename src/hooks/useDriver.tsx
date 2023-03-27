@@ -1,4 +1,4 @@
-import mydb from "../providers/firebaseMain";
+import mydb from "../api/firebaseMain";
 import { userStore } from "../Stores/userStore";
 import useMounted from "./useMounted";
 

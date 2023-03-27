@@ -8,7 +8,8 @@ import OrderCard from "./OrderCard";
 import useOrders from "../hooks/useOrders";
 import FilterUI from "./FilterUI";
 import OrdersPlaceHolder from "./OrdersPLaceHolder";
-import { makeOrderFromDoc } from "../providers/firebaseMain";
+import { makeOrderFromDoc } from "../api/firebaseMain";
+import { TT } from "./utlis/tt";
 
 
 export default function OrderList(props: any) {
@@ -77,7 +78,7 @@ export default function OrderList(props: any) {
       disabled={isInfiniteDisabled}>
       <IonInfiniteScrollContent
         loadingSpinner="dots"
-        loadingText="بحث المزيد من الطلبات"
+        loadingText={TT('loading ..')}
       ></IonInfiniteScrollContent>
     </IonInfiniteScroll>
 

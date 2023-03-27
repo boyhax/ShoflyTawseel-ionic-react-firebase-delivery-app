@@ -53,19 +53,7 @@ module.exports.onPushCreated = functions.firestore
 module.exports.sendMessage = functions.https.onCall((data, context) => {
   cors(data, res, () => {
     const payload = {
-      notification: {
-        title: data.title,
-        body: data.body,
-        // icon: data.icon,
-        click_action: data.click_action,
-      },
-      data: {
-        title: data.title,
-        body: data.body,
-        // icon: data.icon,
-        click_action: data.click_action,
-      },
-      token: data.token,
+      ...data
     };
     admin
       .messaging()

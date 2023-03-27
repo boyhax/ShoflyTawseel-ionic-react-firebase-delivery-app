@@ -23,7 +23,7 @@ import {
   getUserInfoPlaceHolder,
   mydb,
   reportOrder,
-} from "../../providers/firebaseMain";
+} from "../../api/firebaseMain";
 import { userStore } from "../../Stores/userStore";
 import { orderProps, userInfo } from "../../types";
 import "./OrderCard.css";

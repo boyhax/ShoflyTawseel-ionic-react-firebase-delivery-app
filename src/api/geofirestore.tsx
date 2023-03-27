@@ -1,14 +1,9 @@
 import { LatLng } from "@capacitor/google-maps/dist/typings/definitions";
-import { getApp } from "firebase/app";
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
-import { GeoPoint } from "firebase/firestore";
 import * as geofirestore from "geofirestore";
-import { Http2ServerRequest } from "http2";
-import { idCard } from "ionicons/icons";
-import { getLang } from "../App";
 import { Config } from "../config";
-import { newOrderProps, orderMarker, orderProps, OrderStatus } from "../types";
+import { newOrderProps, orderProps, OrderStatus } from "../types";
 import mydb from "./firebaseMain";
 
 class geoClass {
