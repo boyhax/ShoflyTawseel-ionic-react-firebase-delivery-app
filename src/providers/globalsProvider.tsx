@@ -9,9 +9,9 @@ import { useIonAlert } from "@ionic/react";
 import useOnline from "../hooks/useOnline";
 import LoadingScreen from "../pages/LoadingScreen";
 import { userStore } from "../Stores/userStore";
+import OnlineRequiredRoute from "../routes/OnlineRequiredRoute";
 
 interface Props {
-  
   currentOrder: DocumentSnapshot | undefined;
   setCurrentOrder: (doc: DocumentSnapshot) => void | undefined;
   presentAlert: any;
@@ -19,10 +19,8 @@ interface Props {
   userApplications: any;
   userOrders: any;
   userReports: any;
-
 }
 const initialProps: Props = {
-  
   currentOrder: undefined,
   setCurrentOrder: (v: any) => undefined,
   presentAlert: "",
@@ -30,14 +28,11 @@ const initialProps: Props = {
   userApplications: {},
   userOrders: {},
   userReports: {},
- 
 };
 const globalsContext = createContext<Props>(initialProps);
 
 const GlobalProvider: React.FC = (props) => {
-
   const [currentOrder, setCurrentOrder] = useState<DocumentSnapshot>();
-  const { isOnline } = useOnline();
 
   const [presentAlert, dissmissAlert] = useIonAlert();
   const userOrders = userOrdersStore.useState();
@@ -52,9 +47,7 @@ const GlobalProvider: React.FC = (props) => {
 
   // const {mounted}=useMounted()
 
-
   const toProvide: Props = {
-    
     setCurrentOrder,
     currentOrder,
     presentAlert,
@@ -63,27 +56,17 @@ const GlobalProvider: React.FC = (props) => {
     userOrders,
     userReports,
   };
-  if (!isOnline) {
-    return (
-      <div
-        hidden={isOnline || user === undefined}
-        className={"absolute z-50 w-full mx-auto "}
-      >
-        <p className={"text-xl text-center text-slate-300  bg-red-700"}>
-          Intenet connection required
-        </p>
-      </div>
-    );
-  }else{
-    if(user===undefined ||(user && profile===undefined)){
-      return <LoadingScreen/>
-    }
-  }
+  
   return (
     <globalsContext.Provider value={toProvide}>
-      <div className={`${user === undefined && "hidden"}`}>
-        {props.children}
-      </div>
+      <OnlineRequiredRoute>
+        {user === undefined || (user && profile === undefined) ? (
+          <LoadingScreen />
+        ) : (
+          props.children
+        )}
+        
+      </OnlineRequiredRoute>
     </globalsContext.Provider>
   );
 };

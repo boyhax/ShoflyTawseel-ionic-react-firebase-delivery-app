@@ -41,7 +41,7 @@ const MainMenu = (Props: props) => {
     <IonButton onClick={() => history.push("SignIn")}>Sign In</IonButton>
   );
   const SignOutButton = (
-    <IonButton color="danger" onClick={() => getAuth().signOut()}>
+    <IonButton fill={'default'}  onClick={() => getAuth().signOut()}>
       {TT("Sign Out")}
     </IonButton>
   );
@@ -53,9 +53,12 @@ const MainMenu = (Props: props) => {
           <IonToolbar
             onClick={() => history.push("/account")}
             color={"primary"}
-            className={"flex h-32 items-center shadow-xl rounded-br-2xl"}
+            style={{direction:'ltr'}}
+            className={
+              "flex  items-center shadow-xl "
+            }
           >
-            <IonAvatar slot={"primary"}>
+            <IonAvatar slot={"start"}>
               <IonImg
                 src={
                   profile
@@ -64,16 +67,26 @@ const MainMenu = (Props: props) => {
                 }
               ></IonImg>
             </IonAvatar>
-
+            <div className={"flex m-3 flex-col "}>
             <IonLabel>
-              {user
-                ? profile
-                  ? profile.phoneNumber!
-                  : profile === undefined
-                  ? ".."
-                  : ""
-                : ""}
-            </IonLabel>
+                {user
+                  ? profile
+                    ? profile.name!
+                    : profile === undefined
+                    ? ".."
+                    : ""
+                  : ""}
+              </IonLabel>
+              <IonLabel>
+                {user
+                  ? profile
+                    ? profile.phoneNumber!
+                    : profile === undefined
+                    ? ".."
+                    : ""
+                  : ""}
+              </IonLabel>
+            </div>
           </IonToolbar>
         </IonMenuToggle>
       </IonHeader>
@@ -108,7 +121,7 @@ const MainMenu = (Props: props) => {
             </IonItem>
           </IonMenuToggle>
           <IonMenuToggle>
-            <IonItem className="item" onClick={() => history.push("contactus")}>
+            <IonItem className="item" onClick={() => history.push("contact")}>
               <IonIcon icon={callOutline} />
               <IonLabel>{TT("Get in Touch")}</IonLabel>
             </IonItem>
@@ -126,12 +139,9 @@ const MainMenu = (Props: props) => {
           )}
           <IonMenuToggle>
             <IonItem>
-            <div  className="flex-end">
-            {user && SignOutButton }
-          </div>
+              <div className="flex-end">{user && SignOutButton}</div>
             </IonItem>
           </IonMenuToggle>
-          
         </IonList>
       </IonContent>
       <IonFooter>

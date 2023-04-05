@@ -1,7 +1,5 @@
-import { IonButton, IonButtons, IonFabButton, IonIcon } from "@ionic/react";
+import { IonIcon } from "@ionic/react";
 import {
-  arrowBack,
-  locateSharp,
   locationSharp,
   pinSharp,
   readerSharp,
@@ -23,10 +21,29 @@ const OrdersSteps: React.FC<{
           "flex flex-row text-4xl gap-x-8 ltr bg-inherit bg-white gab-6"
         }
       >
-        
-        <IonIcon className={''} onClick={()=>onStepClick(0)} color={step===0?`light`:`secondary`}  icon={locationSharp} />
-        <IonIcon onClick={()=>onStepClick(1)} color={step===1?`light`:`secondary`} icon={pinSharp} />
-        <IonIcon onClick={()=>{}} color={step===2?`light`:`secondary`} icon={readerSharp} />
+        <div className={`${step === 0 && "border-b-2 border-white "} `}>
+          <IonIcon
+            className={""}
+            onClick={() => onStepClick(0)}
+            color={step === 0 ? `light` : `secondary`}
+            icon={locationSharp}
+          />
+        </div>
+        <div className={`${step === 1 && "border-b-2 border-white "} `}>
+          <IonIcon
+            onClick={() => onStepClick(1)}
+            color={step === 1 ? `light` : `secondary`}
+            icon={pinSharp}
+          />
+        </div>
+
+        <div className={`${step === 2 && "border-b-2 border-white "} `}>
+          <IonIcon
+            onClick={() => {}}
+            color={step === 2 ? `light` : `secondary`}
+            icon={readerSharp}
+          />
+        </div>
       </div>
     </div>
   );

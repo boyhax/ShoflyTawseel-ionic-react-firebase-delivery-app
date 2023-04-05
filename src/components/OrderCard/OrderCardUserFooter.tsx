@@ -45,24 +45,16 @@ const OpenWhatsapp = (number: any) => {
 export default function OrderCardDriverFooter({
   order,
 }: props): React.ReactElement {
-  const [deleted, setDeleted] = useState(false);
-  const uid = getAuth().currentUser?.uid;
   const { user, driver } = userStore.useState((s) => s);
   const history = useHistory();
-  const owner = order!.uid === uid;
-  const [userInfo,setUserInfo] = useState(getUserInfoPlaceHolder())
   
-  const { mounted } = useMounted();
 
   const userApplied = useMemo(
     () => mydb.user && order.driver === mydb.user.uid,
     [order.driver]
   );
 
-  useEffect(() => {
-    mydb.getUserInfo(order.uid).then(data=>setUserInfo(data))
-  }, []);
-  const [presentAlert] = useIonAlert();
+  
 
   async function hundleApply() {
     if (!userApplied) {
@@ -74,9 +66,7 @@ export default function OrderCardDriverFooter({
   function Report(why: string) {
     reportOrder(order.id, why);
   }
-  if (deleted) {
-    return <></>;
-  }
+  
   return (
     <div className={"flex w-full  justify-between "}>
         

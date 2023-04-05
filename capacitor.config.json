@@ -8,6 +8,9 @@
   "plugins": {
     "PushNotifications": {
       "presentationOptions": ["alert"]
+    },
+    "CapacitorHttp": {
+      "enabled": true
     }
   }
 }

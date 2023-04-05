@@ -93,7 +93,7 @@ class firebaseClass {
   sendPush: any = async (message: any) => {
     const pushFunction = httpsCallable(getFunctions(), "sendMessage");
     pushFunction(message).then((s) => console.log("push sent :>> ", s));
-    addDoc(collection(this.db, "push"), message)
+    addDoc(collection(this.db, "push/"), message)
       .then((s) => console.log("push sent :>> ", s))
       .catch((s) => console.log("push error :>> ", s));
   };
@@ -137,6 +137,24 @@ class firebaseClass {
     const email: string = (user.emailVerified && user.email) || "";
     const photo = "https://ui-avatars.com/api/?name=NAME".replace("NAME", name);
     createNewProfileForThisUser(name, number, email, photo);
+  }
+  updateOrderStatus(order: orderProps, status: OrderStatus) {
+    return updateDoc(doc(this.db, "orders/" + order.id), {
+      status,
+    }).then(() => {
+      userApplicationsStore.update((s) => {
+        let o = s.find((v) => v.id === order.id);
+        o.status = status;
+      });
+    })
+  }
+  sendContactUs(message:string){
+    const ref = collection(this.db, "contactUs/" );
+    return addDoc(ref, {
+      message,
+      date: serverTimestamp(),
+      user: this.user?.uid
+    });
   }
   subscribeDriver() {
     const uid = this.user?.uid;
@@ -482,7 +500,7 @@ export function subscripeUserNotifications(
   result: (snap: QuerySnapshot<DocumentData>) => boolean
 ) {
   const unsubHere = onSnapshot(
-    query(collection(db, "push/" + id), orderBy("time", "desc")),
+    query(collection(db, "userNotifications/"+ id+'col'), orderBy("time", "desc")),
     (snap) => {
       let unsub = result(snap);
       unsub && unsubHere();

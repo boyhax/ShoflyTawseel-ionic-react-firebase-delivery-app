@@ -3,33 +3,31 @@ import { ComponentProps } from "@ionic/core";
 import {
   IonIcon,
   IonButton,
-  IonSpinner,
   useIonAlert,
   IonButtons,
+  IonLabel,
+  IonSelect,
+  IonSelectOption,
+  useIonActionSheet,
+  useIonLoading,
 } from "@ionic/react";
 import { getAuth } from "firebase/auth";
 import {
-  trashOutline,
-  thumbsDownOutline,
-  thumbsUpOutline,
   logoWhatsapp,
   chatboxOutline,
   alertCircleOutline,
-  checkmarkOutline,
-  closeSharp,
   closeOutline,
 } from "ionicons/icons";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useHistory } from "react-router";
-import useMounted from "../../hooks/useMounted";
 
 import {
-  getUserInfoPlaceHolder,
   mydb,
   reportOrder,
+  userApplicationsStore,
 } from "../../api/firebaseMain";
 import { userStore } from "../../Stores/userStore";
-import { orderProps, userInfo } from "../../types";
+import { orderProps, OrderStatus } from "../../types";
 import { TT } from "../utlis/tt";
 import "./OrderCard.css";
 
@@ -46,56 +44,32 @@ const OpenWhatsapp = (number: any) => {
 export default function OrderCardDriverFooter({
   order,
 }: props): React.ReactElement {
-  const [deleted, setDeleted] = useState(false);
-  const uid = getAuth().currentUser?.uid;
-  const { user } = userStore.useState((s) => s);
   const history = useHistory();
 
-  const userApplied = useMemo(
-    () => mydb.user && order.driver === mydb.user.uid,
-    [order.driver]
-  );
-
   const [presentAlert] = useIonAlert();
+  const [present, dissmis] = useIonActionSheet();
+  const [showloading, hideloading] = useIonLoading();
 
-  async function hundleApply() {
-    if (!userApplied) {
-      await mydb.applyForCard(order);
-    } else {
-      await mydb.removeApplicationToOrder(order);
-    }
-  }
-  function Report(why: string) {
-    reportOrder(order.id, why);
-  }
-  
   return (
     <div className={"flex w-full  justify-between "}>
       <IonButton
-        color={ "danger" }
+        color={"danger"}
         shape={"round"}
-        onClick={async()=>{
-          await presentAlert(TT('sure you want to cancel delivery?'),[
+        onClick={async () => {
+          await presentAlert(TT("sure you want to cancel delivery?"), [
             {
-              text:'Yes',
+              text: "Yes",
               handler(value) {
-                mydb.removeApplicationToOrder(order)
-
+                mydb.removeApplicationToOrder(order);
               },
             },
             {
-              text:'No',
-            
-            }
-          ])
+              text: "No",
+            },
+          ]);
         }}
       >
-        
-          <IonIcon
-            slot={"icon-only"}
-            icon={ closeOutline }
-          ></IonIcon>
-        
+        <IonIcon slot={"icon-only"} icon={closeOutline}></IonIcon>
       </IonButton>
 
       <IonButtons className={"flex flex-end justify-end"}>
@@ -136,6 +110,35 @@ export default function OrderCardDriverFooter({
           </IonButton>
         )}
       </IonButtons>
+      <IonSelect
+        interface="action-sheet"
+        mode={'ios'}
+        value={order.status}
+        onIonChange={(v) => {
+          showloading();
+          mydb
+            .updateOrderStatus(order, v.detail.value)
+            .finally(() => {
+              hideloading();
+            });
+        }}
+      >
+        <IonSelectOption value={OrderStatus.DriverAsigned}>
+          {OrderStatus.DriverAsigned}
+        </IonSelectOption>
+        <IonSelectOption value={OrderStatus.DriverOnWayToCollect}>
+          {OrderStatus.DriverOnWayToCollect}
+        </IonSelectOption>
+        <IonSelectOption value={OrderStatus.DriverOnWayToDeliver}>
+          {OrderStatus.DriverOnWayToDeliver}
+        </IonSelectOption>
+        <IonSelectOption value={OrderStatus.Done}>
+          {OrderStatus.Done}
+        </IonSelectOption>
+      </IonSelect>
+      {/* <IonLabel className={' text-justify self-center mx-5'}>
+        {TT(OrderStatus[ order.status]) }
+      </IonLabel> */}
     </div>
   );
 }

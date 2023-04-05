@@ -15,13 +15,7 @@ export default function UserApplicationsList(props: any) {
 
   return (
       <IonList>
-        {/* <IonRefresher
-          ref={IonRefresherElement}
-          slot="fixed"
-          onIonRefresh={Refresh}
-        >
-          <IonRefresherContent refreshingText="refreshing..."></IonRefresherContent>
-        </IonRefresher> */}
+        
         {orders&&
           orders.map((v: DocumentSnapshot, i: any) => {
             if (!v.exists() ) {

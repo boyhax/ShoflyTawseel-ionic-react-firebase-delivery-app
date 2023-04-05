@@ -239,5 +239,25 @@
     "Sign Out": {
         "en": "Sign Out",
         "ar": "Sign Out"
+    },
+    "Placed": {
+        "en": "Placed",
+        "ar": "Placed"
+    },
+    "your application still being verfied thank you for patience": {
+        "en": "your application still being verfied thank you for patience",
+        "ar": "your application still being verfied thank you for patience"
+    },
+    "internet connection lost": {
+        "en": "internet connection lost",
+        "ar": "internet connection lost"
+    },
+    "are you sure?": {
+        "en": "are you sure?",
+        "ar": "are you sure?"
+    },
+    "sure you want to cancel delivery?": {
+        "en": "sure you want to cancel delivery?",
+        "ar": "sure you want to cancel delivery?"
     }
 }

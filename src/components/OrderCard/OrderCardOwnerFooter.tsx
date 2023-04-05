@@ -6,6 +6,7 @@ import {
   IonSpinner,
   useIonAlert,
   IonButtons,
+  IonLabel,
 } from "@ionic/react";
 import { getAuth } from "firebase/auth";
 import {
@@ -25,10 +26,11 @@ import {
   reportOrder,
 } from "../../api/firebaseMain";
 import { userStore } from "../../Stores/userStore";
-import { orderProps, userInfo } from "../../types";
+import { orderProps, OrderStatus, userInfo } from "../../types";
 import "./OrderCard.css";
 import { prettyDate } from "./../utlis/prettyDate";
 import { useHistory } from "react-router";
+import { TT } from "../utlis/tt";
 
 interface props extends ComponentProps {
   order: orderProps;
@@ -43,53 +45,24 @@ const OpenWhatsapp = (number: any) => {
 export default function OrderCardOwnerFooter({
   order,
 }: props): React.ReactElement {
-
-  const { user, driver } = userStore.useState((s) => s);
-  const history = useHistory()
-  const [userInfo, setUserInfo] = useState<userInfo>(getUserInfoPlaceHolder());
-
-
-  const userApplied = useMemo(
-    () => mydb.user && order.driver === mydb.user.uid,
-    [order.driver]
-  );
-
-  useEffect(() => {}, []);
-
-
-  async function hundleApply() {
-    if (!userApplied) {
-      await mydb.applyForCard(order);
-    } else {
-      await mydb.removeApplicationToOrder(order);
-    }
-  }
-  function Report(why: string) {
-    reportOrder(order.id, why);
-  }
-  
-  return (<div className={"flex w-full  justify-between "}>
+  return (
+    <div>
+      <div className={"flex w-full  justify-between "}>
+          <IonButton
+          shape={'round'}
+          color='danger'
+            onClick={() => {
+              mydb.deleteOrder(order);
+            }}
+          >
+            <IonIcon size="small" color="light" icon={trashOutline}></IonIcon>
+          </IonButton>
         
-  
-
-<IonButtons className={"flex flex-end justify-end"}>
-  
-    <IonButton
-      fill="clear"
-      onClick={() => {
-        mydb.deleteOrder(order);
-      }}
-    >
-      <IonIcon
-        size="small"
-        color="primary"
-        icon={trashOutline}
-      ></IonIcon>
-    </IonButton>
-  
-   
-  
-</IonButtons>
-</div>
+        <IonLabel className={' text-justify self-center mx-5'}>
+        {TT(OrderStatus[ order.status]) }
+      </IonLabel>
+      </div>
+      
+    </div>
   );
 }

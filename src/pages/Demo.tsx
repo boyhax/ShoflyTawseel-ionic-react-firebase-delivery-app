@@ -1,50 +1,59 @@
 import React from "react";
 import Page from "../components/Page";
 import mydb from "../api/firebaseMain";
-import { IonButton, IonContent } from "@ionic/react";
-import  pushFCM, { TokenStore } from "../services/pushFCM";
+import {
+  IonButton,
+  IonContent,
+  IonLabel,
+  IonText,
+  IonTextarea,
+} from "@ionic/react";
+import pushFCM, { TokenStore } from "../services/pushFCM";
 import { notificationsStore } from "../hooks/useNotifications";
 
 const Demo: React.FC = () => {
-  const {Notifications} = notificationsStore.useState()
-  const {token} = TokenStore.useState()
+  const { Notifications } = notificationsStore.useState();
+  const { token } = TokenStore.useState();
+  const [query, setQuery] = React.useState("");
+  const [result, setResult] = React.useState("");
   async function sendPush() {
-    
-    const message:any = {
-      data:{},
-      body: ' Your Push Notification',
+    const message: any = {
+      data: {},
+      body: " Your Push Notification",
       title: "$FooCorp up 1.43% on the day",
       token: token,
       click_action: "NOTIFICATION_CLICK",
     };
     mydb.sendPush(message);
   }
- 
+  const hundlequery = () => {
+    
+    fetch('http://localhost:3000/api/excute', {
+      method: 'POST',
+      headers: { "Content-Type": "application/json", },
+      body: JSON.stringify({query, values: [] })
+    }).then((response) => response.json())
+    .then((data) => {
+      console.log("Success:", data);
+      setResult(data);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      setResult(JSON.stringify(error));
+    });
+    
+  };
   return (
     <Page homeButton>
-      
-      <IonContent>
-        <IonButton onClick={()=>{
-          pushFCM.subscribeTo('all')
-        }}>register</IonButton>
-        <IonButton onClick={sendPush}>send push</IonButton>
-
-        <p>{token || " token"}</p>
-        <p>token</p>
-        {Notifications && Notifications.map((notif: any) => <div key={notif.id}>
-        <p>
-          <p>
-            <h3 className="notif-title">{notif.title}</h3>
-          </p>
-          <p>{notif.body}</p>
-          {notif.type === "foreground" && (
-            <p>This data was received in foreground</p>
-          )}
-          {notif.type === "action" && <p>This data was received on tap</p>}
-        </p>
-      </div>
-    )}
-
+      <IonContent className={"flex justify-center mt-8"}>
+        <IonLabel>query</IonLabel>
+        <IonTextarea
+          value={query}
+          onIonChange={(e) => setQuery(e.detail.value!)}
+        ></IonTextarea>
+        <IonLabel>result</IonLabel>
+        <IonTextarea value={result}></IonTextarea>
+        <IonButton onClick={hundlequery}>Send query</IonButton>
       </IonContent>
     </Page>
   );

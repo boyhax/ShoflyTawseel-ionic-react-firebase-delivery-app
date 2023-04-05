@@ -12,6 +12,7 @@ import {
   IonBadge,
   IonCardContent,
   IonLabel,
+  IonItemDivider,
 } from "@ionic/react";
 import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useMemo, useState } from "react";
@@ -101,7 +102,7 @@ const OrderCard = ({ order }: props) => {
   }
   
   return (
-    <IonCard mode={"md"}>
+    <IonCard mode={"md"} >
       <div className="h-32 w-full">
         {order.geo &&<TwoPointMap
           id={order.id}
@@ -120,18 +121,20 @@ const OrderCard = ({ order }: props) => {
         )}
         {TT('description') +
           (showComment ? order.comment : order.comment.slice(0, 50) + "...")}
-         <div  className={'w-full'}>
+         {/* <div  className={'w-full'}>
          <IonLabel>
             {  OrderStatus[order.status]}
           </IonLabel>
-         </div>
+         </div> */}
           
       </IonCardContent>
+      <div className="h-px mx-3 my-2 bg-gray-200  dark:bg-gray-700"/>
 
       {role==='owner' && <OrderCardOwnerFooter order={order}/>}
       {role==='driver' && <OrderCardDriverFooter order={order}/>}
       {role==='user' && <OrderCardUserFooter order={order}/>}
       {/* //messengers popover */}
+      
 
       <IonPopover trigger={`reportButton ${order.id}`}>
         <form

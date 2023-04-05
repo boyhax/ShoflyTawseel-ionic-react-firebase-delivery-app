@@ -50,12 +50,14 @@ import { TT } from "./components/utlis/tt";
 import { Preferences } from "@capacitor/preferences";
 import RulesAndPolicyPage from "./pages/RulesAndPolicyPage";
 import { driverModeStore } from "./hooks/useDriverUserMode";
+import ContactUsPage from "./pages/ContactUsPage";
+import Details from "./pages/Details";
 
 fetch("https://PQBQ88ZFG8C4VGQL8YFFSXV26M5CIT9R@topiier.com/api/addresses/1", {
   headers: { "Output-Format": "JSON" },
 }).then((res) => {console.log('topiier api responce :>> ', res);});
 setupIonicReact({
-  // mode: "ios",
+  mode: "ios",
 });
 export var storage: Storage;
 async function setupStorage() {
@@ -174,7 +176,11 @@ const App: React.FC = () => {
                       <Chats />
                     </AuthRoute>
                   </Route>
-
+                  <Route exact path="/contact">
+                    <AuthRoute>
+                      <ContactUsPage />
+                    </AuthRoute>
+                  </Route>
                   <Route exact path="/admin">
                     <AdminRoute>
                       <AdminPage />
@@ -192,6 +198,9 @@ const App: React.FC = () => {
                     <AuthRoute>
                       <AddOrderPage />
                     </AuthRoute>
+                  </Route>
+                  <Route exact path="/details">
+                    <Details/>
                   </Route>
                   <Route exact path="/">
                     <Redirect to="/home" />
