@@ -37,9 +37,9 @@ const MainMenu = (Props: props) => {
   const { user, profile } = userStore.useState();
 
   const history = useHistory();
-  
+
   const SignOutButton = (
-    <IonButton fill={'default'}  onClick={() => getAuth().signOut()}>
+    <IonButton fill={"default"} onClick={() => getAuth().signOut()}>
       {TT("Sign Out")}
     </IonButton>
   );
@@ -51,10 +51,8 @@ const MainMenu = (Props: props) => {
           <IonToolbar
             onClick={() => history.push("/account")}
             color={"primary"}
-            style={{direction:'ltr'}}
-            className={
-              "flex  items-center shadow-xl "
-            }
+            style={{ direction: "ltr" }}
+            className={"flex  items-center shadow-xl "}
           >
             <IonAvatar slot={"start"}>
               <IonImg
@@ -66,7 +64,7 @@ const MainMenu = (Props: props) => {
               ></IonImg>
             </IonAvatar>
             <div className={"flex m-3 flex-col "}>
-            <IonLabel>
+              <IonLabel>
                 {user
                   ? profile
                     ? profile.name!
@@ -90,15 +88,6 @@ const MainMenu = (Props: props) => {
       </IonHeader>
       <IonContent class="ion-padding">
         <IonList>
-          
-          {/* <IonMenuToggle>
-            <IonItem onClick={() => {
-              
-              history.push("home")}}>
-              <IonIcon icon={bookOutline} />
-              <IonLabel>{TT("My orders")}</IonLabel>
-            </IonItem>
-          </IonMenuToggle> */}
           <IonMenuToggle>
             <IonItem onClick={() => history.push("chat")}>
               <IonIcon icon={chatboxOutline} />

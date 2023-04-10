@@ -42,7 +42,7 @@ export default function OrderList(props: any) {
 
   
   return <div>
-    <IonFab   >
+    <IonFab >
       <IonFabButton id='filterToggler'
       className={'ml-auto'}>
         <IonIcon icon={filterIcon}></IonIcon>

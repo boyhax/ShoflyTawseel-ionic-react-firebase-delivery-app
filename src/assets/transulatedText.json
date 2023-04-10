@@ -213,15 +213,15 @@
     },
     "undefined": {},
     "Firebase: Invalid format. (auth/invalid-phone-number).": {
-        "en": "Firebase: Invalid format. (auth/invalid-phone-number).",
+        "en": " Invalid format invalid-phone-number.",
         "ar": " الرقم خاطئ"
     },
     "Firebase: TOO_LONG (auth/invalid-phone-number).": {
-        "en": "Firebase: TOO_LONG (auth/invalid-phone-number).",
+        "en": " TOO_LONG invalid-phone-number .",
         "ar": "الرقم خاطئ"
     },
     "Firebase: Error (auth/invalid-verification-code).": {
-        "en": "Firebase: Error (auth/invalid-verification-code).",
+        "en": " Error invalid-verification-code.",
         "ar": "الرقم خاطئ"
     },
     "empty list \n": {
@@ -230,46 +230,78 @@
     },
     "Do you Want To Register As Driver with us?": {
         "en": "Do you Want To Register As Driver with us?",
-        "ar": "Do you Want To Register As Driver with us?"
+        "ar": "هل تريد التسجيل كسائق معنا؟"
     },
     "Yes": {
         "en": "Yes",
-        "ar": "Yes"
+        "ar": "نعم"
     },
     "Sign Out": {
         "en": "Sign Out",
-        "ar": "Sign Out"
+        "ar": "تسجيل الخروج"
     },
     "Placed": {
         "en": "Placed",
-        "ar": "Placed"
+        "ar": "تم الوضع"
     },
     "your application still being verfied thank you for patience": {
-        "en": "your application still being verfied thank you for patience",
-        "ar": "your application still being verfied thank you for patience"
+        "en": "your application still being verified thank you for patience",
+        "ar": "مازال طلبك قيد التحقق، شكرًا لصبرك"
     },
     "internet connection lost": {
         "en": "internet connection lost",
-        "ar": "internet connection lost"
+        "ar": "فقدان الاتصال بالإنترنت"
     },
     "are you sure?": {
         "en": "are you sure?",
-        "ar": "are you sure?"
+        "ar": "هل أنت متأكد؟"
     },
     "sure you want to cancel delivery?": {
         "en": "sure you want to cancel delivery?",
-        "ar": "sure you want to cancel delivery?"
+        "ar": "هل أنت متأكد أنك تريد إلغاء التوصيل؟"
     },
     "Send": {
         "en": "Send",
-        "ar": "Send"
+        "ar": "إرسال"
     },
     "Delete Order": {
         "en": "Delete Order",
-        "ar": "Delete Order"
+        "ar": "حذف الطلب"
     },
     "Are you sure you want to delete this order?": {
         "en": "Are you sure you want to delete this order?",
-        "ar": "Are you sure you want to delete this order?"
+        "ar": "هل أنت متأكد أنك تريد حذف هذا الطلب؟"
+    },
+    "shofly tawseel welcomes you": {
+        "en": "shofly tawseel welcomes you",
+        "ar": "مرحباً بك في تطبيق شوفلي توصيل"
+    },
+    "decsription of shofly tawseel": {
+        "en": "description of shofly tawseel",
+        "ar": "وصف شوفلي توصيل"
+    },
+    "shofly tawseel is person to person delivery app that\n helps you to deliver your goods from one place to \n another anytime someone is available to deliver it": {
+        "en": "shofly tawseel is person to person delivery app that\n helps you to deliver your goods from one place to \n another anytime someone is available to deliver it",
+        "ar": "شوفلي توصيل هو تطبيق توصيل بين الأفراد يساعدك على توصيل بضائعك من مكان لآخر في أي وقت يتوفر فيه شخص للتوصيل"
+    },
+    "for user": {
+        "en": "for user",
+        "ar": "للمستخدم"
+    },
+    "it is very easy , just create an account and add your orders \n                choose the delivery time and location and wait for the \n                driver to see your order and contact you.if no one is available\n                 you can choose to wait for the next available driver or cancel\n                  your order": {
+        "en": "it is very easy , just create an account and add your orders \n                choose the delivery time and location and wait for the \n                driver to see your order and contact you.if no one is available\n                 you can choose to wait for the next available driver or cancel\n                  your order",
+        "ar": "من السهل جدًا، فقط قم بإنشاء حساب وأضف طلباتك، واختر وقت وموقع التسليم وانتظر حتى يرى السائق طلبك ويتصل بك، إذا لم يتوفر أي سائق، يمكنك اختيار الانتظار لحين توفر سائق آخر أو إلغاء طلبك."
+    },
+    "for Driver": {
+        "en": "for Driver",
+        "ar": "للسائق"
+    },
+    "after sign in as user ,from account page just do application\n                 to be driver then wait until you are approved you need to\n                  fill the form with valid and correct informations. after\n                   you are approved start look up for orders in your area \n                   and contact the user to deliver\n                 the order to the destination, you can see and choose the\n                  orders\n                 from map \n                 ": {
+        "en": "after sign in as user ,from account page just do application\n                 to be driver then wait until you are approved you need to\n                  fill the form with valid and correct informations. after\n                   you are approved start look up for orders in your area \n                   and contact the user to deliver\n                 the order to the destination, you can see and choose the\n                  orders\n                 from map \n                 ",
+        "ar": "بعد تسجيل الدخول كمستخدم، يمكنك القيام بطلب التسجيل كسائق من صفحة الحساب، ثم انتظر حتى يتم الموافقة عليك، تحتاج إلى ملء النموذج بمعلومات صحيحة و بعد الموافقة عليك، ابدأ في البحث عن الطلبات في منطقتك والاتصال بالمستخدم لتسليم الطلب إلى الوجهة، يمكنك رؤية الطلبات واختيارها من الخريطة "
+    },
+    "shofly tawseel is person to person delivery app that\n                 helps you to deliver your goods from one place to \n                 another anytime someone is available to deliver it": {
+        "en": "shofly tawseel is person to person delivery app that\n                 helps you to deliver your goods from one place to \n                 another anytime someone is available to deliver it",
+        "ar": "شوفلي توصيل هو تطبيق توصيل من شخص لآخر يساعدك على توصيل البضائع الخاصة بك من مكان إلى آخر في أي وقت يتوفر فيه شخص ما لتسليمها."
     }
 }

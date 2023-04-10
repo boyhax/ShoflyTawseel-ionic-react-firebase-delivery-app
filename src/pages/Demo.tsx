@@ -11,6 +11,7 @@ import {
 import pushFCM, { TokenStore } from "../services/pushFCM";
 import { notificationsStore } from "../hooks/useNotifications";
 import excuteQuery from "../api/mysql";
+import LoadingScreen from "./LoadingScreen";
 
 const Demo: React.FC = () => {
   const { Notifications } = notificationsStore.useState();
@@ -39,14 +40,17 @@ const Demo: React.FC = () => {
   return (
     <Page homeButton>
       <IonContent className={"flex justify-center mt-8"}>
-        <IonLabel>query</IonLabel>
+        {/* <IonLabel>query</IonLabel>
         <IonTextarea
           value={query}
           onIonChange={(e) => setQuery(e.detail.value!)}
         ></IonTextarea>
         <IonLabel>result</IonLabel>
         <IonTextarea value={result}></IonTextarea>
-        <IonButton onClick={hundlequery}>Send query</IonButton>
+        <IonButton onClick={hundlequery}>Send query</IonButton> */}
+        <LoadingScreen/>
+        
+
       </IonContent>
     </Page>
   );

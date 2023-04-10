@@ -25,9 +25,10 @@
   height: 40px;
   -webkit-transform-style: preserve-3d;
           transform-style: preserve-3d;
-  width: 40px; }
+  width: 40px;
+ }
   .cube div {
-    background-color: rgba(33, 137, 212, 0.48);
+    background-color: rgba(220, 244, 42, 0.48);
     height: 100%;
     position: absolute;
     width: 100%;

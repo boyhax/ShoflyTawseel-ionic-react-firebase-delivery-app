@@ -1,48 +1,72 @@
-import React from 'react';
-import { IonBackButton, IonButtons, IonHeader, IonPage, IonToolbar, IonTitle, IonContent, IonList, IonCard, IonCardTitle, IonCardContent } from '@ionic/react';
-import { useParams } from 'react-router';
-import Page from '../components/Page';
+import React from "react";
+import {
+  IonBackButton,
+  IonButtons,
+  IonHeader,
+  IonPage,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonList,
+  IonCard,
+  IonCardTitle,
+  IonCardContent,
+} from "@ionic/react";
+import { useParams } from "react-router";
+import Page from "../components/Page";
+import { TT } from "../components/utlis/tt";
 
 const Details: React.FC = () => {
-  const parms = useParams()
+  const parms = useParams();
   // console.log('parms :>> ', parms);
   return (
     <Page homeButton>
-      <div className={'h-12'}/>
+      <div className={"h-12"} />
       <IonContent>
-        <IonList className={'divide-y-4'}>
-            <IonCardTitle className={'m-5'}>
-            تطبيق شوفلي توصيل يرحب بك
-            </IonCardTitle>
-            
-          
+        <IonList className={"divide-y-4"}>
+          <IonCardTitle className={"m-5"}>
+            {TT(`shofly tawseel welcomes you`)}{" "}
+          </IonCardTitle>
+
           <div>
-            <IonCardTitle>
-              نبذه سريعة
-            </IonCardTitle>
+            <IonCardTitle>{TT(`decsription of shofly tawseel`)}</IonCardTitle>
             <IonCardContent>
-    تطبيق شوفلي توصيل يساعدك في الوصول السريع الى اي شخص يريد توصيل اي غرض 
+              {TT(
+                `shofly tawseel is person to person delivery app that
+                 helps you to deliver your goods from one place to 
+                 another anytime someone is available to deliver it`
+              )}
             </IonCardContent>
           </div>
           <div>
-            <IonCardTitle>
-      صاحب الغرض
-            </IonCardTitle>
+            <IonCardTitle>{TT(`for user`)}</IonCardTitle>
             <IonCardContent>
-  اظغط زر الزائد في الصفحه الرئيسية 
-  بعدها حدد من الولايه التي تريد ارسال الغرض منها والى اي ولاية 
+              {TT(
+                `it is very easy , just create an account and add your orders 
+                choose the delivery time and location and wait for the 
+                driver to see your order and contact you.if no one is available
+                 you can choose to wait for the next available driver or cancel
+                  your order`
+              )}
             </IonCardContent>
           </div>
           <div>
-            <IonCardTitle>
-        المندوب
-            </IonCardTitle>
+            <IonCardTitle>{TT(`for Driver`)}</IonCardTitle>
             <IonCardContent>
-  ابحث في الصفحة الرئيسية عن الطلبات التي تناسب وجهتك وموقع انطلاقك واختر التواصل بلواتساب او الرسائل النصية
+              {TT(
+                `after sign in as user ,from account page just do application
+                 to be driver then wait until you are approved you need to
+                  fill the form with valid and correct informations. after
+                   you are approved start look up for orders in your area 
+                   and contact the user to deliver
+                 the order to the destination, you can see and choose the
+                  orders
+                 from map 
+                 `
+              )}
             </IonCardContent>
           </div>
         </IonList>
-
       </IonContent>
     </Page>
   );
