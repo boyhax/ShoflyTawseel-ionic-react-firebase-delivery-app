@@ -37,9 +37,7 @@ const MainMenu = (Props: props) => {
   const { user, profile } = userStore.useState();
 
   const history = useHistory();
-  const SignInButton = (
-    <IonButton onClick={() => history.push("SignIn")}>Sign In</IonButton>
-  );
+  
   const SignOutButton = (
     <IonButton fill={'default'}  onClick={() => getAuth().signOut()}>
       {TT("Sign Out")}
@@ -92,22 +90,15 @@ const MainMenu = (Props: props) => {
       </IonHeader>
       <IonContent class="ion-padding">
         <IonList>
-          {/* <IonItem onClick={() => history.push("Wallet")}>
-            <IonIcon icon={walletOutline} />
-
-            <IonLabel>{TT("Wallet")}</IonLabel>
-            <IonLabel slot={"end"}>{"0 OMR"}</IonLabel>
-          </IonItem> */}
-          {/* <IonItem onClick={() => history.push("places")}>
-            <IonIcon icon={locationOutline} />
-            <IonLabel>{TT("Saved places")}</IonLabel>
-          </IonItem> */}
-          <IonMenuToggle>
-            <IonItem onClick={() => history.push("myorders")}>
+          
+          {/* <IonMenuToggle>
+            <IonItem onClick={() => {
+              
+              history.push("home")}}>
               <IonIcon icon={bookOutline} />
               <IonLabel>{TT("My orders")}</IonLabel>
             </IonItem>
-          </IonMenuToggle>
+          </IonMenuToggle> */}
           <IonMenuToggle>
             <IonItem onClick={() => history.push("chat")}>
               <IonIcon icon={chatboxOutline} />

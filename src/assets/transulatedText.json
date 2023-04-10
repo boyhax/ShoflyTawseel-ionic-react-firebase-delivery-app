@@ -259,5 +259,17 @@
     "sure you want to cancel delivery?": {
         "en": "sure you want to cancel delivery?",
         "ar": "sure you want to cancel delivery?"
+    },
+    "Send": {
+        "en": "Send",
+        "ar": "Send"
+    },
+    "Delete Order": {
+        "en": "Delete Order",
+        "ar": "Delete Order"
+    },
+    "Are you sure you want to delete this order?": {
+        "en": "Are you sure you want to delete this order?",
+        "ar": "Are you sure you want to delete this order?"
     }
 }

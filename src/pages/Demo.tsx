@@ -10,6 +10,7 @@ import {
 } from "@ionic/react";
 import pushFCM, { TokenStore } from "../services/pushFCM";
 import { notificationsStore } from "../hooks/useNotifications";
+import excuteQuery from "../api/mysql";
 
 const Demo: React.FC = () => {
   const { Notifications } = notificationsStore.useState();
@@ -26,22 +27,14 @@ const Demo: React.FC = () => {
     };
     mydb.sendPush(message);
   }
+
   const hundlequery = () => {
-    
-    fetch('http://localhost:3000/api/excute', {
-      method: 'POST',
-      headers: { "Content-Type": "application/json", },
-      body: JSON.stringify({query, values: [] })
-    }).then((response) => response.json())
-    .then((data) => {
-      console.log("Success:", data);
-      setResult(data);
+    excuteQuery(query,[]).then(res=>{
+      console.log('res :>> ', res);
+      setResult(JSON.stringify(res))
+    }).catch(err=>{
+      console.log('err :>> ', err);
     })
-    .catch((error) => {
-      console.error("Error:", error);
-      setResult(JSON.stringify(error));
-    });
-    
   };
   return (
     <Page homeButton>

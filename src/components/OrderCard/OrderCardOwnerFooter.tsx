@@ -3,33 +3,19 @@ import { ComponentProps } from "@ionic/core";
 import {
   IonIcon,
   IonButton,
-  IonSpinner,
-  useIonAlert,
-  IonButtons,
   IonLabel,
+  useIonAlert,
 } from "@ionic/react";
-import { getAuth } from "firebase/auth";
 import {
   trashOutline,
-  thumbsDownOutline,
-  thumbsUpOutline,
-  logoWhatsapp,
-  chatboxOutline,
-  alertCircleOutline,
 } from "ionicons/icons";
-import React, { useEffect, useMemo, useState } from "react";
-import useMounted from "../../hooks/useMounted";
+import React, {  } from "react";
 
 import {
-  getUserInfoPlaceHolder,
   mydb,
-  reportOrder,
 } from "../../api/firebaseMain";
-import { userStore } from "../../Stores/userStore";
-import { orderProps, OrderStatus, userInfo } from "../../types";
+import { orderProps, OrderStatus } from "../../types";
 import "./OrderCard.css";
-import { prettyDate } from "./../utlis/prettyDate";
-import { useHistory } from "react-router";
 import { TT } from "../utlis/tt";
 
 interface props extends ComponentProps {
@@ -39,12 +25,11 @@ export var Currentplatform = "web";
 Device.getInfo().then((v) => {
   Currentplatform = v.platform;
 });
-const OpenWhatsapp = (number: any) => {
-  window.open("http://wa.me/" + number);
-};
+
 export default function OrderCardOwnerFooter({
   order,
 }: props): React.ReactElement {
+  const [alert,dissmissAlert] = useIonAlert()
   return (
     <div>
       <div className={"flex w-full  justify-between "}>
@@ -52,7 +37,17 @@ export default function OrderCardOwnerFooter({
           shape={'round'}
           color='danger'
             onClick={() => {
-              mydb.deleteOrder(order);
+              alert({
+                header: TT('Delete Order'),
+                message: TT('Are you sure you want to delete this order?'),
+                buttons: [
+                  'Cancel',
+                  { text: 'Delete', handler: () => {
+                    mydb.deleteOrder(order);
+                  } }
+                ]
+              })
+              // mydb.deleteOrder(order);
             }}
           >
             <IonIcon size="small" color="light" icon={trashOutline}></IonIcon>

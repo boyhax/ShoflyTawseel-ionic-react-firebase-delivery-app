@@ -500,7 +500,7 @@ export function subscripeUserNotifications(
   result: (snap: QuerySnapshot<DocumentData>) => boolean
 ) {
   const unsubHere = onSnapshot(
-    query(collection(db, "userNotifications/"+ id+'col'), orderBy("time", "desc")),
+    query(collection(db, "userNotifications/"+ id+'/col'), orderBy("time", "desc")),
     (snap) => {
       let unsub = result(snap);
       unsub && unsubHere();

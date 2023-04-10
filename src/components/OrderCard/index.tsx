@@ -128,7 +128,7 @@ const OrderCard = ({ order }: props) => {
          </div> */}
           
       </IonCardContent>
-      <div className="h-px mx-3 my-2 bg-gray-200  dark:bg-gray-700"/>
+      <div className="h-px mx-3 my-2 bg-gray-200  dark:bg-gray-500"/>
 
       {role==='owner' && <OrderCardOwnerFooter order={order}/>}
       {role==='driver' && <OrderCardDriverFooter order={order}/>}

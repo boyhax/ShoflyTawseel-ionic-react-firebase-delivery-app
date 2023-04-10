@@ -42,7 +42,7 @@ export default function OrderList(props: any) {
 
   
   return <div>
-    <IonFab  className={'fixed top-[10%] right-[5%] flex-row top-5  '}  >
+    <IonFab   >
       <IonFabButton id='filterToggler'
       className={'ml-auto'}>
         <IonIcon icon={filterIcon}></IonIcon>
