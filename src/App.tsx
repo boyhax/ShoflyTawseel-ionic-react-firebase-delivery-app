@@ -41,7 +41,6 @@ import MainMenu from "./components/MainMenu";
 import Profile from "./pages/Profile";
 import OrdersPage from "./pages/OrdersPage";
 import { Store } from "pullstate";
-import DriverApplication from "./pages/DriverApplication";
 import AdminRoute from "./routes/AdminRoute";
 import AdminPage from "./pages/Admin";
 import Account from "./pages/account";
@@ -52,10 +51,12 @@ import RulesAndPolicyPage from "./pages/RulesAndPolicyPage";
 import { driverModeStore } from "./hooks/useDriverUserMode";
 import ContactUsPage from "./pages/ContactUsPage";
 import Details from "./pages/Details";
+import DriverUpdatePage from "./pages/DriverUpdate";
+import DriverRoute from "./routes/DriverRoute";
+import pushFCM from "./services/pushFCM";
+import DriverApplicationPage from "./pages/DriverApplication";
 
-fetch("https://PQBQ88ZFG8C4VGQL8YFFSXV26M5CIT9R@topiier.com/api/addresses/1", {
-  headers: { "Output-Format": "JSON" },
-}).then((res) => {console.log('topiier api responce :>> ', res);});
+
 setupIonicReact({
   mode: "ios",
 });
@@ -118,7 +119,12 @@ const App: React.FC = () => {
   const ionRouter = useIonRouter();
   const { lang } = languageStore.useState();
   document.body.style.direction = TT("dir", lang);
-
+  const {device} = DeviceStore.useState()
+  useEffect(() => {
+    if (device !== "web") {
+      pushFCM.start();
+    }
+  }, [device]);
   document.addEventListener("ionBackButton", (ev: any) => {
     ev.detail.register(-1, () => {
       if (!ionRouter.canGoBack()) {
@@ -191,7 +197,14 @@ const App: React.FC = () => {
                   </Route>
                   <Route exact path="/driverapplication">
                     <AuthRoute>
-                      <DriverApplication />
+                      <DriverApplicationPage />
+                    </AuthRoute>
+                  </Route>
+                  <Route exact path="/driverupdate">
+                    <AuthRoute>
+                      <DriverRoute>
+                        <DriverUpdatePage />
+                      </DriverRoute>
                     </AuthRoute>
                   </Route>
                   <Route exact path="/addorder">
@@ -200,7 +213,7 @@ const App: React.FC = () => {
                     </AuthRoute>
                   </Route>
                   <Route exact path="/details">
-                    <Details/>
+                    <Details />
                   </Route>
                   <Route exact path="/">
                     <Redirect to="/home" />

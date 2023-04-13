@@ -303,5 +303,13 @@
     "shofly tawseel is person to person delivery app that\n                 helps you to deliver your goods from one place to \n                 another anytime someone is available to deliver it": {
         "en": "shofly tawseel is person to person delivery app that\n                 helps you to deliver your goods from one place to \n                 another anytime someone is available to deliver it",
         "ar": "شوفلي توصيل هو تطبيق توصيل من شخص لآخر يساعدك على توصيل البضائع الخاصة بك من مكان إلى آخر في أي وقت يتوفر فيه شخص ما لتسليمها."
+    },
+    "DriverOnWayToDeliver": {
+        "en": "DriverOnWayToDeliver",
+        "ar": "DriverOnWayToDeliver"
+    },
+    "make sure you have location enabled": {
+        "en": "make sure you have location enabled",
+        "ar": "make sure you have location enabled"
     }
 }

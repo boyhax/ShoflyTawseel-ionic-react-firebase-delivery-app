@@ -119,9 +119,10 @@ class firebaseClass {
       }
     });
     return onSnapshot(ref, (doc) => {
-      var profile: any = null;
       if (doc.exists()) {
-        profile = UserProfileFromDoc(doc);
+        userStore.update((s) => {
+          s.profile = UserProfileFromDoc(doc);
+        });
       } else {
         this.hundleNoProfileCreatedYet();
         userStore.update((s) => {
@@ -146,14 +147,14 @@ class firebaseClass {
         let o = s.find((v) => v.id === order.id);
         o.status = status;
       });
-    })
+    });
   }
-  sendContactUs(message:string){
-    const ref = collection(this.db, "contactUs/" );
+  sendContactUs(message: string) {
+    const ref = collection(this.db, "contactUs/");
     return addDoc(ref, {
       message,
       date: serverTimestamp(),
-      user: this.user?.uid
+      user: this.user?.uid,
     });
   }
   subscribeDriver() {
@@ -349,10 +350,45 @@ class firebaseClass {
     return updateDoc(doc(this.db, "users/" + this.user?.uid), profile);
   }
 
-  async submitDriverApplication(values: any) {
-    return setDoc(doc(this.db, "drivers/" + this.user?.uid), {
-      ...values,
+  async submitDriverApplication(data: Partial<driverData>) {
+    // car_image: "",
+    //  car_card_image: "",
+    //   driving_license_image: "",
+    //    driver_id_image: "",
+    const imagesUrls = await Promise.all([
+      this.uploadPhoto(data.car_image!, "driver/car_image" + this.user?.uid.slice(0,5)+'.png'),
+      this.uploadPhoto(data.car_card_image!,"driver/car_card_image" + this.user?.uid.slice(0,5)+'.png'),
+      this.uploadPhoto(data.driving_license_image!,"driver/driving_license_image" + this.user?.uid.slice(0,5)+'.png'),
+      this.uploadPhoto(data.driver_id_image!,"driver/driver_id_image" + this.user?.uid.slice(0,5)+'.png'),
+    ]);
+    return setDoc(doc(this.db, `drivers/${this.user!.uid}`), {
+      ...data,
+      car_image: imagesUrls[0],
+      car_card_image: imagesUrls[1],
+      driving_license_image: imagesUrls[2],
+      driver_id_image: imagesUrls[3],
       status: "pending",
+    })
+      .then((s) => true)
+      .catch((e) => false);
+  }
+  async updateDriver(data: Partial<driverData>) {
+    // car_image: "",
+    //       car_card_image: "",
+    //       driving_license_image: "",
+    //       driver_id_image: "",
+    const imagesUrls = await Promise.all([
+      this.uploadPhoto(data.car_image!, "driver/car_image" + this.user?.uid.slice(0,5)+'.png'),
+      this.uploadPhoto(data.car_card_image!,"driver/car_card_image" + this.user?.uid.slice(0,5)+'.png'),
+      this.uploadPhoto(data.driving_license_image!,"driver/driving_license_image" + this.user?.uid.slice(0,5)+'.png'),
+      this.uploadPhoto(data.driver_id_image!,"driver/driver_id_image" + this.user?.uid.slice(0,5)+'.png'),
+    ]);
+    return updateDoc(doc(this.db, `drivers/${this.user!.uid}`), {
+      ...data,
+      car_image: imagesUrls[0],
+      car_card_image: imagesUrls[1],
+      driving_license_image: imagesUrls[2],
+      driver_id_image: imagesUrls[3],
     })
       .then((s) => true)
       .catch((e) => false);
@@ -420,11 +456,6 @@ class firebaseClass {
         deleteDoc(doc.ref);
       });
     });
-  }
-  async updateDriver(data: Partial<driverData>) {
-    return updateDoc(doc(this.db, `drivers/${this.user!.uid}`), data)
-      .then((s) => true)
-      .catch((e) => false);
   }
 }
 export const mydb = new firebaseClass();
@@ -500,7 +531,10 @@ export function subscripeUserNotifications(
   result: (snap: QuerySnapshot<DocumentData>) => boolean
 ) {
   const unsubHere = onSnapshot(
-    query(collection(db, "userNotifications/"+ id+'/col'), orderBy("time", "desc")),
+    query(
+      collection(db, "userNotifications/" + id + "/col"),
+      orderBy("time", "desc")
+    ),
     (snap) => {
       let unsub = result(snap);
       unsub && unsubHere();

@@ -44,12 +44,12 @@ background-size: 10px 10px;
 :root {
   --ion-font-family:"tajawal";
   /** primary **/
-  --ion-color-primary: #eff312;
+  --ion-color-primary: #f3c212;
 	--ion-color-primary-rgb: 239,243,18;
 	--ion-color-primary-contrast: #000000;
 	--ion-color-primary-contrast-rgb: 0,0,0;
-	--ion-color-primary-shade: #d2d610;
-	--ion-color-primary-tint: #f1f42a;
+	--ion-color-primary-shade: #d69710;
+	--ion-color-primary-tint: #eee260;
 
 	--ion-color-secondary: #47cdd7;
 	--ion-color-secondary-rgb: 71,205,215;

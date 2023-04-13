@@ -58,44 +58,42 @@ export const OrderCatagories: OrderType[] = [
   },
 ];
 export enum DriverStatus {
-  active="active",
-  inactive="inactive",
-  banned="banned",
-  pending="pending",
+  active = "active",
+  inactive = "inactive",
+  banned = "banned",
+  pending = "pending",
 }
 export interface driverData {
-  carType: string;
-  carNumber: string;
-  carYear: string;
-  email:string,
-  identity:string,
-  status:DriverStatus,
-  id?:string
-  working:boolean,
-  name:string
+  car_image: string;
+  car_number: string;
+  car_card_image: string;
+  driving_license_image: string;
+  driver_id_image: string;
+  driver_id: string;
+  id: string;
+  status: DriverStatus;
+  working: boolean;
 }
-  
 
 export interface UserProfile {
-  id:string,
+  id: string;
   driverData: driverData;
   name: string;
   phoneNumber: string;
   photoURL: string;
   email?: string;
-  role:'user'|'driver'|'admin',
-  status:'active'|'inactive'|'banned'|'pending',
+  role: "user" | "driver" | "admin";
+  status: "active" | "inactive" | "banned" | "pending";
   time: any;
-
 }
 export interface userInfo {
   name: string;
   photoURL: string;
-  phoneNumber: string ;
+  phoneNumber: string;
 }
 
 export interface ApplicationProps {
-  id:string,
+  id: string;
   byUser: string;
   forOrder: string;
   forUser: string;
@@ -122,10 +120,10 @@ export interface OrderReportProps {
   why: string;
   OrderId: string;
 }
-export interface orderMarker{
-  coordinates:GeoPoint,
-  id:string,
-  from:boolean
+export interface orderMarker {
+  coordinates: GeoPoint;
+  id: string;
+  from: boolean;
 }
 export enum OrderStatus {
   Placed = "Placed",
@@ -136,27 +134,27 @@ export enum OrderStatus {
   Canceled = "Canceled",
 }
 export interface orderProps {
-  id:string
+  id: string;
   urgent: boolean;
   type: string;
   geo: { from: GeoPoint; to: GeoPoint };
   uid: string;
-  from: google.maps.GeocoderResult|any;
-  to: google.maps.GeocoderResult|any;
+  from: google.maps.GeocoderResult | any;
+  to: google.maps.GeocoderResult | any;
   time: any;
-  phoneNumber?:string,
+  phoneNumber?: string;
   comment: string | "";
-  driver:string,
-  status:OrderStatus,
+  driver: string;
+  status: OrderStatus;
   address: {
     from: string;
     to: string;
-  },
-  coordinates?:GeoPoint,
-  g?:{
-    geohash?:string,
-    geopoint?:GeoPoint
-  }
+  };
+  coordinates?: GeoPoint;
+  g?: {
+    geohash?: string;
+    geopoint?: GeoPoint;
+  };
 }
 export type newOrderProps = Pick<
   orderProps,

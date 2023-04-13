@@ -12,6 +12,7 @@ import pushFCM, { TokenStore } from "../services/pushFCM";
 import { notificationsStore } from "../hooks/useNotifications";
 import excuteQuery from "../api/mysql";
 import LoadingScreen from "./LoadingScreen";
+import ImagePicker from "../components/ImagePicker";
 
 const Demo: React.FC = () => {
   const { Notifications } = notificationsStore.useState();
@@ -48,8 +49,7 @@ const Demo: React.FC = () => {
         <IonLabel>result</IonLabel>
         <IonTextarea value={result}></IonTextarea>
         <IonButton onClick={hundlequery}>Send query</IonButton> */}
-        <LoadingScreen/>
-        
+        <ImagePicker />
 
       </IonContent>
     </Page>

@@ -63,9 +63,7 @@ export default function OrderCardDriverFooter({
       await mydb.removeApplicationToOrder(order);
     }
   }
-  function Report(why: string) {
-    reportOrder(order.id, why);
-  }
+  
   
   return (
     <div className={"flex w-full  justify-between "}>

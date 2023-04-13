@@ -1,28 +1,35 @@
 import { Geolocation } from "@capacitor/geolocation";
-import { IonFab, IonFabButton, IonIcon, useIonViewDidEnter, useIonViewWillLeave } from "@ionic/react";
-import { locate, locateSharp, mapSharp } from "ionicons/icons";
+import { IonFab, IonFabButton, IonIcon, useIonToast } from "@ionic/react";
+import { locateSharp, mapSharp } from "ionicons/icons";
 import L, { LatLng } from "leaflet";
-import {
-  OpenStreetMapProvider,
-  GoogleProvider,
-  GeoSearchControl,
-} from "leaflet-geosearch";
-import { ProviderParams } from "leaflet-geosearch/dist/providers/provider";
-import { Store } from "pullstate";
+import { GoogleProvider, GeoSearchControl } from "leaflet-geosearch";
 import * as React from "react";
 import { useState } from "react";
 import { Config } from "../config";
+import { TT } from "./utlis/tt";
 
-const mapsStore = new Store({
-  mapsCount:0,
-})
+var initialLocation: LatLng | undefined;
+async function updateInitialLocation() {
+  try {
+    const pos = await Geolocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 20000,
+      maximumAge: 1000,
+    });
+    initialLocation = new LatLng(pos.coords.latitude, pos.coords.longitude);
+  } catch (error) {
+    console.debug(error)
+  }
+}
+updateInitialLocation();
+
 type props = {
   onMap: (map: L.Map) => void;
   locateButton?: boolean;
   searchButton?: boolean;
   layerButton?: boolean;
   centerPin?: boolean;
-  id?:string,
+  id?: string;
 };
 export const LeafLetMap: React.FC<props> = ({
   locateButton,
@@ -31,39 +38,35 @@ export const LeafLetMap: React.FC<props> = ({
   centerPin,
   onMap,
   children,
-  id
+  id,
 }) => {
-  let current_lat = 23.588;
-  let current_long = 58.3829;
+  let current_lat =initialLocation?initialLocation.lat: 23.588;
+  let current_long =initialLocation?initialLocation.lng: 58.3829;
   let current_zoom = 16;
   let center_lat = current_lat;
   let center_long = current_long;
   let center_zoom = current_zoom;
   const [map, setMap] = useState<L.Map>();
-  
+  const [toast] = useIonToast();
   const mapRef = React.useRef(map);
   const [tailLayer, setTailLayer] = useState<L.TileLayer>();
-  const{mapsCount} = mapsStore.useState(s=>s)
   var layerNow = "street";
-  
+
   React.useEffect(() => {
-    console.log('leaflet map effect :>> ');
-    var container = L.DomUtil.get(`map${id??''}`);
+    console.log("leaflet map effect :>> ");
+    var container = L.DomUtil.get(`map${id ?? ""}`);
 
     if (mapRef.current) {
-      return
-    // container.id = '';
+      return;
+      // container.id = '';
     }
-    const map = L.map(`map${id??''}`, {
+    const map = L.map(`map${id ?? ""}`, {
       center: [center_lat, center_long],
       zoom: center_zoom,
       zoomControl: false,
     }).fitWorld();
-    mapsStore.update(s=>{s.mapsCount+=1})
     setMap(map);
     onMap(map);
-
-   
 
     const tailLayer = L.tileLayer(
       "http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}",
@@ -92,13 +95,12 @@ export const LeafLetMap: React.FC<props> = ({
         console.log("geoSearch", e);
       });
     }
-    return()=>{
+    return () => {
       if (map) {
         map.off();
-        mapsStore.update(s=>{s.mapsCount=s.mapsCount-1})
       }
-    }
-  },[]);
+    };
+  }, []);
   React.useEffect(() => {
     if (map) {
       map.invalidateSize(true);
@@ -123,17 +125,27 @@ export const LeafLetMap: React.FC<props> = ({
     }
   }
   async function selfLocate() {
-    const pos = await Geolocation.getCurrentPosition();
-    if (map) {
-      moveCameraTo({
-        lat: pos.coords.latitude,
-        lng: pos.coords.longitude,
-      });
+    try {
+      const pos = await Geolocation.getCurrentPosition();
+
+      if (map) {
+        moveCameraTo({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        });
+      }
+    } catch (error) {
+      const grant = await Geolocation.checkPermissions();
+      if (!grant.location) {
+        const request = await Geolocation.requestPermissions();
+        toast(TT("make sure you have location enabled"), 2000);
+      }
+      toast(TT("make sure you have location enabled"), 2000);
     }
   }
   return (
     <div
-      id={`map${id||''}`}
+      id={`map${id || ""}`}
       style={{
         display: "inline-block",
         overflow: "hidden",
@@ -146,22 +158,30 @@ export const LeafLetMap: React.FC<props> = ({
     >
       <div className=" flex absolute w-full h-full pointer-events-none z-[1000]">
         {children}
-        
-        <IonFab horizontal={"start"} vertical={"bottom"} className={'bottom-12'}>
-          {layerButton&& <IonFabButton
-            size={"small"}
-            className={"pointer-events-auto my-2  "}
-            onClick={toggleMapType}
-          >
-            <IonIcon icon={mapSharp} />
-          </IonFabButton>}
-          {locateButton &&<IonFabButton
-            size={"small"}
-            className={"pointer-events-auto my-2  "}
-            onClick={selfLocate}
-          >
-            <IonIcon icon={locateSharp} />
-          </IonFabButton>}
+
+        <IonFab
+          horizontal={"start"}
+          vertical={"bottom"}
+          className={"bottom-12"}
+        >
+          {layerButton && (
+            <IonFabButton
+              size={"small"}
+              className={"pointer-events-auto my-2  "}
+              onClick={toggleMapType}
+            >
+              <IonIcon icon={mapSharp} />
+            </IonFabButton>
+          )}
+          {locateButton && (
+            <IonFabButton
+              size={"small"}
+              className={"pointer-events-auto my-2  "}
+              onClick={selfLocate}
+            >
+              <IonIcon icon={locateSharp} />
+            </IonFabButton>
+          )}
         </IonFab>
       </div>
     </div>

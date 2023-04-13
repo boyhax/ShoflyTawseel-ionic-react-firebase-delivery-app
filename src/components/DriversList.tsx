@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import {
   IonButton,
@@ -23,66 +23,66 @@ import { mydb } from "../api/firebaseMain";
 import { driverData } from "../types";
 import useMounted from "../hooks/useMounted";
 import { TT } from "./utlis/tt";
+import useCollectionPagination from "../hooks/useCollectionPagination";
+import {
+  collection,
+  getFirestore,
+  query,
+  Query,
+  where,
+} from "firebase/firestore";
 
 export default function DriversList(props: any) {
-  const [list, setList] = useState<driverData[]>([]);
+  // const [list, setList] = useState<driverData[]>([]);
   const IonRefresherElement = useRef<HTMLIonRefresherElement | any>();
   const history = useHistory();
   const [lastDoc, setLastDoc] = useState<any>(null);
-  const [loading, setLoading] = useState<any>(true);
+  // const [loading, setLoading] = useState<any>(true);
   const { mounted } = useMounted();
   const [segment, setSegmt] = useState<"pending" | "active" | "inactive" | any>(
     "pending"
   );
+  const [theQuery, setTheQuery] = useState(
+    query(collection(getFirestore(), "drivers"), where("status", "==", segment))
+  );
 
-  function doRefresh(event: CustomEvent<RefresherEventDetail>) {
+  const { documents, getMore, hasMore, loading } = useCollectionPagination(
+    theQuery,
+    10
+  );
+  function Refresh(event: CustomEvent<RefresherEventDetail>) {
     console.log("Begin async operation");
+    setTheQuery(theQuery);
+    setTimeout(() => {
+      console.log("Async operation has ended");
+      event.detail.complete();
+    }, 2000);
   }
-
-  function Refresh() {
-    setLoading(true);
-    try {
-      mydb
-        .getDrivers({ from: null, status: segment }, setLastDoc)
-        .then((v: any) => {
-          mounted && setList(v);
-        });
-    } catch (error) {}
-    setLoading(false);
-  }
-  
-
   useEffect(() => {
-    Refresh();
-  }, []);
-  useEffect(() => {
-    Refresh();
+    setTheQuery(
+      query(
+        collection(getFirestore(), "drivers"),
+        where("status", "==", segment)
+      )
+    );
   }, [segment]);
 
   useEffect(() => {
-    console.log("drivers list :>> ", list);
-  }, [list]);
+    console.log("drivers list :>> ", documents);
+  }, [documents]);
+
   function onEndRefresh(e: any) {
-    setLoading(true);
-    try {
-      mydb
-        .getDrivers({ from: lastDoc, status: segment }, setLastDoc)
-        .then((v: any) => {
-          mounted && setList(v);
-        });
-    } catch (error) {}
-    setLoading(false);
+    !loading && hasMore && getMore();
+
     setTimeout(() => {
-      e.target.complete()
+      e.target.complete();
     }, 2000);
   }
   function hundleApprove(id: string) {
-    
-      console.log('approving driver')
-      mydb.ApproveDriver(id).then((v: any) => {
-        mounted && setList(list.filter((v: any) => v.id !== id));
-      });
-    
+    console.log("approving driver");
+    mydb.ApproveDriver(id).then((v: any) => {
+      // mounted && setList(list.filter((v: any) => v.id !== id));
+    });
   }
   return (
     <div>
@@ -95,41 +95,44 @@ export default function DriversList(props: any) {
         <IonRefresher
           ref={IonRefresherElement}
           slot="fixed"
-          onIonRefresh={doRefresh}
+          onIonRefresh={Refresh}
         >
           <IonRefresherContent refreshingText="refreshing..."></IonRefresherContent>
         </IonRefresher>
 
-        {list &&
-          list.map((v: driverData, i: any) => {
+        {documents &&
+          documents.map((doc:any, i: any) => {
+            let v = doc.data();
             return (
-              <IonCard key={v.id}>
-                {/* <IonAvatar>
-                  <IonImg src={}></IonImg>
-                </IonAvatar> */}
-                <IonLabel>{}</IonLabel>
+              <IonCard key={i}>
+                
                 <IonChip>carNumber {v.carNumber}</IonChip>
                 <IonChip>carType {v.carType}</IonChip>
 
                 <IonChip> carYear{v.carYear}</IonChip>
                 <IonChip>identity {v.identity}</IonChip>
                 <IonNote>status {v.status}</IonNote>
-                <IonButton onClick={()=>{v.id && hundleApprove(v.id)}}>
+                <IonButton
+                  onClick={() => {
+                     hundleApprove(doc.id);
+                  }}
+                >
                   <IonIcon icon={thumbsUp} />
                 </IonButton>
               </IonCard>
             );
           })}
-        {loading && !list && <OrdersPlaceHolder></OrdersPlaceHolder>}
+        {loading && <OrdersPlaceHolder></OrdersPlaceHolder>}
         <IonInfiniteScroll
-      onIonInfinite={onEndRefresh}
-      threshold="100px"
-      disabled={loading}>
-      <IonInfiniteScrollContent
-        loadingSpinner="dots"
-        loadingText={TT('loading ..')}
-      ></IonInfiniteScrollContent>
-    </IonInfiniteScroll>
+          onIonInfinite={onEndRefresh}
+          threshold="100px"
+          disabled={loading}
+        >
+          <IonInfiniteScrollContent
+            loadingSpinner="dots"
+            loadingText={TT("loading ..")}
+          ></IonInfiniteScrollContent>
+        </IonInfiniteScroll>
       </IonList>
     </div>
   );

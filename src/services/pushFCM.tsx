@@ -13,7 +13,7 @@ import { Store } from "pullstate";
 export const TokenStore = new Store({token:''})
 class pushFCM {
    token:string=''
-  constructor() {
+  start() {
     this.addListeners();
     this.subscribeTo("all");
   

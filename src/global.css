@@ -10,6 +10,10 @@
   font-family: 'tajawal';  
   src: url('assets/fonts/Tajawal-ExtraBold.ttf');
 }
+@font-face {   
+  font-family: 'alba';  
+  src: url('assets/fonts/AlbaMedium.ttf');
+}
 /* 
 
 

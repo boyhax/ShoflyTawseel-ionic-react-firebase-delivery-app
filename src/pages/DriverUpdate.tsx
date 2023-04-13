@@ -8,7 +8,6 @@ import {
   IonLoading,
   IonNote,
   IonThumbnail,
-  useIonToast,
 } from "@ionic/react";
 import { TT } from "../components/utlis/tt";
 import { Formik } from "formik";
@@ -17,12 +16,9 @@ import { mydb } from "../api/firebaseMain";
 import { useDriver } from "../hooks/useDriver";
 import Page from "../components/Page";
 import ImagePicker from "../components/ImagePicker";
-import { useHistory } from "react-router";
 
-export default function DriverApplicationPage(props: any) {
+export default function DriverUpdatePage(props: any) {
   const { driver } = useDriver();
-  const history = useHistory()
-  const [toast] = useIonToast()
   const initalData = useMemo(() => {
     return driver
       ? {
@@ -53,19 +49,17 @@ export default function DriverApplicationPage(props: any) {
   });
   const [loading, setloading] = useState(false);
 
-  function hundleSubmit(values: any) {
+  function hundleSubmit(values: typeof initalData) {
     setloading(true);
-    mydb.submitDriverApplication(values).then(() => {
+    mydb.updateDriver(values as any).then(() => {
       setloading(false);
-      history.push('/account')
-      toast(TT('Your Application Sent Successfully'), 2000, )
     });
   }
   return (
     <Page backbutton>
       <IonLoading
         isOpen={loading}
-        message={driver ? TT("updating") : TT("Sending Application")}
+        message={TT("updating")}
       ></IonLoading>
       <div
         className={
@@ -99,6 +93,19 @@ export default function DriverApplicationPage(props: any) {
                   name="driver_id"
                   lang={"en"}
                   value={values.driver_id}
+                  onIonChange={handleChange}
+                ></IonInput>
+                <IonNote className={"text-sm"} color={"danger"}>
+                  {errors.driver_id}
+                </IonNote>
+              </IonItem>
+              <IonItem>
+                <IonLabel position="stacked">{TT("car_number")}</IonLabel>
+                <IonInput
+                className={'border-b-2 rounded-xl px-5'}
+                  name="car_number"
+                  lang={"en"}
+                  value={values.car_number}
                   onIonChange={handleChange}
                 ></IonInput>
                 <IonNote className={"text-sm"} color={"danger"}>

@@ -153,14 +153,7 @@ const MapPage: React.FC = () => {
               "flex w-full justify-center self-end bg-gradient-to-t from-white via-white to-transparent"
             }
           >
-            {/* <IonButton
-            color={'primary'}
-              className={"pointer-events-auto  w-10/12 "}
-              onClick={()=>history.push('addorder')}
-            >
-              <IonIcon color={'light'} slot={'icon-only'} icon={cube} />
-              Make order
-            </IonButton> */}
+            
             {clickedOrder && (
               <IonCard className={"h-fit h-min-24 w-full pointer-events-auto"}>
                 <NewOrderView
