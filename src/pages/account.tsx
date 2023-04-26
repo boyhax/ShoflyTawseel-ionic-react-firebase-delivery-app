@@ -100,7 +100,7 @@ const Account: React.FC = () => {
                 </IonItem>
               </div>
             </IonAccordion>
-            <IonAccordion value={"secound"}>
+            <IonAccordion value={"secound"} >
               <IonItem slot="header" color="light">
                 <IonLabel>driver information</IonLabel>
               </IonItem>
@@ -140,13 +140,15 @@ const Account: React.FC = () => {
                   </IonItem>
                 )}
                 {driver && (
-                  <IonCard>
+                  <div>
                     {/* <IonChip>carNumber {driver.carNumber}</IonChip>
                     <IonChip>carType {driver.carType}</IonChip>
                     <IonChip> carYear{driver.carYear}</IonChip>
                     <IonChip>identity {driver.identity}</IonChip> */}
-                    <IonNote>status {driver.status}</IonNote>
-                  </IonCard>
+                    <IonItem>
+                      <IonLabel>{TT('Status')}</IonLabel> 
+                      <IonLabel>{TT(driver.status)}</IonLabel></IonItem>
+                  </div>
                 )}
               </div>
             </IonAccordion>

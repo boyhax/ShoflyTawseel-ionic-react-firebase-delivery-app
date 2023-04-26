@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   IonButton,
   IonContent,
@@ -19,6 +19,11 @@ import ImagePicker from "../components/ImagePicker";
 
 export default function DriverUpdatePage(props: any) {
   const { driver } = useDriver();
+  useEffect(() => {
+    if (!driver) {
+      props.history.push("/account");
+    }
+  }, []);
   const initalData = useMemo(() => {
     return driver
       ? {
@@ -55,12 +60,10 @@ export default function DriverUpdatePage(props: any) {
       setloading(false);
     });
   }
+
   return (
     <Page backbutton>
-      <IonLoading
-        isOpen={loading}
-        message={TT("updating")}
-      ></IonLoading>
+      <IonLoading isOpen={loading} message={TT("updating")}></IonLoading>
       <div
         className={
           " text-white h-20 bg-[var(--ion-color-primary)] rounded-bl-full drop-shadow-lg flex justify-center flex-col items-center"
@@ -89,28 +92,36 @@ export default function DriverUpdatePage(props: any) {
               <IonItem>
                 <IonLabel position="stacked">{TT("driver_id")}</IonLabel>
                 <IonInput
-                className={'border-b-2 rounded-xl px-5'}
+                  className={"border-b-2 rounded-xl px-5"}
                   name="driver_id"
                   lang={"en"}
                   value={values.driver_id}
                   onIonChange={handleChange}
                 ></IonInput>
-                <IonNote className={"text-sm"} color={"danger"}>
-                  {errors.driver_id}
-                </IonNote>
+                <IonButton
+                  onClick={() => {
+                    mydb.updateDriver({ driver_id: values.driver_id });
+                  }}
+                >
+                  {TT("Save")}
+                </IonButton>
               </IonItem>
               <IonItem>
                 <IonLabel position="stacked">{TT("car_number")}</IonLabel>
                 <IonInput
-                className={'border-b-2 rounded-xl px-5'}
+                  className={"border-b-2 rounded-xl px-5"}
                   name="car_number"
                   lang={"en"}
                   value={values.car_number}
                   onIonChange={handleChange}
                 ></IonInput>
-                <IonNote className={"text-sm"} color={"danger"}>
-                  {errors.driver_id}
-                </IonNote>
+                <IonButton
+                  onClick={() => {
+                    mydb.updateDriver({ car_number: values.car_number });
+                  }}
+                >
+                  {TT("Save")}
+                </IonButton>
               </IonItem>
               <IonItem>
                 <IonLabel position="stacked">{TT("car_image")}</IonLabel>
@@ -118,6 +129,7 @@ export default function DriverUpdatePage(props: any) {
                   className={" w-full h-[150px] rounded-xl overflow-hidden "}
                 >
                   <ImagePicker
+                    defaultImgUrl={initalData.car_image}
                     onChange={(value) => {
                       setFieldValue("car_image", value);
                       console.log(value);
@@ -128,6 +140,13 @@ export default function DriverUpdatePage(props: any) {
                 <IonNote className={"text-sm"} color={"danger"}>
                   {errors.car_image}
                 </IonNote>
+                <IonButton
+                  onClick={() => {
+                    mydb.updateDriver({ car_image: values.car_image });
+                  }}
+                >
+                  {TT("Save")}
+                </IonButton>
               </IonItem>
               <IonItem>
                 <IonLabel position="stacked">{TT("car_card_image")}</IonLabel>
@@ -135,32 +154,22 @@ export default function DriverUpdatePage(props: any) {
                   className={" w-full h-[150px] rounded-xl overflow-hidden "}
                 >
                   <ImagePicker
+                    defaultImgUrl={initalData.car_card_image}
                     onChange={(value) => {
                       setFieldValue("car_card_image", value);
                       console.log(value);
                     }}
                   />
                 </IonThumbnail>
-                <IonNote className={"text-sm"} color={"danger"}>
-                  {errors.car_card_image}
-                </IonNote>
-              </IonItem>
-
-              <IonItem>
-                <IonLabel position="stacked">{TT("car_number")}</IonLabel>
-                <IonThumbnail
-                  className={" w-full h-[150px] rounded-xl overflow-hidden "}
+                <IonButton
+                  onClick={() => {
+                    mydb.updateDriver({
+                      car_card_image: values.car_card_image,
+                    });
+                  }}
                 >
-                  <ImagePicker
-                    onChange={(value) => {
-                      setFieldValue("car_number", value);
-                      console.log(value);
-                    }}
-                  />
-                </IonThumbnail>
-                <IonNote className={"text-sm"} color={"danger"}>
-                  {errors.car_number}
-                </IonNote>
+                  {TT("Save")}
+                </IonButton>
               </IonItem>
 
               <IonItem>
@@ -169,15 +178,22 @@ export default function DriverUpdatePage(props: any) {
                   className={" w-full h-[150px] rounded-xl overflow-hidden "}
                 >
                   <ImagePicker
+                    defaultImgUrl={initalData.driver_id_image}
                     onChange={(value) => {
                       setFieldValue("driver_id_image", value);
                       console.log(value);
                     }}
                   />
                 </IonThumbnail>
-                <IonNote className={"text-sm"} color={"danger"}>
-                  {errors.driver_id_image}
-                </IonNote>
+                <IonButton
+                  onClick={() => {
+                    mydb.updateDriver({
+                      driver_id_image: values.driver_id_image,
+                    });
+                  }}
+                >
+                  {TT("Save")}
+                </IonButton>
               </IonItem>
               <IonItem>
                 <IonLabel position="stacked">
@@ -187,20 +203,27 @@ export default function DriverUpdatePage(props: any) {
                   className={" w-full h-[150px] rounded-xl overflow-hidden "}
                 >
                   <ImagePicker
+                    defaultImgUrl={initalData.driving_license_image}
                     onChange={(value) => {
                       setFieldValue("driving_license_image", value);
                       console.log(value);
                     }}
                   />
                 </IonThumbnail>
-                <IonNote className={"text-sm"} color={"danger"}>
-                  {errors.driving_license_image}
-                </IonNote>
+                <IonButton
+                  onClick={() => {
+                    mydb.updateDriver({
+                      driving_license_image: values.driving_license_image,
+                    });
+                  }}
+                >
+                  {TT("Save")}
+                </IonButton>
               </IonItem>
 
-              <IonButton color={"primary"} className={"w-full"} type={"submit"}>
+              {/* <IonButton color={"primary"} className={"w-full"} type={"submit"}>
                 {TT("submit")}
-              </IonButton>
+              </IonButton> */}
             </form>
           )}
         </Formik>

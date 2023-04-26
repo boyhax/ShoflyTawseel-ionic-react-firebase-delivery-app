@@ -81,7 +81,7 @@
     },
     "edit driver information": {
         "en": "edit driver information",
-        "ar": "تعديل معلومات السائق"
+        "ar": "تحديث معلومات السائق"
     },
     "inactive": {
         "en": "inactive",
@@ -114,10 +114,6 @@
     "Admin Page": {
         "en": "Admin Page",
         "ar": "Admin Page"
-    },
-    "": {
-        "en": "",
-        "ar": ""
     },
     "status": {
         "en": "status",
@@ -171,10 +167,7 @@
         "en": "pending",
         "ar": "انتظار الموافقة"
     },
-    "Yout": {
-        "en": "Yout",
-        "ar": "Yout"
-    },
+    
     "dir": {
         "en": "ltr",
         "ar": "rtl"
@@ -185,19 +178,19 @@
     },
     "active": {
         "en": "active",
-        "ar": "active"
+        "ar": "فعال"
     },
     "Account": {
         "en": "Account",
-        "ar": "Account"
+        "ar": "الحساب"
     },
     "Orders": {
         "en": "Orders",
-        "ar": "Orders"
+        "ar": "الطلبات"
     },
     "Home": {
         "en": "Home",
-        "ar": "Home"
+        "ar": "الرئيسية"
     },
     "accept": {
         "en": "accept",
@@ -211,7 +204,6 @@
         "en": "by sign in you agree to the ",
         "ar": "عبر تسجيل الدخول أنت توافق على"
     },
-    "undefined": {},
     "Firebase: Invalid format. (auth/invalid-phone-number).": {
         "en": " Invalid format invalid-phone-number.",
         "ar": " الرقم خاطئ"
@@ -306,10 +298,14 @@
     },
     "DriverOnWayToDeliver": {
         "en": "DriverOnWayToDeliver",
-        "ar": "DriverOnWayToDeliver"
+        "ar": "السائق في طريقة اليك"
     },
     "make sure you have location enabled": {
         "en": "make sure you have location enabled",
-        "ar": "make sure you have location enabled"
+        "ar": "تاكد ان تحديدالموقع يعمل"
+    },
+    "Status": {
+        "en": "Status",
+        "ar": "الحالة"
     }
 }

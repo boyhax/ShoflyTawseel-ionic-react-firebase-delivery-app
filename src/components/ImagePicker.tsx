@@ -1,21 +1,45 @@
-import React, { useState } from "react";
+import React, {  useState } from "react";
 
-import {
-  IonImg,
-  IonSkeletonText,
-  IonThumbnail,
-} from "@ionic/react";
+import { IonIcon, } from "@ionic/react";
 import { Camera, CameraResultType, CameraSource } from "@capacitor/camera";
+import { imagesSharp } from "ionicons/icons";
 
-export default function ImagePicker(props: {path64data?:string,onChange?:(path64data:string)=>void,clearButton?:boolean}) {
-  const {path64data, getImage} = useImage();
+export default function ImagePicker(props: {
+  onChange?: (path64data: string) => void;
+  clearButton?: boolean;
+  defaultImgUrl?: string;
+}) {
+  const { path64data, getImage } = useImage();
 
+  
   return (
-    <div className={'w-full h-full'}  onClick={()=>getImage().then(v=>{props.onChange&&v&& props.onChange(v)})}>
+    <div
+      className={"w-full h-full bg-gray-200"}
+      onClick={() =>
+        getImage().then((v) => {
+          props.onChange && v && props.onChange(v);
+        })
+      }
+    >
       {path64data && (
-        <img className={'rounded-xl  h-full'} alt="imasssge" src={`data:image/jpeg;base64,${path64data}`} />
+        <img
+          className={"rounded-xl  h-full"}
+          alt="imasssge"
+          src={`data:image/jpeg;base64,${path64data}`}
+        />
       )}
-      {!path64data && <IonSkeletonText />}
+      {!path64data?props.defaultImgUrl?(
+        <img
+        className={"rounded-xl  h-full"}
+        alt="imasssge"
+        src={props.defaultImgUrl}
+      />
+      ):false:(
+        <div className={'flex w-full h-full justify-center items-center  bg-white/30'}>
+          <IonIcon icon={imagesSharp} />
+        </div>
+      )}
+      
     </div>
   );
 }
@@ -32,5 +56,5 @@ function useImage() {
     return image.base64String;
   };
 
-  return {path64data, getImage};
+  return { path64data, getImage };
 }
