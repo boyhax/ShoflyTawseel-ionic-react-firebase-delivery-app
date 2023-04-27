@@ -55,10 +55,10 @@ export default function DriverUpdatePage(props: any) {
   const [loading, setloading] = useState(false);
 
   function hundleSubmit(values: typeof initalData) {
-    setloading(true);
-    mydb.updateDriver(values as any).then(() => {
-      setloading(false);
-    });
+    // setloading(true);
+    // mydb.updateDriverImages(values as any).then(() => {
+    //   setloading(false);
+    // });
   }
 
   return (
@@ -100,7 +100,7 @@ export default function DriverUpdatePage(props: any) {
                 ></IonInput>
                 <IonButton
                   onClick={() => {
-                    mydb.updateDriver({ driver_id: values.driver_id });
+                    mydb.updateDriverImages({ driver_id: values.driver_id });
                   }}
                 >
                   {TT("Save")}
@@ -117,7 +117,7 @@ export default function DriverUpdatePage(props: any) {
                 ></IonInput>
                 <IonButton
                   onClick={() => {
-                    mydb.updateDriver({ car_number: values.car_number });
+                    mydb.updateDriverImages({ car_number: values.car_number });
                   }}
                 >
                   {TT("Save")}
@@ -142,7 +142,7 @@ export default function DriverUpdatePage(props: any) {
                 </IonNote>
                 <IonButton
                   onClick={() => {
-                    mydb.updateDriver({ car_image: values.car_image });
+                    mydb.updateDriverImages({ car_image: values.car_image });
                   }}
                 >
                   {TT("Save")}
@@ -163,7 +163,7 @@ export default function DriverUpdatePage(props: any) {
                 </IonThumbnail>
                 <IonButton
                   onClick={() => {
-                    mydb.updateDriver({
+                    mydb.updateDriverImages({
                       car_card_image: values.car_card_image,
                     });
                   }}
@@ -187,7 +187,7 @@ export default function DriverUpdatePage(props: any) {
                 </IonThumbnail>
                 <IonButton
                   onClick={() => {
-                    mydb.updateDriver({
+                    mydb.updateDriverImages({
                       driver_id_image: values.driver_id_image,
                     });
                   }}
@@ -212,7 +212,7 @@ export default function DriverUpdatePage(props: any) {
                 </IonThumbnail>
                 <IonButton
                   onClick={() => {
-                    mydb.updateDriver({
+                    mydb.updateDriverImages({
                       driving_license_image: values.driving_license_image,
                     });
                   }}

@@ -50,6 +50,7 @@ import { TT } from "../components/utlis/tt";
 import { FCM } from "@capacitor-community/fcm";
 import { TokenStore } from "../services/pushFCM";
 import { getFunctions, httpsCallable } from "firebase/functions";
+import { Capacitor } from "@capacitor/core";
 
 export const userOrdersStore = new Store<any[]>([]);
 export const userApplicationsStore = new Store<any[]>([]);
@@ -67,7 +68,7 @@ class firebaseClass {
       userStore.update((s) => {
         s.user = user;
       });
-      user && this.updateToken();
+      user && Capacitor.isNativePlatform()&& this.updateToken();
       console.log("user id :>> ", user && user.uid);
       if (!user) {
         this.unSubscripeUserList();
@@ -350,39 +351,30 @@ class firebaseClass {
     return updateDoc(doc(this.db, "users/" + this.user?.uid), profile);
   }
 
-  async submitDriverApplication(data: Partial<driverData>) {
-    // car_image: "",
-    //  car_card_image: "",
-    //   driving_license_image: "",
-    //    driver_id_image: "",
-    const imagesUrls = await Promise.all([
-      this.uploadPhoto(
-        data.car_image!,
-        "driver/car_image" + this.user?.uid.slice(0, 5) + ".png"
-      ),
-      this.uploadPhoto(
-        data.car_card_image!,
-        "driver/car_card_image" + this.user?.uid.slice(0, 5) + ".png"
-      ),
-      this.uploadPhoto(
-        data.driving_license_image!,
-        "driver/driving_license_image" + this.user?.uid.slice(0, 5) + ".png"
-      ),
-      this.uploadPhoto(
-        data.driver_id_image!,
-        "driver/driver_id_image" + this.user?.uid.slice(0, 5) + ".png"
-      ),
-    ]);
-    return setDoc(doc(this.db, `drivers/${this.user!.uid}`), {
-      ...data,
-      car_image: imagesUrls[0],
-      car_card_image: imagesUrls[1],
-      driving_license_image: imagesUrls[2],
-      driver_id_image: imagesUrls[3],
-      status: "pending",
-    })
-      .then((s) => true)
-      .catch((e) => false);
+  async addNewDriver(data: Partial<driverData>) {
+    console.log("new driver:-",data)
+    if(!this.user){
+      return new Error("user not found")
+    }
+       await setDoc(doc(this.db, `drivers/`+this.user.uid), {
+        driver_id: data.driver_id,
+        car_number: data.car_number,
+        status: DriverStatus.pending,
+      });
+
+      data.car_image &&
+         this.setDriverImages("car_image", data.car_image!);
+      data.car_card_image &&
+        this.setDriverImages("car_card_image", data.car_card_image!);
+      data.driving_license_image! &&
+        this.setDriverImages(
+          "driving_license_image",
+          data.driving_license_image!
+        );
+      data.driver_id_image! &&
+         this.setDriverImages("driver_id_image", data.driver_id_image!);
+      return ;
+    
   }
   async setDriverImages(field: string, base64String: string) {
     const url = await this.uploadPhoto(
@@ -393,7 +385,7 @@ class firebaseClass {
       [field]: url,
     });
   }
-  async updateDriver(data: Partial<driverData>) {
+  async updateDriverImages(data: Partial<driverData>) {
     data.car_image && this.setDriverImages("car_image", data.car_image!);
     data.car_card_image &&
       this.setDriverImages("car_card_image", data.car_card_image!);
@@ -404,12 +396,11 @@ class firebaseClass {
       );
     data.driver_id_image! &&
       this.setDriverImages("driver_id_image", data.driver_id_image!);
-    let newData = {};
 
-    let a = data.driver_id ? (newData = { driver_id: data.driver_id }) : "";
-    let b = data.car_number ? (newData = { car_number: data.car_number,...newData }) : '';
-
-    return updateDoc(doc(this.db, `drivers/${this.user!.uid}`), newData);
+    return true
+  }
+  async updateDriverData(data: Partial<driverData>) {
+    return updateDoc(doc(this.db, `drivers/${this.user!.uid}`), data);
   }
   async getDrivers(
     values: { from: any; status?: "pending" | "active" | "inactive" },

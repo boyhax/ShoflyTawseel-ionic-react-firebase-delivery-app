@@ -1,6 +1,8 @@
 import { FCM } from "@capacitor-community/fcm";
 import { getFunctions, httpsCallable } from "firebase/functions";
-
+import {
+  FirebaseMessaging,
+} from "@capacitor-firebase/messaging";
 import {
   ActionPerformed,
   PushNotificationSchema,
@@ -9,13 +11,42 @@ import {
 } from "@capacitor/push-notifications";
 import mydb from "../api/firebaseMain";
 import { Store } from "pullstate";
+import { Capacitor } from "@capacitor/core";
 
 export const TokenStore = new Store({token:''})
 class pushFCM {
    token:string=''
+   constructor() {
+    if(Capacitor.isNativePlatform()){
+      this.start()
+    }
+  }
+  public async requestPermissions(): Promise<void> {
+    await FirebaseMessaging.requestPermissions();
+  }
+
+  public async getToken(): Promise<void> {
+    // const options: GetTokenOptions = {
+    //   vapidKey: environment.firebase.vapidKey,
+    // };
+    
+    const { token } = await FirebaseMessaging.getToken();
+    this.token = token;
+  }
   start() {
-    this.addListeners();
-    this.subscribeTo("all");
+    FirebaseMessaging.addListener("notificationReceived", (event) => {
+      console.log("notificationReceived: ", { event });
+    });
+    FirebaseMessaging.addListener("notificationActionPerformed", (event) => {
+      console.log("notificationActionPerformed: ", { event });
+    });
+    this.requestPermissions().then(() => {
+      console.log("permissions granted");
+      this.getToken().then(() => {
+        console.log("token: ", this.token);
+      });
+    });
+    
   
   }
 

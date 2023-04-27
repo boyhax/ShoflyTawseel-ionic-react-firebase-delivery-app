@@ -43,7 +43,7 @@ const Account: React.FC = () => {
 
   const hundleActiveState = () => {
     driver &&
-      mydb.updateDriver({
+      mydb.updateDriverData({
         status:
           driver.status === "active"
             ? DriverStatus.inactive

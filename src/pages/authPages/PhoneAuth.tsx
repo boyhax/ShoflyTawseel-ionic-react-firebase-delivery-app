@@ -22,6 +22,7 @@ import { TT } from "../../components/utlis/tt";
 import { useHistory } from "react-router";
 import { phonePortraitOutline, phonePortraitSharp } from "ionicons/icons";
 import PhoneInput from "react-phone-input-2";
+import useMounted from "../../hooks/useMounted";
 
 const PhoneAuth: React.FC = (props) => {
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -38,6 +39,7 @@ const PhoneAuth: React.FC = (props) => {
   const [recaptchaVerifier, setRecaptchaVerifier] = useState<any>();
   const [present] = useIonToast();
   const history = useHistory();
+  const {mounted} = useMounted()
   useEffect(() => {
     const newRecaptchaVerifier = new RecaptchaVerifier(
       `recaptcha-container`,
@@ -114,9 +116,12 @@ const PhoneAuth: React.FC = (props) => {
 
       await signInWithCredential(getAuth(), credential).then(
         (v) => {
-          setConfirmInProgress(false);
-          setVerificationId("");
-          setVerificationCode("");
+          if (mounted){
+            setConfirmInProgress(false);
+            setVerificationId("");
+            setVerificationCode("");
+          }
+          
           present({
             message: "Signed in Successfully",
             onDidDismiss: () => {},

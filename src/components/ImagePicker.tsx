@@ -3,6 +3,7 @@ import React, {  useState } from "react";
 import { IonIcon, } from "@ionic/react";
 import { Camera, CameraResultType, CameraSource } from "@capacitor/camera";
 import { imagesSharp } from "ionicons/icons";
+import useMounted from "../hooks/useMounted";
 
 export default function ImagePicker(props: {
   onChange?: (path64data: string) => void;
@@ -10,7 +11,6 @@ export default function ImagePicker(props: {
   defaultImgUrl?: string;
 }) {
   const { path64data, getImage } = useImage();
-
   
   return (
     <div
@@ -34,7 +34,9 @@ export default function ImagePicker(props: {
         alt="imasssge"
         src={props.defaultImgUrl}
       />
-      ):false:(
+      ):<div className={'flex w-full h-full justify-center items-center  bg-white/30'}>
+      <IonIcon icon={imagesSharp} />
+    </div>:(
         <div className={'flex w-full h-full justify-center items-center  bg-white/30'}>
           <IonIcon icon={imagesSharp} />
         </div>
@@ -44,6 +46,7 @@ export default function ImagePicker(props: {
   );
 }
 function useImage() {
+  const{mounted} = useMounted()
   const [path64data, setpath64data] = useState("");
   const getImage = async () => {
     const image = await Camera.getPhoto({
@@ -52,7 +55,8 @@ function useImage() {
       resultType: CameraResultType.Base64,
       source: CameraSource.Photos,
     });
-    setpath64data(image.base64String ?? "");
+    
+    mounted && setpath64data(image.base64String ?? "");
     return image.base64String;
   };
 

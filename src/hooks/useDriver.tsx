@@ -7,7 +7,7 @@ export function useDriver() {
   const { mounted } = useMounted();
   
   async function setStatus(state: any) {
-    await mydb.updateDriver({ working: state });
+    await mydb.updateDriverData({ working: state });
     userStore.update((s) => {
       s.driver!.working = state;
     });

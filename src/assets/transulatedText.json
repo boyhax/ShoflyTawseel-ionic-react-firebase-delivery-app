@@ -167,7 +167,6 @@
         "en": "pending",
         "ar": "انتظار الموافقة"
     },
-    
     "dir": {
         "en": "ltr",
         "ar": "rtl"
@@ -307,5 +306,37 @@
     "Status": {
         "en": "Status",
         "ar": "الحالة"
+    },
+    " Enter Car Info": {
+        "en": " Enter Car Info",
+        "ar": " ادخل معلومات المركبة"
+    },
+    "driver_id": {
+        "en": "driver_id",
+        "ar": "الرقم المدني"
+    },
+    "car_image": {
+        "en": "car_image",
+        "ar": "صورة السيارة"
+    },
+    "car_card_image": {
+        "en": "car_card_image",
+        "ar": "صورة ملكية السيارة"
+    },
+    "car_number": {
+        "en": "car_number",
+        "ar": "رقم لوحة السيارة"
+    },
+    "driver_id_image": {
+        "en": "driver_id_image",
+        "ar": "صورة بطاقة الهوية للسائق"
+    },
+    "driving_license_image": {
+        "en": "driving_license_image",
+        "ar": "صورة رخصة القيادة"
+    },
+    "updating": {
+        "en": "updating",
+        "ar": "تحديث"
     }
 }

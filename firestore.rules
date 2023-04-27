@@ -5,6 +5,9 @@ service cloud.firestore {
       allow  write: if request.auth != null;
       allow read;
     }
+    match /users/{document=**} {
+      allow read, write: if request.auth != null;
+    }
     
   }
   match /databases/users/{UID} {

@@ -53,13 +53,17 @@ export default function DriverApplicationPage(props: any) {
   });
   const [loading, setloading] = useState(false);
 
-  function hundleSubmit(values: any) {
+  async function hundleSubmit(values: any) {
     setloading(true);
-    mydb.submitDriverApplication(values).then(() => {
-      setloading(false);
-      history.push('/account')
-      toast(TT('Your Application Sent Successfully'), 2000, )
-    });
+    try {
+      await mydb.addNewDriver(values);
+        setloading(false);
+        history.push('/account');
+        toast(TT('Your Application Sent Successfully'), 2000, );
+    } catch (error) {
+      console.log(error);
+    }
+    
   }
   return (
     <Page backbutton>
@@ -73,7 +77,7 @@ export default function DriverApplicationPage(props: any) {
         }
       >
         <IonLabel className="text-2xl font-bold ">
-          {TT(" update veichle info")}
+          {TT(" Enter Car Info")}
         </IonLabel>
         {/* <IonLabel>{TT("please fill  ")}</IonLabel> */}
       </div>
@@ -105,6 +109,20 @@ export default function DriverApplicationPage(props: any) {
                   {errors.driver_id}
                 </IonNote>
               </IonItem>
+              <IonItem>
+                <IonLabel position="stacked">{TT("car number")}</IonLabel>
+                <IonInput
+                className={'border-b-2 rounded-xl px-5'}
+                  name="car_number"
+                  lang={"en"}
+                  value={values.car_number}
+                  onIonChange={handleChange}
+                ></IonInput>
+                <IonNote className={"text-sm"} color={"danger"}>
+                  {errors.car_number}
+                </IonNote>
+              </IonItem>
+              <IonItem></IonItem>
               <IonItem>
                 <IonLabel position="stacked">{TT("car_image")}</IonLabel>
                 <IonThumbnail
@@ -140,23 +158,6 @@ export default function DriverApplicationPage(props: any) {
               </IonItem>
 
               <IonItem>
-                <IonLabel position="stacked">{TT("car_number")}</IonLabel>
-                <IonThumbnail
-                  className={" w-full h-[150px] rounded-xl overflow-hidden "}
-                >
-                  <ImagePicker
-                    onChange={(value) => {
-                      setFieldValue("car_number", value);
-                      console.log(value);
-                    }}
-                  />
-                </IonThumbnail>
-                <IonNote className={"text-sm"} color={"danger"}>
-                  {errors.car_number}
-                </IonNote>
-              </IonItem>
-
-              <IonItem>
                 <IonLabel position="stacked">{TT("driver_id_image")}</IonLabel>
                 <IonThumbnail
                   className={" w-full h-[150px] rounded-xl overflow-hidden "}
@@ -172,6 +173,8 @@ export default function DriverApplicationPage(props: any) {
                   {errors.driver_id_image}
                 </IonNote>
               </IonItem>
+
+             
               <IonItem>
                 <IonLabel position="stacked">
                   {TT("driving_license_image")}

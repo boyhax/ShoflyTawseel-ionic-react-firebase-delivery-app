@@ -1,25 +1,28 @@
 import { IonButton, IonContent, IonLabel } from "@ionic/react";
 import * as React from "react";
+import { useHistory } from "react-router";
 import Page from "../components/Page";
 import { TT } from "../components/utlis/tt";
 import { useDriver } from "../hooks/useDriver";
 
 export default function DriverRoute({ children }: any): JSX.Element {
   const { driver } = useDriver();
+  const history = useHistory();
 
   if (!driver) {
     return (
       <Page menubutton>
         <IonContent
           fullscreen
-          className={"flex flex-col items-center justify-start"}
+          
         >
-          <div className={"m-auto"}>
-            <IonLabel>
+          <div className={"w-full h-full flex flex-col items-center justify-center"}>
+          <IonLabel >
               {TT("Do you Want To Register As Driver with us?")}
             </IonLabel>
-            <IonButton>{TT("Yes")}</IonButton>
+            <IonButton onClick={()=>history.push('driverapplication')}>{TT("Yes")}</IonButton>
           </div>
+           
         </IonContent>
       </Page>
     );
