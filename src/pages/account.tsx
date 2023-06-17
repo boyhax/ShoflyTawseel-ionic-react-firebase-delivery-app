@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   IonContent,
   IonButton,
   IonIcon,
-  IonButtons,
   IonList,
   IonInput,
   IonItem,
@@ -12,74 +11,94 @@ import {
   IonNote,
   IonAccordionGroup,
   IonAccordion,
+  IonButtons,
+  useIonAlert,
+  useIonToast,
   IonChip,
-  IonCard,
 } from "@ionic/react";
 import {
+  checkmarkDoneCircleOutline,
+  createOutline,
   logOutOutline,
   mailOutline,
   personCircleOutline,
   phonePortraitOutline,
+  saveOutline,
+  ticketOutline,
 } from "ionicons/icons";
 import { getAuth } from "firebase/auth";
-import { avatarPLaceholder, mydb } from "../api/firebaseMain";
+import mydb, { avatarPLaceholder } from "../api/firebaseMain";
 import { TT } from "../components/utlis/tt";
 import CreatProfile from "./CreatProfile";
 import { useHistory } from "react-router";
-import { usePhoto } from "../hooks/usePhoto";
 import Page from "../components/Page";
 import ProfileAvatar from "../components/ProfileAvatar";
 import { userStore } from "../Stores/userStore";
-import { DriverStatus } from "../types";
-import useDriverUserMode from "../hooks/useDriverUserMode";
-import { useDriver } from "../hooks/useDriver";
 
 const Account: React.FC = () => {
   const { user, profile, driver } = userStore.useState((s) => s);
+  const [newName, setNewName] = useState("");
+  const [editName, setEditName] = useState(false);
   const [content, setContent] = useState<"orders" | "deliver" | "editProfile">(
     "orders"
   );
+  const [alert] = useIonToast();
   const history = useHistory();
 
-  const hundleActiveState = () => {
-    driver &&
-      mydb.updateDriverData({
-        status:
-          driver.status === "active"
-            ? DriverStatus.inactive
-            : DriverStatus.active,
-      });
-  };
   return (
     <Page homeButton>
-      <IonContent fullscreen className={''}>
-        <IonToolbar className={"flex h-28 items-center ion-padding"}>
+      <IonContent fullscreen className={""}>
+        <IonToolbar className={"flex  h-28 items-center ion-padding"}>
           <ProfileAvatar
             url={profile?.photoURL ?? avatarPLaceholder(profile?.name ?? "s t")}
             onClick={() => {}}
           />
-          
+          <div className={"flex flex-row  justify-around"}>
+              {/* <IonIcon className={'m-auto  h-10 w-10'} icon={personCircleOutline} /> */}
+              <IonButton
+              disabled={false}
+              slot={"end"}
+              fill={"clear"}
+              onClick={() => {
+                if (editName) {
+                  if (newName.length < 5) {
+                    alert("name must be at least 5 characters", 2000);
+                  } else {
+                    setEditName(false);
+                    mydb.updateProfile({ name: newName });
+                    alert("name updated", 2000);
+                  }
+                } else {
+                  setEditName(true);
+                }
+              }}
+            >
+              {editName ? (
+                <IonIcon icon={saveOutline} />
+              ) : (
+                <IonIcon icon={createOutline} />
+              )}
+            </IonButton>
+              <IonInput
+                style={{ direction: "" }}
+                slot={"end"}
+                value={newName || profile?.name || "Name"}
+                disabled={!editName}
+                onIonChange={(e) => {
+                  setNewName(e.detail.value!);
+                }}
+              ></IonInput>
+            
+          </div>
         </IonToolbar>
 
         <IonList>
           <IonAccordionGroup mode={"ios"} multiple={true} value={["first"]}>
             <IonAccordion value={"first"}>
               <IonItem slot="header" color="light">
-                <IonLabel>Account information</IonLabel>
+                <IonLabel>{TT("Account information")}</IonLabel>
               </IonItem>
               <div className="ion-padding" slot="content">
-                <IonItem>
-                  <IonIcon icon={personCircleOutline} />
-                  <IonInput
-                    style={{ direction: "ltr" }}
-                    slot={"end"}
-                    value={profile?.name || "Name"}
-                    disabled={true}
-                    onIonChange={(e) => {
-                      // mydb.updateProfile({ name: e.detail.value! });
-                    }}
-                  ></IonInput>
-                </IonItem>
                 <IonItem>
                   <IonIcon icon={mailOutline} />
                   <IonInput
@@ -100,7 +119,7 @@ const Account: React.FC = () => {
                 </IonItem>
               </div>
             </IonAccordion>
-            <IonAccordion value={"secound"} >
+            <IonAccordion value={"secound"}>
               <IonItem slot="header" color="light">
                 <IonLabel>driver information</IonLabel>
               </IonItem>
@@ -146,8 +165,9 @@ const Account: React.FC = () => {
                     <IonChip> carYear{driver.carYear}</IonChip>
                     <IonChip>identity {driver.identity}</IonChip> */}
                     <IonItem>
-                      <IonLabel>{TT('Status')}</IonLabel> 
-                      <IonLabel>{TT(driver.status)}</IonLabel></IonItem>
+                      <IonLabel>{TT("Status")}</IonLabel>
+                      <IonLabel>{TT(driver.status)}</IonLabel>
+                    </IonItem>
                   </div>
                 )}
               </div>

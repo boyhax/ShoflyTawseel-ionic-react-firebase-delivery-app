@@ -17,8 +17,7 @@ const AdminPage: React.FC = () => {
 
   return (
     <Page homeButton>
-      <IonContent fullscreen>
-      <IonHeader translucent mode={'ios'}>
+      <IonHeader translucent collapse={'fade'}>
         <IonToolbar>
           <IonSegment onIonChange={(e)=>setSegmt(e.detail.value)}  mode={'ios'} value={segment}>
             <IonSegmentButton value="DriversList">
@@ -31,6 +30,8 @@ const AdminPage: React.FC = () => {
           </IonSegment>
         </IonToolbar>
       </IonHeader>
+      <IonContent fullscreen>
+      
       {segment ==='DriversList' && <DriversList/>}
       {segment ==='Orders' && <OrderList/>}
       </IonContent>

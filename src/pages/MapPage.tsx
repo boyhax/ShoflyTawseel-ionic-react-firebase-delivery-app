@@ -48,21 +48,10 @@ const MapPage: React.FC = () => {
   });
   const history = useHistory();
   const state = useRef(_state);
-  const modalComponent = (props: any) => (
-    <IonContent>
-      <IonToolbar>
-        <IonButtons slot="start">
-          <IonButton onClick={() => dissmis()}>cancel</IonButton>
-        </IonButtons>
-        <IonButtons slot="end">
-          <IonButton onClick={() => dissmis()}>Accept</IonButton>
-        </IonButtons>
-      </IonToolbar>
-      {<OrderCardWithOrder id={props.orderId} />}
-    </IonContent>
-  );
+  
   const [present, dissmis] = useIonModal(modalComponent, {
     orderId: state.current.orderId,
+    onDissmis:()=>dissmis(),
   });
   useEffect(() => {
     return () => unSetup();
@@ -171,3 +160,17 @@ const MapPage: React.FC = () => {
 };
 
 export default MapPage;
+
+const modalComponent = (props: {onDissmis:()=>void,orderId:string}) => (
+  <IonContent>
+    <IonToolbar>
+      <IonButtons slot="start">
+        <IonButton onClick={() => props.onDissmis()}>cancel</IonButton>
+      </IonButtons>
+      <IonButtons slot="end">
+        <IonButton onClick={() => props.onDissmis()}>Accept</IonButton>
+      </IonButtons>
+    </IonToolbar>
+    {<OrderCardWithOrder id={props.orderId} />}
+  </IonContent>
+);

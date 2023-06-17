@@ -3,6 +3,11 @@ import Page from "../components/Page";
 import mydb from "../api/firebaseMain";
 import {
   IonButton,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
   IonContent,
   IonLabel,
   IonText,
@@ -13,6 +18,7 @@ import { notificationsStore } from "../hooks/useNotifications";
 import excuteQuery from "../api/mysql";
 import LoadingScreen from "./LoadingScreen";
 import ImagePicker from "../components/ImagePicker";
+import { TT } from "../components/utlis/tt";
 
 const Demo: React.FC = () => {
   const { Notifications } = notificationsStore.useState();
@@ -39,20 +45,23 @@ const Demo: React.FC = () => {
     })
   };
   return (
-    <Page homeButton>
-      <IonContent className={"flex justify-center mt-8"}>
-        {/* <IonLabel>query</IonLabel>
-        <IonTextarea
-          value={query}
-          onIonChange={(e) => setQuery(e.detail.value!)}
-        ></IonTextarea>
-        <IonLabel>result</IonLabel>
-        <IonTextarea value={result}></IonTextarea>
-        <IonButton onClick={hundlequery}>Send query</IonButton> */}
-        <ImagePicker />
-
-      </IonContent>
-    </Page>
+    <Page menubutton>
+        <IonContent fullscreen>
+          <IonCard>
+            <IonCardHeader>
+              <IonCardTitle>
+                {TT("You Are Not Registered As Driver")}
+              </IonCardTitle>
+              <IonCardSubtitle>
+                {TT("Do you Want To Register As Driver with us?")}
+              </IonCardSubtitle>
+            </IonCardHeader>
+            <IonCardContent>
+            <IonButton>{TT("Yes")}</IonButton>
+            </IonCardContent>
+          </IonCard>
+        </IonContent>
+      </Page>
   );
 };
 

@@ -21,6 +21,23 @@ class pushFCM {
       this.start()
     }
   }
+  start() {
+    FirebaseMessaging.addListener("notificationReceived", (event) => {
+      console.log("notificationReceived: ", { event });
+    });
+    FirebaseMessaging.addListener("notificationActionPerformed", (event) => {
+      console.log("notificationActionPerformed: ", { event });
+    });
+    this.requestPermissions().then(() => {
+      console.log("permissions granted");
+      this.getToken().then(() => {
+        
+        console.log("token: ", this.token);
+      });
+    });
+    
+  
+  }
   public async requestPermissions(): Promise<void> {
     await FirebaseMessaging.requestPermissions();
   }
@@ -33,22 +50,7 @@ class pushFCM {
     const { token } = await FirebaseMessaging.getToken();
     this.token = token;
   }
-  start() {
-    FirebaseMessaging.addListener("notificationReceived", (event) => {
-      console.log("notificationReceived: ", { event });
-    });
-    FirebaseMessaging.addListener("notificationActionPerformed", (event) => {
-      console.log("notificationActionPerformed: ", { event });
-    });
-    this.requestPermissions().then(() => {
-      console.log("permissions granted");
-      this.getToken().then(() => {
-        console.log("token: ", this.token);
-      });
-    });
-    
   
-  }
 
   addListeners = async () => {
     await PushNotifications.addListener("registration", (token) => {

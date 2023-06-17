@@ -18,7 +18,7 @@ export default function HomeDriver() {
   return (
     <DriverRoute>
       <Page menubutton>
-        <IonHeader className={`flex justify-center`}></IonHeader>
+        <IonHeader translucent collapse={'fade'}>
         <IonToolbar>
           <IonSegment
             value={segment}
@@ -32,6 +32,8 @@ export default function HomeDriver() {
             </IonSegmentButton>
           </IonSegment>
         </IonToolbar>
+        </IonHeader>
+        
         <IonContent>
           {segment === "Map" && (
             <div className={` h-full w-full`}>

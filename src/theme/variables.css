@@ -42,7 +42,7 @@ background-size: 10px 10px;
 
 /** Ionic CSS Variables **/
 :root {
-  --ion-font-family:"tajawal";
+  --ion-font-family:tajawal,nunito;
   /** primary **/
   --ion-color-primary: #f3c212;
 	--ion-color-primary-rgb: 239,243,18;

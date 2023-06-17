@@ -1,4 +1,13 @@
-import { IonContent, useIonAlert, useIonLoading } from "@ionic/react";
+import {
+  IonButton,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardTitle,
+  IonContent,
+  useIonAlert,
+  useIonLoading,
+} from "@ionic/react";
 import React, { useRef, useState } from "react";
 import { useHistory } from "react-router";
 import { AnyObjectSchema } from "yup";
@@ -7,41 +16,48 @@ import Page from "../components/Page";
 import { TT } from "../components/utlis/tt";
 
 export default function ContactUsPage() {
-  const [present,dissmis] = useIonLoading()
-  const [alert]=useIonAlert()
+  const [present, dissmis] = useIonLoading();
+  const [alert] = useIonAlert();
   const textInput: any = useRef<HTMLTextAreaElement>();
-  const history = useHistory()
+  const history = useHistory();
   return (
     <Page homeButton>
       <IonContent>
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            present()
+            present();
             mydb.sendContactUs(textInput.current.value).finally(() => {
-              dissmis()
+              dissmis();
               alert({
                 message: TT("Your message has been sent"),
                 buttons: [TT("OK")],
-              })
-              history.push('/')
-            })
+              });
+              history.push("/");
+            });
           }}
-          className={"flex flex-col justify-center mt-[50%]"}
+          className={"flex flex-col justify-center "}
         >
-          <textarea
-            required
-            ref={textInput}
-            className={"m-5 p-3 text-clip min-h-[200px] border-2 rounded-3xl"}
-            wrap="hard"
-            placeholder="Write ..."
-            
-          />
-          <button className={"m-5 ring-2 border-2 rounded-xl"} type={"submit"}>
-            {TT("Send")}
-          </button>
+          {/* <IonCard> */}
+          <IonCardHeader>
+            <IonCardTitle>{TT("Write Here")}</IonCardTitle>
+            <IonButton type={"submit"}>{TT("Send")}</IonButton>
+          </IonCardHeader>
+
+          <IonCardContent>
+            <textarea
+              required
+              ref={textInput}
+              className={
+                "m-5 w-3/4 p-3 text-clip min-h-[200px] border-2 rounded-3xl"
+              }
+              wrap="hard"
+              placeholder={TT("Write ...")}
+            />
+          </IonCardContent>
+
+          {/* </IonCard> */}
         </form>
-        
       </IonContent>
     </Page>
   );

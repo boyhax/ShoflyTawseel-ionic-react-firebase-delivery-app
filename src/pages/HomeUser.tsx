@@ -11,10 +11,9 @@ export default function HomeUser() {
 
   return (
     <Page menubutton>
-      <IonHeader className={` flex flex-row items-center justify-center`}>
-        <IonToolbar className={` flex flex-row items-center justify-center`}>
-        <IonLabel  >{TT('My Orders')}</IonLabel>
-
+      <IonHeader translucent collapse={'fade'} >
+        <IonToolbar >
+        <IonTitle>{TT('My Orders')}</IonTitle>
         </IonToolbar>
         </IonHeader>
       <IonContent >
