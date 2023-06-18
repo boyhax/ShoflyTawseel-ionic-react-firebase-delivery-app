@@ -36,6 +36,8 @@ import { prettyDate } from "../utlis/prettyDate";
 import { TT } from "../utlis/tt";
 import OrderCardUserFooter from "./OrderCardUserFooter";
 import { userStore } from "../../Stores/userStore";
+import { timeAgo } from "../../lib/timeAgo";
+import Comment from "../Comment";
 
 interface props extends ComponentProps {
   order: orderProps;
@@ -46,7 +48,7 @@ Device.getInfo().then((v) => {
 });
 
 const OrderCard = ({ order }: props) => {
-  var date = order && prettyDate(new Date(order.time.seconds * 1000));
+  var date = order && timeAgo(new Date(order.time.seconds * 1000));
 
   const [reportWhy, setReportWhy] = useState<string>("");
   const uid = mydb.user? mydb.user.uid: "";
@@ -111,16 +113,20 @@ const OrderCard = ({ order }: props) => {
           point2={geoToLatlng(order.geo.to)}
         />}
       </div>
-      <IonCardHeader className="flex w-full items-center justify-between">
+      <IonCardHeader 
+      className="flex w-full items-center justify-between"
+      >
         <IonCardTitle>{userInfo.name}</IonCardTitle>
-        <IonCardSubtitle> {date}</IonCardSubtitle>
+        <IonCardSubtitle style={{direction: 'ltr'}}> {date}</IonCardSubtitle>
       </IonCardHeader>
-      <IonCardContent onClick={() => toggleComment()}>
+      <IonCardContent >
         {order.urgent && (
           <IonBadge className={" top-0 left-0"}>Urgent</IonBadge>
         )}
-        {TT('description') +
-          (showComment ? order.comment : order.comment.slice(0, 50) + "...")}
+        {/* //# comment component start minimal and maxemize on click */}
+        {TT('description') }
+        <Comment text={order.comment??''}/>
+        
          {/* <div  className={'w-full'}>
          <IonLabel>
             {  OrderStatus[order.status]}
