@@ -1,55 +1,41 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import Page from "../components/Page";
 import HomeDriver from "./HomeDriver";
 import HomeUser from "./HomeUser";
 import useDriverUserMode from "../hooks/useDriverUserMode";
-import { JsxElement } from "typescript";
-import { useGlobals } from "../providers/globalsProvider";
-import { userStore } from "../Stores/userStore";
-import { useDriver } from "../hooks/useDriver";
 import {
-  IonButton,
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardSubtitle,
-  IonCardTitle,
-  IonContent,
-  IonLabel,
-} from "@ionic/react";
-import { TT } from "../components/utlis/tt";
+  useCollectionDataOnce,
+  useDocumentData,
+} from "react-firebase-hooks/firestore";
+import {
+  collection,
+  doc,
+  getFirestore,
+  orderBy,
+  query,
+} from "firebase/firestore";
+import { mydb } from "../api/firebaseMain";
+import { IonButton } from "@ionic/react";
 
 const Home = () => {
   const { driverMode } = useDriverUserMode();
+  const [clicked,setClicked] = useState(0)
+  // const [data, loading, error] = useCollectionDataOnce(
+  //   query(collection(getFirestore(), "orders/"), orderBy("time", "asc"))
+  // );
+  // useEffect(() => {
+  //   console.log("user => ", data, loading, error);
 
-  return <div>{driverMode ? <HomeDriver /> : <HomeUser />}</div>;
+  // }, [data]);
+  const click=()=>{
+    setClicked(clicked+1)
+  }
+  return <React.Fragment>
+
+    {driverMode ? <HomeDriver /> : <HomeUser />}
+    
+    </React.Fragment>;
 };
 
 export default Home;
-
-function WithDriver(node: JSX.Element) {
-  const { driver } = useDriver();
-  if (!driver) {
-    return (
-      <Page menubutton>
-        <IonContent fullscreen>
-          <IonCard>
-            <IonCardHeader>
-              <IonCardTitle>
-                {TT("You Are Not Registered As Driver")}
-              </IonCardTitle>
-              <IonCardSubtitle>
-                {TT("Do you Want To Register As Driver with us?")}
-              </IonCardSubtitle>
-            </IonCardHeader>
-            <IonCardContent>
-            <IonButton>{TT("Yes")}</IonButton>
-            </IonCardContent>
-          </IonCard>
-        </IonContent>
-      </Page>
-    );
-  }
-  return node;
-}

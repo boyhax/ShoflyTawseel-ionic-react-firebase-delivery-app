@@ -66,8 +66,8 @@ const Page: React.FC<Props> = (props) => {
         )}
         {props.menubutton && (
           <IonMenuToggle>
-            <IonFabButton>
-              <IonIcon size={"large"} icon={menuOutline}></IonIcon>
+            <IonFabButton size={"small"}>
+              <IonIcon icon={menuOutline}></IonIcon>
               {/* <IonMenuButton></IonMenuButton>  */}
             </IonFabButton>
           </IonMenuToggle>
