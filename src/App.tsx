@@ -55,7 +55,14 @@ import DriverUpdatePage from "./pages/DriverUpdate";
 import DriverRoute from "./routes/DriverRoute";
 import pushFCM from "./services/pushFCM";
 import DriverApplicationPage from "./pages/DriverApplication";
-
+import HomeDriver from "./pages/HomeDriver";
+import HomeUser from "./pages/HomeUser";
+import Settings from "./pages/Settings";
+import Notifications from "./pages/Notifications";
+import Locations from "./pages/Locations";
+import ChatProvider from "./providers/chatProvider";
+import Chat from "./pages/chat/chat";
+import MapPage from "./pages/MapPage";
 
 setupIonicReact({
   mode: "ios",
@@ -93,14 +100,9 @@ Device.getInfo().then((v) => {
     s.device = v.platform;
   });
 
-  if (["android", "ios"].includes(v.platform)) {
-    // FCM.getToken().then((t) => {
-    //   token = t.token;
-    //   mydb.setUserToken(t.token);
-    // });
-  }
+  
 });
-const languageStore = new Store<{ lang: languages }>({ lang: "ar" });
+export const languageStore = new Store<{ lang: languages }>({ lang: "ar" });
 type languages = "en" | "ar";
 var language: languages = "ar";
 
@@ -136,11 +138,12 @@ const App: React.FC = () => {
   return (
     <React.StrictMode>
       <GlobalProvider>
+        <ChatProvider>
+
+        
         <IonReactRouter>
           <Switch>
-            <IonApp
-            // className={`${TT('dir')}`}
-            >
+            <IonApp>
               <MainMenu />
 
               {/* <IonTabs> */}
@@ -152,6 +155,16 @@ const App: React.FC = () => {
                   <Route exact path="/orders">
                     <AuthRoute>
                       <OrdersPage />
+                    </AuthRoute>
+                  </Route>
+                  <Route exact path="/user">
+                    <AuthRoute>
+                      <HomeUser />
+                    </AuthRoute>
+                  </Route>
+                  <Route exact path="/driver">
+                    <AuthRoute>
+                      <HomeDriver />
                     </AuthRoute>
                   </Route>
                   <Route exact path="/account">
@@ -179,12 +192,17 @@ const App: React.FC = () => {
                   </Route>
                   <Route exact path="/chat/:id">
                     <AuthRoute>
-                      <Chats />
+                      <Chat />
                     </AuthRoute>
                   </Route>
                   <Route exact path="/contact">
                     <AuthRoute>
                       <ContactUsPage />
+                    </AuthRoute>
+                  </Route>
+                  <Route exact path="/map">
+                    <AuthRoute>
+                      <MapPage />
                     </AuthRoute>
                   </Route>
                   <Route exact path="/admin">
@@ -214,6 +232,15 @@ const App: React.FC = () => {
                   </Route>
                   <Route exact path="/details">
                     <Details />
+                  </Route>
+                  <Route exact path="/settings">
+                    <Settings />
+                  </Route>
+                  <Route exact path="/locations">
+                    <Locations />
+                  </Route>
+                  <Route exact path="/notifications">
+                    <Notifications />
                   </Route>
                   <Route exact path="/">
                     <Redirect to="/home" />
@@ -253,6 +280,7 @@ const App: React.FC = () => {
             </IonApp>
           </Switch>
         </IonReactRouter>
+        </ChatProvider>
       </GlobalProvider>
     </React.StrictMode>
   );

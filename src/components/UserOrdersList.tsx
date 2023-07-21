@@ -69,16 +69,7 @@ export default function UserOrdersList(props: any) {
 
   return (
     <div>
-      <IonFab horizontal={"start"} vertical="bottom">
-        <IonFabButton
-          className={"ml-auto"}
-          onClick={() => {
-            history.push("addorder");
-          }}
-        >
-          <IonIcon icon={addOutline}></IonIcon>
-        </IonFabButton>
-      </IonFab>
+      
       {loading && (
         <IonList>
           <IonProgressBar />

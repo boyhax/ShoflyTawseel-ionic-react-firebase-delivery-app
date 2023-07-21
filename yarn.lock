@@ -1828,12 +1828,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@capacitor-community/fcm@^2.0.2":
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/@capacitor-community/fcm/-/fcm-2.0.2.tgz#8e35f452d4929ce0a7aba000a215f2e4779e2d0a"
-  integrity sha512-O/xxizQyPdD6AejJjmhZC+WBquy1UHrS0KvmnVf58Ji9TtQiaCb6iQhZMjTidNqOHJIj1YxeIFGAcXlt8nqgyw==
-  dependencies:
-    "@capacitor/core" "^3.0.1"
+"@capacitor-community/geolocation-react@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@capacitor-community/geolocation-react/-/geolocation-react-0.1.0.tgz#dbfdd3daacf69b7da5b08e9253c2a11ed578d283"
+  integrity sha512-FPaCVkzEDhKvSBGQwzUOJmJ6WmUfTRxW1d40a477cSwv8cpK5MVAe1gRXInFhOLjEtAdLG6mjXeq2gNnIOLVoQ==
 
 "@capacitor-firebase/messaging@^1.4.0":
   version "1.4.0"
@@ -1882,13 +1880,6 @@
   version "4.7.3"
   resolved "https://registry.yarnpkg.com/@capacitor/core/-/core-4.7.3.tgz#d28dab05be7a390065cc92fab6f788c2a8dcf344"
   integrity sha512-IDhJapHqfJNpSlq89M0quOZGb08uOUZhVhyRDdrGUrwa4ttFoWeX/Vi9F+b9bffsDRKkSLF0BhzA9TH7ko5c3A==
-  dependencies:
-    tslib "^2.1.0"
-
-"@capacitor/core@^3.0.1":
-  version "3.9.0"
-  resolved "https://registry.yarnpkg.com/@capacitor/core/-/core-3.9.0.tgz#ab5eccbeb02e140382e983b794ead296f1db7e6d"
-  integrity sha512-j1lL0+/7stY8YhIq1Lm6xixvUqIn89vtyH5ZpJNNmcZ0kwz6K9eLkcG6fvq1UWMDgSVZg9JrRGSFhb4LLoYOsw==
   dependencies:
     tslib "^2.1.0"
 
@@ -5120,9 +5111,9 @@ caniuse-api@^3.0.0:
     lodash.uniq "^4.5.0"
 
 caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001400, caniuse-lite@^1.0.30001426:
-  version "1.0.30001441"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001441.tgz#987437b266260b640a23cd18fbddb509d7f69f3e"
-  integrity sha512-OyxRR4Vof59I3yGWXws6i908EtGbMzVUi3ganaZQHmydk1iwDhRnvaPG2WaR0KcqrDFKrxVZHULT396LEPhXfg==
+  version "1.0.30001510"
+  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001510.tgz"
+  integrity sha512-z35lD6xjHklPNgjW4P68R30Er5OCIZE0C1bUf8IMXSh34WJYXfIy+GxIEraQXYJ2dvTU8TumjYAeLrPhpMlsuw==
 
 case-sensitive-paths-webpack-plugin@^2.4.0:
   version "2.4.0"

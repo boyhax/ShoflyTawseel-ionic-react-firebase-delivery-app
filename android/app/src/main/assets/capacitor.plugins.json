@@ -1,9 +1,5 @@
 [
 	{
-		"pkg": "@capacitor-community/fcm",
-		"classpath": "com.getcapacitor.community.fcm.FCMPlugin"
-	},
-	{
 		"pkg": "@capacitor-firebase/messaging",
 		"classpath": "io.capawesome.capacitorjs.plugins.firebase.messaging.FirebaseMessagingPlugin"
 	},

@@ -1,10 +1,12 @@
 import { LatLng } from "@capacitor/google-maps/dist/typings/definitions";
+import { getAuth } from "firebase/auth";
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
+import { GeoPoint } from "firebase/firestore";
 import * as geofirestore from "geofirestore";
+import { Point } from "leaflet";
 import { Config } from "../config";
 import { newOrderProps, orderProps, OrderStatus } from "../types";
-import mydb from "./firebaseMain";
 
 class geoClass {
   geocollection;
@@ -31,11 +33,7 @@ class geoClass {
       })
       .where("status", "==", OrderStatus.Placed);
     const list = await query.get().then((d) => d.docs ?? []);
-    // var list = [...q.docs]
-    // list = list.filter((v)=>{
-    //   return from?v.data().from===true:false
-    // })
-    console.log("qeo query list :>> ", list);
+
     return list;
   }
   async addOrder(order: newOrderProps) {
@@ -46,25 +44,25 @@ class geoClass {
       coordinates: order.geo.from,
     });
   }
-  async getNearOrder(point: LatLng, radius: number = 20) {
+  async getNearOrder(point: L.LatLng, radius: number = 1000, limit = 20) {
+    if (!point) return [];
     const geocollection = this.GeoFirestore.collection("orders");
-    const uid = mydb.user?.uid ?? "";
+    const uid = getAuth().currentUser?.uid;
     const query = geocollection
       .near({
         center: new firebase.firestore.GeoPoint(point.lat, point.lng),
         radius: radius,
-        limit: 5,
+        limit,
       })
       .where("status", "==", OrderStatus.Placed);
     const list: orderProps[] = await query.get().then((d) =>
       d.docs
-        .filter((v) => v.data().uid !== uid && !v.data().driver  )
+        .filter((v) => v.data().uid !== uid )
         .map((d) => {
-          return { id: d.id, ...d.data() } as orderProps;
+          return d.data() as orderProps;
         })
     );
-
-    console.log("qeo query list :>> ", list);
+    console.log("list :>> ", list);
     return list;
   }
 

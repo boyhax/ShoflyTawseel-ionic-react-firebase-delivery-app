@@ -14,13 +14,16 @@ import {
   IonImg,
   IonMenuToggle,
   IonFooter,
+  useIonRouter,
 } from "@ionic/react";
 import { getAuth } from "firebase/auth";
 import {
   bookOutline,
   callOutline,
   chatboxOutline,
+  homeOutline,
   informationCircleOutline,
+  settingsOutline,
 } from "ionicons/icons";
 import React from "react";
 import { useHistory } from "react-router";
@@ -35,8 +38,7 @@ interface props extends ComponentProps {
 
 const MainMenu = (Props: props) => {
   const { user, profile } = userStore.useState();
-
-  const history = useHistory();
+  const history = useIonRouter();
 
   const SignOutButton = (
     <IonButton fill={"default"} onClick={() => getAuth().signOut()}>
@@ -45,7 +47,7 @@ const MainMenu = (Props: props) => {
   );
 
   return (
-    <IonMenu id="mainMenu" ref={Props.menuRef} contentId="main-content">
+    <IonMenu id="mainMenu" ref={Props.menuRef} contentId="main-content" side={'start'}>
       <IonHeader>
         <IonMenuToggle>
           <IonToolbar
@@ -87,36 +89,39 @@ const MainMenu = (Props: props) => {
         </IonMenuToggle>
       </IonHeader>
       <IonContent class="ion-padding">
-        <IonList>
+        <IonList style={{direction:'ltr'}}>
+        <IonMenuToggle>
+            <IonItem  onClick={() => history.push("/")}>
+              <IonIcon icon={homeOutline} />
+              <IonLabel className={'mx-1'}>{TT("Home")}</IonLabel>
+            </IonItem>
+          </IonMenuToggle>
           <IonMenuToggle>
             <IonItem onClick={() => history.push("chat")}>
               <IonIcon icon={chatboxOutline} />
-              <IonLabel>{TT("Chat")}</IonLabel>
+              <IonLabel className={'mx-1'}>{TT("Chat")}</IonLabel>
             </IonItem>
           </IonMenuToggle>
           <IonMenuToggle>
-            <IonItem className="item" onClick={() => history.push("Details")}>
+            <IonItem  onClick={() => history.push("Details")}>
               <IonIcon icon={informationCircleOutline} />
-              <IonLabel>{TT("Info")}</IonLabel>
+              <IonLabel className={'mx-1'}>{TT("Info")}</IonLabel>
             </IonItem>
           </IonMenuToggle>
           <IonMenuToggle>
-            <IonItem className="item" onClick={() => history.push("contact")}>
+            <IonItem  onClick={() => history.push("contact")}>
               <IonIcon icon={callOutline} />
-              <IonLabel>{TT("Get in Touch")}</IonLabel>
+              <IonLabel className={'mx-1'}>{TT("Get in Touch")}</IonLabel>
+            </IonItem>
+          </IonMenuToggle>
+          <IonMenuToggle>
+            <IonItem  onClick={() => history.push("/settings")}>
+              <IonIcon icon={settingsOutline} />
+              <IonLabel className={'mx-1'}>{TT("Settings")}</IonLabel>
             </IonItem>
           </IonMenuToggle>
 
-          {profile?.role === "admin" && (
-            <IonMenuToggle>
-              <IonItem className="item" onClick={() => history.push("/Demo")}>
-                Demo
-              </IonItem>
-              <IonItem className="item" onClick={() => history.push("/admin")}>
-                Admin panel
-              </IonItem>
-            </IonMenuToggle>
-          )}
+          
           <IonMenuToggle>
             <IonItem>
               <div className="flex-end">{user && SignOutButton}</div>
@@ -124,6 +129,16 @@ const MainMenu = (Props: props) => {
           </IonMenuToggle>
         </IonList>
       </IonContent>
+      {profile?.role === "admin" && (
+            <IonMenuToggle className={'top-auto flex justify-evenly'}>
+              <IonButton  onClick={() => history.push("/Demo")}>
+                Demo
+              </IonButton>
+              <IonButton  onClick={() => history.push("/admin")}>
+                Admin panel
+              </IonButton>
+            </IonMenuToggle>
+          )}
       <IonFooter>
         <DriverUserToggleSegment />
       </IonFooter>

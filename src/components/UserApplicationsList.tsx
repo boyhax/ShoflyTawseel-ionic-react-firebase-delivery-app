@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 
 import { DocumentSnapshot } from "firebase/firestore";
-import { IonLabel, IonList } from "@ionic/react";
+import { IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, IonLabel, IonList } from "@ionic/react";
 import OrderCard from "./OrderCard";
 import { orderProps } from "../types";
 import { userApplicationsStore } from "../api/firebaseMain";
@@ -24,10 +24,17 @@ export default function UserApplicationsList(props: any) {
             return <OrderCard key={v.id} order={{id:v.id,...v.data()}as orderProps}/>
           })}
           {!orders.length&&
-          <div className={'flex justify-center items-center '}>
-            <IonLabel >{TT('empty list \n')}</IonLabel>
-
-          </div>
+          <IonCard>
+            <IonCardHeader>
+              <IonCardTitle>
+              {TT('No deliveries Found ')}
+              </IonCardTitle>
+              <IonCardSubtitle>
+              {TT('check for new deliveries  ')}
+              </IonCardSubtitle>
+            </IonCardHeader>
+          </IonCard>
+          
           }
         
       </IonList>

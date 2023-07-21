@@ -1,92 +1,69 @@
-import React, { useEffect, useState } from 'react';
-import { IonContent, IonTitle, IonToolbar, IonLabel, IonItem, IonAvatar, IonSkeletonText, IonCardSubtitle, IonGrid, useIonViewDidEnter, IonBackButton, IonHeader } from '@ionic/react';
-import { useParams } from 'react-router';
-import Chat from './chat';
-import Page from '../../components/Page';
-import chatStore, { ChatProps } from '../../Stores/chatStore';
-import ChatItem from './ChatItem';
-import mydb from '../../api/firebaseMain';
-
+import React, {  } from "react";
+import {
+  IonContent,
+  IonTitle,
+  IonToolbar,
+  IonAvatar,
+  IonCardSubtitle,
+  IonHeader,
+  IonButton,
+  IonButtons,
+  IonIcon,
+  useIonRouter,
+  IonList,
+  IonCardTitle,
+  IonBadge,
+} from "@ionic/react";
+import Page from "../../components/Page";
+import { TT } from "../../components/utlis/tt";
+import { chevronBackOutline } from "ionicons/icons";
+import { useChat } from "../../providers/chatProvider";
+import { timeAgo } from "../../lib/timeAgo";
 
 export default function Chats(props: any) {
-  
-  const [currentChat, setCurrentChat] = useState<ChatProps>()
-  
-  const {chats} = chatStore.useState()
-  const {id}:any = useParams()
-  
-useEffect(() => {
-  if(id){
-    let chat = chats.find((v)=>v.chaters.includes(id)||v.id===id)
-    chat && setCurrentChat(chat)
-    !chat && mydb.makeChatIfUserExist(id)
-  }else{
-    setCurrentChat(undefined)
-  }
-}, [chats,id])
-
-      
-  
-
-  if (currentChat) {
-    return <Chat chaters={currentChat.chaters} id={currentChat.id} ></Chat>
-  }
+  const router = useIonRouter();
+  const { chatItems: items } = useChat();
 
   return (
-    <Page backbutton>
-      <IonContent fullscreen={true}>
-        <IonHeader >
-        <IonToolbar className={'h-16'} >
-          {/* <IonBackButton  defaultHref={'/'}/> */}
-          <IonTitle slot={'secondary'}>Chats</IonTitle>
+    <Page>
+      <IonHeader translucent style={{ direction: "ltr" }} collapse={"fade"}>
+        <IonToolbar>
+          <IonButtons slot="start">
+            <IonButton onClick={() => router.goBack()}>
+              <IonIcon icon={chevronBackOutline} />
+            </IonButton>
+          </IonButtons>
+          <IonTitle>{TT("Chat")}</IonTitle>
         </IonToolbar>
-        </IonHeader>
-        
-        {!chats.length &&<div className={'flex justify-center'}>
-          <IonLabel>No Chats</IonLabel>
-        </div>}
-        { chats.map((chat:ChatProps, key: any) => {
-          return <ChatItem {...chat}  key={key}/>
-        })
-        }
-        {/* {lo && <ChatsPlaceHolder />} */}
-        {/* {!refreshing && !list && EmptyChat} */}
+      </IonHeader>
+      <IonContent fullscreen={true}>
+        <IonList>
+          {items.map((item) => (
+            <div
+              className={"flex justify-between items-center space-x-2 border-b-2 border-gray-300 p-2"}
+              onClick={() => router.push(`chat/${item.id}`, "forward", "push")}
+              key={item.id}
+            >
+              <IonAvatar>
+                <img alt="avatar" src={item.icon} />
+              </IonAvatar>
+              <div className={'w-[50%]'}>
+                <IonCardTitle>{item.name}</IonCardTitle>
 
+                <p className={"truncate w-1/2 text-sm"}>{item.lastMessage}</p>
+              </div>
+
+              <IonCardSubtitle style={{ direction: "ltr" }}>
+                {timeAgo(item.lastMessageTime)}
+              </IonCardSubtitle>
+              <IonBadge class={"m-auto"}>{item.unreadMessages}</IonBadge>
+            </div>
+          ))}
+        </IonList>
       </IonContent>
     </Page>
   );
-};
-
-const ChatsPlaceHolder: React.FC = (props) => {
-  return (<IonGrid>
-    {[1, 2, 3, 4, 5, 6].map((v,i) => { return CardSkeleton(i) })}
-  </IonGrid>
-  )
 }
-const EmptyChat = <div className={'flex justify-center align-middle'}>
-  <IonTitle>No Chats now <IonCardSubtitle>Try to reach people </IonCardSubtitle></IonTitle>
-</div>
-const CardSkeleton =(i:any)=><IonItem key={i}>
-  <IonAvatar>
-    <IonSkeletonText animated />
-  </IonAvatar>
-  <IonTitle>
-    <IonSkeletonText animated />
-  </IonTitle>
-  <IonCardSubtitle>
-    <IonSkeletonText animated />
-
-  </IonCardSubtitle>
-</IonItem>
-
-
-
-
-
-
-
-
-
 
 //  message data
 // data
@@ -104,4 +81,3 @@ const CardSkeleton =(i:any)=><IonItem key={i}>
 // September 26, 2022 at 9:52:36 AM UTC+4
 // type
 // "text"
-

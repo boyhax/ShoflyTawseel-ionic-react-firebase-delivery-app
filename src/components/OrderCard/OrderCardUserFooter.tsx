@@ -31,6 +31,7 @@ import { userStore } from "../../Stores/userStore";
 import { DriverStatus, orderProps, OrderStatus, userInfo } from "../../types";
 import { TT } from "../utlis/tt";
 import "./OrderCard.css";
+import { useChat } from "../../providers/chatProvider";
 
 interface props extends ComponentProps {
   order: orderProps;
@@ -47,7 +48,8 @@ export default function OrderCardDriverFooter({
 }: props): React.ReactElement {
   const { user, driver } = userStore.useState((s) => s);
   const history = useHistory();
-  
+  const {getChatIdWithUser} = useChat()
+  const goChatWithUser = ()=>getChatIdWithUser(order.uid).then((v)=>{v && history.push(`/chat/${v}`)});
 
   const userApplied = useMemo(
     () => mydb.user && order.driver === mydb.user.uid,
@@ -87,7 +89,7 @@ export default function OrderCardDriverFooter({
           
             <IonButton
               fill="clear"
-              onClick={() => history.push("/chat/" + order.uid)}
+              onClick={goChatWithUser}
               color="dark"
               shape="round"
             >

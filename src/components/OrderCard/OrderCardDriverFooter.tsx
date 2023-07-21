@@ -26,6 +26,7 @@ import {
   reportOrder,
   userApplicationsStore,
 } from "../../api/firebaseMain";
+import { useChat } from "../../providers/chatProvider";
 import { userStore } from "../../Stores/userStore";
 import { orderProps, OrderStatus } from "../../types";
 import { TT } from "../utlis/tt";
@@ -45,6 +46,8 @@ export default function OrderCardDriverFooter({
   order,
 }: props): React.ReactElement {
   const history = useHistory();
+  const {getChatIdWithUser} = useChat()
+  const goChatWithUser = ()=>getChatIdWithUser(order.uid).then((v)=>{v && history.push(`/chat/${v}`)});
 
   const [presentAlert] = useIonAlert();
   const [present, dissmis] = useIonActionSheet();
@@ -89,7 +92,7 @@ export default function OrderCardDriverFooter({
 
         <IonButton
           fill="clear"
-          onClick={() => history.push("/chat/" + order.uid)}
+          onClick={goChatWithUser}
           color="dark"
           shape="round"
         >
@@ -136,9 +139,7 @@ export default function OrderCardDriverFooter({
           {OrderStatus.Done}
         </IonSelectOption>
       </IonSelect>
-      {/* <IonLabel className={' text-justify self-center mx-5'}>
-        {TT(OrderStatus[ order.status]) }
-      </IonLabel> */}
+    
     </div>
   );
 }

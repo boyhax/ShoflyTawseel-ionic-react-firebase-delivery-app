@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState } from "react";
-import { DocumentSnapshot } from "firebase/firestore";
-import {
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { doc, DocumentSnapshot, getFirestore } from "firebase/firestore";
+import mydb, {
   userApplicationsStore,
   userOrdersStore,
   userReportsStore,
@@ -10,8 +10,13 @@ import useOnline from "../hooks/useOnline";
 import LoadingScreen from "../pages/LoadingScreen";
 import { userStore } from "../Stores/userStore";
 import OnlineRequiredRoute from "../routes/OnlineRequiredRoute";
+import { UserProfile } from "../types";
+import { User } from "firebase/auth";
+import { useDocumentData } from "react-firebase-hooks/firestore";
 
 interface Props {
+  user: User | null;
+  profile: UserProfile | null;
   currentOrder: DocumentSnapshot | undefined;
   setCurrentOrder: (doc: DocumentSnapshot) => void | undefined;
   presentAlert: any;
@@ -21,6 +26,8 @@ interface Props {
   userReports: any;
 }
 const initialProps: Props = {
+  user: null,
+  profile: null,
   currentOrder: undefined,
   setCurrentOrder: (v: any) => undefined,
   presentAlert: "",
@@ -39,15 +46,21 @@ const GlobalProvider: React.FC = (props) => {
   const userApplications = userApplicationsStore.useState();
   const userReports = userReportsStore.useState();
   const { user, profile } = userStore.useState();
-  console.log("this.userOrders :>> ", userOrders);
-  console.log("this.userApplication :>> ", userApplications);
-  console.log("this.userReports :>> ", userReports);
-  console.log("user :>> ", user);
+  // const [profile,loading,error] = useDocumentData(doc(getFirestore() as any , "users/",user? user?.uid:''))
   console.log("profile :>> ", profile);
 
-  // const {mounted}=useMounted()
+  useEffect(() => {
+    console.log("this.userOrders :>> ", userOrders);
+    console.log("this.userApplication :>> ", userApplications);
+    console.log("this.userReports :>> ", userReports);
+    console.log("user :>> ", user);
+    console.log("profile :>> ", profile);
+  }, [user, profile]);
+
 
   const toProvide: Props = {
+    user: user||null,
+    profile:profile as UserProfile||null,
     setCurrentOrder,
     currentOrder,
     presentAlert,
@@ -56,7 +69,7 @@ const GlobalProvider: React.FC = (props) => {
     userOrders,
     userReports,
   };
-  
+
   return (
     <globalsContext.Provider value={toProvide}>
       <OnlineRequiredRoute>
@@ -65,7 +78,6 @@ const GlobalProvider: React.FC = (props) => {
         ) : (
           props.children
         )}
-        
       </OnlineRequiredRoute>
     </globalsContext.Provider>
   );

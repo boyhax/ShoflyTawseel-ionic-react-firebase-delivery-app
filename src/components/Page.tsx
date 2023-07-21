@@ -50,7 +50,7 @@ const Page: React.FC<Props> = (props) => {
 
   return (
     <IonPage>
-      <IonFab  horizontal={"start"} vertical={"top"}>
+      <IonFab  horizontal={"start"} vertical={"top"} className={'top-1 absolute'}>
         {props.backbutton && (
           <IonFabButton onClick={() => history.goBack()} size={"small"}>
             <IonIcon icon={returnUpBackSharp}></IonIcon>

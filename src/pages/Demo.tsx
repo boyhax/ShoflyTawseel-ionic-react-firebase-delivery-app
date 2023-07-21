@@ -1,67 +1,63 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Page from "../components/Page";
 import mydb from "../api/firebaseMain";
 import {
   IonButton,
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardSubtitle,
-  IonCardTitle,
   IonContent,
+  IonItemDivider,
   IonLabel,
   IonText,
   IonTextarea,
 } from "@ionic/react";
-import pushFCM, { TokenStore } from "../services/pushFCM";
-import { notificationsStore } from "../hooks/useNotifications";
-import excuteQuery from "../api/mysql";
-import LoadingScreen from "./LoadingScreen";
-import ImagePicker from "../components/ImagePicker";
-import { TT } from "../components/utlis/tt";
+import { FirebaseMessaging } from "@capacitor-firebase/messaging";
+import useLocalStorage from "../hooks/useLocalStorage";
+import { getFunctions, httpsCallable } from "firebase/functions";
 
 const Demo: React.FC = () => {
-  const { Notifications } = notificationsStore.useState();
-  const { token } = TokenStore.useState();
-  const [query, setQuery] = React.useState("");
-  const [result, setResult] = React.useState("");
-  async function sendPush() {
-    const message: any = {
-      data: {},
-      body: " Your Push Notification",
-      title: "$FooCorp up 1.43% on the day",
-      token: token,
-      click_action: "NOTIFICATION_CLICK",
+  const [token, setToken] = React.useState('');
+  useEffect(() => {
+    FirebaseMessaging.requestPermissions().then(() => {
+      FirebaseMessaging.getToken().then((token) => {
+        setToken(token.token);
+      });
+    });
+  }, []);
+
+  async function sendPush(token: string) {
+    const message = {
+      notification: {
+        title: "Capacitor Firebase Messaging",
+        body: "Hello world!",
+      },
+      token
     };
-    mydb.sendPush(message);
+    const sendFunction = httpsCallable(getFunctions(),'sendmessage')
+    sendFunction(message).then((result) => {
+      console.log(result);
+    }).catch((error) => {
+      console.log(error);
+    });
+
+    // mydb.sendPush(message);
   }
 
-  const hundlequery = () => {
-    excuteQuery(query,[]).then(res=>{
-      console.log('res :>> ', res);
-      setResult(JSON.stringify(res))
-    }).catch(err=>{
-      console.log('err :>> ', err);
-    })
-  };
   return (
     <Page menubutton>
-        <IonContent fullscreen>
-          <IonCard>
-            <IonCardHeader>
-              <IonCardTitle>
-                {TT("You Are Not Registered As Driver")}
-              </IonCardTitle>
-              <IonCardSubtitle>
-                {TT("Do you Want To Register As Driver with us?")}
-              </IonCardSubtitle>
-            </IonCardHeader>
-            <IonCardContent>
-            <IonButton>{TT("Yes")}</IonButton>
-            </IonCardContent>
-          </IonCard>
-        </IonContent>
-      </Page>
+      <IonContent fullscreen>
+        <IonLabel>token :</IonLabel>
+        <IonTextarea> {token}</IonTextarea>
+
+        <IonItemDivider></IonItemDivider>
+        
+        <IonButton
+          onClick={() => {
+            token && sendPush(token as string);
+          }}
+        >
+          Send Push
+        </IonButton>
+      </IonContent>
+    </Page>
   );
 };
 

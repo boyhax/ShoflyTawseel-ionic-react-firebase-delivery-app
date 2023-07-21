@@ -1,9 +1,9 @@
-import { DocumentData, query,limit as _Limit, Query, QueryDocumentSnapshot, QuerySnapshot, onSnapshot } from "firebase/firestore";
-import { useReducer, useEffect } from "react";
+import { DocumentData, query,limit as _Limit, Query, QueryDocumentSnapshot, QuerySnapshot, onSnapshot, DocumentSnapshot } from "firebase/firestore";
+import { useReducer, useEffect, useState } from "react";
 
 type StateType = {
   hasMore: boolean;
-  items: DocumentData[];
+  items: DocumentSnapshot[];
   after: QueryDocumentSnapshot | null;
   lastLoaded: QueryDocumentSnapshot | null;
   loadingMore: boolean;
@@ -125,17 +125,18 @@ export default function useCollectionPagination(
   { limit = 25 }: PaginationOptions = {}
 ) {
   const [state, dispatch] = useReducer(reducer, initialState);
-
   // when "after" changes, we update our query
   useEffect(() => {
     let fn = query(_query,_Limit(state.limit || limit)) ;
 
-    let unsubscribe = onSnapshot(fn,(snap:any) => {
+    let unsubscrip = onSnapshot(fn,(snap:any) => {
       dispatch({ type: "LOADED", value: snap, limit });
     });
-
-    return () => unsubscribe();
+    
+    return unsubscrip;
   }, [state.after]);
+  
+  
 
   // trigger firebase to load more
   function loadMore() {

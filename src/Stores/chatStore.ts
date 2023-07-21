@@ -2,8 +2,6 @@ import { Store } from 'pullstate';
 import * as React from 'react';
 
 export interface MessageProps {
-    iconURL:string,
-    name:string
     time: any;
     text: string;
     data: any;

@@ -47,10 +47,10 @@ import { userStore } from "../Stores/userStore";
 import chatStore, { MessageProps } from "../Stores/chatStore";
 import { getAcendingString } from "../components/utlis/AcendingString";
 import { TT } from "../components/utlis/tt";
-import { FCM } from "@capacitor-community/fcm";
-import { TokenStore } from "../services/pushFCM";
+import pushFCM, { TokenStore } from "../services/pushFCM";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import { Capacitor } from "@capacitor/core";
+import { FirebaseMessaging } from "@capacitor-firebase/messaging";
 
 export const userOrdersStore = new Store<any[]>([]);
 export const userApplicationsStore = new Store<any[]>([]);
@@ -59,7 +59,6 @@ export const userNotificatonsStore = new Store<any[]>([]);
 
 class firebaseClass {
   constructor() {
-    console.log("firebase Class");
     initializeApp(Config());
 
     this.db = getFirestore();
@@ -68,16 +67,21 @@ class firebaseClass {
       userStore.update((s) => {
         s.user = user;
       });
-      user && Capacitor.isNativePlatform()&& this.updateToken();
+      
       console.log("user id :>> ", user && user.uid);
       if (!user) {
         this.unSubscripeUserList();
+        const last_uid = localStorage.getItem("uid")
+        last_uid && pushFCM.unsubscribeFrom(last_uid );
+        last_uid && localStorage.setItem("uid",'')
+
       } else {
+        this.updateToken();
         this.subscripeUserList();
+        localStorage.setItem("uid",user.uid)
+        pushFCM.subscribeTo(user.uid)
       }
-      // user && this.token && this.updateToken();
     });
-    // this.sendPush = httpsCallable(getFunctions(), "sendMessage");
   }
   db;
   userOrders: DocumentSnapshot[] = [];
@@ -193,37 +197,22 @@ class firebaseClass {
     userApplicationsStore.update((s) => this.userApplications);
   }
 
-  updateToken(token?: string) {
-    if (!token) {
-      FCM.getToken()
-        .then((token) => {
-          this.token = token.token;
-          TokenStore.update((s) => {
-            s.token = token.token;
-          });
+  async updateToken() {
+    try {
+      await FirebaseMessaging.requestPermissions();
+      const { token } = await FirebaseMessaging.getToken();
 
-          setDoc(doc(this.db, "fcmTokens/" + this.user?.uid), {
-            token: this.token,
-          })
-            .then((v) => {
-              console.log("token updated");
-            })
-            .catch((s) => console.log("token update error :>> ", s));
-        })
-        .catch((s) => console.log("token error :>> ", s));
-    } else {
-      this.token = token;
-      TokenStore.update((s) => {
-        s.token = token;
+      this.token = token || "";
+      const userUID = getAuth().currentUser?.uid;
+      if (!userUID || !this.token) return;
+
+      await setDoc(doc(this.db, "fcmTokens/", userUID), {
+        token,
       });
 
-      setDoc(doc(this.db, "fcmTokens/" + this.user?.uid), {
-        token: this.token,
-      })
-        .then((v) => {
-          console.log("token updated");
-        })
-        .catch((s) => console.log("token update error :>> ", s));
+      console.log("token updated");
+    } catch (error) {
+      console.log("token update error :>> ", JSON.stringify(error));
     }
   }
   setUserToken(token: string) {
@@ -283,10 +272,6 @@ class firebaseClass {
       return;
     }
     let message: MessageProps = {
-      iconURL:
-        this.user?.photoURL ||
-        avatarPLaceholder(this.user?.displayName ?? " s t"),
-      name: this.user?.displayName || "@@",
       from: this.user!.uid,
       isRead: false,
       time: new Date(),
@@ -312,10 +297,6 @@ class firebaseClass {
           }
         );
         let message: MessageProps = {
-          iconURL:
-            this.user?.photoURL ||
-            avatarPLaceholder(this.user?.displayName ?? " s t"),
-          name: this.user?.displayName || "@@",
           data: "",
           from: this.user!.uid,
           text: TT("Hello"),
@@ -352,29 +333,27 @@ class firebaseClass {
   }
 
   async addNewDriver(data: Partial<driverData>) {
-    console.log("new driver:-",data)
-    if(!this.user){
-      return new Error("user not found")
+    console.log("new driver:-", data);
+    if (!this.user) {
+      return new Error("user not found");
     }
-       await setDoc(doc(this.db, `drivers/`+this.user.uid), {
-        driver_id: data.driver_id,
-        car_number: data.car_number,
-        status: DriverStatus.pending,
-      });
+    await setDoc(doc(this.db, `drivers/` + this.user.uid), {
+      driver_id: data.driver_id,
+      car_number: data.car_number,
+      status: DriverStatus.pending,
+    });
 
-      data.car_image &&
-         this.setDriverImages("car_image", data.car_image!);
-      data.car_card_image &&
-        this.setDriverImages("car_card_image", data.car_card_image!);
-      data.driving_license_image! &&
-        this.setDriverImages(
-          "driving_license_image",
-          data.driving_license_image!
-        );
-      data.driver_id_image! &&
-         this.setDriverImages("driver_id_image", data.driver_id_image!);
-      return ;
-    
+    data.car_image && this.setDriverImages("car_image", data.car_image!);
+    data.car_card_image &&
+      this.setDriverImages("car_card_image", data.car_card_image!);
+    data.driving_license_image! &&
+      this.setDriverImages(
+        "driving_license_image",
+        data.driving_license_image!
+      );
+    data.driver_id_image! &&
+      this.setDriverImages("driver_id_image", data.driver_id_image!);
+    return;
   }
   async setDriverImages(field: string, base64String: string) {
     const url = await this.uploadPhoto(
@@ -397,7 +376,7 @@ class firebaseClass {
     data.driver_id_image! &&
       this.setDriverImages("driver_id_image", data.driver_id_image!);
 
-    return true
+    return true;
   }
   async updateDriverData(data: Partial<driverData>) {
     return updateDoc(doc(this.db, `drivers/${this.user!.uid}`), data);
@@ -432,15 +411,20 @@ class firebaseClass {
       status: OrderStatus.DriverAsigned,
       driver: this.user?.uid,
     });
-    const b = getDocs(
-      query(collection(this.db, "ordersGeoFrom"), where("id", "==", order.id))
-    ).then((v) => {
-      v.forEach((doc) => {
-        updateDoc(doc.ref, { status: OrderStatus.DriverAsigned });
-      });
-    });
+    addDoc(collection(this.db, "notifications"), {
+      notification:{
+        title: " Order accepted",
+        body: "Your order has been accepted by a driver",
+      },
+      user: order.uid,
+      order: order.id,
+      topic: order.uid,
+      token: null,
+      }
+    );
+    
 
-    return Promise.all([a, b]);
+    return Promise.all([a]);
   }
   async deleteOrder(order: orderProps) {
     this.userOrders = this.userOrders.filter((v) => v.id !== order.id);

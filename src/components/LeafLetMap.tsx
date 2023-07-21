@@ -71,6 +71,7 @@ export const LeafLetMap: React.FC<props> = ({
     const tailLayer = L.tileLayer(
       "http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}",
       {
+        detectRetina: true,
         maxZoom: 20,
         subdomains: ["mt0", "mt1", "mt2", "mt3"],
       }

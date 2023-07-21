@@ -11,6 +11,8 @@ import {
 } from "@ionic/react";
 import UserApplicationsList from "../components/UserApplicationsList";
 import DriverRoute from "../routes/DriverRoute";
+import { TT } from "../components/utlis/tt";
+import OrdersMap from "../components/ordersMap";
 
 export default function HomeDriver() {
   const [segment, setSegment] = useState("Map");
@@ -25,10 +27,10 @@ export default function HomeDriver() {
             onIonChange={(s) => setSegment(s.detail.value!)}
           >
             <IonSegmentButton title={"Map"} value={"Map"}>
-              Map
+              {TT("Map")}
             </IonSegmentButton>
             <IonSegmentButton title={"Orders"} value={"Orders"}>
-              Orders
+              {TT("Deliveries")}
             </IonSegmentButton>
           </IonSegment>
         </IonToolbar>
@@ -37,7 +39,7 @@ export default function HomeDriver() {
         <IonContent>
           {segment === "Map" && (
             <div className={` h-full w-full`}>
-              <MapPage />
+              <OrdersMap />
             </div>
           )}
           {segment === "Orders" && <UserApplicationsList />}

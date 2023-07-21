@@ -1,4 +1,4 @@
-import { IonButton, IonContent, IonLabel } from "@ionic/react";
+import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent, IonLabel, useIonRouter } from "@ionic/react";
 import * as React from "react";
 import { useHistory } from "react-router";
 import Page from "../components/Page";
@@ -7,22 +7,26 @@ import { useDriver } from "../hooks/useDriver";
 
 export default function DriverRoute({ children }: any): JSX.Element {
   const { driver } = useDriver();
-  const history = useHistory();
-
+  const router = useIonRouter();
+  let goDriverApplication = React.useCallback(()=>router.push('driverapplication'),[])
   if (!driver) {
     return (
       <Page menubutton>
-        <IonContent
-          fullscreen
+        <IonContent fullscreen  >
+          <IonCard>
+            <IonCardHeader>
+              <IonCardTitle>
+                {TT('Welcome To Our App')}
+              </IonCardTitle>
+              <IonCardSubtitle>
+                {TT("Do you Want To Register As Driver with us?")}
+              </IonCardSubtitle>
+            </IonCardHeader>
+            <IonCardContent>
+            <IonButton onClick={goDriverApplication} >{TT("Yes")}</IonButton>
+            </IonCardContent>
+          </IonCard>
           
-        >
-          <div className={"w-full h-full flex flex-col items-center justify-center"}>
-          <IonLabel >
-              {TT("Do you Want To Register As Driver with us?")}
-            </IonLabel>
-            <IonButton onClick={()=>history.push('driverapplication')}>{TT("Yes")}</IonButton>
-          </div>
-           
         </IonContent>
       </Page>
     );
@@ -30,17 +34,21 @@ export default function DriverRoute({ children }: any): JSX.Element {
   if (driver && driver.status === "pending") {
     return (
       <Page menubutton>
-        <IonContent
-          fullscreen
-          className={"flex flex-col items-center justify-start"}
-        >
-          <div className={"flex h-full justify-center items-center p-6"}>
-            <IonLabel className={"text-center self-auto"}>
-              {TT(
-                "your application still being verfied thank you for patience"
-              )}
-            </IonLabel>
-          </div>
+        <IonContent fullscreen >
+           <IonCard>
+            <IonCardHeader>
+              <IonCardTitle>
+                {TT('Welcome To Our App')}
+              </IonCardTitle>
+              <IonCardSubtitle>
+                {TT("your application still being verfied thank you for patience")}
+              </IonCardSubtitle>
+            </IonCardHeader>
+            <IonCardContent>
+            </IonCardContent>
+          </IonCard>
+          
+          
         </IonContent>
       </Page>
     );
@@ -52,13 +60,20 @@ export default function DriverRoute({ children }: any): JSX.Element {
           fullscreen
           className={"flex flex-col items-center justify-start"}
         >
-          <div className={"flex h-full justify-center items-center p-6"}>
-            <IonLabel className={"text-center self-auto"}>
-              {TT(
-                "your are banned from our system please contact us for more information"
-              )}
-            </IonLabel>
-          </div>
+          <IonCard>
+            <IonCardHeader>
+              <IonCardTitle>
+                {TT('Oops!')}
+              </IonCardTitle>
+              <IonCardSubtitle>
+                {TT("It looks tjat you are banned from our system if you think this is a mistake please contact us")}
+              </IonCardSubtitle>
+            </IonCardHeader>
+            <IonCardContent>
+            <IonButton onClick={()=>router.push('contact')} >{TT("chat now")}</IonButton>
+            </IonCardContent>
+          </IonCard>
+          
         </IonContent>
       </Page>
     );

@@ -1,7 +1,14 @@
 import { GeoPoint } from "firebase/firestore";
 import { LatLng } from "leaflet";
-import { GooglePlacesAutocompleteHandle } from "react-google-places-autocomplete/build/GooglePlacesAutocomplete.types";
-
+export interface MessageProps {
+  iconURL:string,
+  name:string
+  time: any;
+  text: string;
+  data: any;
+  from: string;
+  isRead?: boolean;
+}
 export interface locationOption {
   value: Geolocation | any;
   title: string;
