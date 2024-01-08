@@ -1,25 +1,26 @@
-import React from 'react';
-import { IonBackButton, IonButtons, IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
-import MyMap from '../components/utlis/Map';
+import React, {  } from "react";
+import {
+  IonBackButton,
+  IonContent, IonHeader, IonToolbar,
+} from "@ionic/react";
+import OrdersMap from "../components/ordersMap";
+import Page from "../components/Page";
+import { BackButton } from "../components/utlis/buttons";
 
-const MapPage: React.FC = () => {
+
+export default function MapPage () {
   return (
-    <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonButtons slot='start'>
-            <IonBackButton defaultHref='home'></IonBackButton>
-          </IonButtons>
-          <IonTitle>Map</IonTitle>
-        </IonToolbar>
-      </IonHeader>
-      <IonContent>
-        <MyMap>
-
-        </MyMap>
+    <Page>
+      <IonHeader translucent collapse={'fade'}>
+          <IonToolbar>
+            <BackButton/>
+          </IonToolbar>
+          
+        </IonHeader>
+      <IonContent fullscreen>
+        
+        <OrdersMap />
       </IonContent>
-    </IonPage>
+    </Page>
   );
 };
-
-export default MapPage;

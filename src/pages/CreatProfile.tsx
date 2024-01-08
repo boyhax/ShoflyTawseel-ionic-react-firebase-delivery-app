@@ -1,15 +1,13 @@
-import React, {  FC, useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { IonButton, IonContent, IonHeader, IonInput, IonItem, IonLabel, IonPage, IonTitle, IonToast } from "@ionic/react";
-import {  updateUserProfile } from "../providers/firebaseMain";
+import {  updateUserProfile } from "../api/firebaseMain";
 import { getAuth } from "firebase/auth";
-import { useGlobals } from "../providers/globalsProvider";
 import { useHistory } from "react-router";
-import { onSnapshot } from "firebase/firestore";
-import { TT } from "../components/utlis/tt";
 import { randomAvatarUrl } from "../components/Avatar";
+import { userStore } from "../Stores/userStore";
 
  const CreateProfile= (props:any)=>{
-    const {profile} = useGlobals()
+    const {user,profile} = userStore.useState()
 
      const [name,setName]= useState<any>(profile?profile.name!?profile.name:"":"")
      const [phone,setPhone]= useState<any>(profile?profile.phoneNumber!?profile.phoneNumber:"":"")

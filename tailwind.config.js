@@ -1,12 +1,20 @@
 module.exports = {
   mode: 'jit', // Optionally use just in time engine
   content: ["./src/**/*.{js,jsx,ts,tsx}", "./public/index.html"],
-  darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {},
   },
   variants: {
     extend: {},
   },
-  plugins: [],
+  // plugins: [require("daisyui"),require("tailwindcss-flip")],
+  // daisyui: {
+  //   // styled: true,
+  //   // themes: true,
+  //   // base: true,
+  //   // utils: true,
+  //   // logs: true,
+  //   // prefix: "",
+  //   // darkTheme: "dark",
+  // },
 }

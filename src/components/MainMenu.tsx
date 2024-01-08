@@ -1,71 +1,148 @@
 import { ComponentProps } from "@ionic/core";
-import { IonContent, IonTitle, IonHeader, IonToolbar, IonList, IonItem, IonMenu, IonButtons, IonButton, IonIcon, IonRippleEffect, IonLabel, IonAvatar, IonImg } from "@ionic/react";
+import {
+  IonContent,
+  IonHeader,
+  IonToolbar,
+  IonList,
+  IonItem,
+  IonMenu,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonLabel,
+  IonAvatar,
+  IonImg,
+  IonMenuToggle,
+  IonFooter,
+  useIonRouter,
+} from "@ionic/react";
 import { getAuth } from "firebase/auth";
-import { closeOutline, } from "ionicons/icons";
-import React, { useEffect, } from "react";
+import {
+  bookOutline,
+  callOutline,
+  chatboxOutline,
+  homeOutline,
+  informationCircleOutline,
+  settingsOutline,
+} from "ionicons/icons";
+import React from "react";
 import { useHistory } from "react-router";
-import { avatarPLaceholder } from "../providers/firebaseMain";
-import { useGlobals } from "../providers/globalsProvider";
+import { avatarPLaceholder } from "../api/firebaseMain";
+import { userStore } from "../Stores/userStore";
+import DriverUserToggleSegment from "./DriverUserToggleSegment";
+import { TT } from "./utlis/tt";
 
 interface props extends ComponentProps {
-    menuRef?: any
+  menuRef?: any;
 }
 
 const MainMenu = (Props: props) => {
-    const { user, profile } = useGlobals()
-    function close() {
-        Props.menuRef.current.close()
-    }
-    useEffect(() => {
-        //  menu.current!.toggle()
-    })
-    const history = useHistory()
-    const SignInButton = <IonButton
-        onClick={() => history.push("SignIn")}>Sign In</IonButton>
-    const SignOutButton = <IonButton color="danger"
-        onClick={() => getAuth().signOut()} >Sign Out</IonButton>
+  const { user, profile } = userStore.useState();
+  const history = useIonRouter();
 
-    return <IonMenu  id='mainMenu' ref={Props.menuRef} contentId="main-content"  >
-        {/* <IonHeader >
-            <IonToolbar>
-                <IonTitle>Menu</IonTitle>
-            </IonToolbar>
+  const SignOutButton = (
+    <IonButton fill={"default"} onClick={() => getAuth().signOut()}>
+      {TT("Sign Out")}
+    </IonButton>
+  );
 
-        </IonHeader> */}
-        <IonContent class="ion-padding"  >
-            <IonList  >
-                
-                        <IonButtons slot={'primary'}>
-                        <IonButton>
-                        
-                    {user ?
-                     profile ? profile.name! 
-                     : profile === undefined ?
-                      "signing in.." : "" : ""}
-                        </IonButton>
-                        <IonAvatar slot={'primary'}>
-                        <IonImg src={profile?.photoURL || avatarPLaceholder}>
-                        </IonImg>
-                    </IonAvatar>
-                        </IonButtons>
-                       
-                    
+  return (
+    <IonMenu id="mainMenu" ref={Props.menuRef} contentId="main-content" side={'start'}>
+      <IonHeader>
+        <IonMenuToggle>
+          <IonToolbar
+            onClick={() => history.push("/account")}
+            color={"primary"}
+            style={{ direction: "ltr" }}
+            className={"flex  items-center shadow-xl "}
+          >
+            <IonAvatar slot={"start"}>
+              <IonImg
+                src={
+                  profile
+                    ? profile.photoURL || avatarPLaceholder(" s t")
+                    : avatarPLaceholder(" s t")
+                }
+              ></IonImg>
+            </IonAvatar>
+            <div className={"flex m-3 flex-col "}>
+              <IonLabel>
+                {user
+                  ? profile
+                    ? profile.name!
+                    : profile === undefined
+                    ? ".."
+                    : ""
+                  : ""}
+              </IonLabel>
+              <IonLabel>
+                {user
+                  ? profile
+                    ? profile.phoneNumber!
+                    : profile === undefined
+                    ? ".."
+                    : ""
+                  : ""}
+              </IonLabel>
+            </div>
+          </IonToolbar>
+        </IonMenuToggle>
+      </IonHeader>
+      <IonContent class="ion-padding">
+        <IonList style={{direction:'ltr'}}>
+        <IonMenuToggle>
+            <IonItem  onClick={() => history.push("/")}>
+              <IonIcon icon={homeOutline} />
+              <IonLabel className={'mx-1'}>{TT("Home")}</IonLabel>
+            </IonItem>
+          </IonMenuToggle>
+          <IonMenuToggle>
+            <IonItem onClick={() => history.push("chat")}>
+              <IonIcon icon={chatboxOutline} />
+              <IonLabel className={'mx-1'}>{TT("Chat")}</IonLabel>
+            </IonItem>
+          </IonMenuToggle>
+          <IonMenuToggle>
+            <IonItem  onClick={() => history.push("Details")}>
+              <IonIcon icon={informationCircleOutline} />
+              <IonLabel className={'mx-1'}>{TT("Info")}</IonLabel>
+            </IonItem>
+          </IonMenuToggle>
+          <IonMenuToggle>
+            <IonItem  onClick={() => history.push("contact")}>
+              <IonIcon icon={callOutline} />
+              <IonLabel className={'mx-1'}>{TT("Get in Touch")}</IonLabel>
+            </IonItem>
+          </IonMenuToggle>
+          <IonMenuToggle>
+            <IonItem  onClick={() => history.push("/settings")}>
+              <IonIcon icon={settingsOutline} />
+              <IonLabel className={'mx-1'}>{TT("Settings")}</IonLabel>
+            </IonItem>
+          </IonMenuToggle>
 
-
-                {/* </IonToolbar> */}
-
-                <IonItem className="item" onClick={() => history.push("Details")}>Info
-                </IonItem>
-
-                {profile?.devloper && <IonItem className="item"
-
-                    onClick={() => history.push("Demo")}>Dev Page
-                </IonItem>}
-
-                {user ? SignOutButton : SignInButton}
-            </IonList>
-        </IonContent>
+          
+          <IonMenuToggle>
+            <IonItem>
+              <div className="flex-end">{user && SignOutButton}</div>
+            </IonItem>
+          </IonMenuToggle>
+        </IonList>
+      </IonContent>
+      {profile?.role === "admin" && (
+            <IonMenuToggle className={'top-auto flex justify-evenly'}>
+              <IonButton  onClick={() => history.push("/Demo")}>
+                Demo
+              </IonButton>
+              <IonButton  onClick={() => history.push("/admin")}>
+                Admin panel
+              </IonButton>
+            </IonMenuToggle>
+          )}
+      <IonFooter>
+        <DriverUserToggleSegment />
+      </IonFooter>
     </IonMenu>
-
-}
-export default MainMenu
+  );
+};
+export default MainMenu;

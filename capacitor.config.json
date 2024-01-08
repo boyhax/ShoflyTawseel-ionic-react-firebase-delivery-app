@@ -4,5 +4,13 @@
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "build",
-  "cordova": {}
+  "cordova": {},
+  "plugins": {
+    "PushNotifications": {
+      "presentationOptions": ["alert"]
+    },
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
 }

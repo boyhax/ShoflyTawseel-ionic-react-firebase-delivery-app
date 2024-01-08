@@ -1,9 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
-import { Camera, CameraResultType, Photo } from '@capacitor/camera';
 
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { setUserImage } from "../providers/firebaseMain";
 import { getLang } from "../App";
 
 export function useGoogleAuth() {
@@ -14,8 +12,10 @@ export function useGoogleAuth() {
   const auth = getAuth();
   auth.languageCode = getLang();
   const signin = ()=>{
-    return signInWithPopup(auth, provider)
+    
+    return  signInWithPopup(auth,provider)
     .then((result) => {
+      if(!result){return}
       // This gives you a Google Access Token. You can use it to access the Google API.
       const credential = GoogleAuthProvider.credentialFromResult(result);
       const token = credential?.accessToken;

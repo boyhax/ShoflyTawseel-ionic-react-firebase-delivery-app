@@ -1,22 +1,33 @@
 import { Store } from 'pullstate';
 import * as React from 'react';
 
-interface Message{
-    from:string,
-    text:string,
-    type:string,
-    timestamp:string
+export interface MessageProps {
+    time: any;
+    text: string;
+    data: any;
+    from: string;
+    isRead?: boolean;
+  }
 
+export interface ChatItemProps{
+    message:MessageProps,
 }
-interface Chat{
-    Messages:Message[]
+export interface ChatProps{
+    id:string,
+    chaters:string[]
+}
+export interface ChatStoreProps{
+    unreadMessagesNumber:number,
+    chats:ChatProps[]
+    chatiItems:ChatItemProps[]
+    chatMessages:object
 }
 const ChatStore={
     unreadMessagesNumber:0,
-    chats:[]
-
+    chats:[],
+    chatiItems:[],
+    chatMessages:{},
 }
- const chatStore = new Store(ChatStore)
+const chatStore = new Store<ChatStoreProps>(ChatStore)
 
- chatStore.update((s)=>{return {unreadMessagesNumber:5}})
- export default chatStore
+export default chatStore;

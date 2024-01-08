@@ -1,88 +1,150 @@
-import { IonPage, IonFab, IonFabButton, IonIcon, IonContent, IonCard, IonLabel, IonTitle, IonImg, IonItem, IonCheckbox, IonTextarea, IonFooter, IonButton, IonLoading } from '@ionic/react';
-import { closeSharp, arrowForwardOutline } from 'ionicons/icons';
-import * as React from 'react';
-import { useNewOrder, useOrderContext } from '.';
-import { uploadNewOrder } from '../../providers/firebaseMain';
-import { OrderCatagories } from '../../types';
+import {
+  IonIcon,
+  IonCard,
+  IonLabel,
+  IonTitle,
+  IonImg,
+  IonItem,
+  IonCheckbox,
+  IonTextarea,
+  IonFooter,
+  IonButton,
+  IonInput,
+  IonThumbnail,
+  IonContent,
+} from "@ionic/react";
+import {
+  arrowForwardOutline,
+  locateSharp,
+  locationSharp,
+  pinSharp,
+} from "ionicons/icons";
+import { Map } from "leaflet";
+import * as React from "react";
+import { useMemo } from "react";
+import { newOrderStore, useNewOrder } from ".";
+import OrderPointsCard from "../../components/OrderPointsCard";
+import TwoPointMap from "../../components/TwoPointMap";
+import { geoToLatlng } from "../../api/firebaseMain";
+import { newOrderProps, OrderCatagorie, OrderCatagories } from "../../types";
 
-const Step2: React.FC<{ onFinish: (v: any) => void,orderProps:any }> = ({ onFinish,orderProps }) => {
-  const [props,setProps] = React.useState<object|any>({})
+const Step2: React.FC = (props) => {
+  const { order, uploadOrder, setOrder } = useNewOrder();
+  const [fromAddress, setFromAddress] = React.useState("");
+  const [toAddress, setToAddress] = React.useState("");
+  const [comment, setComment] = React.useState("");
+  const [urgent, setUrgent] = React.useState(false);
+  const [type, setType] = React.useState<OrderCatagorie>("SmallObjects");
+  const {fromPoint,toPoint} =useMemo(()=>{
+    console.log('geo in step 2',order.geo)
+    let fromPoint = geoToLatlng(order.geo?.from!),
+    toPoint = geoToLatlng(order.geo?.to!);
+    return {fromPoint,toPoint}
+  },[order])
   
-  return <div>
-      <form onSubmit={(e)=>{e.preventDefault();onFinish({props})}}>
+  function validateAndSubmit() {
+    const o: newOrderProps = {
+      address: {
+        from: fromAddress,
+        to: toAddress,
+      },
+      comment: comment!,
+      urgent: urgent,
+      type: type!,
+      geo: order.geo!,
+      from: order.from!,
+      to: order.to!,
+    };
+    setOrder(o);
+    uploadOrder(o);
+  }
 
-          <IonCard style={{ display: 'flex', justifyContent: 'center', justifyItems: 'space-between' }} >
-            {/* pick up point */}
-            <div>
-              <IonLabel
-                position={'floating'}>Pick up point</IonLabel>
-              <IonTitle
-              // onClick={() => setLocationsConfirmed(false)}
-              >
-                 {orderProps.from.value}
-              </IonTitle>
-            </div>
-            {/* drop point */}
-            <IonIcon style={{ verticalAlign: 'middle', padding: '4px' }} size={'large'} icon={arrowForwardOutline}></IonIcon>
-            <div>
-              <IonLabel position={'floating'}>Drop point</IonLabel>
-              <IonTitle
-              // onClick={() => setLocationsConfirmed(false)}
-              >
-                 {orderProps.to.value}
-              </IonTitle>
-            </div>
-          </IonCard>
-          <div style={{ display: 'flex', justifyItems: 'space-between', justifyContent: 'center', alignItems: 'space-evenly' }}>
-            {OrderCatagories && OrderCatagories.map((value, index, array) => {
-              return <div
-                onClick={() => setProps({...props,type:value.value})}
-                key={index}
-                style={{
-                  margin: '5px', width: '60px',
-                  height: 'auto',
-                  borderRadius: '10px',
-                  border: '5px',
-                  backgroundColor: props && props.type === value.value ?
-                    "var(--ion-color-primary)" : "var(--ion-color-light)"
-                }}>
+  return (
+    <IonContent fullscreen>
+      
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          validateAndSubmit();
+        }}
+      >
+        <OrderPointsCard point1={order.from} point2={order.to}/>
+        <IonCard className={'w-full h-[150px]'}>
+          {order.geo &&<TwoPointMap  onMap={()=>{}} 
+          point1={fromPoint} 
+          point2={toPoint}></TwoPointMap>}
+        </IonCard>
 
-                <IonImg style={{ flex: 1, }} src={value.icon} />
-                <IonLabel
-                  style={{ fontSize: '0.7em' }}
-                >{value.name}</IonLabel>
-              </div>
-            })}
-          </div>
+        <div
+          style={{
+            display: "flex",
+            justifyItems: "space-between",
+            justifyContent: "center",
+            alignItems: "space-evenly",
+          }}
+        >
+          {/* {OrderCatagories &&
+            OrderCatagories.map((value, index, array) => {
+              return (
+                <div
+                onClick={() => setType(value.value)}
+                  key={index}
+                  className={`flex flex-col h-28 text-clip m-4 rounded-xl 
+                  justify-self-stretch text-justify
+                  ${type === value.value &&"bg-blue-200 text-white" } `}
+                 
+                >
+                  <IonThumbnail>
+                    <IonImg  src={value.icon} />
+                  </IonThumbnail>
 
-          <div>
-            <IonItem>
-              <IonLabel >Is it Urgent? </IonLabel>
-              <IonCheckbox placeholder={'Is Order Urgent?'}
-                 onIonChange={(v) => { setProps({urgent:v.detail.value}) }}>
-              </IonCheckbox>
-            </IonItem>
+                  <IonLabel className={'text-sm text-center'}>
+                    {value.name}
+                  </IonLabel>
+                </div>
+              );
+            })} */}
+        </div>
 
-            <IonCard>
-              <IonTextarea
-                // onIonChange={v => setComment(v.detail.value!)}
-                placeholder={"Please write any discreption.. "}>
-              </IonTextarea>
-            </IonCard>
-          </div>
+        <div>
+          <IonItem>
+            <IonLabel>Is it Urgent? </IonLabel>
+            <IonCheckbox
+              placeholder={"Is Order Urgent?"}
+              onIonChange={(v) => {
+                setUrgent(v.detail.value || false);
+              }}
+            ></IonCheckbox>
+          </IonItem>
+          <IonItem>
+            <IonLabel position={"stacked"}>pick up point address</IonLabel>
+            <IonInput
+              onIonChange={(v) => setFromAddress(v.detail.value || "")}
+              placeholder={"Write building, floor, street.."}
+            />
+          </IonItem>
+          <IonItem>
+            <IonLabel position={"stacked"}>drop point address</IonLabel>
+            <IonInput
+              onIonChange={(v) => setFromAddress(v.detail.value || "")}
+              placeholder={"Write building, floor, street.."}
+            />
+          </IonItem>
+          {/* <IonCard> */}
+          <IonTextarea
+            onIonChange={(v) => setComment(v.detail.value || "")}
+            placeholder={"Please write any discreption.. "}
+          ></IonTextarea>
+          {/* </IonCard> */}
+        </div>
 
-
-
-        <IonFooter style={{ display: "flex", justifyContent: 'center' }}>
-          <IonButton shape={'round'}
-            type='submit'
-          >
-
-            Submit Order 👍
+        <IonFooter style={{ display: "flex", justifyContent: "center" }}>
+          <IonButton shape={"round"} type="submit">
+            Submit Order 
           </IonButton>
         </IonFooter>
       </form>
-    
-  </div>
-}
-export default Step2
+    </IonContent>
+  );
+};
+export default Step2;

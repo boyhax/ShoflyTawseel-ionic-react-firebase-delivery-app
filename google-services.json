@@ -1,34 +1,34 @@
 {
   "project_info": {
-    "project_number": "261518911024",
-    "firebase_url": "https://mandubk-370d7-default-rtdb.asia-southeast1.firebasedatabase.app",
-    "project_id": "mandubk-370d7",
-    "storage_bucket": "mandubk-370d7.appspot.com"
+    "project_number": "189614284891",
+    "firebase_url": "https://shoflytawseel-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "shoflytawseel",
+    "storage_bucket": "shoflytawseel.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:261518911024:android:e94e045359715b5e93eff5",
+        "mobilesdk_app_id": "1:189614284891:android:c315a6089e4598fbc8df7e",
         "android_client_info": {
-          "package_name": "com.boyhax.shoflytawseel"
+          "package_name": "com.boyhax.shoflyTawseel"
         }
       },
       "oauth_client": [
         {
-          "client_id": "261518911024-d9jv5hco56qc5k3ji58je0pnjgg6vvrg.apps.googleusercontent.com",
+          "client_id": "189614284891-l0is46osjod0rra41no7kqkr6kgk71uj.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyA1ItjtBmkIIEAuB6ps6Dl498lXf583LYk"
+          "current_key": "AIzaSyA_YKcwbL20RBKOtElSIg64krrGhQfJAvU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "261518911024-d9jv5hco56qc5k3ji58je0pnjgg6vvrg.apps.googleusercontent.com",
+              "client_id": "189614284891-l0is46osjod0rra41no7kqkr6kgk71uj.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

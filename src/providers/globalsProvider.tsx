@@ -1,142 +1,89 @@
-import React, { createContext, useContext, useState, useEffect } from "react";  
-import { getAuth, onAuthStateChanged, updateProfile, } from "firebase/auth";
-import { doc, DocumentSnapshot, getFirestore, onSnapshot, setDoc } from "firebase/firestore";
-import { Network } from '@capacitor/network';
-import CreateProfile from "../pages/CreatProfile";
-import { db, token } from "../App";
-import { createNewProfileForThisUser, UpdateProfileForThisUser, UserProfileFromDoc } from "./firebaseMain";
-import { UserProfile } from "../types";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { doc, DocumentSnapshot, getFirestore } from "firebase/firestore";
+import mydb, {
+  userApplicationsStore,
+  userOrdersStore,
+  userReportsStore,
+} from "../api/firebaseMain";
 import { useIonAlert } from "@ionic/react";
 import useOnline from "../hooks/useOnline";
-import { randomAvatarUrl } from "../components/Avatar";
-import useSignTools from "../hooks/useSignTools";
-import useUserApplications from "../hooks/useUserApplications";
-import useUserOrders from "../hooks/useUserOrders";
-import useUserReports from "../hooks/useUserReports";
-import useUserHooks from "../hooks/userHooks";
+import LoadingScreen from "../pages/LoadingScreen";
+import { userStore } from "../Stores/userStore";
+import OnlineRequiredRoute from "../routes/OnlineRequiredRoute";
+import { UserProfile } from "../types";
+import { User } from "firebase/auth";
+import { useDocumentData } from "react-firebase-hooks/firestore";
 
 interface Props {
-    user:boolean|undefined,
-    profile:UserProfile|undefined,
-    currentOrder:DocumentSnapshot|undefined,
-    setCurrentOrder:(doc:DocumentSnapshot)=>void|undefined,
-    online:boolean,
-    presentAlert:any,dissmissAlert:()=>void
-    userApplications:any,userOrders:any,userReports:any
+  user: User | null;
+  profile: UserProfile | null;
+  currentOrder: DocumentSnapshot | undefined;
+  setCurrentOrder: (doc: DocumentSnapshot) => void | undefined;
+  presentAlert: any;
+  dissmissAlert: () => void;
+  userApplications: any;
+  userOrders: any;
+  userReports: any;
 }
-const initialProps:Props={
-    user:false,
-    profile:undefined,
-    currentOrder:undefined,
-    setCurrentOrder:(v:any)=>undefined,
-    online:false,
-    presentAlert:'',
-    dissmissAlert:()=>'',
-    userApplications:{},userOrders:{},userReports:{}
-
-}
+const initialProps: Props = {
+  user: null,
+  profile: null,
+  currentOrder: undefined,
+  setCurrentOrder: (v: any) => undefined,
+  presentAlert: "",
+  dissmissAlert: () => "",
+  userApplications: {},
+  userOrders: {},
+  userReports: {},
+};
 const globalsContext = createContext<Props>(initialProps);
 
-const GlobalProvider:React.FC =(props)=>{
-    const [user,setUser] = useState<boolean|undefined>(undefined)
-    const [profile,setProfile] = useState<UserProfile>()
-    const [currentOrder,setCurrentOrder] = useState<DocumentSnapshot>()
+const GlobalProvider: React.FC = (props) => {
+  const [currentOrder, setCurrentOrder] = useState<DocumentSnapshot>();
 
-    const [profileLoadingComplete,setProfileLoadingComplete] = useState<boolean>(false)
+  const [presentAlert, dissmissAlert] = useIonAlert();
+  const userOrders = userOrdersStore.useState();
+  const userApplications = userApplicationsStore.useState();
+  const userReports = userReportsStore.useState();
+  const { user, profile } = userStore.useState();
+  // const [profile,loading,error] = useDocumentData(doc(getFirestore() as any , "users/",user? user?.uid:''))
+  console.log("profile :>> ", profile);
 
-    const uid=getAuth().currentUser?.uid
-    const {getEmail,getPhone} = useSignTools()
-    const {online} = useOnline()
-    const {userApplications,userOrders,userReports} =useUserHooks()
-    
-    const [presentAlert,dissmissAlert] = useIonAlert()
-
-    useEffect(()=>{
-
-      return onAuthStateChanged(getAuth(),(user)=>{
-                console.log('user  :>> ', !!user );
-                setUser(!!user)
-        },(err)=>{
-            console.log(err,"error in user sign in check")
-        })
-      },[])
-
-      useEffect(()=>{
-        if(user){
-          const unsub = fetchProfile()
-          return ()=>{unsub()}
-      }
-      },[user])
-
-    useEffect(()=>{
-        isProfileComplete()
-        tokenUpdate()
-
-      },[profile])
-
-    function tokenUpdate() {
-      if(user && profile && token){
-        setDoc(doc(db,"fcmTokens",getAuth().currentUser?.uid!),{token:token}).then((v)=>{
-          console.log(v)
-        })
-      }
-    }
-  
-    function  fetchProfile(){
-    setProfileLoadingComplete(false)
-    const uid = getAuth().currentUser!.uid
-    console.log('uid :>> ', uid);
-    const ref = doc(getFirestore(),"users",uid)
-
-    return   onSnapshot(ref,(doc)=>{
-        if(doc.exists()){
-          const p:any = UserProfileFromDoc(doc)
-          setProfile(p)
-          
-          console.log('profile :>> ', p);
-
-        }else{
-          hundleNoProfileCreatedYet()
-          
-        }
-        async function hundleNoProfileCreatedYet(){
-          const user  = getAuth().currentUser!
-          const name = user.displayName || ("User"+user.uid.slice(0,5) )
-          const number:string= user.phoneNumber || await getPhone() || ""
-          const email:string = (user.emailVerified && user.email) || await getEmail() ||""
-          const photo = 'https://ui-avatars.com/api/?name=NAME'.replace('NAME',name)
-          createNewProfileForThisUser(name,number,email,photo)
-        }
-        
-
-        console.log('profile is complete :>> ', doc.exists());
-        setProfileLoadingComplete(true)
-      })
-        
-    
-  }
-      function isProfileComplete() {
-          let res = (!!profile 
-          && (!!profile.name && profile.name.length >= 5) 
-         
-          && (!!profile.phoneNumber && profile.phoneNumber.length >=8))
-        }       
-    const toProvide:Props = {user,profile,
-      setCurrentOrder,
-      currentOrder,
-      online,
-      presentAlert,
-      dissmissAlert,userApplications,userOrders,userReports}
+  useEffect(() => {
+    console.log("this.userOrders :>> ", userOrders);
+    console.log("this.userApplication :>> ", userApplications);
+    console.log("this.userReports :>> ", userReports);
+    console.log("user :>> ", user);
+    console.log("profile :>> ", profile);
+  }, [user, profile]);
 
 
+  const toProvide: Props = {
+    user: user||null,
+    profile:profile as UserProfile||null,
+    setCurrentOrder,
+    currentOrder,
+    presentAlert,
+    dissmissAlert,
+    userApplications,
+    userOrders,
+    userReports,
+  };
 
-    return<globalsContext.Provider value={toProvide}>
-     {props.children}    
+  return (
+    <globalsContext.Provider value={toProvide}>
+      <OnlineRequiredRoute>
+        {user === undefined || (user && profile === undefined) ? (
+          <LoadingScreen />
+        ) : (
+          props.children
+        )}
+      </OnlineRequiredRoute>
     </globalsContext.Provider>
-}
-export const useGlobals=()=>{
-    return useContext(globalsContext)
-}
+  );
+};
+export const useGlobals = () => {
+  return useContext(globalsContext);
+};
 
-export default GlobalProvider
-
+export default GlobalProvider;

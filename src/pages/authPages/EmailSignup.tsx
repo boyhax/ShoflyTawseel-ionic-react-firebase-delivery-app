@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { IonPage, IonContent, IonInput, IonButton, IonFooter, IonLabel, IonItem, useIonAlert, IonIcon } from '@ionic/react';
-import { createUserWithEmailAndPassword, getAuth,signInWithEmailAndPassword } from 'firebase/auth';
-import { lockClosedOutline, lockClosedSharp, mailOutline, personOutline } from 'ionicons/icons';
+import { IonInput, IonButton, IonItem, useIonAlert, IonIcon } from '@ionic/react';
+import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
+import { lockClosedOutline, mailOutline, personOutline } from 'ionicons/icons';
 
-const EmailSignup: React.FC<{onSetPage:(s:string)=>void}> = ({onSetPage}) => {
+const EmailSignup: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -67,16 +67,7 @@ const EmailSignup: React.FC<{onSetPage:(s:string)=>void}> = ({onSetPage}) => {
           <IonButton type="submit" expand="block">Sign Up</IonButton>
           {error !== '' && <p>{error}</p>}
         </form>
-        <IonItem>
-            <IonLabel >
-              Already a user?
-              <span
-              onClick={(e)=>onSetPage('signin')}
-              style={{fontSize:'1.2rem',color:'var(--ion-color-primary)'}}
-              color={'secondary'} 
-              className={'ion-padding --ion-color-primary'}> 
-              Sign In</span></IonLabel>
-        </IonItem>
+        
       </div>
   );
 };

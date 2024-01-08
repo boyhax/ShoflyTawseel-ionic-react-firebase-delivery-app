@@ -1,98 +1,75 @@
-import { Store } from 'pullstate';
-import * as React from 'react';
+import { useIonToast } from "@ionic/react";
+import { LatLng } from "leaflet";
+import { Store } from "pullstate";
+import { geocodeByLatLng } from "react-google-places-autocomplete";
+import { useHistory } from "react-router";
 
-import { createContext,useContext } from 'react';
-import { uploadNewOrder } from '../../providers/firebaseMain';
-import { newOrderProps } from '../../types';
-import AddOrderPage from './AddOrderPage';
-interface Props{
-    step:number,
-    loading:boolean,
-    order:newOrderProps,
-    update:(d:any)=>void
+import { uploadNewOrder } from "../../api/firebaseMain";
+import { newOrderProps } from "../../types";
+import AddOrderPage from "./AddOrderPage";
+interface Props {
+  step: number;
+  loading: boolean;
+  order: Partial<newOrderProps>  ;
 }
-const initialProps:Props={
-    step:1,
-    loading:false,
-    order:{to:{key:'',value:''},from:{key:'',value:''}},
-    update:(d:any)=>{},
-
-}
-const newOrderStore = new Store(initialProps)
-
-const OrderContext = createContext(initialProps);
-
-
-const Provider= (p:any)=>{
-    const [props,setProps] = React.useState(initialProps)
-
-    const update = (d:Object)=>{
-        setProps({...props,...d})
-    }
-    const values = {...props,update}
-    
-    return<OrderContext.Provider value={values}>
-        <AddOrderPage></AddOrderPage>
-    </OrderContext.Provider>
-} 
-export const useOrderContext=()=>{
-    return useContext(OrderContext)
+const initialProps: Props = {
+  step: 0,
+  loading: false,
+  order: {  },
 };
+export const newOrderStore = new Store(initialProps);
+export function updateGeo(data:any){
+  newOrderStore.update(s=>{s.order.geo = {...s.order.geo,...data}})
+}
+export async function updateFromTo(from:boolean,point:LatLng){
+  var codeResult = await geocodeByLatLng(point)
+  var data = codeResult? codeResult[0].formatted_address:''
+  newOrderStore.update(s=>{
+    from?s.order.from = data:s.order.to = data})
+}
+export function updateStep(to:number){
+  newOrderStore.update(s=>{s.step = to})
+}
+export function useNewOrder(){
 
-export const useNewOrder=()=>{
-    const {order,loading,update,step} = useOrderContext()
+  const navigate = useHistory();
+  const [present] = useIonToast();
 
-    const [submitted,setSubmitted] = React.useState(false)
+  function setOrder(order:any){
+    newOrderStore.update((s) => {
+      s.order = order;
+    });
+  }
+  async function uploadOrder(order:newOrderProps){
 
-    const {urgent ,from,to,comment,geoLocation,type}= order
+      newOrderStore.update((s) => {
+        s.loading = true;
+      });
 
-    function setUrgent(b:boolean){
+      console.log('order :>> ', order);
+      
+      try {
+        await uploadNewOrder(order);
+        present({ message: "Order submitted seccessfully ", duration: 1000 });
+        navigate.push("/");
 
-    }
-    
-    const setLoading = (b:boolean)=>{
-        update({loading:b})
-    }
+      } catch (error) {
 
-    
-    const setStep = (b:number)=>{
-        update({step:b})
-    }
-    const stepNext=()=>{
-        update({step:step+1})
-    };
-    const stepBack=()=>{
-        update({step:step-1})
-
-    }
-    const submitOrder = async () => {
-       
-        setLoading(true)
-        
-        try {
-            if(from && to  ){
-                await uploadNewOrder({
-                    from:from,to:to,
-                    comment:order.comment,type:order.type,
-                    urgent:order.urgent
-                  })
-            }
-          
-          setSubmitted(true)
-    
-        } catch (error) {
-          console.log('error submitiing order :>> ', error);
-        }
-        setLoading(false)
-    
+        console.log('error from new order :>> ', error );
+        present({ message: "Sorry some issue happen.. please try Again",duration: 1000 });
       }
-      const values = {order,urgent,loading,submitOrder,step,stepBack,
-        stepNext,setUrgent,submitted}
 
-    return values
+      newOrderStore.update((s) => {
+        s.loading = false;
+      });
+    
+  }
+  function reset(){
+    newOrderStore.update(s=>{s.order={};s.step=0;s.loading=false})
+  }
+
+  return{reset,setOrder,uploadOrder,...newOrderStore.useState()}
 }
 
 
-export default Provider
-
-
+export default AddOrderPage;

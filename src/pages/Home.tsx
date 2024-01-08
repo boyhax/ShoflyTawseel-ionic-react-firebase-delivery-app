@@ -1,106 +1,178 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
+import "leaflet/dist/leaflet.css";
+import Page from "../components/Page";
 import {
-  IonBadge, IonButton, IonButtons, IonCard, IonContent, IonFab, IonFabButton,
-  IonFabList,
-  IonFooter,
+  IonAlert,
+  IonBadge,
+  IonButton,
+  IonButtons,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
+  IonContent,
   IonHeader,
-  IonIcon, IonLabel, IonList, IonMenuButton, IonPage, IonSegment, IonSegmentButton, IonTitle, IonToolbar
-} from '@ionic/react';
-import { add, chatbox, menu, menuOutline, person, personCircle } from 'ionicons/icons';
-import { useHistory } from "react-router-dom";
-import { useGlobals } from '../providers/globalsProvider';
-import MainMenu from '../components/MainMenu';
-import * as L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-import { getUserInfoPlaceHolder } from '../providers/firebaseMain';
-import { Geolocation } from '@capacitor/geolocation';
-import { Device } from '@capacitor/device';
-import OrderList from '../components/OrderList';
-import { greenIcon } from '../components/utlis/LeafLetMap';
-import { TT } from '../components/utlis/tt';
-import Page from '../components/Page';
-import OrdersSegmentComponent from '../components/OrdersSegmentComponent';
-
-var dInfo: any = ''
-var state: any = process.env.NODE_ENV
-Device.getInfo().then((info) => {
-  dInfo = info
-})
+  IonIcon,
+  IonItem,
+  IonItemSliding,
+  IonLabel,
+  IonList,
+  IonMenuButton,
+  IonMenuToggle,
+  IonModal,
+  IonNote,
+  IonRouterLink,
+  IonTitle,
+  IonToolbar,
+  useIonRouter,
+} from "@ionic/react";
+import {
+  chatboxEllipsesOutline,
+  chevronBack,
+  menuOutline,
+  notificationsOutline,
+} from "ionicons/icons";
+import { TT } from "../components/utlis/tt";
+import useNearOrders from "../hooks/useNearOrders";
+import OrderCard from "../components/OrderCard";
+import {
+  collection,
+  getCountFromServer,
+  getFirestore,
+  query,
+  where,
+} from "firebase/firestore";
+import { useGlobals } from "../providers/globalsProvider";
+import { useChat } from "../providers/chatProvider";
+import { LeafLetMap } from "./GetLocationOnMap";
+import OrdersMap from "../components/ordersMap";
 
 const Home = () => {
+  const { user } = useGlobals();
 
-  const { user, profile } = useGlobals()
-  const navigate = useHistory()
-  const [addOrder, setAddOrder] = useState(false)
-  const [fcmToken, setFcmToken] = useState<any>(null)
-  const [_profile, _setProfile] = useState<any>(profile ? profile : getUserInfoPlaceHolder())
-  const [Map, setMap] = useState<L.Map>()
+  const { items: nearOrders, loading, error, searchNear } = useNearOrders();
+  const [counts, setCounts] = useState({
+    orders: 0,
+    deliveris: 0,
+    messages: 0,
+  });
+  const router = useIonRouter();
+  const { unreadMessages } = useChat();
+  const goDriverPage = () => router.push("driver");
+  const goNotificationPage = () =>
+    router.push("notifications", "forward", "replace");
+  const goDriver = () => router.push("driver", "forward");
+  const goChatPage = () => router.push("chat", "forward");
+  const goUser = () => router.push("/user", "forward");
+  const bounds: any = useRef(null);
+  const themap: any = useRef(null);
+
   useEffect(() => {
-    if (!!profile) {
-      _setProfile(profile)
-    }
-  }, [profile]);
+    getCounts();
+  }, []);
 
-  const menuRef = useRef<any>()
-  function onAddOrder() {
-    setAddOrder(!addOrder)
+  useEffect(() => {
+    themap && nearOrders.forEach((value, index, array) => {});
+  }, [nearOrders]);
+  async function getCounts() {
+    if (!user) return;
+    const orders = await getCountFromServer(
+      query(collection(getFirestore(), "orders"), where("uid", "==", user.uid))
+    ).then((d) => d.data().count);
+    const deliveris = await getCountFromServer(
+      query(
+        collection(getFirestore(), "orders"),
+        where("driver", "==", user.uid)
+      )
+    ).then((d) => d.data().count);
+    const messages = await getCountFromServer(
+      query(
+        collection(getFirestore(), "messages"),
+        where("user_to", "==", user.uid)
+      )
+    ).then((d) => d.data().count);
+    setCounts({
+      orders,
+      deliveris,
+      messages,
+    });
   }
-  function toggleMenu() {
-    menuRef.current?.toggle()
-  }
-  async function getLocation() {
-
-    Map?.locate()
-    try {
-      Geolocation.checkPermissions()
-      const location = await Geolocation.getCurrentPosition()
-      const latlng = { lat: location.coords.latitude, lng: location.coords.longitude }
-      if (Map && location) {
-        Map?.flyTo(latlng)
-        L.marker(latlng, { icon: greenIcon, draggable: true }).addEventListener('dragend', (e) => { console.log('e :>> ', e); }).addTo(Map)
-        return
-      }
-    } catch (error) {
-      alert('please enable GPS!  ' + error)
-    }
-    Map?.addEventListener('locationfound', (e) => {
-      console.log(e);
-      Map.flyTo(e.latlng)
-      L.marker(e.latlng, { icon: greenIcon, draggable: true }).addEventListener('dragend', (e) => { console.log('e :>> ', e); }).addTo(Map)
-    }, {})
-  }
-
   return (
-    <Page menubutton>
-      <IonContent fullscreen scrollX>
-        <OrdersSegmentComponent></OrdersSegmentComponent>
-        
-        
-      </IonContent>
-
-
-
-      <div className={'sticky bottom-2 w-full flex justify-center'}>
-          <IonButton className={'mx-auto w-50'}
-
-            onClick={() => navigate.push('addorder')}
-            shape='round'>
-            <IonIcon  icon={add}></IonIcon>
-            {TT('Add New Order')}
-          </IonButton>
+    <Page>
+      <IonHeader
+        className={
+          "h-20 bg-[var(--ion-color-primary)] rounded-b-lg  shadow-lg "
+        }
+      >
+        <div className={"flex justify-between mx-auto"}>
+          <IonMenuToggle>
+            <IonButton fill={"clear"} color={"light"}>
+              <IonIcon icon={menuOutline} />
+            </IonButton>
+          </IonMenuToggle>
+          <IonButtons className={"p-2"}>
+            <IonButton
+              size={"small"}
+              color={"light"}
+              onClick={goNotificationPage}
+            >
+              <IonIcon icon={notificationsOutline} />
+            </IonButton>
+            <IonButton size={"small"} color={"light"} onClick={goChatPage}>
+              <IonIcon icon={chatboxEllipsesOutline} />
+              <div
+                className={
+                  "absolute top-[-1px] right-[-1px]  rounded-full text-white w-3 h-3 "
+                }
+              >
+                {unreadMessages}
+              </div>
+            </IonButton>
+          </IonButtons>
+          <IonTitle color={"light"} className={"font-bold text-2xl "}>
+            {TT("Shofly Tawseel")}
+          </IonTitle>
         </div>
+      </IonHeader>
+      <IonContent fullscreen>
+        <div className={"grid grid-cols-2 px-2 pt-5"}>
+          <IonCard onClick={goUser}>
+            <IonCardHeader>
+              <IonNote>{TT("orders")}</IonNote>
+            </IonCardHeader>
+            <IonCardContent className={"flex justify-center"}>
+              <IonLabel className={"m-auto text-7xl font-bold "}>
+                {counts.orders}
+              </IonLabel>
+            </IonCardContent>
+          </IonCard>
+          <IonCard onClick={goDriver}>
+            <IonCardHeader>
+              <IonNote>{TT("deliveries")}</IonNote>
+            </IonCardHeader>
+            <IonCardContent className={"flex justify-center"}>
+              <IonLabel className={"m-auto text-7xl font-bold "}>
+                {counts.deliveris}
+              </IonLabel>
+            </IonCardContent>
+          </IonCard>
+        </div>
+        <IonCard>
+          <IonCardHeader>
+            <IonCardSubtitle onClick={goDriverPage} className={"ion-padding"}>
+              {TT("see orders near you")}
+            </IonCardSubtitle>
+          </IonCardHeader>
+          <IonRouterLink routerLink={"/map"}>
+            <div className={"w-full h-36"}>
+              <OrdersMap />
+            </div>
+          </IonRouterLink>
+        </IonCard>
+      </IonContent>
     </Page>
   );
 };
 
 export default Home;
-
-
-//x scroll
-{/* <div className={'flex flex-row w-100 overflow-x-scroll'}>
-        {[1,2,1,1,1,1,1,].map((v)=>{
-          return  <div className={'w-[100px] h-[100px]'}>
-          sfsdfsdfsdfsdfsdfdsf
-        </div>
-        })} 
-        </div> */}

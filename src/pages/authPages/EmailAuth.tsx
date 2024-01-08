@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { IonPage, IonContent, IonInput, IonButton, IonFooter, IonLabel, IonTitle } from '@ionic/react';
-import { getAuth,signInWithEmailAndPassword } from 'firebase/auth';
+import { IonLabel, IonItem } from '@ionic/react';
 import EmailSignin from './EmailSignIn';
 import EmailSignup from './EmailSignup';
 
@@ -12,9 +11,28 @@ const EmailAuth: React.FC = () => {
 
   return (
       <div>
-        {page === 'signin'&&<EmailSignin onSetPage={setPage}/>}
-        {page === 'signup'&& <EmailSignup onSetPage={setPage}/>}
-
+        {page === 'signin'&&<EmailSignin />}
+        {page === 'signup'&& <EmailSignup />}
+        {page == 'signin'?<IonItem>
+            <IonLabel >
+              New user?
+              <span
+              onClick={(e)=>setPage('signup')}
+              style={{fontSize:'1.2rem',color:'var(--ion-color-primary)'}}
+              color={'secondary'} 
+              className={'ion-padding --ion-color-primary'}> 
+              Sign up</span></IonLabel>
+        </IonItem>:
+        <IonItem>
+            <IonLabel >
+              Already a user?
+              <span
+              onClick={(e)=>setPage('signin')}
+              style={{fontSize:'1.2rem',color:'var(--ion-color-primary)'}}
+              color={'secondary'} 
+              className={'ion-padding --ion-color-primary'}> 
+              Sign In</span></IonLabel>
+        </IonItem>}
         
       </div>
   );

@@ -1,218 +1,77 @@
-import React, { FC, FunctionComponent, useEffect, useState } from 'react';
-import { IonContent, IonPage, IonTitle, IonToolbar,IonButtons, IonInput, IonLabel, IonItem, IonAccordionGroup, IonAccordion, IonList, IonSpinner, IonBackButton, IonSlides, IonSlide, IonCard, IonCardTitle, IonAvatar, IonImg, IonRouterOutlet, IonSkeletonText, IonCardSubtitle, IonGrid } from '@ionic/react';
-import { useGlobals } from '../../providers/globalsProvider';
-import { addDoc, collection, doc, DocumentData, FieldValue, getDoc, getDocs, getFirestore, onSnapshot, orderBy, query, QueryDocumentSnapshot, where } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
-import {  Redirect, Route, useHistory, useParams } from 'react-router';
-import { TT } from '../../components/utlis/tt';
-import { db } from '../../App';
-import Chat from './chat';
-import Page from '../../components/Page';
+import React, {  } from "react";
+import {
+  IonContent,
+  IonTitle,
+  IonToolbar,
+  IonAvatar,
+  IonCardSubtitle,
+  IonHeader,
+  IonButton,
+  IonButtons,
+  IonIcon,
+  useIonRouter,
+  IonList,
+  IonCardTitle,
+  IonBadge,
+} from "@ionic/react";
+import Page from "../../components/Page";
+import { TT } from "../../components/utlis/tt";
+import { chevronBackOutline } from "ionicons/icons";
+import { useChat } from "../../providers/chatProvider";
+import { timeAgo } from "../../lib/timeAgo";
 
+export default function Chats(props: any) {
+  const router = useIonRouter();
+  const { chatItems: items } = useChat();
 
-export default  function Chats(props:any) {
-    const {user,profile} = useGlobals()
-    const [loading,setLoading]=useState(true)
-    const [data,setData] = useState<any>(undefined)
-    const [refreshing,setRefreshing] = useState(true)
-    const [isMounted, setIsMounted] = useState(true)
-    const [currentChat, setCurrentChat] = useState<any|QueryDocumentSnapshot<DocumentData>>("")
-    const [makingChat,setMakingChat]= useState(false)
-    const [list,setList]=useState<null|QueryDocumentSnapshot<DocumentData>[]>(null)
-    const uid= getAuth().currentUser?.uid
-    const params:any = useParams()
-    const history =useHistory()
-    
-    useEffect(()=>{
-      if(!user){
-        return
-      }
-      const unsub = getData();
-      return()=>{unsub()}
-    },[user])
-    useEffect(()=>{
-      setIsMounted(true)
-      return () => {
-        setIsMounted(false)
-      }
-    },[])
-    useEffect(()=>{
-      if(!!params.id && !!list){
-        console.log('list on effect :>> ', list);
-        const chat = list.find((value, index, array) => {
-          return value.data().chaters.includes(params.id,0)
-        })
-        console.log('chat :>> ', chat);
-        if(!!chat){
-          setCurrentChat(chat)
-        }else{
-          if(!makingChat){
-            setMakingChat(true)
-            addDoc(collection(db,"chats"),{chaters:[uid,params.id]}).finally(()=>{
-              setMakingChat(false)
-            }) 
-            }
-          }
-      }
-    },[list])
-  
-     function getData() {
-      setRefreshing(true)
-      const ref = collection(getFirestore(),"chats")
-      var firstQuery = ref
-      var finalQuery= query(firstQuery,where("chaters",'array-contains-any',[getAuth().currentUser?.uid]))
-      
-      const unsub =  onSnapshot(finalQuery,(snap)=>{
-        var newList:any[]=[]
-        snap.forEach((doc)=>{
-           newList.push(doc)
-          })
-          if(isMounted){
-            
-           setList(newList)
-           setRefreshing(false)    
-          }else{
-            unsub()
-          }
-        })
-        return unsub
-      };
-      
-
-      
-      if(!!currentChat){
-        return<Chat doc={currentChat} onGoBack={()=>{setCurrentChat("")}}></Chat>
-      }
-    
-    return (
+  return (
     <Page>
-      
-
-      <IonContent fullscreen={true}>
-        <IonToolbar color={'primary'}>
-        <IonTitle className={'ion-padding'}>Chats</IonTitle>
+      <IonHeader translucent style={{ direction: "ltr" }} collapse={"fade"}>
+        <IonToolbar>
+          <IonButtons slot="start">
+            <IonButton onClick={() => router.goBack()}>
+              <IonIcon icon={chevronBackOutline} />
+            </IonButton>
+          </IonButtons>
+          <IonTitle>{TT("Chat")}</IonTitle>
         </IonToolbar>
-             {!!list && list.map((value,key:any) => { 
-              return<ChatItem onChatClicked={()=>setCurrentChat(value)} chatDocSnap={value} key={key}>
-              
-             </ChatItem>
-             })
-             }
-             {refreshing && <ChatsPlaceHolder/>}
-             {!refreshing && !list&& EmptyChat}
+      </IonHeader>
+      <IonContent fullscreen={true}>
+        <IonList>
+          {items.map((item) => (
+            <div
+              className={"flex justify-between items-center space-x-2 border-b-2 border-gray-300 p-2"}
+              onClick={() => router.push(`chat/${item.id}`, "forward", "push")}
+              key={item.id}
+            >
+              <IonAvatar>
+                <img alt="avatar" src={item.icon} />
+              </IonAvatar>
+              <div className={'w-[50%]'}>
+                <IonCardTitle>{item.name}</IonCardTitle>
 
+                <p className={"truncate w-1/2 text-sm"}>{item.lastMessage}</p>
+              </div>
+
+              <IonCardSubtitle style={{ direction: "ltr" }}>
+                {timeAgo(item.lastMessageTime)}
+              </IonCardSubtitle>
+              <IonBadge class={"m-auto"}>{item.unreadMessages}</IonBadge>
+            </div>
+          ))}
+        </IonList>
       </IonContent>
     </Page>
   );
-};
-
-const ChatsPlaceHolder:React.FC=(props)=>{
-  return (<IonGrid>
-    {[1,2,3,4,5,6].map(()=>{return CardSkeleton})}
-  </IonGrid>
-  )
-}
-const EmptyChat = <div className={'flex justify-center align-middle'}>
-  <IonTitle>No Chats now <IonCardSubtitle>Try to reach people </IonCardSubtitle></IonTitle>
-</div>
-const CardSkeleton = <IonItem>
-<IonAvatar>
-  <IonSkeletonText animated/>
-</IonAvatar>
-<IonTitle>
-<IonSkeletonText animated/>
-</IonTitle>
-<IonCardSubtitle>
-<IonSkeletonText animated/>
-
-</IonCardSubtitle>
-</IonItem>
-
-interface ChatItemProps {
-  chatDocSnap:QueryDocumentSnapshot<DocumentData>,
-  onChatClicked:()=>void
-  
-}
- 
-interface ChatItemState {
-  chaterID:string,
-  lastMessage:string,
-  messagesDocs:QueryDocumentSnapshot<DocumentData>[],
-  chaterPhotoURL:string,
-  chaterName:string,
-  lastMessageTimeStamp:"" | Date,
-  unsubs:any[]
-
-}
- 
-class ChatItem extends React.Component<ChatItemProps, ChatItemState> {
-  constructor(props: ChatItemProps) {
-    super(props);
-    this.state = {chaterID:this.getOtherChater(),unsubs:[],
-      lastMessage:'chat here',messagesDocs:[],chaterPhotoURL:require("../../assets/avatarPlaceHolder.png") ,  chaterName:"",lastMessageTimeStamp:""    };
-  };
-  
-  getOtherChater(){
-    const uid = getAuth().currentUser?.uid
-    var otherChaters:string[] = this.props.chatDocSnap.data().chaters
-    .filter((v:any)=>{return v !== uid})
-    return otherChaters[0]
-  }
-  componentDidMount() {
-    var unsub = this.getChatMessages();
-    var unsub2 = this.getChaterPhotoURL();
-    this.setState({
-      unsubs :[unsub,unsub2]
-    })
-  }
-  componentWillUnmount(){
-    for(let n of this.state.unsubs){
-      n()
-    }
-
-  }
-  componentDidUpdate(prevProps: ChatItemProps, prevState: ChatItemState) {
-    // console.log('state  :>> ', this.state );
-  }
-  getChaterPhotoURL(){
-    return onSnapshot(doc(db,"users/"+this.state.chaterID),(snap)=>{
-      console.log('chater :>> ', snap.data());
-      this.setState({chaterPhotoURL:snap.data()!.photoURL,
-                    chaterName:snap.data()!.name
-                    })
-    })
-  }
- getChatMessages=()=> {
-return onSnapshot(query(collection(this.props.chatDocSnap.ref,"messages"))
-,(snap)=>{
-  if(snap.empty){return}
-  this.setState({messagesDocs:snap.docs,
-                lastMessage:snap.docs[0].data().text,
-                lastMessageTimeStamp:new Date(snap.docs[0].data().time.seconds*1000),
-              })
-})
-}
-  render() { 
-    return (<IonItem dir='ltr' onClick={()=>{this.props.onChatClicked()}}>
-      <IonAvatar><IonImg src={this.state.chaterPhotoURL} ></IonImg></IonAvatar>
-      <IonLabel>{this.state.lastMessage}</IonLabel>
-      <IonLabel slot='end'>{this.state.lastMessageTimeStamp !==""?
-      this.state.lastMessageTimeStamp.toLocaleTimeString():""}</IonLabel>
-    </IonItem> );
-  }
 }
 
-
- 
-
- 
 //  message data
-// data 
+// data
 // ""
 // (string)
 // isRead
 // true
-// receiver 
+// receiver
 // "asdsd"
 // sender
 // "dsfdfs"
@@ -222,4 +81,3 @@ return onSnapshot(query(collection(this.props.chatDocSnap.ref,"messages"))
 // September 26, 2022 at 9:52:36 AM UTC+4
 // type
 // "text"
-

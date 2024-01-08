@@ -1,12 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { IonBackButton, IonButton, IonButtons, IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonModal, IonPage, IonSpinner, IonTab, IonTabs, IonTitle, IonToolbar } from '@ionic/react';
-import { arrowBack, arrowForwardCircle, closeCircleSharp, closeSharp, home, returnUpBack } from 'ionicons/icons';
-import { getAuth, PhoneAuthProvider, signInWithCredential, RecaptchaVerifier, signInWithPhoneNumber, initializeAuth, browserSessionPersistence, browserPopupRedirectResolver, EmailAuthProvider, onAuthStateChanged, GoogleAuthProvider, OAuthProvider } from 'firebase/auth';
+import React, {  } from 'react';
+import { IonFab, IonFabButton, IonHeader, IonIcon } from '@ionic/react';
+import { closeSharp } from 'ionicons/icons';
 import './SignIn.css';
-import * as firebaseui from 'firebaseui';
-import { useGlobals } from '../../providers/globalsProvider';
-import { getProfile, profileExist } from '../../providers/firebaseMain';
-import { StyledFirebaseAuth, FirebaseAuth } from 'react-firebaseui';
 import { useHistory } from 'react-router';
 
 

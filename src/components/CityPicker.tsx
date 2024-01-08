@@ -1,8 +1,8 @@
-import { IonButton, IonCardSubtitle, IonContent, IonIcon, IonInput, IonItem, IonLabel, IonList, IonPopover } from "@ionic/react";
+import { IonCardSubtitle, IonContent, IonIcon, IonInput, IonItem, IonLabel, IonList, IonPopover } from "@ionic/react";
 import { caretForwardOutline, removeOutline } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import { keyValue } from "../types";
-import { Cities, citiesList, getLocationSuggetions } from "./utlis/citiesUtlis";
+import { Cities, getLocationSuggetions } from "./utlis/citiesUtlis";
 
 
 interface Props extends React.ThHTMLAttributes<Element> {
@@ -30,14 +30,7 @@ const CityPicker = ({ placeHolder, onValueSet ,clear}: Props) => {
   function updateOptions(text: string) {
 
     const options = getLocationSuggetions(text,-1)
-    // var op: any = []
-    // for (let v of options) {
-    //   op.push({
-    //     address: v.value, name: v.value
-    //     , location: { lat: '', lng: '' }
-    //     , id: v.key, types: [""]
-    //   })
-    // }
+   
     setOptions(options)
 
 
@@ -51,11 +44,10 @@ const CityPicker = ({ placeHolder, onValueSet ,clear}: Props) => {
 
   return <>
   <IonItem>
-    <IonLabel position={'stacked'}>Pick up place</IonLabel>
     <IonInput
       required
       value={(value && value.value ) ||''}
-      placeholder={'pick up point'}
+      placeholder={placeHolder}
       id={placeHolder+'LocationSelector'}>
     </IonInput>
     {clear&& <IonIcon slot={'end'} onClick={()=>hundlepick({key:'',value:''})} icon={removeOutline}/>}

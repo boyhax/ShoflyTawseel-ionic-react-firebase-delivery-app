@@ -2,7 +2,6 @@ import {
   IonLabel, IonItem, IonList, IonListHeader, IonSkeletonText, IonThumbnail, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonRow, IonAvatar, IonButton, IonIcon
 } from "@ionic/react";
 import React from "react";
-import "./OrderCard.css"
 
 
 export const OrderPlaceHolder: React.FC = (props) => {

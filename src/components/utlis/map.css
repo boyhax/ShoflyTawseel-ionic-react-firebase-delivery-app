@@ -1,0 +1,71 @@
+.mapMainContainer {
+    width: 100%;
+    height: 100%;
+
+}
+
+/* .mapMainContainer .ui {
+    z-index: 100;
+    width: fit-content;
+    height: fit-content;
+    pointer-events: none;
+
+} */
+.map-control {
+    position: absolute;
+    pointer-events: all;
+    z-index: 100;
+
+}
+.mapMainContainer .ui .item {
+    position: absolute;
+    pointer-events: all;
+    width: fit-content;
+    z-index: 100;
+    top: 150px;
+    display: flex;
+    flex-direction: column;
+
+}
+.mapMainContainer .ui .item button {
+    border-radius: 50px;
+    background-color: var(--ion-color-light);
+    color:var(--ion-color-primary);
+    width: 50px;
+    height: 50px;
+    align-content: center;
+    margin-left: 10px;
+    margin-top: 2px;
+
+}
+.map-center-merker::after {
+    width: 22px;
+    height: 40px;
+    display: block;
+    content: ' ';
+    position: absolute;
+    top: 50%; left: 50%;
+    margin: -40px 0 0 -11px;
+    background: url('https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi_hdpi.png');
+    background-size: 22px 40px; /* Since I used the HiDPI marker version this compensates for the 2x size */
+    pointer-events: none; /* This disables clicks on the marker. Not fully supported by all major browsers, though */
+}
+.mapMainContainer .ymidlle {
+    margin-top: 50%;
+
+}
+
+.mapContainer {
+    width: 100%;
+    height: 100%;
+}
+
+.mapContainer .map {}
+
+capacitor-google-map {
+    display: inline-block;
+    min-width: 406px;
+    min-height: 406px;
+    height: 100%;
+    width: 100%;
+}

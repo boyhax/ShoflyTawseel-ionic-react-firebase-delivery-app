@@ -1,5 +1,19 @@
-
-
+@font-face {   
+  font-family: 'baloo';  
+  src: url('assets/fonts/BalooBhaijaan-Regular.ttf');
+}
+@font-face {   
+  font-family: 'nunito';  
+  src: url('assets/fonts/Nunito-ExtraBold.ttf');
+}
+@font-face {   
+  font-family: 'tajawal';  
+  src: url('assets/fonts/Tajawal-ExtraBold.ttf');
+}
+@font-face {   
+  font-family: 'alba';  
+  src: url('assets/fonts/AlbaMedium.ttf');
+}
 /* 
 
 

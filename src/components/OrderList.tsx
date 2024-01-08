@@ -1,13 +1,15 @@
 import React, { useRef, useState } from "react";
 
 import { DocumentSnapshot } from "firebase/firestore";
-import { IonButton, IonContent, IonFab, IonFabButton, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonItem, IonLabel, IonModal, IonRefresher, IonRefresherContent } from "@ionic/react";
+import { IonButton, IonContent, IonFab, IonFabButton, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonItem, IonLabel, IonList, IonModal, IonRefresher, IonRefresherContent } from "@ionic/react";
 import { filter as filterIcon } from "ionicons/icons";
 import { RefresherEventDetail } from '@ionic/core';
 import OrderCard from "./OrderCard";
 import useOrders from "../hooks/useOrders";
 import FilterUI from "./FilterUI";
 import OrdersPlaceHolder from "./OrdersPLaceHolder";
+import { makeOrderFromDoc } from "../api/firebaseMain";
+import { TT } from "./utlis/tt";
 
 
 export default function OrderList(props: any) {
@@ -31,13 +33,16 @@ export default function OrderList(props: any) {
   }
   function onEndRefresh(e: any) {
     orders.add(10, () => e.target.complete())
+    setTimeout(() => {
+      e.target.complete()
+    }, 2000);
   }
 
 
 
   
-  return <IonContent fullscreen={true}>
-    <IonFab  className={'sticky flex-row top-5  '}  >
+  return <div>
+    <IonFab >
       <IonFabButton id='filterToggler'
       className={'ml-auto'}>
         <IonIcon icon={filterIcon}></IonIcon>
@@ -45,7 +50,7 @@ export default function OrderList(props: any) {
     </IonFab>
 
 
-    {/* <IonList > */}
+    <IonList  >
 
     <IonRefresher
       ref={IonRefresherElement}
@@ -61,8 +66,7 @@ export default function OrderList(props: any) {
         if (!v["exists"]) {
           return ''
         }
-        return <OrderCard orderDocSnap={v} key={i} report canApplyFor onRefresh={() => Refresh()} onDeleted={() => { delete list[i]; setList(list) }}>
-        </OrderCard>
+        return <OrderCard order={makeOrderFromDoc(v)} key={i}  />
       })
     }
     {orders.loading && !orders.orders && <OrdersPlaceHolder></OrdersPlaceHolder>}
@@ -74,11 +78,11 @@ export default function OrderList(props: any) {
       disabled={isInfiniteDisabled}>
       <IonInfiniteScrollContent
         loadingSpinner="dots"
-        loadingText="بحث المزيد من الطلبات"
+        loadingText={TT('loading ..')}
       ></IonInfiniteScrollContent>
     </IonInfiniteScroll>
 
-    {/* </IonList> */}
+    </IonList>
 
     {/* {!orders.loading && !orders.orders && <IonItem style={{ display: "flex", flexDirection: "column" }}>
       <IonLabel color={listMessage.color}>{listMessage.text}</IonLabel>
@@ -94,7 +98,7 @@ export default function OrderList(props: any) {
         <FilterUI onfilter={(v) => orders.setFilter(v)} filter={orders.filter}></FilterUI>
 
     </IonModal>
-  </IonContent>
+  </div>
 }
 
 
